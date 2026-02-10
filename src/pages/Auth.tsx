@@ -41,7 +41,7 @@ const Auth = () => {
       if (error) {
         showError(error.message);
       } else {
-        showSuccess("Compte créé ! Vérifiez vos emails pour confirmer.");
+        showSuccess("Compte créé ! Vérifiez vos emails (et vos spams) pour confirmer.");
         setIsLogin(true);
       }
     }
