@@ -13,11 +13,13 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Vérification initiale de la session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
     });
 
+    // Écoute des changements d'état d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
@@ -66,7 +68,7 @@ const Index = () => {
     );
   }
 
-  // VUE NON CONNECTÉE (Mur d'accueil)
+  // Si l'utilisateur n'est pas connecté, on affiche le mur de bienvenue
   if (!session) {
     return (
       <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
@@ -140,7 +142,7 @@ const Index = () => {
     );
   }
 
-  // VUE CONNECTÉE (Tableau de bord)
+  // Si l'utilisateur est connecté, on affiche le tableau de bord
   return (
     <div className="min-h-screen bg-zinc-950 text-white pb-24 md:pt-20">
       <Navbar />
@@ -165,7 +167,7 @@ const Index = () => {
               Voir les offres
             </button>
           </div>
-        </header>
+        </section>
 
         <section>
           <div className="flex items-center justify-between mb-6">
@@ -173,8 +175,8 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tournaments.map((t, i) => (
-              <TournamentCard key={i} {...t} />
+            {tournaments.map((t) => (
+              <TournamentCard key={t.id} {...t} />
             ))}
           </div>
         </section>
