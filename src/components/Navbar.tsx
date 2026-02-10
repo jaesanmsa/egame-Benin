@@ -35,9 +35,11 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:block">
-          <button className="bg-violet-600 hover:bg-violet-700 text-white px-6 py-2 rounded-full font-medium transition-all shadow-lg shadow-violet-500/20">
-            Connexion Google
-          </button>
+          <Link to="/auth">
+            <button className="bg-violet-600 hover:bg-violet-700 text-white px-6 py-2 rounded-full font-medium transition-all shadow-lg shadow-violet-500/20">
+              Connexion
+            </button>
+          </Link>
         </div>
       </div>
     </nav>

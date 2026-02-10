@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, DollarSign } from 'lucide-react';
+import { Users, Calendar } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
 
 interface TournamentProps {
-  id?: string;
+  id: string;
   title: string;
   game: string;
   image: string;
@@ -17,7 +17,7 @@ interface TournamentProps {
   type: 'Online' | 'Presentiel';
 }
 
-const TournamentCard = ({ id = "1", title, game, image, date, participants, entryFee, type }: TournamentProps) => {
+const TournamentCard = ({ id, title, game, image, date, participants, entryFee, type }: TournamentProps) => {
   const navigate = useNavigate();
 
   return (
@@ -56,10 +56,7 @@ const TournamentCard = ({ id = "1", title, game, image, date, participants, entr
         <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
           <div className="flex items-center gap-1">
             <span className="text-zinc-500 text-xs">Entrée:</span>
-            <span className="text-white font-bold flex items-center">
-              <DollarSign size={14} className="text-green-500" />
-              {entryFee}
-            </span>
+            <span className="text-white font-bold">{entryFee} FCFA</span>
           </div>
           <button className="bg-zinc-800 group-hover:bg-violet-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
             Participer
