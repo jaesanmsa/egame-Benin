@@ -14,21 +14,21 @@ const TournamentDetails = () => {
   const [showPayment, setShowPayment] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing' | 'success'>('select');
 
-  const tournament = {
-    title: "Bénin Pro League COD MW4",
-    game: "COD MW4",
-    image: "https://images.unsplash.com/photo-1552824236-0776282ffdee?q=80&w=2070&auto=format&fit=crop",
-    date: "25 Mai, 2024",
-    participants: "12/64",
-    entryFee: "5000",
-    prizePool: "250.000 FCFA",
-    description: "Affrontez les meilleurs soldats du Bénin sur Modern Warfare 4. Un tournoi épique avec un cashprize massif.",
-    rules: ["Matchs en 4vs4", "Mode Recherche & Destruction", "Pas de lance-grenades", "Fair-play obligatoire"]
+  // Données basées sur l'ID pour correspondre aux prix demandés
+  const getTournamentData = (id: string | undefined) => {
+    switch(id) {
+      case 'cod-mw4': return { title: "Bénin Pro League: COD MW4", game: "COD MW4", entryFee: "2000", prizePool: "100.000 FCFA", image: "https://images.unsplash.com/photo-1552824236-0776282ffdee?q=80&w=2070&auto=format&fit=crop" };
+      case 'blur': return { title: "Blur Racing Cup: Cotonou", game: "Blur", entryFee: "2500", prizePool: "150.000 FCFA", image: "https://images.unsplash.com/photo-1547949003-9792a18a2601?q=80&w=2070&auto=format&fit=crop" };
+      case 'clash-royale': return { title: "Clash Royale: King of Benin", game: "Clash Royale", entryFee: "1000", prizePool: "50.000 FCFA", image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?q=80&w=2071&auto=format&fit=crop" };
+      case 'bombsquad': return { title: "BombSquad Party: Parakou", game: "BombSquad", entryFee: "1500", prizePool: "75.000 FCFA", image: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?q=80&w=2070&auto=format&fit=crop" };
+      default: return { title: "Tournoi eGame", game: "Gaming", entryFee: "1000", prizePool: "50.000 FCFA", image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop" };
+    }
   };
+
+  const tournament = getTournamentData(id);
 
   const handleFedaPay = () => {
     setPaymentStep('processing');
-    // Simulation de l'ouverture du widget FedaPay
     setTimeout(() => {
       setPaymentStep('success');
       showSuccess("Paiement FedaPay réussi !");
@@ -62,17 +62,17 @@ const TournamentDetails = () => {
             <div className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700/50 text-center">
               <Calendar className="text-violet-500 mx-auto mb-2" size={20} />
               <p className="text-zinc-400 text-xs">Date</p>
-              <p className="font-bold text-sm">{tournament.date}</p>
+              <p className="font-bold text-sm">À venir</p>
             </div>
             <div className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700/50 text-center">
               <Users className="text-violet-500 mx-auto mb-2" size={20} />
               <p className="text-zinc-400 text-xs">Joueurs</p>
-              <p className="font-bold text-sm">{tournament.participants}</p>
+              <p className="font-bold text-sm">Ouvert</p>
             </div>
             <div className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700/50 text-center">
               <Trophy className="text-violet-500 mx-auto mb-2" size={20} />
               <p className="text-zinc-400 text-xs">Format</p>
-              <p className="font-bold text-sm">4vs4</p>
+              <p className="font-bold text-sm">Tournoi</p>
             </div>
             <div className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700/50 text-center">
               <Shield className="text-violet-500 mx-auto mb-2" size={20} />

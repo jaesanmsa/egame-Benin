@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Trophy, User, Home, Search, Bell } from 'lucide-react';
+import { Trophy, User, Home, Search, Bell, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
@@ -24,10 +24,10 @@ const Navbar = () => {
             <Search size={24} />
             <span className="text-[10px] md:hidden">Explorer</span>
           </Link>
-          <Link to="/notifications" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition-colors">
-            <Bell size={24} />
-            <span className="text-[10px] md:hidden">Alertes</span>
-          </Link>
+          <a href="mailto:support@egamebenin.com" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition-colors">
+            <Mail size={24} />
+            <span className="text-[10px] md:hidden">Support</span>
+          </a>
           <Link to="/profile" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition-colors">
             <User size={24} />
             <span className="text-[10px] md:hidden">Profil</span>

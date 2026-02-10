@@ -4,22 +4,22 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
 import { motion } from 'framer-motion';
-import { Trophy, Gamepad2, Zap, Target } from 'lucide-react';
+import { Zap, Mail } from 'lucide-react';
 
 const Index = () => {
   const tournaments = [
     {
-      id: "1",
-      title: "Bénin Pro League COD MW4",
+      id: "cod-mw4",
+      title: "Bénin Pro League: COD MW4",
       game: "COD MW4",
       image: "https://images.unsplash.com/photo-1552824236-0776282ffdee?q=80&w=2070&auto=format&fit=crop",
       date: "25 Mai, 2024",
       participants: "12/64",
-      entryFee: "5000",
+      entryFee: "2000",
       type: "Presentiel" as const
     },
     {
-      id: "2",
+      id: "blur",
       title: "Blur Racing Cup: Cotonou",
       game: "Blur",
       image: "https://images.unsplash.com/photo-1547949003-9792a18a2601?q=80&w=2070&auto=format&fit=crop",
@@ -29,7 +29,7 @@ const Index = () => {
       type: "Online" as const
     },
     {
-      id: "3",
+      id: "clash-royale",
       title: "Clash Royale: King of Benin",
       game: "Clash Royale",
       image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?q=80&w=2071&auto=format&fit=crop",
@@ -39,7 +39,7 @@ const Index = () => {
       type: "Online" as const
     },
     {
-      id: "4",
+      id: "bombsquad",
       title: "BombSquad Party: Parakou",
       game: "BombSquad",
       image: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?q=80&w=2070&auto=format&fit=crop",
@@ -74,31 +74,20 @@ const Index = () => {
               DOMINEZ LA SCÈNE <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">GAMING AU BÉNIN</span>
             </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-zinc-400 text-lg mb-8"
-            >
-              Participez aux plus grands tournois nationaux, gagnez des prix en FCFA et devenez une légende.
-            </motion.p>
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex flex-wrap gap-4"
-            >
+            <p className="text-zinc-400 text-lg mb-8">
+              Participez aux tournois de COD, Blur, Clash Royale et BombSquad. Gagnez des prix en FCFA.
+            </p>
+            <div className="flex flex-wrap gap-4">
               <button className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-violet-500/20">
                 Explorer les tournois
               </button>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         <section>
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold">Tournois Populaires</h2>
-            <button className="text-violet-400 font-medium hover:underline">Voir tout</button>
+            <h2 className="text-2xl font-bold">Tournois Actifs</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -106,6 +95,19 @@ const Index = () => {
               <TournamentCard key={i} {...t} />
             ))}
           </div>
+        </section>
+
+        {/* Support Section */}
+        <section className="mt-20 p-8 bg-zinc-900 rounded-[2rem] border border-zinc-800 text-center">
+          <h2 className="text-2xl font-bold mb-4">Besoin d'aide ?</h2>
+          <p className="text-zinc-400 mb-6">Notre équipe de support est disponible pour vous aider.</p>
+          <a 
+            href="mailto:support@egamebenin.com" 
+            className="inline-flex items-center gap-3 bg-zinc-800 hover:bg-zinc-700 px-6 py-3 rounded-xl font-bold transition-colors"
+          >
+            <Mail size={20} className="text-violet-500" />
+            support@egamebenin.com
+          </a>
         </section>
       </main>
     </div>
