@@ -4,7 +4,8 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
 import { motion } from 'framer-motion';
-import { Zap, Mail } from 'lucide-react';
+import { Zap, Mail, LogIn } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   const tournaments = [
@@ -78,7 +79,13 @@ const Index = () => {
               Participez aux tournois de COD, Blur, Clash Royale et BombSquad. Gagnez des prix en FCFA.
             </p>
             <div className="flex flex-wrap gap-4">
-              <button className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-violet-500/20">
+              <Link to="/auth">
+                <button className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-violet-500/20 flex items-center gap-2">
+                  <LogIn size={20} />
+                  Se connecter maintenant
+                </button>
+              </Link>
+              <button className="bg-zinc-800 hover:bg-zinc-700 text-white px-8 py-4 rounded-2xl font-bold transition-all">
                 Explorer les tournois
               </button>
             </div>
