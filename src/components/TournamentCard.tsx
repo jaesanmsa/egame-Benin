@@ -4,8 +4,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Users, Calendar, DollarSign } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from 'react-router-dom';
 
 interface TournamentProps {
+  id?: string;
   title: string;
   game: string;
   image: string;
@@ -15,11 +17,14 @@ interface TournamentProps {
   type: 'Online' | 'Presentiel';
 }
 
-const TournamentCard = ({ title, game, image, date, participants, entryFee, type }: TournamentProps) => {
+const TournamentCard = ({ id = "1", title, game, image, date, participants, entryFee, type }: TournamentProps) => {
+  const navigate = useNavigate();
+
   return (
     <motion.div 
       whileHover={{ y: -5 }}
-      className="group relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 hover:border-violet-500/50 transition-all"
+      onClick={() => navigate(`/tournament/${id}`)}
+      className="group relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 hover:border-violet-500/50 transition-all cursor-pointer"
     >
       <div className="aspect-video overflow-hidden relative">
         <img 
@@ -56,7 +61,7 @@ const TournamentCard = ({ title, game, image, date, participants, entryFee, type
               {entryFee}
             </span>
           </div>
-          <button className="bg-zinc-800 hover:bg-violet-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
+          <button className="bg-zinc-800 group-hover:bg-violet-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
             Participer
           </button>
         </div>
