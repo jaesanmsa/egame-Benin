@@ -1,10 +1,11 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar } from 'lucide-react';
+import { Users, Calendar, Lock } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
 
 interface TournamentProps {
   id: string;
@@ -19,11 +20,32 @@ interface TournamentProps {
 
 const TournamentCard = ({ id, title, game, image, date, participants, entryFee, type }: TournamentProps) => {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleClick = () => {
+    if (!isLoggedIn) {
+      navigate('/auth');
+    } else {
+      navigate(`/tournament/${id}`);
+    }
+  };
 
   return (
     <motion.div 
       whileHover={{ y: -5 }}
-      onClick={() => navigate(`/tournament/${id}`)}
+      onClick={handleClick}
       className="group relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 hover:border-violet-500/50 transition-all cursor-pointer"
     >
       <div className="aspect-video overflow-hidden relative">
@@ -54,13 +76,22 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
         </div>
         
         <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
-          <div className="flex items-center gap-1">
-            <span className="text-zinc-500 text-xs">Entrée:</span>
-            <span className="text-white font-bold">{entryFee} FCFA</span>
-          </div>
-          <button className="bg-zinc-800 group-hover:bg-violet-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
-            Participer
-          </button>
+          {isLoggedIn ? (
+            <>
+              <div className="flex items-center gap-1">
+                <span className="text-zinc-500 text-xs">Entrée:</span>
+                <span className="text-white font-bold">{entryFee} FCFA</span>
+              </div>
+              <button className="bg-violet-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
+                Participer
+              </button>
+            </>
+          ) : (
+            <div className="w-full flex items-center justify-center gap-2 py-2 text-zinc-500 text-sm font-medium">
+              <Lock size={14} />
+              <span>Connectez-vous pour voir le prix</span>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>

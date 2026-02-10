@@ -1,20 +1,27 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Users, Trophy, Shield, Smartphone, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, CheckCircle2, ArrowLeft, Lock } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess } from '@/utils/toast';
+import { supabase } from '@/lib/supabase';
 
 const TournamentDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showPayment, setShowPayment] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing' | 'success'>('select');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Données basées sur l'ID pour correspondre aux prix demandés
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+  }, []);
+
   const getTournamentData = (id: string | undefined) => {
     switch(id) {
       case 'cod-mw4': return { title: "Bénin Pro League: COD MW4", game: "COD MW4", entryFee: "2000", prizePool: "100.000 FCFA", image: "https://images.unsplash.com/photo-1552824236-0776282ffdee?q=80&w=2070&auto=format&fit=crop" };
@@ -54,7 +61,7 @@ const TournamentDetails = () => {
             </div>
             <div className="bg-violet-600 px-6 py-3 rounded-2xl text-center">
               <p className="text-xs text-violet-200 uppercase font-bold">Prix à gagner</p>
-              <p className="text-2xl font-black">{tournament.prizePool}</p>
+              <p className="text-2xl font-black">{isLoggedIn ? tournament.prizePool : "???"}</p>
             </div>
           </div>
 
@@ -81,9 +88,16 @@ const TournamentDetails = () => {
             </div>
           </div>
 
-          <Button onClick={() => setShowPayment(true)} className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 text-xl font-black shadow-xl shadow-violet-500/20">
-            S'INSCRIRE POUR {tournament.entryFee} FCFA
-          </Button>
+          {isLoggedIn ? (
+            <Button onClick={() => setShowPayment(true)} className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 text-xl font-black shadow-xl shadow-violet-500/20">
+              S'INSCRIRE POUR {tournament.entryFee} FCFA
+            </Button>
+          ) : (
+            <Button onClick={() => navigate('/auth')} className="w-full py-8 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-xl font-black flex items-center justify-center gap-3">
+              <Lock size={24} />
+              SE CONNECTER POUR S'INSCRIRE
+            </Button>
+          )}
         </motion.div>
       </main>
 
