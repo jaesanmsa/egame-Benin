@@ -1,23 +1,25 @@
--- Création de la table des paiements
-create table public.payments (
-  id uuid default gen_random_uuid() primary key,
-  user_id uuid references auth.users(id) on delete cascade not null,
-  tournament_id text not null,
-  tournament_name text not null,
-  amount text not null,
-  status text default 'En attente' check (status in ('En attente', 'Réussi', 'Échoué')),
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+-- On s'assure que la table est créée dans le bon schéma
+CREATE TABLE IF NOT EXISTS public.payments (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  tournament_id text NOT NULL,
+  tournament_name text NOT NULL,
+  amount text NOT NULL,
+  status text DEFAULT 'En attente',
+  created_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
--- Activer la sécurité (RLS)
-alter table public.payments enable row level security;
+-- Activer la sécurité
+ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
 
--- Politique : Les utilisateurs ne voient que leurs propres paiements
-create policy "Les utilisateurs voient leurs propres paiements"
-on public.payments for select
-using ( auth.uid() = user_id );
+-- Supprimer les anciennes politiques si elles existent pour éviter les erreurs
+DROP POLICY IF EXISTS "Users can view their own payments" ON public.payments;
+DROP POLICY IF EXISTS "Users can insert their own payments" ON public.payments;
 
--- Politique : Les utilisateurs peuvent insérer leurs propres paiements
-create policy "Les utilisateurs peuvent créer leurs paiements"
-on public.payments for insert
-with check ( auth.uid() = user_id );
+-- Créer les politiques de sécurité
+CREATE POLICY "Users can view their own payments" ON public.payments FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert their own payments" ON public.payments FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Donner les droits d'accès
+GRANT ALL ON public.payments TO authenticated;
+GRANT ALL ON public.payments TO service_role;

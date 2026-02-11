@@ -39,9 +39,9 @@ const TournamentDetails = () => {
     
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Non connecté");
+      if (!user) throw new Error("Veuillez vous connecter");
 
-      // Insertion dans la table 'payments' de Supabase
+      // On tente l'insertion dans Supabase
       const { error } = await supabase.from('payments').insert({
         user_id: user.id,
         tournament_id: id,
@@ -50,15 +50,16 @@ const TournamentDetails = () => {
         status: 'En attente'
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erreur Supabase:", error);
+        throw new Error("La table 'payments' n'existe pas encore. Exécutez le script SQL sur Supabase.");
+      }
 
-      // Redirection vers le lien FedaPay après un court délai
-      setTimeout(() => {
-        window.location.href = "https://me.fedapay.com/mpservices";
-      }, 1000);
+      // REDIRECTION RÉELLE VERS TON LIEN
+      window.location.href = "https://me.fedapay.com/mpservices";
       
     } catch (err: any) {
-      showError("Erreur : " + err.message);
+      showError(err.message);
       setPaymentStep('select');
     }
   };
@@ -127,10 +128,11 @@ const TournamentDetails = () => {
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPayment(false)} className="absolute inset-0 bg-zinc-950/90 backdrop-blur-sm" />
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-[2.5rem] p-8">
-              {/* Bouton Fermer (X) */}
+              
+              {/* LA CROIX X POUR FERMER */}
               <button 
                 onClick={() => setShowPayment(false)}
-                className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-full transition-colors"
+                className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-full transition-all z-50"
               >
                 <X size={24} />
               </button>
