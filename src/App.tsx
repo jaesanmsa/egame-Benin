@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import TournamentDetails from "./pages/TournamentDetails";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
 import NotFound from "./pages/NotFound";
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/tournament/:id" element={<TournamentDetails />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
