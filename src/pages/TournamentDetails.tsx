@@ -41,7 +41,7 @@ const TournamentDetails = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Veuillez vous connecter");
 
-      // On tente l'insertion dans Supabase
+      // On enregistre l'intention de paiement
       const { error } = await supabase.from('payments').insert({
         user_id: user.id,
         tournament_id: id,
@@ -50,16 +50,13 @@ const TournamentDetails = () => {
         status: 'En attente'
       });
 
-      if (error) {
-        console.error("Erreur Supabase:", error);
-        throw new Error("La table 'payments' n'existe pas encore. Exécutez le script SQL sur Supabase.");
-      }
+      if (error) throw error;
 
-      // REDIRECTION RÉELLE VERS TON LIEN
+      // REDIRECTION VERS TON LIEN FEDAPAY
       window.location.href = "https://me.fedapay.com/mpservices";
       
     } catch (err: any) {
-      showError(err.message);
+      showError("Erreur : " + err.message);
       setPaymentStep('select');
     }
   };
@@ -129,7 +126,7 @@ const TournamentDetails = () => {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPayment(false)} className="absolute inset-0 bg-zinc-950/90 backdrop-blur-sm" />
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-[2.5rem] p-8">
               
-              {/* LA CROIX X POUR FERMER */}
+              {/* BOUTON FERMER (X) TOUJOURS PRÉSENT */}
               <button 
                 onClick={() => setShowPayment(false)}
                 className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-full transition-all z-50"
