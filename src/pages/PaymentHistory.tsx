@@ -22,6 +22,22 @@ const PaymentHistory = () => {
 
   useEffect(() => {
     fetchPayments();
+
+    // ÉCOUTE EN TEMPS RÉEL : L'application se met à jour toute seule
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'payments' },
+        () => {
+          fetchPayments(); // On recharge les données dès qu'un changement arrive
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchPayments = async () => {
@@ -31,18 +47,7 @@ const PaymentHistory = () => {
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      // Logique d'expiration automatique (1 heure)
-      const updatedHistory = data.map((p: Payment) => {
-        const createdDate = new Date(p.created_at).getTime();
-        const now = new Date().getTime();
-        const oneHour = 60 * 60 * 1000;
-
-        if (p.status === 'En attente' && (now - createdDate) > oneHour) {
-          return { ...p, status: 'Échoué' };
-        }
-        return p;
-      });
-      setPayments(updatedHistory);
+      setPayments(data);
     }
     setLoading(false);
   };
@@ -115,7 +120,7 @@ const PaymentHistory = () => {
 
         <div className="mt-12 p-6 bg-violet-600/10 border border-violet-500/20 rounded-2xl">
           <p className="text-sm text-zinc-400 leading-relaxed">
-            <span className="text-violet-400 font-bold">Note :</span> Les paiements sont vérifiés manuellement. Si votre paiement n'est pas validé après 1 heure, il sera marqué comme échoué.
+            <span className="text-violet-400 font-bold">Note :</span> Les paiements sont désormais vérifiés automatiquement via FedaPay.
           </p>
         </div>
       </main>
