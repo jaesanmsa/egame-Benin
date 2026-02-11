@@ -41,28 +41,23 @@ const TournamentDetails = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Non connecté");
 
-      // Simulation de création de paiement dans l'historique
-      // Dans un vrai cas, on insère dans la table 'payments' de Supabase
-      const newPayment = {
-        id: Math.random().toString(36).substr(2, 9),
+      // Insertion réelle dans la table 'payments' de Supabase
+      const { error } = await supabase.from('payments').insert({
         user_id: user.id,
         tournament_id: id,
         tournament_name: tournament.title,
         amount: tournament.entryFee,
-        status: 'En attente',
-        created_at: new Date().toISOString()
-      };
+        status: 'En attente'
+      });
 
-      // On stocke temporairement dans localStorage pour la démo
-      const history = JSON.parse(localStorage.getItem('payment_history') || '[]');
-      localStorage.setItem('payment_history', JSON.stringify([newPayment, ...history]));
+      if (error) throw error;
 
       setTimeout(() => {
         setPaymentStep('success');
         showSuccess("Demande de paiement envoyée !");
-      }, 2000);
-    } catch (err) {
-      showError("Erreur lors de l'initialisation du paiement");
+      }, 1500);
+    } catch (err: any) {
+      showError("Erreur : " + err.message);
       setPaymentStep('select');
     }
   };
