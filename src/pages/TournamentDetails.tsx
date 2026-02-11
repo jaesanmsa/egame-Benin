@@ -112,13 +112,13 @@ const TournamentDetails = () => {
           </div>
 
           {isLoggedIn ? (
-            <Button onClick={() => setShowPayment(true)} className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 text-xl font-black shadow-xl shadow-violet-500/20">
-              S'INSCRIRE POUR {tournament.entryFee} FCFA
+            <Button onClick={() => setShowPayment(true)} className="w-full py-6 rounded-2xl bg-violet-600 hover:bg-violet-700 text-base md:text-lg font-black shadow-xl shadow-violet-500/20 uppercase tracking-tight">
+              S'inscrire pour {tournament.entryFee} FCFA
             </Button>
           ) : (
-            <Button onClick={() => navigate('/auth')} className="w-full py-8 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-xl font-black flex items-center justify-center gap-3">
-              <Lock size={24} />
-              SE CONNECTER POUR S'INSCRIRE
+            <Button onClick={() => navigate('/auth')} className="w-full py-6 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-base md:text-lg font-black flex items-center justify-center gap-3 uppercase tracking-tight">
+              <Lock size={20} />
+              Se connecter pour s'inscrire
             </Button>
           )}
         </motion.div>
@@ -128,38 +128,37 @@ const TournamentDetails = () => {
         {showPayment && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPayment(false)} className="absolute inset-0 bg-zinc-950/90 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-[2.5rem] p-8">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-zinc-900 border border-zinc-800 w-full max-w-[340px] rounded-[2rem] p-6">
               
-              {/* CROIX X DESCENDUE (top-10 au lieu de top-6) */}
               <button 
                 onClick={() => setShowPayment(false)}
-                className="absolute top-10 right-8 p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-full transition-all z-50"
+                className="absolute top-4 right-4 p-1.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-full transition-all z-50"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
 
               {paymentStep === 'select' && (
-                <div className="space-y-6">
+                <div className="space-y-5">
                   <div className="text-center">
-                    <h2 className="text-2xl font-bold mb-2">Paiement Local</h2>
-                    <p className="text-zinc-400">Payez via Mobile Money au Bénin</p>
+                    <h2 className="text-lg font-bold mb-1">Paiement Local</h2>
+                    <p className="text-zinc-400 text-xs">Payez via Mobile Money au Bénin</p>
                   </div>
-                  <button onClick={handleFedaPay} className="w-full flex items-center justify-between p-5 bg-zinc-800 hover:bg-zinc-700 rounded-2xl border border-zinc-700 transition-all group">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-500"><Smartphone size={24} /></div>
+                  <button onClick={handleFedaPay} className="w-full flex items-center justify-between p-4 bg-zinc-800 hover:bg-zinc-700 rounded-xl border border-zinc-700 transition-all group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center text-orange-500"><Smartphone size={20} /></div>
                       <div className="text-left">
-                        <p className="font-bold">FedaPay (MTN / Moov)</p>
-                        <p className="text-xs text-zinc-500">Paiement sécurisé 229</p>
+                        <p className="font-bold text-sm">FedaPay (MTN / Moov)</p>
+                        <p className="text-[10px] text-zinc-500">Paiement sécurisé 229</p>
                       </div>
                     </div>
                   </button>
                 </div>
               )}
               {paymentStep === 'processing' && (
-                <div className="py-12 text-center space-y-6">
-                  <div className="w-20 h-20 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                  <h2 className="text-2xl font-bold">Redirection vers FedaPay...</h2>
-                  <p className="text-zinc-400">Veuillez patienter un instant.</p>
+                <div className="py-8 text-center space-y-4">
+                  <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                  <h2 className="text-lg font-bold">Redirection...</h2>
+                  <p className="text-zinc-400 text-xs">Veuillez patienter un instant.</p>
                 </div>
               )}
             </motion.div>
