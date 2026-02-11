@@ -19,7 +19,13 @@ const Auth = () => {
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin }
+      options: { 
+        redirectTo: window.location.origin,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      }
     });
     if (error) showError(error.message);
   };
@@ -41,7 +47,7 @@ const Auth = () => {
       if (error) {
         showError(error.message);
       } else {
-        showSuccess("Compte créé ! Vérifiez vos emails (et vos spams) pour confirmer.");
+        showSuccess("Compte créé ! Vérifiez vos emails pour confirmer.");
         setIsLogin(true);
       }
     }
