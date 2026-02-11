@@ -16,6 +16,12 @@ const TournamentDetails = () => {
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing' | 'success'>('select');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const today = new Date().toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
@@ -41,7 +47,6 @@ const TournamentDetails = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Veuillez vous connecter");
 
-      // On enregistre l'intention de paiement
       const { error } = await supabase.from('payments').insert({
         user_id: user.id,
         tournament_id: id,
@@ -52,7 +57,6 @@ const TournamentDetails = () => {
 
       if (error) throw error;
 
-      // REDIRECTION VERS TON LIEN FEDAPAY
       window.location.href = "https://me.fedapay.com/mpservices";
       
     } catch (err: any) {
@@ -88,7 +92,7 @@ const TournamentDetails = () => {
             <div className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700/50 text-center">
               <Calendar className="text-violet-500 mx-auto mb-2" size={20} />
               <p className="text-zinc-400 text-xs">Date</p>
-              <p className="font-bold text-sm">À venir</p>
+              <p className="font-bold text-sm">{today}</p>
             </div>
             <div className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700/50 text-center">
               <Users className="text-violet-500 mx-auto mb-2" size={20} />
@@ -126,10 +130,10 @@ const TournamentDetails = () => {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPayment(false)} className="absolute inset-0 bg-zinc-950/90 backdrop-blur-sm" />
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-[2.5rem] p-8">
               
-              {/* BOUTON FERMER (X) TOUJOURS PRÉSENT */}
+              {/* CROIX X DESCENDUE (top-10 au lieu de top-6) */}
               <button 
                 onClick={() => setShowPayment(false)}
-                className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-full transition-all z-50"
+                className="absolute top-10 right-8 p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-full transition-all z-50"
               >
                 <X size={24} />
               </button>

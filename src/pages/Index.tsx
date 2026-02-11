@@ -12,6 +12,13 @@ const Index = () => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  // Date du jour formatée en français
+  const today = new Date().toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -31,7 +38,7 @@ const Index = () => {
       title: "Bénin Pro League: COD MW4",
       game: "COD MW4",
       image: "https://images.unsplash.com/photo-1552824236-0776282ffdee?q=80&w=2070&auto=format&fit=crop",
-      date: "25 Mai, 2024",
+      date: today,
       participants: "12/64",
       entryFee: "2000",
       type: "Presentiel" as const
@@ -41,7 +48,7 @@ const Index = () => {
       title: "Blur Racing Cup: Cotonou",
       game: "Blur",
       image: "https://images.unsplash.com/photo-1547949003-9792a18a2601?q=80&w=2070&auto=format&fit=crop",
-      date: "02 Juin, 2024",
+      date: today,
       participants: "45/100",
       entryFee: "2500",
       type: "Online" as const
@@ -51,7 +58,7 @@ const Index = () => {
       title: "Clash Royale: King of Benin",
       game: "Clash Royale",
       image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?q=80&w=2071&auto=format&fit=crop",
-      date: "15 Juin, 2024",
+      date: today,
       participants: "20/32",
       entryFee: "1000",
       type: "Online" as const
@@ -61,7 +68,7 @@ const Index = () => {
       title: "BombSquad Party: Parakou",
       game: "BombSquad",
       image: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?q=80&w=2070&auto=format&fit=crop",
-      date: "20 Juin, 2024",
+      date: today,
       participants: "8/16",
       entryFee: "1500",
       type: "Presentiel" as const
