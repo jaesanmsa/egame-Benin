@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
+import PaymentHistory from "./pages/PaymentHistory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/tournament/:id" element={<TournamentDetails />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/payments" element={<PaymentHistory />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

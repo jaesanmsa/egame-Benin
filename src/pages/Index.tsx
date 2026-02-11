@@ -55,6 +55,16 @@ const Index = () => {
       participants: "20/32",
       entryFee: "1000",
       type: "Online" as const
+    },
+    {
+      id: "bombsquad",
+      title: "BombSquad Party: Parakou",
+      game: "BombSquad",
+      image: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?q=80&w=2070&auto=format&fit=crop",
+      date: "20 Juin, 2024",
+      participants: "8/16",
+      entryFee: "1500",
+      type: "Presentiel" as const
     }
   ];
 

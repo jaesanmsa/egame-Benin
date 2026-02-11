@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Users, Trophy, Shield, Smartphone, CheckCircle2, ArrowLeft, Lock } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { showSuccess } from '@/utils/toast';
+import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
 
 const TournamentDetails = () => {
@@ -34,12 +34,37 @@ const TournamentDetails = () => {
 
   const tournament = getTournamentData(id);
 
-  const handleFedaPay = () => {
+  const handleFedaPay = async () => {
     setPaymentStep('processing');
-    setTimeout(() => {
-      setPaymentStep('success');
-      showSuccess("Paiement FedaPay réussi !");
-    }, 2500);
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Non connecté");
+
+      // Simulation de création de paiement dans l'historique
+      // Dans un vrai cas, on insère dans la table 'payments' de Supabase
+      const newPayment = {
+        id: Math.random().toString(36).substr(2, 9),
+        user_id: user.id,
+        tournament_id: id,
+        tournament_name: tournament.title,
+        amount: tournament.entryFee,
+        status: 'En attente',
+        created_at: new Date().toISOString()
+      };
+
+      // On stocke temporairement dans localStorage pour la démo
+      const history = JSON.parse(localStorage.getItem('payment_history') || '[]');
+      localStorage.setItem('payment_history', JSON.stringify([newPayment, ...history]));
+
+      setTimeout(() => {
+        setPaymentStep('success');
+        showSuccess("Demande de paiement envoyée !");
+      }, 2000);
+    } catch (err) {
+      showError("Erreur lors de l'initialisation du paiement");
+      setPaymentStep('select');
+    }
   };
 
   return (
@@ -132,8 +157,9 @@ const TournamentDetails = () => {
               {paymentStep === 'success' && (
                 <div className="py-12 text-center space-y-6">
                   <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto"><CheckCircle2 size={48} /></div>
-                  <h2 className="text-2xl font-bold">Inscription Validée !</h2>
-                  <Button onClick={() => navigate('/profile')} className="w-full bg-zinc-800 py-6 rounded-xl">Voir mon profil</Button>
+                  <h2 className="text-2xl font-bold">Demande envoyée !</h2>
+                  <p className="text-zinc-400">Votre inscription sera validée après vérification du paiement.</p>
+                  <Button onClick={() => navigate('/payments')} className="w-full bg-zinc-800 py-6 rounded-xl">Voir l'historique</Button>
                 </div>
               )}
             </motion.div>

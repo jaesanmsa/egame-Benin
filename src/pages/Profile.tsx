@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Phone, Mail, MapPin } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Phone, Mail, MapPin, History, MessageSquare } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showError, showSuccess } from '@/utils/toast';
@@ -30,6 +30,10 @@ const Profile = () => {
       showSuccess("Déconnexion réussie");
       navigate('/');
     }
+  };
+
+  const handleSupport = () => {
+    window.location.href = "mailto:egamebenin@gmail.com?subject=Support eGame Bénin - " + (user?.email || "");
   };
 
   if (loading) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
@@ -99,7 +103,17 @@ const Profile = () => {
 
         {/* Actions */}
         <div className="space-y-4">
-          <h2 className="text-xl font-bold mb-4">Paramètres</h2>
+          <h2 className="text-xl font-bold mb-4">Menu</h2>
+          
+          <Link to="/payments" className="block">
+            <button className="w-full flex items-center justify-between p-5 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-zinc-800 transition-all group">
+              <div className="flex items-center gap-4">
+                <History size={20} className="text-violet-500" />
+                <span className="font-bold">Historique des paiements</span>
+              </div>
+            </button>
+          </Link>
+
           <Link to="/edit-profile" className="block">
             <button className="w-full flex items-center justify-between p-5 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-zinc-800 transition-all group">
               <div className="flex items-center gap-4">
@@ -108,6 +122,17 @@ const Profile = () => {
               </div>
             </button>
           </Link>
+
+          <button 
+            onClick={handleSupport}
+            className="w-full flex items-center justify-between p-5 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-zinc-800 transition-all group"
+          >
+            <div className="flex items-center gap-4">
+              <MessageSquare size={20} className="text-cyan-500" />
+              <span className="font-bold">Contacter le support</span>
+            </div>
+          </button>
+
           <button 
             onClick={handleLogout}
             className="w-full flex items-center justify-between p-5 bg-zinc-900 hover:bg-red-500/10 rounded-2xl border border-zinc-800 hover:border-red-500/50 transition-all text-red-400"
