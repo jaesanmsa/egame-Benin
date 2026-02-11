@@ -13,7 +13,7 @@ const Profile = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pb-24 md:pt-20">
+    <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
       <Navbar />
       
       <main className="max-w-4xl mx-auto px-6 py-8">

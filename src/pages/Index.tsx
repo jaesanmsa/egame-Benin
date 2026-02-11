@@ -13,13 +13,11 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Vérification initiale de la session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
     });
 
-    // Écoute des changements d'état d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
@@ -68,10 +66,9 @@ const Index = () => {
     );
   }
 
-  // Si l'utilisateur n'est pas connecté, on affiche le mur de bienvenue
   if (!session) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
+      <div className="min-h-screen bg-zinc-950 text-white flex flex-col pt-12">
         <main className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <motion.div 
             initial={{ scale: 0.5, opacity: 0 }}
@@ -142,9 +139,8 @@ const Index = () => {
     );
   }
 
-  // Si l'utilisateur est connecté, on affiche le tableau de bord
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pb-24 md:pt-20">
+    <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
       <Navbar />
       
       <main className="max-w-7xl mx-auto px-6 py-8">
