@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Users, Trophy, Shield, Smartphone, CheckCircle2, ArrowLeft, Lock } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, CheckCircle2, ArrowLeft, Lock, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -41,7 +41,7 @@ const TournamentDetails = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Non connecté");
 
-      // Insertion réelle dans la table 'payments' de Supabase
+      // Insertion dans la table 'payments' de Supabase
       const { error } = await supabase.from('payments').insert({
         user_id: user.id,
         tournament_id: id,
@@ -52,10 +52,11 @@ const TournamentDetails = () => {
 
       if (error) throw error;
 
+      // Redirection vers le lien FedaPay après un court délai
       setTimeout(() => {
-        setPaymentStep('success');
-        showSuccess("Demande de paiement envoyée !");
-      }, 1500);
+        window.location.href = "https://me.fedapay.com/mpservices";
+      }, 1000);
+      
     } catch (err: any) {
       showError("Erreur : " + err.message);
       setPaymentStep('select');
@@ -126,6 +127,14 @@ const TournamentDetails = () => {
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPayment(false)} className="absolute inset-0 bg-zinc-950/90 backdrop-blur-sm" />
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-[2.5rem] p-8">
+              {/* Bouton Fermer (X) */}
+              <button 
+                onClick={() => setShowPayment(false)}
+                className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-full transition-colors"
+              >
+                <X size={24} />
+              </button>
+
               {paymentStep === 'select' && (
                 <div className="space-y-6">
                   <div className="text-center">
@@ -146,15 +155,8 @@ const TournamentDetails = () => {
               {paymentStep === 'processing' && (
                 <div className="py-12 text-center space-y-6">
                   <div className="w-20 h-20 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                  <h2 className="text-2xl font-bold">Lien FedaPay...</h2>
-                </div>
-              )}
-              {paymentStep === 'success' && (
-                <div className="py-12 text-center space-y-6">
-                  <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto"><CheckCircle2 size={48} /></div>
-                  <h2 className="text-2xl font-bold">Demande envoyée !</h2>
-                  <p className="text-zinc-400">Votre inscription sera validée après vérification du paiement.</p>
-                  <Button onClick={() => navigate('/payments')} className="w-full bg-zinc-800 py-6 rounded-xl">Voir l'historique</Button>
+                  <h2 className="text-2xl font-bold">Redirection vers FedaPay...</h2>
+                  <p className="text-zinc-400">Veuillez patienter un instant.</p>
                 </div>
               )}
             </motion.div>
