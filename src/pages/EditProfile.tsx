@@ -7,7 +7,7 @@ import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, User, Phone, Save, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, User, Phone, Save, Image as ImageIcon, MapPin } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const EditProfile = () => {
@@ -17,6 +17,7 @@ const EditProfile = () => {
   const [profile, setProfile] = useState({
     full_name: '',
     phone: '',
+    city: '',
     avatar_url: ''
   });
 
@@ -31,6 +32,7 @@ const EditProfile = () => {
         setProfile({
           full_name: user.user_metadata?.full_name || '',
           phone: user.user_metadata?.phone || '',
+          city: user.user_metadata?.city || '',
           avatar_url: user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`
         });
       }
@@ -49,6 +51,7 @@ const EditProfile = () => {
       data: { 
         full_name: profile.full_name,
         phone: profile.phone,
+        city: profile.city,
         avatar_url: profile.avatar_url
       }
     });
@@ -99,7 +102,7 @@ const EditProfile = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Numéro de téléphone</Label>
+              <Label htmlFor="phone">Numéro de téléphone (Bénin)</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-3 text-zinc-500" size={18} />
                 <Input 
@@ -108,7 +111,22 @@ const EditProfile = () => {
                   value={profile.phone}
                   onChange={(e) => setProfile({...profile, phone: e.target.value})}
                   className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
-                  placeholder="+229 XX XX XX XX"
+                  placeholder="+229 01 XX XX XX XX"
+                />
+              </div>
+              <p className="text-[10px] text-zinc-500">Format 10 chiffres requis</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="city">Ville</Label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-3 text-zinc-500" size={18} />
+                <Input 
+                  id="city" 
+                  value={profile.city}
+                  onChange={(e) => setProfile({...profile, city: e.target.value})}
+                  className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
+                  placeholder="Ex: Cotonou, Parakou..."
                 />
               </div>
             </div>
