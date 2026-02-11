@@ -7,7 +7,7 @@ import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Camera, User, Phone, Save } from 'lucide-react';
+import { ArrowLeft, User, Phone, Save, Image as ImageIcon } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const EditProfile = () => {
@@ -28,7 +28,6 @@ const EditProfile = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        // On récupère les infos depuis les métadonnées de l'utilisateur
         setProfile({
           full_name: user.user_metadata?.full_name || '',
           phone: user.user_metadata?.phone || '',
@@ -77,17 +76,11 @@ const EditProfile = () => {
         <h1 className="text-3xl font-black mb-8">Modifier le profil</h1>
 
         <form onSubmit={handleSave} className="space-y-8">
-          {/* Avatar Section */}
           <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-800 bg-zinc-900">
-                <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-              </div>
-              <button type="button" className="absolute bottom-0 right-0 p-2 bg-violet-600 rounded-full border-4 border-zinc-950 hover:bg-violet-700 transition-colors">
-                <Camera size={18} />
-              </button>
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-800 bg-zinc-900">
+              <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
             </div>
-            <p className="text-xs text-zinc-500">Cliquez pour changer votre photo</p>
+            <p className="text-xs text-zinc-500">Aperçu de votre photo</p>
           </div>
 
           <div className="space-y-6 bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-800">
@@ -118,7 +111,21 @@ const EditProfile = () => {
                   placeholder="+229 XX XX XX XX"
                 />
               </div>
-              <p className="text-[10px] text-zinc-500">Laissez vide pour supprimer le numéro</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="avatar">Lien de la photo de profil (URL)</Label>
+              <div className="relative">
+                <ImageIcon className="absolute left-3 top-3 text-zinc-500" size={18} />
+                <Input 
+                  id="avatar" 
+                  value={profile.avatar_url}
+                  onChange={(e) => setProfile({...profile, avatar_url: e.target.value})}
+                  className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
+                  placeholder="https://lien-vers-votre-image.jpg"
+                />
+              </div>
+              <p className="text-[10px] text-zinc-500">Collez ici le lien d'une image pour changer votre photo</p>
             </div>
           </div>
 
