@@ -173,12 +173,9 @@ const Index = () => {
               <span>OFFRE SPÉCIALE</span>
             </div>
             <h2 className="text-2xl font-black mb-4">Prêt pour la compétition ?</h2>
-            <p className="text-zinc-400 text-sm mb-6 max-w-md">
+            <p className="text-zinc-400 text-sm max-w-md">
               Inscrivez-vous à votre premier tournoi aujourd'hui et recevez un bonus de bienvenue.
             </p>
-            <button className="bg-white text-black px-6 py-3 rounded-xl font-bold text-sm transition-all active:scale-95">
-              Voir les offres
-            </button>
           </div>
         </section>
 
