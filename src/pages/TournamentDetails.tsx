@@ -35,7 +35,7 @@ const TournamentDetails = () => {
         game: "COD MW4", 
         entryFee: "2000", 
         prizePool: "100.000 FCFA", 
-        image: "https://images.unsplash.com/photo-1552824236-0776282ffdee?q=80&w=2070&auto=format&fit=crop",
+        image: "/images/games/COD.jpg",
         paymentLink: "https://me.fedapay.com/mpservices"
       };
       case 'blur': return { 
@@ -43,7 +43,7 @@ const TournamentDetails = () => {
         game: "Blur", 
         entryFee: "2500", 
         prizePool: "150.000 FCFA", 
-        image: "https://images.unsplash.com/photo-1547949003-9792a18a2601?q=80&w=2070&auto=format&fit=crop",
+        image: "/images/games/blur.jpg",
         paymentLink: "https://process.fedapay.com/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwOTUwMzQ5MiwiZXhwIjoxNzcxMDE4NzM3fQ.7Bf62YWSCgE9zOfH-EueveD1m4gPdwau-4ECRPzZFts"
       };
       case 'clash-royale': return { 
@@ -51,7 +51,7 @@ const TournamentDetails = () => {
         game: "Clash Royale", 
         entryFee: "1000", 
         prizePool: "50.000 FCFA", 
-        image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?q=80&w=2071&auto=format&fit=crop",
+        image: "/images/games/clash-royale.jpg",
         paymentLink: "https://me.fedapay.com/mpservices"
       };
       case 'bombsquad': return { 
@@ -59,7 +59,7 @@ const TournamentDetails = () => {
         game: "BombSquad", 
         entryFee: "1500", 
         prizePool: "75.000 FCFA", 
-        image: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?q=80&w=2070&auto=format&fit=crop",
+        image: "/images/games/bombsquad.png",
         paymentLink: "https://me.fedapay.com/mpservices"
       };
       default: return { 
