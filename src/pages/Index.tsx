@@ -20,8 +20,22 @@ const Index = () => {
     year: 'numeric'
   });
 
+  const fetchParticipantCounts = async () => {
+    const { data, error } = await supabase
+      .from('payments')
+      .select('tournament_id')
+      .eq('status', 'Réussi');
+    
+    if (!error && data) {
+      const counts: Record<string, number> = {};
+      data.forEach((p: any) => {
+        counts[p.tournament_id] = (counts[p.tournament_id] || 0) + 1;
+      });
+      setParticipantCounts(counts);
+    }
+  };
+
   useEffect(() => {
-    // Vérifier la session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
@@ -31,25 +45,24 @@ const Index = () => {
       setSession(session);
     });
 
-    // Récupérer le nombre de participants réels (paiements réussis)
-    const fetchParticipantCounts = async () => {
-      const { data, error } = await supabase
-        .from('payments')
-        .select('tournament_id')
-        .eq('status', 'Réussi');
-      
-      if (!error && data) {
-        const counts: Record<string, number> = {};
-        data.forEach((p: any) => {
-          counts[p.tournament_id] = (counts[p.tournament_id] || 0) + 1;
-        });
-        setParticipantCounts(counts);
-      }
-    };
-
     fetchParticipantCounts();
 
-    return () => subscription.unsubscribe();
+    // Abonnement en temps réel pour mettre à jour les compteurs dès qu'un paiement est validé
+    const channel = supabase
+      .channel('public-payments-index')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'payments' },
+        () => {
+          fetchParticipantCounts();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const tournaments = [

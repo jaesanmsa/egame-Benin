@@ -14,21 +14,40 @@ const Profile = () => {
   const [tournamentCount, setTournamentCount] = useState(0);
   const navigate = useNavigate();
 
+  const fetchTournamentCount = async (userId: string) => {
+    const { count, error } = await supabase
+      .from('payments')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('status', 'Réussi');
+    
+    if (!error && count !== null) {
+      setTournamentCount(count);
+    }
+  };
+
   useEffect(() => {
     const getUserData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
-        // Récupérer le nombre de tournois rejoints (paiements réussis)
-        const { count, error } = await supabase
-          .from('payments')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .eq('status', 'Réussi');
-        
-        if (!error && count !== null) {
-          setTournamentCount(count);
-        }
+        fetchTournamentCount(user.id);
+
+        // Abonnement en temps réel pour le profil
+        const channel = supabase
+          .channel(`profile-payments-${user.id}`)
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'payments', filter: `user_id=eq.${user.id}` },
+            () => {
+              fetchTournamentCount(user.id);
+            }
+          )
+          .subscribe();
+
+        return () => {
+          supabase.removeChannel(channel);
+        };
       }
       setLoading(false);
     };

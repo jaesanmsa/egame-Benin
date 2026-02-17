@@ -14,6 +14,7 @@ interface Payment {
   amount: string;
   status: 'En attente' | 'Réussi' | 'Échoué';
   created_at: string;
+  user_id: string;
 }
 
 const PaymentHistory = () => {
@@ -26,7 +27,7 @@ const PaymentHistory = () => {
     fetchPayments();
 
     const channel = supabase
-      .channel('schema-db-changes')
+      .channel('my-payments-changes')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'payments' },
@@ -42,9 +43,13 @@ const PaymentHistory = () => {
   }, []);
 
   const fetchPayments = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
     const { data, error } = await supabase
       .from('payments')
       .select('*')
+      .eq('user_id', user.id) // Sécurité : Uniquement les paiements de l'utilisateur connecté
       .order('created_at', { ascending: false });
 
     if (!error && data) {
@@ -69,7 +74,7 @@ const PaymentHistory = () => {
   };
 
   const generateValidationCode = (id: string) => {
-    // Génère un code court et lisible à partir de l'ID
+    if (!id) return "EGB-XXXXX";
     return `EGB-${id.substring(0, 5).toUpperCase()}`;
   };
 
