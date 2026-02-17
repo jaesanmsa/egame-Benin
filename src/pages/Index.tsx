@@ -35,7 +35,7 @@ const Index = () => {
   const tournaments = [
     {
       id: "cod-mw4",
-      title: "Bénin Pro League: COD MW4",
+      title: "Bénin Pro League: COD MW4 (Cotonou)",
       game: "COD MW4",
       image: "/images/games/COD.jpg",
       date: today,
@@ -51,7 +51,7 @@ const Index = () => {
       date: today,
       participants: "45/100",
       entryFee: "2500",
-      type: "Online" as const
+      type: "Presentiel" as const
     },
     {
       id: "clash-royale",
@@ -65,7 +65,7 @@ const Index = () => {
     },
     {
       id: "bombsquad",
-      title: "BombSquad Party: Parakou",
+      title: "BombSquad Party: Cotonou",
       game: "BombSquad",
       image: "/images/games/bombsquad.png",
       date: today,
@@ -149,8 +149,8 @@ const Index = () => {
           </div>
         </main>
         
-        <footer className="p-8 text-center text-zinc-600 text-xs font-medium">
-          © 2024 eGame Bénin • Version 1.0.0
+        <footer className="p-8 text-center text-zinc-600 text-xs font-bold uppercase tracking-widest">
+          eGame Benin @2026
         </footer>
       </div>
     );
@@ -163,7 +163,6 @@ const Index = () => {
       <Navbar />
       
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Logo visible uniquement sur mobile en haut */}
         <div className="flex justify-center mb-8 md:hidden">
           <Logo size="sm" />
         </div>
@@ -188,6 +187,10 @@ const Index = () => {
           </div>
         </section>
       </main>
+
+      <footer className="mt-auto p-8 text-center text-zinc-600 text-xs font-bold uppercase tracking-widest">
+        eGame Benin @2026
+      </footer>
     </div>
   );
 };

@@ -56,7 +56,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md space-y-8 bg-zinc-900 p-8 rounded-[2.5rem] border border-zinc-800 shadow-2xl">
         <div className="text-center">
           <Link to="/" className="inline-block mb-4">
@@ -133,6 +133,10 @@ const Auth = () => {
           </button>
         </p>
       </div>
+
+      <footer className="mt-12 p-8 text-center text-zinc-600 text-xs font-bold uppercase tracking-widest">
+        eGame Benin @2026
+      </footer>
     </div>
   );
 };

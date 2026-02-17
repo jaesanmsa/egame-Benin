@@ -31,7 +31,7 @@ const TournamentDetails = () => {
   const getTournamentData = (id: string | undefined) => {
     switch(id) {
       case 'cod-mw4': return { 
-        title: "Bénin Pro League: COD MW4", 
+        title: "Bénin Pro League: COD MW4 (Cotonou)", 
         game: "COD MW4", 
         entryFee: "2000", 
         prizePool: "100.000 FCFA", 
@@ -50,12 +50,12 @@ const TournamentDetails = () => {
         title: "Clash Royale: King of Benin", 
         game: "Clash Royale", 
         entryFee: "1000", 
-        prizePool: "50.000 FCFA", 
+        prizePool: "20.000 FCFA", 
         image: "/images/games/clash-royale.jpg",
         paymentLink: "https://me.fedapay.com/mpservices"
       };
       case 'bombsquad': return { 
-        title: "BombSquad Party: Parakou", 
+        title: "BombSquad Party: Cotonou", 
         game: "BombSquad", 
         entryFee: "1500", 
         prizePool: "75.000 FCFA", 
@@ -92,7 +92,6 @@ const TournamentDetails = () => {
 
       if (error) throw error;
 
-      // Redirection vers le lien spécifique du tournoi
       window.location.href = tournament.paymentLink;
       
     } catch (err: any) {
@@ -159,6 +158,10 @@ const TournamentDetails = () => {
           )}
         </motion.div>
       </main>
+
+      <footer className="p-8 text-center text-zinc-600 text-xs font-bold uppercase tracking-widest">
+        eGame Benin @2026
+      </footer>
 
       <AnimatePresence>
         {showPayment && (
