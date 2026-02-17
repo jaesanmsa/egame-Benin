@@ -159,10 +159,15 @@ const Index = () => {
   const userName = session.user.user_metadata?.full_name || session.user.email?.split('@')[0];
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-4 md:pt-24">
       <Navbar />
       
       <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Logo visible uniquement sur mobile en haut */}
+        <div className="flex justify-center mb-8 md:hidden">
+          <Logo size="sm" />
+        </div>
+
         <header className="mb-10">
           <p className="text-violet-500 font-bold text-sm uppercase tracking-widest mb-1">Bienvenue, {userName}</p>
           <h1 className="text-3xl font-black leading-tight">
