@@ -47,7 +47,6 @@ const Index = () => {
 
     fetchParticipantCounts();
 
-    // Abonnement en temps réel pour mettre à jour les compteurs dès qu'un paiement est validé
     const channel = supabase
       .channel('public-payments-index')
       .on(
@@ -182,8 +181,8 @@ const Index = () => {
           </div>
         </main>
         
-        <footer className="p-8 text-center text-zinc-600 text-xs font-bold uppercase tracking-widest">
-          eGame Benin @2026
+        <footer className="p-8 text-center text-zinc-600 text-[10px] font-bold uppercase tracking-widest">
+          eGame Benin @2026 • v1.0
         </footer>
       </div>
     );
@@ -221,8 +220,8 @@ const Index = () => {
         </section>
       </main>
 
-      <footer className="mt-auto p-8 text-center text-zinc-600 text-xs font-bold uppercase tracking-widest">
-        eGame Benin @2026
+      <footer className="mt-auto p-8 text-center text-zinc-600 text-[10px] font-bold uppercase tracking-widest">
+        eGame Benin @2026 • v1.0
       </footer>
     </div>
   );

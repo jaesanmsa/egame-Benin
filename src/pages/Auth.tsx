@@ -134,8 +134,8 @@ const Auth = () => {
         </p>
       </div>
 
-      <footer className="mt-12 p-8 text-center text-zinc-600 text-xs font-bold uppercase tracking-widest">
-        eGame Benin @2026
+      <footer className="mt-12 p-8 text-center text-zinc-600 text-[10px] font-bold uppercase tracking-widest">
+        eGame Benin @2026 • v1.0
       </footer>
     </div>
   );
