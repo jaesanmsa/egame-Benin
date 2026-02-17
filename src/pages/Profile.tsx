@@ -11,15 +11,28 @@ import { showError, showSuccess } from '@/utils/toast';
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [tournamentCount, setTournamentCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getUser = async () => {
+    const getUserData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      if (user) {
+        setUser(user);
+        // Récupérer le nombre de tournois rejoints (paiements réussis)
+        const { count, error } = await supabase
+          .from('payments')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('status', 'Réussi');
+        
+        if (!error && count !== null) {
+          setTournamentCount(count);
+        }
+      }
       setLoading(false);
     };
-    getUser();
+    getUserData();
   }, []);
 
   const handleLogout = async () => {
@@ -40,7 +53,7 @@ const Profile = () => {
   }
 
   const stats = [
-    { label: "Tournois", value: "0", icon: <Trophy size={18} /> },
+    { label: "Tournois", value: tournamentCount.toString(), icon: <Trophy size={18} /> },
     { label: "Victoires", value: "0", icon: <Star size={18} /> },
   ];
 
