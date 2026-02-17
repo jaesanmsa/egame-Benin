@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
 import Logo from '@/components/Logo';
 import { motion } from 'framer-motion';
-import { LogIn, UserPlus, Zap, Star, Target, Search, Trophy, Globe, MapPin } from 'lucide-react';
+import { LogIn, UserPlus, Zap, Star, Target, Search, Trophy, Globe, MapPin, CheckCircle2, Download } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -109,6 +109,12 @@ const Index = () => {
       entryFee: "1500",
       type: "Presentiel" as const
     }
+  ];
+
+  const pastTournaments = [
+    { id: "p1", title: "FIFA 24: Cotonou Masters", winner: "BeninGhost", prize: "50.000 FCFA" },
+    { id: "p2", title: "PUBG Mobile: Squad War", winner: "EliteTeam", prize: "40.000 FCFA" },
+    { id: "p3", title: "Free Fire: Solo King", winner: "ShadowNinja", prize: "25.000 FCFA" }
   ];
 
   const filteredTournaments = tournaments.filter(t => {
@@ -243,7 +249,7 @@ const Index = () => {
           </motion.div>
         </section>
 
-        <section>
+        <section className="mb-16">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
               <button 
@@ -291,10 +297,53 @@ const Index = () => {
             </div>
           )}
         </section>
+
+        {/* Past Tournaments Section */}
+        <section className="mb-16">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-zinc-500">
+              <CheckCircle2 size={20} />
+            </div>
+            <h2 className="text-xl font-bold">Tournois Terminés</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {pastTournaments.map((pt) => (
+              <div key={pt.id} className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-3xl">
+                <h3 className="font-bold text-sm mb-4 text-zinc-300">{pt.title}</h3>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-violet-600/20 flex items-center justify-center text-violet-500">
+                      <Trophy size={14} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-zinc-500 uppercase font-bold">Gagnant</p>
+                      <p className="text-xs font-black">{pt.winner}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] text-zinc-500 uppercase font-bold">Prix</p>
+                    <p className="text-xs font-black text-green-500">{pt.prize}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
 
-      <footer className="mt-auto p-8 text-center text-zinc-600 text-[10px] font-bold uppercase tracking-widest">
-        eGame Benin @2026 • v1.0
+      <footer className="mt-auto p-12 border-t border-zinc-900 flex flex-col items-center gap-6">
+        <Logo size="sm" />
+        <div className="flex items-center gap-8 text-zinc-500 text-xs font-bold uppercase tracking-widest">
+          <Link to="/contact" className="hover:text-white transition-colors">Aide</Link>
+          <Link to="/leaderboard" className="hover:text-white transition-colors">Classement</Link>
+          <Link to="/download-logo" className="flex items-center gap-2 hover:text-white transition-colors">
+            <Download size={14} />
+            Logo
+          </Link>
+        </div>
+        <p className="text-zinc-700 text-[10px] font-bold uppercase tracking-widest">
+          eGame Benin @2026 • v1.0
+        </p>
       </footer>
     </div>
   );

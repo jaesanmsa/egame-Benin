@@ -11,6 +11,7 @@ import AvatarMaker from "./pages/AvatarMaker";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
 import PaymentHistory from "./pages/PaymentHistory";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import Contact from "./pages/Contact";
 import Leaderboard from "./pages/Leaderboard";
 import DownloadLogo from "./pages/DownloadLogo";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/avatar-maker" element={<AvatarMaker />} />
           <Route path="/payments" element={<PaymentHistory />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/download-logo" element={<DownloadLogo />} />
