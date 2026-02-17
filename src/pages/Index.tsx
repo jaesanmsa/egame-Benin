@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
+import Logo from '@/components/Logo';
 import { motion } from 'framer-motion';
-import { Trophy, LogIn, UserPlus, Zap, Star, Target } from 'lucide-react';
+import { LogIn, UserPlus, Zap, Star, Target } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
@@ -12,7 +13,6 @@ const Index = () => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Date du jour formatée en français
   const today = new Date().toLocaleDateString('fr-FR', {
     day: 'numeric',
     month: 'long',
@@ -90,9 +90,9 @@ const Index = () => {
           <motion.div 
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="w-24 h-24 bg-violet-600 rounded-[2rem] flex items-center justify-center mb-8 shadow-2xl shadow-violet-500/40"
+            className="mb-8"
           >
-            <Trophy size={48} className="text-white" />
+            <Logo size="lg" showText={false} />
           </motion.div>
 
           <motion.h1 
@@ -165,19 +165,6 @@ const Index = () => {
           <p className="text-violet-500 font-bold text-sm uppercase tracking-widest mb-1">Bienvenue, Joueur</p>
           <h1 className="text-3xl font-black">Tableau de bord</h1>
         </header>
-
-        <section className="relative rounded-[2.5rem] overflow-hidden mb-12 bg-gradient-to-br from-violet-900/40 to-zinc-900 border border-violet-500/20 p-8">
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 bg-violet-500/20 text-violet-400 px-4 py-2 rounded-full text-xs font-bold mb-4">
-              <Zap size={14} />
-              <span>OFFRE SPÉCIALE</span>
-            </div>
-            <h2 className="text-2xl font-black mb-4">Prêt pour la compétition ?</h2>
-            <p className="text-zinc-400 text-sm max-w-md">
-              Inscrivez-vous à votre premier tournoi aujourd'hui et recevez un bonus de bienvenue.
-            </p>
-          </div>
-        </section>
 
         <section>
           <div className="flex items-center justify-between mb-6">

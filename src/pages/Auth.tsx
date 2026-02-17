@@ -6,8 +6,9 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trophy, Mail, Lock, Chrome, UserPlus, LogIn } from 'lucide-react';
+import { Mail, Lock, Chrome, UserPlus, LogIn } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
+import Logo from '@/components/Logo';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -58,10 +59,8 @@ const Auth = () => {
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
       <div className="w-full max-w-md space-y-8 bg-zinc-900 p-8 rounded-[2.5rem] border border-zinc-800 shadow-2xl">
         <div className="text-center">
-          <Link to="/" className="inline-block">
-            <div className="w-16 h-16 bg-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-violet-500/20">
-              <Trophy className="text-white" size={32} />
-            </div>
+          <Link to="/" className="inline-block mb-4">
+            <Logo size="lg" showText={false} />
           </Link>
           <h1 className="text-3xl font-black text-white">eGame <span className="text-violet-500">Bénin</span></h1>
           <p className="text-zinc-400 mt-2">
