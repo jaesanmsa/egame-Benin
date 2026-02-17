@@ -12,6 +12,7 @@ import { supabase } from '@/lib/supabase';
 const Index = () => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
 
   const today = new Date().toLocaleDateString('fr-FR', {
     day: 'numeric',
@@ -20,6 +21,7 @@ const Index = () => {
   });
 
   useEffect(() => {
+    // Vérifier la session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
@@ -28,6 +30,24 @@ const Index = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
+
+    // Récupérer le nombre de participants réels (paiements réussis)
+    const fetchParticipantCounts = async () => {
+      const { data, error } = await supabase
+        .from('payments')
+        .select('tournament_id')
+        .eq('status', 'Réussi');
+      
+      if (!error && data) {
+        const counts: Record<string, number> = {};
+        data.forEach((p: any) => {
+          counts[p.tournament_id] = (counts[p.tournament_id] || 0) + 1;
+        });
+        setParticipantCounts(counts);
+      }
+    };
+
+    fetchParticipantCounts();
 
     return () => subscription.unsubscribe();
   }, []);
@@ -39,7 +59,7 @@ const Index = () => {
       game: "COD MW4",
       image: "/images/games/COD.jpg",
       date: today,
-      participants: "12/40",
+      participants: `${participantCounts['cod-mw4'] || 0}/40`,
       entryFee: "2000",
       type: "Presentiel" as const
     },
@@ -49,7 +69,7 @@ const Index = () => {
       game: "Blur",
       image: "/images/games/blur.jpg",
       date: today,
-      participants: "15/40",
+      participants: `${participantCounts['blur'] || 0}/40`,
       entryFee: "2000",
       type: "Presentiel" as const
     },
@@ -59,7 +79,7 @@ const Index = () => {
       game: "Clash Royale",
       image: "/images/games/clash-royale.jpg",
       date: today,
-      participants: "20/50",
+      participants: `${participantCounts['clash-royale'] || 0}/50`,
       entryFee: "1000",
       type: "Online" as const
     },
@@ -69,7 +89,7 @@ const Index = () => {
       game: "BombSquad",
       image: "/images/games/bombsquad.png",
       date: today,
-      participants: "8/40",
+      participants: `${participantCounts['bombsquad'] || 0}/40`,
       entryFee: "1500",
       type: "Presentiel" as const
     }
