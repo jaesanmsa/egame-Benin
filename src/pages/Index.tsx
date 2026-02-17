@@ -5,8 +5,8 @@ import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
 import Logo from '@/components/Logo';
 import { motion } from 'framer-motion';
-import { LogIn, UserPlus, Zap, Star, Target, Search, Filter } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { LogIn, UserPlus, Zap, Star, Target, Search, Trophy, Globe, MapPin } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 
@@ -15,6 +15,8 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
+  const navigate = useNavigate();
 
   const today = new Date().toLocaleDateString('fr-FR', {
     day: 'numeric',
@@ -109,10 +111,14 @@ const Index = () => {
     }
   ];
 
-  const filteredTournaments = tournaments.filter(t => 
-    t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    t.game.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredTournaments = tournaments.filter(t => {
+    const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         t.game.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = filterType === 'All' || t.type === filterType;
+    return matchesSearch && matchesType;
+  });
+
+  const featuredTournament = tournaments[0];
 
   if (loading) {
     return (
@@ -214,9 +220,54 @@ const Index = () => {
           </h1>
         </header>
 
+        {/* Featured Tournament Hero */}
+        <section className="mb-12">
+          <motion.div 
+            whileHover={{ scale: 1.01 }}
+            onClick={() => navigate(`/tournament/${featuredTournament.id}`)}
+            className="relative h-[300px] md:h-[400px] rounded-[2.5rem] overflow-hidden cursor-pointer group"
+          >
+            <img src={featuredTournament.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="" />
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+            <div className="absolute bottom-8 left-8 right-8">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="bg-violet-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">À la une</span>
+                <span className="bg-white/10 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Nouveau</span>
+              </div>
+              <h2 className="text-2xl md:text-4xl font-black mb-2">{featuredTournament.title}</h2>
+              <div className="flex items-center gap-4 text-zinc-300 text-sm">
+                <div className="flex items-center gap-1"><Trophy size={16} className="text-yellow-500" /> 35.000 FCFA</div>
+                <div className="flex items-center gap-1"><Globe size={16} className="text-cyan-500" /> {featuredTournament.type}</div>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
         <section>
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <h2 className="text-xl font-bold">Tournois Disponibles</h2>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
+              <button 
+                onClick={() => setFilterType('All')}
+                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${filterType === 'All' ? 'bg-violet-600 text-white' : 'bg-zinc-900 text-zinc-500 hover:text-white'}`}
+              >
+                Tous
+              </button>
+              <button 
+                onClick={() => setFilterType('Online')}
+                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${filterType === 'Online' ? 'bg-cyan-600 text-white' : 'bg-zinc-900 text-zinc-500 hover:text-white'}`}
+              >
+                <Globe size={16} />
+                En ligne
+              </button>
+              <button 
+                onClick={() => setFilterType('Presentiel')}
+                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${filterType === 'Presentiel' ? 'bg-orange-600 text-white' : 'bg-zinc-900 text-zinc-500 hover:text-white'}`}
+              >
+                <MapPin size={16} />
+                Présentiel
+              </button>
+            </div>
+
             <div className="relative w-full md:w-72">
               <Search className="absolute left-3 top-3 text-zinc-500" size={18} />
               <Input 

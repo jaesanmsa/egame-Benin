@@ -3,10 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Phone, Mail, MapPin, History, MessageSquare } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Phone, Mail, MapPin, History, MessageSquare, Zap } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showError, showSuccess } from '@/utils/toast';
+import { Progress } from "@/components/ui/progress";
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
@@ -33,7 +34,6 @@ const Profile = () => {
         setUser(user);
         fetchTournamentCount(user.id);
 
-        // Abonnement en temps réel pour le profil
         const channel = supabase
           .channel(`profile-payments-${user.id}`)
           .on(
@@ -76,6 +76,10 @@ const Profile = () => {
     { label: "Victoires", value: "0", icon: <Star size={18} /> },
   ];
 
+  // Calcul du niveau (1 tournoi = 20% de progression vers le niveau suivant)
+  const level = Math.floor(tournamentCount / 5) + 1;
+  const progress = (tournamentCount % 5) * 20;
+
   const avatarUrl = user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
   const fullName = user.user_metadata?.full_name || user.email?.split('@')[0];
   const phone = user.user_metadata?.phone;
@@ -94,7 +98,9 @@ const Profile = () => {
               <div className="w-32 h-32 rounded-full border-4 border-zinc-950 overflow-hidden bg-zinc-800">
                 <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
               </div>
-              <div className="absolute bottom-0 right-0 w-8 h-8 bg-green-500 border-4 border-zinc-950 rounded-full" />
+              <div className="absolute -bottom-2 -right-2 bg-violet-600 text-white text-xs font-black w-10 h-10 rounded-full flex items-center justify-center border-4 border-zinc-950 shadow-lg">
+                Lvl {level}
+              </div>
             </div>
             <h1 className="text-3xl font-black mt-4">{fullName}</h1>
             <div className="flex flex-col items-center gap-1 mt-2">
@@ -117,6 +123,21 @@ const Profile = () => {
             </div>
           </div>
         </section>
+
+        {/* Progression */}
+        <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-3xl mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-2">
+              <Zap size={18} className="text-yellow-500" />
+              <span className="font-bold text-sm uppercase tracking-widest">Progression Joueur</span>
+            </div>
+            <span className="text-xs text-zinc-500 font-bold">{tournamentCount % 5} / 5 tournois</span>
+          </div>
+          <Progress value={progress} className="h-3 bg-zinc-800" />
+          <p className="text-[10px] text-zinc-500 mt-3 text-center uppercase font-bold tracking-tighter">
+            Encore {5 - (tournamentCount % 5)} tournois pour atteindre le niveau {level + 1}
+          </p>
+        </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-4 mb-12">
