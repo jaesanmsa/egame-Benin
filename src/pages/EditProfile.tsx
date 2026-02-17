@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, User, Phone, Save, Image as ImageIcon, MapPin } from 'lucide-react';
+import { ArrowLeft, User, Phone, Save, Image as ImageIcon, MapPin, Sparkles } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const EditProfile = () => {
@@ -78,14 +78,19 @@ const EditProfile = () => {
 
         <h1 className="text-3xl font-black mb-8">Modifier le profil</h1>
 
-        <form onSubmit={handleSave} className="space-y-8">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-800 bg-zinc-900">
-              <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-            </div>
-            <p className="text-xs text-zinc-500">Aperçu de votre photo</p>
+        <div className="mb-12 flex flex-col items-center gap-6">
+          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-800 bg-zinc-900">
+            <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
           </div>
+          <Link to="/avatar-maker">
+            <Button variant="outline" className="rounded-xl border-violet-500/50 text-violet-400 hover:bg-violet-500/10 gap-2">
+              <Sparkles size={18} />
+              Créer un avatar Emoji
+            </Button>
+          </Link>
+        </div>
 
+        <form onSubmit={handleSave} className="space-y-8">
           <div className="space-y-6 bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-800">
             <div className="space-y-2">
               <Label htmlFor="name">Nom complet / Pseudo</Label>
@@ -114,7 +119,6 @@ const EditProfile = () => {
                   placeholder="+229 01 XX XX XX XX"
                 />
               </div>
-              <p className="text-[10px] text-zinc-500">Format 10 chiffres requis</p>
             </div>
 
             <div className="space-y-2">
@@ -132,7 +136,7 @@ const EditProfile = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="avatar">Lien de la photo de profil (URL)</Label>
+              <Label htmlFor="avatar">Lien direct de la photo (Optionnel)</Label>
               <div className="relative">
                 <ImageIcon className="absolute left-3 top-3 text-zinc-500" size={18} />
                 <Input 
@@ -140,10 +144,9 @@ const EditProfile = () => {
                   value={profile.avatar_url}
                   onChange={(e) => setProfile({...profile, avatar_url: e.target.value})}
                   className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
-                  placeholder="https://lien-vers-votre-image.jpg"
+                  placeholder="https://..."
                 />
               </div>
-              <p className="text-[10px] text-zinc-500">Collez ici le lien d'une image pour changer votre photo</p>
             </div>
           </div>
 

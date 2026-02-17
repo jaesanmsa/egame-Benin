@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import TournamentDetails from "./pages/TournamentDetails";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
+import AvatarMaker from "./pages/AvatarMaker";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
 import PaymentHistory from "./pages/PaymentHistory";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/tournament/:id" element={<TournamentDetails />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/avatar-maker" element={<AvatarMaker />} />
           <Route path="/payments" element={<PaymentHistory />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/download-logo" element={<DownloadLogo />} />
