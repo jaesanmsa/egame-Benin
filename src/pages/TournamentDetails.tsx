@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Users, Trophy, Shield, Smartphone, CheckCircle2, ArrowLeft, Lock, X } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, CheckCircle2, ArrowLeft, Lock, X, Share2, Info, ListChecks } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -29,6 +29,13 @@ const TournamentDetails = () => {
   }, []);
 
   const getTournamentData = (id: string | undefined) => {
+    const baseRules = [
+      "Être présent 15 min avant le début.",
+      "Fair-play obligatoire (pas d'insultes).",
+      "Connexion internet stable requise.",
+      "Le Cash Prize est payé via Mobile Money."
+    ];
+
     switch(id) {
       case 'cod-mw4': return { 
         title: "Bénin Pro League: COD MW4 (Cotonou)", 
@@ -36,7 +43,8 @@ const TournamentDetails = () => {
         entryFee: "2000", 
         prizePool: "35.000 FCFA", 
         image: "/images/games/COD.jpg",
-        paymentLink: "https://me.fedapay.com/mpservices"
+        paymentLink: "https://me.fedapay.com/mpservices",
+        rules: [...baseRules, "Mode Recherche & Destruction.", "Pas de lance-grenades."]
       };
       case 'blur': return { 
         title: "Blur Racing Cup: Cotonou", 
@@ -44,7 +52,8 @@ const TournamentDetails = () => {
         entryFee: "2000", 
         prizePool: "35.000 FCFA", 
         image: "/images/games/blur.jpg",
-        paymentLink: "https://process.fedapay.com/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwOTUwMzQ5MiwiZXhwIjoxNzcxMDE4NzM3fQ.7Bf62YWSCgE9zOfH-EueveD1m4gPdwau-4ECRPzZFts"
+        paymentLink: "https://process.fedapay.com/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwOTUwMzQ5MiwiZXhwIjoxNzcxMDE4NzM3fQ.7Bf62YWSCgE9zOfH-EueveD1m4gPdwau-4ECRPzZFts",
+        rules: [...baseRules, "Course en 3 manches.", "Tous les bonus sont autorisés."]
       };
       case 'clash-royale': return { 
         title: "Clash Royale: King of Benin", 
@@ -52,7 +61,8 @@ const TournamentDetails = () => {
         entryFee: "1000", 
         prizePool: "30.000 FCFA", 
         image: "/images/games/clash-royale.jpg",
-        paymentLink: "https://me.fedapay.com/mpservices"
+        paymentLink: "https://me.fedapay.com/mpservices",
+        rules: [...baseRules, "Niveau des cartes plafonné à 11.", "Format élimination directe."]
       };
       case 'bombsquad': return { 
         title: "BombSquad Party: Cotonou", 
@@ -60,7 +70,8 @@ const TournamentDetails = () => {
         entryFee: "1500", 
         prizePool: "30.000 FCFA", 
         image: "/images/games/bombsquad.png",
-        paymentLink: "https://me.fedapay.com/mpservices"
+        paymentLink: "https://me.fedapay.com/mpservices",
+        rules: [...baseRules, "Match en équipe de 2.", "Manettes recommandées."]
       };
       default: return { 
         title: "Tournoi eGame", 
@@ -68,12 +79,32 @@ const TournamentDetails = () => {
         entryFee: "1000", 
         prizePool: "30.000 FCFA", 
         image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
-        paymentLink: "https://me.fedapay.com/mpservices"
+        paymentLink: "https://me.fedapay.com/mpservices",
+        rules: baseRules
       };
     }
   };
 
   const tournament = getTournamentData(id);
+
+  const handleShare = async () => {
+    const shareData = {
+      title: tournament.title,
+      text: `Rejoins-moi sur eGame Bénin pour le tournoi ${tournament.game} !`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        showSuccess("Lien copié dans le presse-papier !");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleFedaPay = async () => {
     setPaymentStep('processing');
@@ -107,11 +138,16 @@ const TournamentDetails = () => {
       <div className="relative h-[40vh] w-full">
         <img src={tournament.image} className="w-full h-full object-cover opacity-50" alt="" />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent" />
-        <button onClick={() => navigate(-1)} className="absolute top-6 left-6 p-3 bg-zinc-900/80 backdrop-blur-md rounded-full border border-zinc-800"><ArrowLeft size={20} /></button>
+        <div className="absolute top-6 left-6 flex gap-3">
+          <button onClick={() => navigate(-1)} className="p-3 bg-zinc-900/80 backdrop-blur-md rounded-full border border-zinc-800"><ArrowLeft size={20} /></button>
+        </div>
+        <div className="absolute top-6 right-6">
+          <button onClick={handleShare} className="p-3 bg-violet-600 rounded-full shadow-lg shadow-violet-500/20"><Share2 size={20} /></button>
+        </div>
       </div>
 
       <main className="max-w-4xl mx-auto px-6 -mt-32 relative z-10">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 rounded-[2.5rem] p-8 shadow-2xl">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 rounded-[2.5rem] p-8 shadow-2xl mb-8">
           <div className="flex flex-wrap justify-between items-start gap-4 mb-8">
             <div>
               <span className="text-violet-500 font-bold uppercase tracking-widest text-sm">{tournament.game}</span>
@@ -157,10 +193,28 @@ const TournamentDetails = () => {
             </Button>
           )}
         </motion.div>
+
+        {/* Section Règlement */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-zinc-900/30 border border-zinc-800 rounded-[2rem] p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-500">
+              <ListChecks size={20} />
+            </div>
+            <h2 className="text-xl font-bold">Règles & Infos</h2>
+          </div>
+          <ul className="space-y-4">
+            {tournament.rules.map((rule, index) => (
+              <li key={index} className="flex items-start gap-3 text-zinc-400 text-sm">
+                <div className="w-1.5 h-1.5 rounded-full bg-violet-500 mt-1.5 shrink-0" />
+                <span>{rule}</span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
       </main>
 
       <footer className="p-8 text-center text-zinc-600 text-xs font-bold uppercase tracking-widest">
-        eGame Benin @2026
+        eGame Benin @2026 • v1.0
       </footer>
 
       <AnimatePresence>

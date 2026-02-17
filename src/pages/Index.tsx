@@ -5,14 +5,16 @@ import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
 import Logo from '@/components/Logo';
 import { motion } from 'framer-motion';
-import { LogIn, UserPlus, Zap, Star, Target } from 'lucide-react';
+import { LogIn, UserPlus, Zap, Star, Target, Search, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { Input } from '@/components/ui/input';
 
 const Index = () => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
+  const [searchQuery, setSearchQuery] = useState("");
 
   const today = new Date().toLocaleDateString('fr-FR', {
     day: 'numeric',
@@ -106,6 +108,11 @@ const Index = () => {
       type: "Presentiel" as const
     }
   ];
+
+  const filteredTournaments = tournaments.filter(t => 
+    t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    t.game.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -208,15 +215,30 @@ const Index = () => {
         </header>
 
         <section>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <h2 className="text-xl font-bold">Tournois Disponibles</h2>
+            <div className="relative w-full md:w-72">
+              <Search className="absolute left-3 top-3 text-zinc-500" size={18} />
+              <Input 
+                placeholder="Rechercher un tournoi..." 
+                className="pl-10 bg-zinc-900 border-zinc-800 rounded-xl focus:ring-violet-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tournaments.map((t) => (
-              <TournamentCard key={t.id} {...t} />
-            ))}
-          </div>
+          {filteredTournaments.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredTournaments.map((t) => (
+                <TournamentCard key={t.id} {...t} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20 bg-zinc-900/30 rounded-[2rem] border border-zinc-800 border-dashed">
+              <p className="text-zinc-500">Aucun tournoi ne correspond à votre recherche.</p>
+            </div>
+          )}
         </section>
       </main>
 
