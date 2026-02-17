@@ -32,10 +32,6 @@ const Profile = () => {
     }
   };
 
-  const handleSupport = () => {
-    window.location.href = "mailto:egamebenin@gmail.com?subject=Support eGame Bénin - " + (user?.email || "");
-  };
-
   if (loading) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
 
   if (!user) {
@@ -123,15 +119,14 @@ const Profile = () => {
             </button>
           </Link>
 
-          <button 
-            onClick={handleSupport}
-            className="w-full flex items-center justify-between p-5 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-zinc-800 transition-all group"
-          >
-            <div className="flex items-center gap-4">
-              <MessageSquare size={20} className="text-cyan-500" />
-              <span className="font-bold">Contacter le support</span>
-            </div>
-          </button>
+          <Link to="/contact" className="block">
+            <button className="w-full flex items-center justify-between p-5 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-zinc-800 transition-all group">
+              <div className="flex items-center gap-4">
+                <MessageSquare size={20} className="text-cyan-500" />
+                <span className="font-bold">Nous contacter</span>
+              </div>
+            </button>
+          </Link>
 
           <button 
             onClick={handleLogout}

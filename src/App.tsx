@@ -10,6 +10,7 @@ import EditProfile from "./pages/EditProfile";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
 import PaymentHistory from "./pages/PaymentHistory";
+import Contact from "./pages/Contact";
 import DownloadLogo from "./pages/DownloadLogo";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/payments" element={<PaymentHistory />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/download-logo" element={<DownloadLogo />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

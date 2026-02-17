@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, CheckCircle2, XCircle, CreditCard } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle2, XCircle, CreditCard, MessageSquare, Copy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { showSuccess } from '@/utils/toast';
 
 interface Payment {
   id: string;
@@ -19,6 +20,7 @@ const PaymentHistory = () => {
   const navigate = useNavigate();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
+  const whatsappNumber = "2290141790790";
 
   useEffect(() => {
     fetchPayments();
@@ -46,7 +48,6 @@ const PaymentHistory = () => {
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      // Logique d'expiration : si "En attente" et > 1 heure, on marque comme échoué
       const now = new Date();
       const updatedPayments = await Promise.all(data.map(async (p: Payment) => {
         const createdAt = new Date(p.created_at);
@@ -65,6 +66,22 @@ const PaymentHistory = () => {
       setPayments(updatedPayments);
     }
     setLoading(false);
+  };
+
+  const generateValidationCode = (id: string) => {
+    // Génère un code court et lisible à partir de l'ID
+    return `EGB-${id.substring(0, 5).toUpperCase()}`;
+  };
+
+  const handleSendWhatsApp = (payment: Payment) => {
+    const code = generateValidationCode(payment.id);
+    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation pour le tournoi ${payment.tournament_name} : ${code}`);
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    showSuccess("Code copié !");
   };
 
   const getStatusStyle = (status: string) => {
@@ -99,7 +116,7 @@ const PaymentHistory = () => {
             <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {payments.length === 0 ? (
               <div className="text-center py-20 bg-zinc-900/50 rounded-[2rem] border border-zinc-800">
                 <CreditCard size={48} className="mx-auto text-zinc-700 mb-4" />
@@ -111,33 +128,50 @@ const PaymentHistory = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   key={payment.id} 
-                  className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 flex items-center justify-between"
+                  className="bg-zinc-900 p-6 rounded-[2rem] border border-zinc-800 space-y-4"
                 >
-                  <div>
-                    <h3 className="font-bold text-lg">{payment.tournament_name}</h3>
-                    <p className="text-zinc-500 text-sm">
-                      {new Date(payment.created_at).toLocaleDateString('fr-FR', {
-                        day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit'
-                      })}
-                    </p>
-                    <p className="text-violet-400 font-black mt-1">{payment.amount} FCFA</p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-bold text-lg">{payment.tournament_name}</h3>
+                      <p className="text-zinc-500 text-xs">
+                        {new Date(payment.created_at).toLocaleDateString('fr-FR', {
+                          day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] font-bold ${getStatusStyle(payment.status)}`}>
+                      {getStatusIcon(payment.status)}
+                      {payment.status}
+                    </div>
                   </div>
-                  
-                  <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold ${getStatusStyle(payment.status)}`}>
-                    {getStatusIcon(payment.status)}
-                    {payment.status}
+
+                  <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
+                    <p className="text-violet-400 font-black text-xl">{payment.amount} FCFA</p>
+                    
+                    {payment.status === 'Réussi' && (
+                      <div className="flex flex-col items-end gap-2">
+                        <div className="flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-xl border border-zinc-700">
+                          <span className="text-[10px] text-zinc-500 font-bold uppercase">Code:</span>
+                          <span className="text-white font-mono font-bold">{generateValidationCode(payment.id)}</span>
+                          <button onClick={() => copyToClipboard(generateValidationCode(payment.id))} className="text-zinc-500 hover:text-white">
+                            <Copy size={14} />
+                          </button>
+                        </div>
+                        <button 
+                          onClick={() => handleSendWhatsApp(payment)}
+                          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all"
+                        >
+                          <MessageSquare size={14} />
+                          Valider sur WhatsApp
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               ))
             )}
           </div>
         )}
-
-        <div className="mt-12 p-6 bg-violet-600/10 border border-violet-500/20 rounded-2xl">
-          <p className="text-sm text-zinc-400 leading-relaxed">
-            <span className="text-violet-400 font-bold">Note :</span> Les paiements en attente expirent automatiquement après 1 heure.
-          </p>
-        </div>
       </main>
     </div>
   );
