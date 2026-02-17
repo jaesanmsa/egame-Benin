@@ -23,14 +23,13 @@ const PaymentHistory = () => {
   useEffect(() => {
     fetchPayments();
 
-    // ÉCOUTE EN TEMPS RÉEL : L'application se met à jour toute seule
     const channel = supabase
       .channel('schema-db-changes')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'payments' },
         () => {
-          fetchPayments(); // On recharge les données dès qu'un changement arrive
+          fetchPayments();
         }
       )
       .subscribe();
@@ -47,7 +46,23 @@ const PaymentHistory = () => {
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      setPayments(data);
+      // Logique d'expiration : si "En attente" et > 1 heure, on marque comme échoué
+      const now = new Date();
+      const updatedPayments = await Promise.all(data.map(async (p: Payment) => {
+        const createdAt = new Date(p.created_at);
+        const diffInHours = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
+        
+        if (p.status === 'En attente' && diffInHours > 1) {
+          await supabase
+            .from('payments')
+            .update({ status: 'Échoué' })
+            .eq('id', p.id);
+          return { ...p, status: 'Échoué' as const };
+        }
+        return p;
+      }));
+
+      setPayments(updatedPayments);
     }
     setLoading(false);
   };
@@ -120,7 +135,7 @@ const PaymentHistory = () => {
 
         <div className="mt-12 p-6 bg-violet-600/10 border border-violet-500/20 rounded-2xl">
           <p className="text-sm text-zinc-400 leading-relaxed">
-            <span className="text-violet-400 font-bold">Note :</span> Les paiements sont désormais vérifiés automatiquement via FedaPay.
+            <span className="text-violet-400 font-bold">Note :</span> Les paiements en attente expirent automatiquement après 1 heure.
           </p>
         </div>
       </main>
