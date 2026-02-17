@@ -5,29 +5,42 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Save, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const EMOJIS = ["🎮", "🕹️", "🎯", "🔥", "⚡", "🏆", "👑", "💎", "🐱", "🦊", "🐻", "🐼", "🦁", "🐯", "🐸", "🐵", "🚀", "🛸", "👾", "👻", "💀", "👽", "🤖", "🎃"];
-const COLORS = [
-  "bg-violet-600", "bg-indigo-600", "bg-blue-600", "bg-cyan-600", 
-  "bg-emerald-600", "bg-green-600", "bg-lime-600", "bg-yellow-600", 
-  "bg-orange-600", "bg-red-600", "bg-rose-600", "bg-pink-600",
-  "bg-zinc-800", "bg-slate-700", "bg-neutral-900"
+
+// Mapping des classes Tailwind vers des codes Hex réels pour l'API
+const COLOR_OPTIONS = [
+  { class: "bg-violet-600", hex: "7c3aed" },
+  { class: "bg-indigo-600", hex: "4f46e5" },
+  { class: "bg-blue-600", hex: "2563eb" },
+  { class: "bg-cyan-600", hex: "0891b2" },
+  { class: "bg-emerald-600", hex: "059669" },
+  { class: "bg-green-600", hex: "16a34a" },
+  { class: "bg-lime-600", hex: "65a30d" },
+  { class: "bg-yellow-600", hex: "ca8a04" },
+  { class: "bg-orange-600", hex: "ea580c" },
+  { class: "bg-red-600", hex: "dc2626" },
+  { class: "bg-rose-600", hex: "e11d48" },
+  { class: "bg-pink-600", hex: "db2777" },
+  { class: "bg-zinc-800", hex: "27272a" },
+  { class: "bg-slate-700", hex: "334155" },
+  { class: "bg-neutral-900", hex: "171717" }
 ];
 
 const AvatarMaker = () => {
   const navigate = useNavigate();
   const [selectedEmoji, setSelectedEmoji] = useState(EMOJIS[0]);
-  const [selectedColor, setSelectedColor] = useState(COLORS[0]);
+  const [selectedColor, setSelectedColor] = useState(COLOR_OPTIONS[0]);
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      // On crée une URL factice ou on utilise un service comme DiceBear avec l'emoji
-      // Pour faire simple et efficace, on va générer une URL DiceBear basée sur l'emoji
-      const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(selectedEmoji)}&backgroundColor=${selectedColor.replace('bg-', '').replace('-600', '4f46e5')}`;
+      // Utilisation du style 'initials' de DiceBear qui est le plus fiable pour afficher un caractère/emoji sur fond coloré
+      // On encode l'emoji pour l'URL
+      const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(selectedEmoji)}&backgroundColor=${selectedColor.hex}&fontSize=50`;
       
       const { error } = await supabase.auth.updateUser({
         data: { avatar_url: avatarUrl }
@@ -57,7 +70,7 @@ const AvatarMaker = () => {
 
         <div className="flex flex-col items-center gap-12">
           {/* Preview */}
-          <div className={`w-48 h-48 rounded-[3rem] ${selectedColor} flex items-center justify-center text-8xl shadow-2xl shadow-black/50 border-4 border-white/10 transition-all duration-500`}>
+          <div className={`w-48 h-48 rounded-[3rem] ${selectedColor.class} flex items-center justify-center text-8xl shadow-2xl shadow-black/50 border-4 border-white/10 transition-all duration-500`}>
             {selectedEmoji}
           </div>
 
@@ -82,11 +95,11 @@ const AvatarMaker = () => {
             <div className="space-y-4">
               <p className="text-sm font-bold text-zinc-500 uppercase tracking-widest">Couleur de fond</p>
               <div className="flex flex-wrap gap-3">
-                {COLORS.map((color) => (
+                {COLOR_OPTIONS.map((color) => (
                   <button
-                    key={color}
+                    key={color.hex}
                     onClick={() => setSelectedColor(color)}
-                    className={`w-10 h-10 rounded-full border-2 ${color} ${selectedColor === color ? 'border-white scale-110' : 'border-transparent'}`}
+                    className={`w-10 h-10 rounded-full border-2 ${color.class} ${selectedColor.hex === color.hex ? 'border-white scale-110' : 'border-transparent'}`}
                   />
                 ))}
               </div>
@@ -98,7 +111,6 @@ const AvatarMaker = () => {
             disabled={saving}
             className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 text-lg font-bold shadow-xl shadow-violet-500/20 gap-2"
           >
-            <Save size={20} />
             {saving ? "Enregistrement..." : "Définir comme photo de profil"}
           </Button>
         </div>
