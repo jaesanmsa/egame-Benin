@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { User, Home, History, LogIn } from 'lucide-react';
+import { User, Home, History, LogIn, Trophy } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Logo from './Logo';
@@ -39,6 +39,11 @@ const Navbar = () => {
           <Link to="/" className={`flex flex-col items-center gap-1 transition-colors ${isActive('/') ? 'text-violet-500' : 'text-zinc-400 hover:text-white'}`}>
             <Home size={24} />
             <span className="text-[10px] md:hidden">Accueil</span>
+          </Link>
+
+          <Link to="/leaderboard" className={`flex flex-col items-center gap-1 transition-colors ${isActive('/leaderboard') ? 'text-violet-500' : 'text-zinc-400 hover:text-white'}`}>
+            <Trophy size={24} />
+            <span className="text-[10px] md:hidden">Classement</span>
           </Link>
           
           {isLoggedIn && (
