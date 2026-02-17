@@ -10,7 +10,6 @@ import { showError, showSuccess } from '@/utils/toast';
 
 const EMOJIS = ["🎮", "🕹️", "🎯", "🔥", "⚡", "🏆", "👑", "💎", "🐱", "🦊", "🐻", "🐼", "🦁", "🐯", "🐸", "🐵", "🚀", "🛸", "👾", "👻", "💀", "👽", "🤖", "🎃"];
 
-// Mapping des classes Tailwind vers des codes Hex réels pour l'API
 const COLOR_OPTIONS = [
   { class: "bg-violet-600", hex: "7c3aed" },
   { class: "bg-indigo-600", hex: "4f46e5" },
@@ -38,9 +37,16 @@ const AvatarMaker = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Utilisation du style 'initials' de DiceBear qui est le plus fiable pour afficher un caractère/emoji sur fond coloré
-      // On encode l'emoji pour l'URL
-      const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(selectedEmoji)}&backgroundColor=${selectedColor.hex}&fontSize=50`;
+      // Création d'un SVG personnalisé avec l'emoji et la couleur
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+          <rect width="100" height="100" fill="#${selectedColor.hex}" />
+          <text x="50%" y="56%" font-size="60" text-anchor="middle" dominant-baseline="middle">${selectedEmoji}</text>
+        </svg>
+      `.trim();
+      
+      // Conversion du SVG en Data URL Base64
+      const avatarUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
       
       const { error } = await supabase.auth.updateUser({
         data: { avatar_url: avatarUrl }
