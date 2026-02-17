@@ -156,14 +156,19 @@ const Index = () => {
     );
   }
 
+  const userName = session.user.user_metadata?.full_name || session.user.email?.split('@')[0];
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
       <Navbar />
       
       <main className="max-w-7xl mx-auto px-6 py-8">
         <header className="mb-10">
-          <p className="text-violet-500 font-bold text-sm uppercase tracking-widest mb-1">Bienvenue, Joueur</p>
-          <h1 className="text-3xl font-black">Tableau de bord</h1>
+          <p className="text-violet-500 font-bold text-sm uppercase tracking-widest mb-1">Bienvenue, {userName}</p>
+          <h1 className="text-3xl font-black leading-tight">
+            Prêt à dominer l'arène ? <br />
+            <span className="text-zinc-500 text-xl font-medium">L'heure de la gloire a sonné !</span>
+          </h1>
         </header>
 
         <section>

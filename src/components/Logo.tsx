@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Trophy, Zap } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 
 interface LogoProps {
   className?: string;
@@ -23,9 +23,6 @@ const Logo = ({ className = "", size = 'md', showText = true }: LogoProps) => {
       <div className={`${currentSize.box} bg-gradient-to-br from-violet-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/20 relative overflow-hidden group`}>
         <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
         <Trophy className="text-white relative z-10" size={currentSize.icon} />
-        <div className="absolute -bottom-1 -right-1 bg-cyan-500 rounded-full p-0.5 border-2 border-zinc-950">
-          <Zap size={currentSize.icon / 2.5} className="text-white fill-white" />
-        </div>
       </div>
       
       {showText && (

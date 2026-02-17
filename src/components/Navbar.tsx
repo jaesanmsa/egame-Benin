@@ -9,19 +9,24 @@ import Logo from './Logo';
 const Navbar = () => {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const isActive = (path: string) => location.pathname === path;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
+      setUser(session?.user || null);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
+      setUser(session?.user || null);
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const avatarUrl = user?.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/80 backdrop-blur-lg border-t border-zinc-800 px-6 py-3 md:top-0 md:bottom-auto md:border-b md:border-t-0">
@@ -51,7 +56,13 @@ const Navbar = () => {
           )}
 
           <Link to="/profile" className={`flex flex-col items-center gap-1 transition-colors ${isActive('/profile') ? 'text-violet-500' : 'text-zinc-400 hover:text-white'}`}>
-            <User size={24} />
+            {isLoggedIn ? (
+              <div className={`w-6 h-6 rounded-full overflow-hidden border ${isActive('/profile') ? 'border-violet-500' : 'border-zinc-700'}`}>
+                <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <User size={24} />
+            )}
             <span className="text-[10px] md:hidden">Profil</span>
           </Link>
         </div>
@@ -66,8 +77,8 @@ const Navbar = () => {
             </Link>
           ) : (
             <Link to="/profile">
-              <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center hover:border-violet-500 transition-colors">
-                <User size={20} className="text-zinc-400" />
+              <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 overflow-hidden hover:border-violet-500 transition-colors">
+                <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />
               </div>
             </Link>
           )}
