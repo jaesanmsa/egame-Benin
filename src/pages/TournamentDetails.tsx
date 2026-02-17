@@ -34,15 +34,15 @@ const TournamentDetails = () => {
         title: "Bénin Pro League: COD MW4 (Cotonou)", 
         game: "COD MW4", 
         entryFee: "2000", 
-        prizePool: "100.000 FCFA", 
+        prizePool: "35.000 FCFA", 
         image: "/images/games/COD.jpg",
         paymentLink: "https://me.fedapay.com/mpservices"
       };
       case 'blur': return { 
         title: "Blur Racing Cup: Cotonou", 
         game: "Blur", 
-        entryFee: "2500", 
-        prizePool: "150.000 FCFA", 
+        entryFee: "2000", 
+        prizePool: "35.000 FCFA", 
         image: "/images/games/blur.jpg",
         paymentLink: "https://process.fedapay.com/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwOTUwMzQ5MiwiZXhwIjoxNzcxMDE4NzM3fQ.7Bf62YWSCgE9zOfH-EueveD1m4gPdwau-4ECRPzZFts"
       };
@@ -50,7 +50,7 @@ const TournamentDetails = () => {
         title: "Clash Royale: King of Benin", 
         game: "Clash Royale", 
         entryFee: "1000", 
-        prizePool: "20.000 FCFA", 
+        prizePool: "30.000 FCFA", 
         image: "/images/games/clash-royale.jpg",
         paymentLink: "https://me.fedapay.com/mpservices"
       };
@@ -58,7 +58,7 @@ const TournamentDetails = () => {
         title: "BombSquad Party: Cotonou", 
         game: "BombSquad", 
         entryFee: "1500", 
-        prizePool: "75.000 FCFA", 
+        prizePool: "30.000 FCFA", 
         image: "/images/games/bombsquad.png",
         paymentLink: "https://me.fedapay.com/mpservices"
       };
@@ -66,7 +66,7 @@ const TournamentDetails = () => {
         title: "Tournoi eGame", 
         game: "Gaming", 
         entryFee: "1000", 
-        prizePool: "50.000 FCFA", 
+        prizePool: "30.000 FCFA", 
         image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
         paymentLink: "https://me.fedapay.com/mpservices"
       };

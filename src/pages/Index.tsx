@@ -39,7 +39,7 @@ const Index = () => {
       game: "COD MW4",
       image: "/images/games/COD.jpg",
       date: today,
-      participants: "12/64",
+      participants: "12/40",
       entryFee: "2000",
       type: "Presentiel" as const
     },
@@ -49,8 +49,8 @@ const Index = () => {
       game: "Blur",
       image: "/images/games/blur.jpg",
       date: today,
-      participants: "45/100",
-      entryFee: "2500",
+      participants: "15/40",
+      entryFee: "2000",
       type: "Presentiel" as const
     },
     {
@@ -59,7 +59,7 @@ const Index = () => {
       game: "Clash Royale",
       image: "/images/games/clash-royale.jpg",
       date: today,
-      participants: "20/32",
+      participants: "20/50",
       entryFee: "1000",
       type: "Online" as const
     },
@@ -69,7 +69,7 @@ const Index = () => {
       game: "BombSquad",
       image: "/images/games/bombsquad.png",
       date: today,
-      participants: "8/16",
+      participants: "8/40",
       entryFee: "1500",
       type: "Presentiel" as const
     }
