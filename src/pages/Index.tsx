@@ -144,7 +144,7 @@ const Index = () => {
             </div>
             <div className="flex flex-col items-center gap-2">
               <Star size={24} />
-              <span className="text-[10px] font-bold uppercase">Elite</span>
+              <span className="text-[10px] font-bold uppercase">Élite</span>
             </div>
           </div>
         </main>

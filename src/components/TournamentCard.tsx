@@ -56,7 +56,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent" />
         <Badge className={`absolute top-4 right-4 ${type === 'Online' ? 'bg-cyan-500' : 'bg-orange-500'} text-white border-none`}>
-          {type}
+          {type === 'Online' ? 'En ligne' : 'Présentiel'}
         </Badge>
       </div>
       
@@ -79,7 +79,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
           {isLoggedIn ? (
             <>
               <div className="flex items-center gap-1">
-                <span className="text-zinc-500 text-xs">Entrée:</span>
+                <span className="text-zinc-500 text-xs">Entrée :</span>
                 <span className="text-white font-bold">{entryFee} FCFA</span>
               </div>
               <button className="bg-violet-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
