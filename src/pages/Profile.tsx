@@ -65,7 +65,7 @@ const Profile = () => {
   const progress = (tournamentCount % 5) * 20;
   const avatarUrl = user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
   const fullName = user.user_metadata?.full_name || user.email?.split('@')[0];
-  const isAdmin = user.email === 'egambenin@gmail.com';
+  const isAdmin = user.email === 'egamebenin@gmail.com';
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
