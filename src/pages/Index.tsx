@@ -81,9 +81,9 @@ const Index = () => {
     },
     {
       id: "cod-mw4",
-      title: "Bénin Pro League: COD MW4 (Cotonou)",
-      game: "COD MW4",
-      image: "/images/games/COD.jpg",
+      title: "Bénin Pro League: COD Mobile",
+      game: "COD Mobile",
+      image: "DYAD_ATTACHMENT_0", // Utilisation de l'image envoyée
       date: today,
       participants: `${participantCounts['cod-mw4'] || 0}/40`,
       entryFee: "2000",
@@ -173,7 +173,7 @@ const Index = () => {
     );
   }
 
-  const userName = session.user.user_metadata?.full_name || session.user.email?.split('@')[0];
+  const userName = session.user.user_metadata?.username || session.user.user_metadata?.full_name || session.user.email?.split('@')[0];
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-4 md:pt-24">
