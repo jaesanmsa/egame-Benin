@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, User, Phone, Save, MapPin, Sparkles, AtSign } from 'lucide-react';
+import { ArrowLeft, User, Phone, Save, AtSign } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const EditProfile = () => {
@@ -18,7 +18,6 @@ const EditProfile = () => {
     full_name: '',
     username: '',
     phone: '',
-    city: '',
     avatar_url: ''
   });
 
@@ -30,10 +29,9 @@ const EditProfile = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        // On essaie de récupérer depuis la table profiles
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('*')
+          .select('full_name, username, phone, avatar_url')
           .eq('id', user.id)
           .single();
 
@@ -41,12 +39,11 @@ const EditProfile = () => {
           full_name: profileData?.full_name || user.user_metadata?.full_name || '',
           username: profileData?.username || user.user_metadata?.username || '',
           phone: profileData?.phone || user.user_metadata?.phone || '',
-          city: profileData?.city || user.user_metadata?.city || '',
           avatar_url: profileData?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`
         });
       }
     } catch (error) {
-      showError("Erreur lors de la récupération du profil");
+      console.error("Erreur profil:", error);
     } finally {
       setLoading(false);
     }
@@ -65,12 +62,15 @@ const EditProfile = () => {
         data: { ...profile }
       });
 
-      // 2. Mise à jour de la table profiles (pour que l'admin voit tout)
+      // 2. Mise à jour de la table profiles
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
           id: user.id,
-          ...profile,
+          full_name: profile.full_name,
+          username: profile.username,
+          phone: profile.phone,
+          avatar_url: profile.avatar_url,
           updated_at: new Date().toISOString()
         });
 
