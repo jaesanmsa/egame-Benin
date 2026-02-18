@@ -7,19 +7,17 @@ import { Trophy, ArrowLeft, Gamepad2, ChevronRight, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
-const GAMES = [
-  { id: 'pubg-mobile', name: "PUBG Mobile", icon: "🔫" },
-  { id: 'cod-mw4', name: "COD MW4", icon: "🎖️" },
-  { id: 'blur', name: "Blur Racing", icon: "🏎️" },
-  { id: 'clash-royale', name: "Clash Royale", icon: "👑" },
-  { id: 'bombsquad', name: "BombSquad", icon: "💣" }
-];
-
 const Leaderboard = () => {
   const navigate = useNavigate();
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
+  const [games, setGames] = useState<any[]>([]);
   const [rankings, setRankings] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [rankingLoading, setRankingLoading] = useState(false);
+
+  useEffect(() => {
+    fetchGames();
+  }, []);
 
   useEffect(() => {
     if (selectedGame) {
@@ -27,9 +25,29 @@ const Leaderboard = () => {
     }
   }, [selectedGame]);
 
-  const fetchRankings = async (gameId: string) => {
+  const fetchGames = async () => {
     setLoading(true);
-    // On interroge la table leaderboard en filtrant par game_id (qui est du texte)
+    // On récupère les jeux uniques présents dans le classement
+    const { data, error } = await supabase
+      .from('leaderboard')
+      .select('game_id')
+      .order('game_id');
+    
+    if (!error && data) {
+      // On filtre pour n'avoir que des noms uniques
+      const uniqueGames = Array.from(new Set(data.map(item => item.game_id)))
+        .map(id => ({
+          id,
+          name: id.replace(/-/g, ' ').toUpperCase(),
+          icon: "🎮"
+        }));
+      setGames(uniqueGames);
+    }
+    setLoading(false);
+  };
+
+  const fetchRankings = async (gameId: string) => {
+    setRankingLoading(true);
     const { data, error } = await supabase
       .from('leaderboard')
       .select('*')
@@ -41,7 +59,7 @@ const Leaderboard = () => {
     } else {
       setRankings([]);
     }
-    setLoading(false);
+    setRankingLoading(false);
   };
 
   const handleBack = () => {
@@ -66,7 +84,7 @@ const Leaderboard = () => {
             <Trophy size={40} className="text-violet-500" />
           </div>
           <h1 className="text-3xl font-black mb-2">
-            {selectedGame ? GAMES.find(g => g.id === selectedGame)?.name : "Classements"}
+            {selectedGame ? games.find(g => g.id === selectedGame)?.name : "Classements"}
           </h1>
           <p className="text-zinc-400">
             {selectedGame ? "Les meilleurs joueurs de ce jeu" : "Sélectionnez un jeu pour voir le classement"}
@@ -82,19 +100,28 @@ const Leaderboard = () => {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-4"
             >
-              {GAMES.map((game) => (
-                <button
-                  key={game.id}
-                  onClick={() => setSelectedGame(game.id)}
-                  className="w-full flex items-center justify-between p-6 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-[2rem] transition-all group"
-                >
-                  <div className="flex items-center gap-4">
-                    <span className="text-3xl">{game.icon}</span>
-                    <span className="text-lg font-bold">{game.name}</span>
-                  </div>
-                  <ChevronRight className="text-zinc-600 group-hover:text-violet-500 transition-colors" />
-                </button>
-              ))}
+              {loading ? (
+                <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>
+              ) : games.length > 0 ? (
+                games.map((game) => (
+                  <button
+                    key={game.id}
+                    onClick={() => setSelectedGame(game.id)}
+                    className="w-full flex items-center justify-between p-6 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-[2rem] transition-all group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="text-3xl">{game.icon}</span>
+                      <span className="text-lg font-bold">{game.name}</span>
+                    </div>
+                    <ChevronRight className="text-zinc-600 group-hover:text-violet-500 transition-colors" />
+                  </button>
+                ))
+              ) : (
+                <div className="py-12 text-center bg-zinc-900/50 border border-zinc-800 border-dashed rounded-[2.5rem]">
+                  <Gamepad2 size={48} className="mx-auto text-zinc-700 mb-4" />
+                  <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs">Aucun jeu trouvé</p>
+                </div>
+              )}
             </motion.div>
           ) : (
             <motion.div 
@@ -104,7 +131,7 @@ const Leaderboard = () => {
               exit={{ opacity: 0, x: -20 }}
               className="space-y-4"
             >
-              {loading ? (
+              {rankingLoading ? (
                 <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>
               ) : rankings.length > 0 ? (
                 rankings.map((player, index) => (
@@ -130,8 +157,7 @@ const Leaderboard = () => {
               ) : (
                 <div className="py-12 text-center bg-zinc-900/50 border border-zinc-800 border-dashed rounded-[2.5rem]">
                   <Gamepad2 size={48} className="mx-auto text-zinc-700 mb-4" />
-                  <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs">Classement à venir</p>
-                  <p className="text-zinc-600 text-xs mt-2">Soyez le premier à gagner un tournoi !</p>
+                  <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs">Classement vide</p>
                 </div>
               )}
             </motion.div>
