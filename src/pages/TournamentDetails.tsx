@@ -39,8 +39,11 @@ const TournamentDetails = () => {
     fetchTournament();
   }, [id]);
 
-  const generateCode = () => {
-    return `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+  // Génère un code unique basé sur le temps et de l'aléatoire
+  const generateUniqueCode = () => {
+    const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+    const timestamp = Date.now().toString().slice(-3);
+    return `EGB-${randomStr}${timestamp}`;
   };
 
   const handleFedaPay = async () => {
@@ -49,7 +52,7 @@ const TournamentDetails = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Veuillez vous connecter");
       
-      const validationCode = generateCode();
+      const validationCode = generateUniqueCode();
       
       const { error } = await supabase.from('payments').insert({
         user_id: user.id,
@@ -62,6 +65,7 @@ const TournamentDetails = () => {
 
       if (error) throw error;
       
+      // Redirection vers FedaPay
       window.location.href = "https://me.fedapay.com/mpservices";
     } catch (err: any) {
       showError(err.message);

@@ -23,17 +23,28 @@ interface Payment {
 const PaymentHistory = () => {
   const navigate = useNavigate();
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const whatsappNumber = "2290141790790";
 
   useEffect(() => {
-    fetchPayments();
+    fetchData();
   }, []);
 
-  const fetchPayments = async () => {
+  const fetchData = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
+    // Récupérer le profil pour avoir le pseudo
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('username, full_name')
+      .eq('id', user.id)
+      .single();
+    
+    setUserProfile(profile);
+
+    // Récupérer les paiements
     const { data, error } = await supabase
       .from('payments')
       .select(`
@@ -52,7 +63,13 @@ const PaymentHistory = () => {
   };
 
   const handleSendWhatsApp = (payment: Payment) => {
-    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation pour le tournoi ${payment.tournament_name} : ${payment.validation_code}`);
+    const pseudo = userProfile?.username || userProfile?.full_name || "Joueur";
+    const message = encodeURIComponent(
+      `Bonjour eGame Bénin,\n\n` +
+      `Je suis ${pseudo}.\n` +
+      `Je viens d'effectuer le paiement pour le tournoi : ${payment.tournament_name}.\n` +
+      `Mon code de validation est : ${payment.validation_code}`
+    );
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
@@ -97,7 +114,6 @@ const PaymentHistory = () => {
 
                   {payment.status === 'Réussi' ? (
                     <div className="space-y-4">
-                      {/* Code d'accès au tournoi (ID Salle / MDP) */}
                       <div className="bg-violet-600/10 border border-violet-500/20 p-4 rounded-2xl">
                         <div className="flex items-center gap-2 mb-2 text-violet-400">
                           <Gamepad2 size={16} />
@@ -111,7 +127,6 @@ const PaymentHistory = () => {
                         </div>
                       </div>
 
-                      {/* Code de validation (Preuve de paiement) */}
                       <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
                         <div className="flex flex-col gap-1">
                           <span className="text-[10px] text-zinc-500 font-bold uppercase">Preuve de paiement</span>
@@ -125,6 +140,9 @@ const PaymentHistory = () => {
                   ) : (
                     <div className="p-4 bg-zinc-800/50 rounded-2xl text-center">
                       <p className="text-zinc-500 text-xs">Le code d'accès s'affichera ici une fois le paiement validé par l'admin.</p>
+                      <button onClick={() => handleSendWhatsApp(payment)} className="mt-4 w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-xl text-xs font-bold transition-all">
+                        <MessageSquare size={14} /> Envoyer ma preuve de paiement
+                      </button>
                     </div>
                   )}
                 </motion.div>
