@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
 import Logo from '@/components/Logo';
 import { motion } from 'framer-motion';
-import { LogIn, UserPlus, Search, Trophy, Globe, MapPin, CheckCircle2, Download } from 'lucide-react';
+import { LogIn, UserPlus, Search, Trophy, Globe, MapPin, Download, PlusCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -68,7 +68,7 @@ const Index = () => {
     return matchesSearch && matchesType;
   });
 
-  const featuredTournament = tournaments[0];
+  const featuredTournament = filteredTournaments[0];
 
   if (loading) {
     return (
@@ -123,14 +123,14 @@ const Index = () => {
           </h1>
         </header>
 
-        {featuredTournament && (
+        {featuredTournament ? (
           <section className="mb-12">
             <motion.div 
               whileHover={{ scale: 1.01 }}
               onClick={() => navigate(`/tournament/${featuredTournament.id}`)}
               className="relative h-[300px] md:h-[400px] rounded-[2.5rem] overflow-hidden cursor-pointer group"
             >
-              <img src={featuredTournament.image_url || featuredTournament.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="" />
+              <img src={featuredTournament.image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="" />
               <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
               <div className="absolute bottom-8 left-8 right-8">
                 <div className="flex items-center gap-2 mb-3">
@@ -144,6 +144,11 @@ const Index = () => {
               </div>
             </motion.div>
           </section>
+        ) : (
+          <div className="mb-12 p-12 bg-zinc-900/30 rounded-[2.5rem] border border-zinc-800 border-dashed text-center">
+            <Trophy size={48} className="mx-auto text-zinc-800 mb-4" />
+            <p className="text-zinc-500">Aucun tournoi à la une pour le moment.</p>
+          </div>
         )}
 
         <section className="mb-16">
@@ -165,7 +170,7 @@ const Index = () => {
                 id={t.id}
                 title={t.title}
                 game={t.game}
-                image={t.image_url || t.image}
+                image={t.image_url}
                 date={new Date(t.start_date || Date.now()).toLocaleDateString('fr-FR')}
                 participants={`${participantCounts[t.id] || 0}/${t.max_participants || 40}`}
                 entryFee={t.entry_fee.toString()}
@@ -173,8 +178,10 @@ const Index = () => {
               />
             ))}
             {filteredTournaments.length === 0 && (
-              <div className="col-span-full text-center py-20 text-zinc-500">
-                Aucun tournoi trouvé dans la base de données.
+              <div className="col-span-full text-center py-20 bg-zinc-900/20 rounded-[2.5rem] border border-zinc-800 border-dashed">
+                <PlusCircle size={48} className="mx-auto text-zinc-800 mb-4" />
+                <p className="text-zinc-500 font-bold">Aucun tournoi trouvé.</p>
+                <p className="text-zinc-600 text-sm mt-2">Ajoutez des tournois dans votre table Supabase pour les voir ici.</p>
               </div>
             )}
           </div>
