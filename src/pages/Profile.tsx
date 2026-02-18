@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Phone, Mail, MapPin, History, MessageSquare, Zap } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Mail, History, Zap, PlusCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showError, showSuccess } from '@/utils/toast';
@@ -26,7 +26,6 @@ const Profile = () => {
         
         setUser(user);
         
-        // Récupérer le nombre de tournois réussis
         const { count } = await supabase
           .from('payments')
           .select('*', { count: 'exact', head: true })
@@ -34,27 +33,6 @@ const Profile = () => {
           .eq('status', 'Réussi');
         
         setTournamentCount(count || 0);
-
-        // Souscription aux changements
-        const channel = supabase
-          .channel(`profile-payments-${user.id}`)
-          .on(
-            'postgres_changes',
-            { event: '*', schema: 'public', table: 'payments', filter: `user_id=eq.${user.id}` },
-            async () => {
-              const { count: newCount } = await supabase
-                .from('payments')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', user.id)
-                .eq('status', 'Réussi');
-              setTournamentCount(newCount || 0);
-            }
-          )
-          .subscribe();
-
-        return () => {
-          supabase.removeChannel(channel);
-        };
       } catch (err) {
         console.error(err);
         navigate('/auth');
@@ -85,7 +63,6 @@ const Profile = () => {
 
   const level = Math.floor(tournamentCount / 5) + 1;
   const progress = (tournamentCount % 5) * 20;
-
   const avatarUrl = user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
   const fullName = user.user_metadata?.full_name || user.email?.split('@')[0];
 
@@ -124,20 +101,17 @@ const Profile = () => {
           <Progress value={progress} className="h-3 bg-zinc-800" />
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-12">
-          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl text-center">
-            <Trophy className="text-violet-500 mx-auto mb-2" size={18} />
-            <p className="text-2xl font-black">{tournamentCount}</p>
-            <p className="text-zinc-500 text-xs uppercase font-bold">Tournois</p>
-          </div>
-          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl text-center">
-            <Star className="text-violet-500 mx-auto mb-2" size={18} />
-            <p className="text-2xl font-black">0</p>
-            <p className="text-zinc-500 text-xs uppercase font-bold">Victoires</p>
-          </div>
-        </div>
-
         <div className="space-y-4">
+          {/* Bouton Admin pour ajouter un tournoi */}
+          <Link to="/add-tournament" className="block">
+            <button className="w-full flex items-center justify-between p-5 bg-violet-600/10 hover:bg-violet-600/20 rounded-2xl border border-violet-500/30 transition-all text-violet-400">
+              <div className="flex items-center gap-4">
+                <PlusCircle size={20} />
+                <span className="font-bold">Ajouter un tournoi (Admin)</span>
+              </div>
+            </button>
+          </Link>
+
           <Link to="/payments" className="block">
             <button className="w-full flex items-center justify-between p-5 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-zinc-800 transition-all">
               <div className="flex items-center gap-4">
