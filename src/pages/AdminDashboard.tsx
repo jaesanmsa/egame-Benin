@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, Plus, Trash2, CheckCircle, Gamepad2, ArrowLeft } from 'lucide-react';
+import { Trophy, Plus, Trash2, CheckCircle, Gamepad2 } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const AdminDashboard = () => {
@@ -16,12 +16,10 @@ const AdminDashboard = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   
-  // Formulaire Nouveau Tournoi
   const [newTournament, setNewTournament] = useState({
     id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online'
   });
 
-  // Formulaire Leaderboard
   const [newLeader, setNewLeader] = useState({
     username: '', game_id: '', wins: 0, avatar_url: ''
   });
@@ -65,21 +63,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const finishTournament = async (id: string) => {
-    const winner = prompt("Pseudo du gagnant ?");
-    const prize = prompt("Cash prize distribué ?");
-    if (!winner || !prize) return;
-
-    const { error } = await supabase.from('tournaments').update({
-      status: 'finished',
-      winner_name: winner,
-      prize_pool: prize
-    }).eq('id', id);
-
-    if (error) showError(error.message);
-    else showSuccess("Tournoi terminé !");
-  };
-
   if (loading) return null;
   if (!isAdmin) return null;
 
@@ -87,72 +70,35 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-4xl mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-black">Panneau Admin</h1>
-          <div className="bg-violet-600/20 text-violet-500 px-4 py-1 rounded-full text-xs font-bold uppercase">Mode Maître</div>
-        </div>
-
-        <Tabs defaultValue="tournaments" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-zinc-900 rounded-xl p-1 mb-8">
-            <TabsTrigger value="tournaments" className="rounded-lg data-[state=active]:bg-violet-600">Tournois</TabsTrigger>
-            <TabsTrigger value="leaderboard" className="rounded-lg data-[state=active]:bg-violet-600">Leaderboard</TabsTrigger>
+        <h1 className="text-3xl font-black mb-8">Panneau Admin (egamebenin)</h1>
+        <Tabs defaultValue="tournaments">
+          <TabsList className="grid w-full grid-cols-2 bg-zinc-900 mb-8">
+            <TabsTrigger value="tournaments">Tournois</TabsTrigger>
+            <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="tournaments" className="space-y-8">
+          <TabsContent value="tournaments" className="space-y-6">
             <form onSubmit={handleAddTournament} className="bg-zinc-900 p-6 rounded-3xl border border-zinc-800 space-y-4">
-              <h2 className="text-xl font-bold flex items-center gap-2"><Plus size={20} /> Nouveau Tournoi</h2>
+              <h2 className="text-xl font-bold">Nouveau Tournoi</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>ID Unique (ex: blur-01)</Label>
-                  <Input value={newTournament.id} onChange={e => setNewTournament({...newTournament, id: e.target.value})} className="bg-zinc-800 border-zinc-700" required />
-                </div>
-                <div className="space-y-2">
-                  <Label>Titre</Label>
-                  <Input value={newTournament.title} onChange={e => setNewTournament({...newTournament, title: e.target.value})} className="bg-zinc-800 border-zinc-700" required />
-                </div>
-                <div className="space-y-2">
-                  <Label>Jeu</Label>
-                  <Input value={newTournament.game} onChange={e => setNewTournament({...newTournament, game: e.target.value})} className="bg-zinc-800 border-zinc-700" required />
-                </div>
-                <div className="space-y-2">
-                  <Label>Image URL</Label>
-                  <Input value={newTournament.image_url} onChange={e => setNewTournament({...newTournament, image_url: e.target.value})} className="bg-zinc-800 border-zinc-700" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Frais d'entrée (FCFA)</Label>
-                  <Input type="number" value={newTournament.entry_fee} onChange={e => setNewTournament({...newTournament, entry_fee: parseInt(e.target.value)})} className="bg-zinc-800 border-zinc-700" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Cash Prize</Label>
-                  <Input value={newTournament.prize_pool} onChange={e => setNewTournament({...newTournament, prize_pool: e.target.value})} className="bg-zinc-800 border-zinc-700" />
-                </div>
+                <Input placeholder="ID (ex: blur-01)" value={newTournament.id} onChange={e => setNewTournament({...newTournament, id: e.target.value})} className="bg-zinc-800" required />
+                <Input placeholder="Titre" value={newTournament.title} onChange={e => setNewTournament({...newTournament, title: e.target.value})} className="bg-zinc-800" required />
+                <Input placeholder="Jeu" value={newTournament.game} onChange={e => setNewTournament({...newTournament, game: e.target.value})} className="bg-zinc-800" required />
+                <Input placeholder="Image URL" value={newTournament.image_url} onChange={e => setNewTournament({...newTournament, image_url: e.target.value})} className="bg-zinc-800" />
+                <Input type="number" placeholder="Frais" value={newTournament.entry_fee} onChange={e => setNewTournament({...newTournament, entry_fee: parseInt(e.target.value)})} className="bg-zinc-800" />
+                <Input placeholder="Cash Prize" value={newTournament.prize_pool} onChange={e => setNewTournament({...newTournament, prize_pool: e.target.value})} className="bg-zinc-800" />
               </div>
-              <Button type="submit" className="w-full bg-violet-600 hover:bg-violet-700 font-bold py-6 rounded-xl">Créer le tournoi</Button>
+              <Button type="submit" className="w-full bg-violet-600">Créer</Button>
             </form>
           </TabsContent>
-
-          <TabsContent value="leaderboard" className="space-y-8">
+          <TabsContent value="leaderboard">
             <form onSubmit={handleAddLeader} className="bg-zinc-900 p-6 rounded-3xl border border-zinc-800 space-y-4">
-              <h2 className="text-xl font-bold flex items-center gap-2"><Trophy size={20} /> Gérer le Classement</h2>
+              <h2 className="text-xl font-bold">Mettre à jour le Classement</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Pseudo du joueur</Label>
-                  <Input value={newLeader.username} onChange={e => setNewLeader({...newLeader, username: e.target.value})} className="bg-zinc-800 border-zinc-700" required />
-                </div>
-                <div className="space-y-2">
-                  <Label>ID du Jeu (ex: blur, cod-mobile)</Label>
-                  <Input value={newLeader.game_id} onChange={e => setNewLeader({...newLeader, game_id: e.target.value})} className="bg-zinc-800 border-zinc-700" required />
-                </div>
-                <div className="space-y-2">
-                  <Label>Nombre de victoires</Label>
-                  <Input type="number" value={newLeader.wins} onChange={e => setNewLeader({...newLeader, wins: parseInt(e.target.value)})} className="bg-zinc-800 border-zinc-700" required />
-                </div>
-                <div className="space-y-2">
-                  <Label>Avatar URL (Optionnel)</Label>
-                  <Input value={newLeader.avatar_url} onChange={e => setNewLeader({...newLeader, avatar_url: e.target.value})} className="bg-zinc-800 border-zinc-700" />
-                </div>
+                <Input placeholder="Pseudo" value={newLeader.username} onChange={e => setNewLeader({...newLeader, username: e.target.value})} className="bg-zinc-800" required />
+                <Input placeholder="ID Jeu (ex: blur, cod-mobile)" value={newLeader.game_id} onChange={e => setNewLeader({...newLeader, game_id: e.target.value})} className="bg-zinc-800" required />
+                <Input type="number" placeholder="Victoires" value={newLeader.wins} onChange={e => setNewLeader({...newLeader, wins: parseInt(e.target.value)})} className="bg-zinc-800" required />
               </div>
-              <Button type="submit" className="w-full bg-violet-600 hover:bg-violet-700 font-bold py-6 rounded-xl">Mettre à jour le joueur</Button>
+              <Button type="submit" className="w-full bg-violet-600">Mettre à jour</Button>
             </form>
           </TabsContent>
         </Tabs>
