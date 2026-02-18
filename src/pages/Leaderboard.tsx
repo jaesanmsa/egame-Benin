@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, ArrowLeft, Gamepad2, ChevronRight } from 'lucide-react';
+import { Trophy, ArrowLeft, Gamepad2, ChevronRight, User, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
 
 const GAMES = [
   { id: 'pubg-mobile', name: "PUBG Mobile", icon: "🔫" },
@@ -17,6 +18,30 @@ const GAMES = [
 const Leaderboard = () => {
   const navigate = useNavigate();
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
+  const [rankings, setRankings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (selectedGame) {
+      fetchRankings(selectedGame);
+    }
+  }, [selectedGame]);
+
+  const fetchRankings = async (gameId: string) => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('leaderboard')
+      .select('*')
+      .eq('game_id', gameId)
+      .order('wins', { ascending: false });
+    
+    if (!error && data) {
+      setRankings(data);
+    } else {
+      setRankings([]);
+    }
+    setLoading(false);
+  };
 
   const handleBack = () => {
     if (selectedGame) {
@@ -76,11 +101,38 @@ const Leaderboard = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="py-12 text-center bg-zinc-900/50 border border-zinc-800 border-dashed rounded-[2.5rem]"
+              className="space-y-4"
             >
-              <Gamepad2 size={48} className="mx-auto text-zinc-700 mb-4" />
-              <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs">Classement à venir</p>
-              <p className="text-zinc-600 text-xs mt-2">Soyez le premier à gagner un tournoi !</p>
+              {loading ? (
+                <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>
+              ) : rankings.length > 0 ? (
+                rankings.map((player, index) => (
+                  <div key={player.id} className="flex items-center justify-between p-5 bg-zinc-900 border border-zinc-800 rounded-2xl">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${index === 0 ? 'bg-yellow-500 text-black' : index === 1 ? 'bg-zinc-300 text-black' : index === 2 ? 'bg-orange-600 text-white' : 'bg-zinc-800 text-zinc-500'}`}>
+                        {index + 1}
+                      </div>
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-zinc-800 border border-zinc-700">
+                        <img src={player.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${player.username}`} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <p className="font-bold">{player.username}</p>
+                        <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Joueur Pro</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 bg-violet-600/10 px-4 py-2 rounded-xl border border-violet-500/20">
+                      <Star size={14} className="text-violet-500" />
+                      <span className="font-black text-violet-500">{player.wins} Victoires</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-12 text-center bg-zinc-900/50 border border-zinc-800 border-dashed rounded-[2.5rem]">
+                  <Gamepad2 size={48} className="mx-auto text-zinc-700 mb-4" />
+                  <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs">Classement à venir</p>
+                  <p className="text-zinc-600 text-xs mt-2">Soyez le premier à gagner un tournoi !</p>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

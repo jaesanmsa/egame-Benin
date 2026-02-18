@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
+import FinishedTournamentCard from '@/components/FinishedTournamentCard';
 import Logo from '@/components/Logo';
 import { motion } from 'framer-motion';
-import { LogIn, UserPlus, Search, Trophy, Globe, MapPin, Download, PlusCircle } from 'lucide-react';
+import { Search, Trophy, Globe, MapPin, PlusCircle, History } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -14,29 +15,40 @@ const Index = () => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [tournaments, setTournaments] = useState<any[]>([]);
+  const [finishedTournaments, setFinishedTournaments] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const navigate = useNavigate();
 
-  const fetchTournaments = async () => {
-    const { data, error } = await supabase
+  const fetchData = async () => {
+    // Tournois actifs
+    const { data: activeData } = await supabase
       .from('tournaments')
       .select('*')
+      .eq('status', 'active')
       .order('created_at', { ascending: false });
     
-    if (!error && data) {
-      setTournaments(data);
-    }
+    if (activeData) setTournaments(activeData);
+
+    // Tournois terminés (limité à 3)
+    const { data: finishedData } = await supabase
+      .from('tournaments')
+      .select('*')
+      .eq('status', 'finished')
+      .order('created_at', { ascending: false })
+      .limit(3);
+    
+    if (finishedData) setFinishedTournaments(finishedData);
   };
 
   const fetchParticipantCounts = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('payments')
       .select('tournament_id')
       .eq('status', 'Réussi');
     
-    if (!error && data) {
+    if (data) {
       const counts: Record<string, number> = {};
       data.forEach((p: any) => {
         counts[p.tournament_id] = (counts[p.tournament_id] || 0) + 1;
@@ -55,7 +67,7 @@ const Index = () => {
       setSession(session);
     });
 
-    fetchTournaments();
+    fetchData();
     fetchParticipantCounts();
 
     return () => subscription.unsubscribe();
@@ -144,12 +156,7 @@ const Index = () => {
               </div>
             </motion.div>
           </section>
-        ) : (
-          <div className="mb-12 p-12 bg-zinc-900/30 rounded-[2.5rem] border border-zinc-800 border-dashed text-center">
-            <Trophy size={48} className="mx-auto text-zinc-800 mb-4" />
-            <p className="text-zinc-500">Aucun tournoi à la une pour le moment.</p>
-          </div>
-        )}
+        ) : null}
 
         <section className="mb-16">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -180,12 +187,40 @@ const Index = () => {
             {filteredTournaments.length === 0 && (
               <div className="col-span-full text-center py-20 bg-zinc-900/20 rounded-[2.5rem] border border-zinc-800 border-dashed">
                 <PlusCircle size={48} className="mx-auto text-zinc-800 mb-4" />
-                <p className="text-zinc-500 font-bold">Aucun tournoi trouvé.</p>
-                <p className="text-zinc-600 text-sm mt-2">Ajoutez des tournois dans votre table Supabase pour les voir ici.</p>
+                <p className="text-zinc-500 font-bold">Aucun tournoi actif.</p>
               </div>
             )}
           </div>
         </section>
+
+        {/* Section Tournois Terminés */}
+        {finishedTournaments.length > 0 && (
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-800">
+                <History size={20} className="text-zinc-500" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black">Tournois Terminés</h2>
+                <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">Les légendes de l'arène</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {finishedTournaments.map((t) => (
+                <FinishedTournamentCard 
+                  key={t.id}
+                  title={t.title}
+                  game={t.game}
+                  image={t.image_url}
+                  prizePool={t.prize_pool}
+                  winnerName={t.winner_name || "Inconnu"}
+                  winnerAvatar={t.winner_avatar}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );
