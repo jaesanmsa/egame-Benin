@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Users, Trophy, Shield, Smartphone, CheckCircle2, ArrowLeft, Lock, X, Share2, Info, ListChecks } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, ListChecks } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -13,7 +13,7 @@ const TournamentDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showPayment, setShowPayment] = useState(false);
-  const [paymentStep, setPaymentStep] = useState<'select' | 'processing' | 'success'>('select');
+  const [paymentStep, setPaymentStep] = useState<'select' | 'processing'>('select');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const today = new Date().toLocaleDateString('fr-FR', {
@@ -37,6 +37,15 @@ const TournamentDetails = () => {
     ];
 
     switch(id) {
+      case 'pubg-mobile': return { 
+        title: "PUBG Mobile: Battle of Benin", 
+        game: "PUBG Mobile", 
+        entryFee: "1500", 
+        prizePool: "30.000 FCFA", 
+        image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
+        paymentLink: "https://me.fedapay.com/mpservices",
+        rules: [...baseRules, "Mode Squad ou Solo selon l'annonce.", "Émulateurs interdits."]
+      };
       case 'cod-mw4': return { 
         title: "Bénin Pro League: COD MW4 (Cotonou)", 
         game: "COD MW4", 
@@ -93,26 +102,21 @@ const TournamentDetails = () => {
       text: `Rejoins-moi sur eGame Bénin pour le tournoi ${tournament.game} !`,
       url: window.location.href,
     };
-
     try {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        showSuccess("Lien copié dans le presse-papier !");
+        showSuccess("Lien copié !");
       }
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err) { console.error(err); }
   };
 
   const handleFedaPay = async () => {
     setPaymentStep('processing');
-    
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Veuillez vous connecter");
-
       const { error } = await supabase.from('payments').insert({
         user_id: user.id,
         tournament_id: id,
@@ -120,11 +124,8 @@ const TournamentDetails = () => {
         amount: tournament.entryFee,
         status: 'En attente'
       });
-
       if (error) throw error;
-
       window.location.href = tournament.paymentLink;
-      
     } catch (err: any) {
       showError("Erreur : " + err.message);
       setPaymentStep('select');
@@ -134,7 +135,6 @@ const TournamentDetails = () => {
   return (
     <div className="min-h-screen bg-zinc-950 text-white pb-24">
       <Navbar />
-      
       <div className="relative h-[40vh] w-full">
         <img src={tournament.image} className="w-full h-full object-cover opacity-50" alt="" />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent" />
@@ -194,7 +194,6 @@ const TournamentDetails = () => {
           )}
         </motion.div>
 
-        {/* Section Règlement */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-zinc-900/30 border border-zinc-800 rounded-[2rem] p-8">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-500">
@@ -213,24 +212,13 @@ const TournamentDetails = () => {
         </motion.div>
       </main>
 
-      <footer className="p-8 text-center text-zinc-600 text-xs font-bold uppercase tracking-widest">
-        eGame Benin @2026 • v1.0
-      </footer>
-
       <AnimatePresence>
         {showPayment && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPayment(false)} className="absolute inset-0 bg-zinc-950/90 backdrop-blur-sm" />
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-zinc-900 border border-zinc-800 w-full max-w-[340px] rounded-[2rem] p-6">
-              
-              <button 
-                onClick={() => setShowPayment(false)}
-                className="absolute top-4 right-4 p-1.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-full transition-all z-50"
-              >
-                <X size={20} />
-              </button>
-
-              {paymentStep === 'select' && (
+              <button onClick={() => setShowPayment(false)} className="absolute top-4 right-4 p-1.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-full transition-all z-50"><X size={20} /></button>
+              {paymentStep === 'select' ? (
                 <div className="space-y-5">
                   <div className="text-center">
                     <h2 className="text-lg font-bold mb-1">Paiement Local</h2>
@@ -246,12 +234,10 @@ const TournamentDetails = () => {
                     </div>
                   </button>
                 </div>
-              )}
-              {paymentStep === 'processing' && (
+              ) : (
                 <div className="py-8 text-center space-y-4">
                   <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
                   <h2 className="text-lg font-bold">Redirection...</h2>
-                  <p className="text-zinc-400 text-xs">Veuillez patienter un instant.</p>
                 </div>
               )}
             </motion.div>

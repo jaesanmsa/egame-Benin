@@ -70,6 +70,16 @@ const Index = () => {
 
   const tournaments = [
     {
+      id: "pubg-mobile",
+      title: "PUBG Mobile: Battle of Benin",
+      game: "PUBG Mobile",
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
+      date: today,
+      participants: `${participantCounts['pubg-mobile'] || 0}/40`,
+      entryFee: "1500",
+      type: "Online" as const
+    },
+    {
       id: "cod-mw4",
       title: "Bénin Pro League: COD MW4 (Cotonou)",
       game: "COD MW4",
@@ -111,12 +121,6 @@ const Index = () => {
     }
   ];
 
-  const pastTournaments = [
-    { id: "p1", title: "FIFA 24: Cotonou Masters", winner: "BeninGhost", prize: "50.000 FCFA" },
-    { id: "p2", title: "PUBG Mobile: Squad War", winner: "EliteTeam", prize: "40.000 FCFA" },
-    { id: "p3", title: "Free Fire: Solo King", winner: "ShadowNinja", prize: "25.000 FCFA" }
-  ];
-
   const filteredTournaments = tournaments.filter(t => {
     const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          t.game.toLowerCase().includes(searchQuery.toLowerCase());
@@ -138,38 +142,16 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-zinc-950 text-white flex flex-col pt-12">
         <main className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-          <motion.div 
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="mb-8"
-          >
+          <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="mb-8">
             <Logo size="lg" showText={false} />
           </motion.div>
-
-          <motion.h1 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl font-black mb-4 leading-tight"
-          >
+          <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="text-4xl font-black mb-4 leading-tight">
             eGame <span className="text-violet-500">Bénin</span>
           </motion.h1>
-
-          <motion.p 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-zinc-400 text-lg mb-12 max-w-xs"
-          >
+          <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="text-zinc-400 text-lg mb-12 max-w-xs">
             L'arène ultime pour les gamers béninois. Relevez le défi et gagnez des prix.
           </motion.p>
-
-          <motion.div 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="w-full max-w-xs space-y-4"
-          >
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="w-full max-w-xs space-y-4">
             <Link to="/auth" className="block">
               <button className="w-full bg-violet-600 hover:bg-violet-700 text-white py-5 rounded-2xl font-bold text-lg shadow-xl shadow-violet-500/20 flex items-center justify-center gap-3 transition-all active:scale-95">
                 <LogIn size={22} />
@@ -183,23 +165,7 @@ const Index = () => {
               </button>
             </Link>
           </motion.div>
-
-          <div className="mt-16 grid grid-cols-3 gap-8 opacity-30">
-            <div className="flex flex-col items-center gap-2">
-              <Zap size={24} />
-              <span className="text-[10px] font-bold uppercase">Rapide</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <Target size={24} />
-              <span className="text-[10px] font-bold uppercase">Précis</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <Star size={24} />
-              <span className="text-[10px] font-bold uppercase">Élite</span>
-            </div>
-          </div>
         </main>
-        
         <footer className="p-8 text-center text-zinc-600 text-[10px] font-bold uppercase tracking-widest">
           eGame Benin @2026 • v1.0
         </footer>
@@ -214,10 +180,6 @@ const Index = () => {
       <Navbar />
       
       <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="flex justify-center mb-8 md:hidden">
-          <Logo size="sm" />
-        </div>
-
         <header className="mb-10">
           <p className="text-violet-500 font-bold text-sm uppercase tracking-widest mb-1">Bienvenue, {userName}</p>
           <h1 className="text-3xl font-black leading-tight">
@@ -226,7 +188,6 @@ const Index = () => {
           </h1>
         </header>
 
-        {/* Featured Tournament Hero */}
         <section className="mb-12">
           <motion.div 
             whileHover={{ scale: 1.01 }}
@@ -238,7 +199,6 @@ const Index = () => {
             <div className="absolute bottom-8 left-8 right-8">
               <div className="flex items-center gap-2 mb-3">
                 <span className="bg-violet-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">À la une</span>
-                <span className="bg-white/10 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Nouveau</span>
               </div>
               <h2 className="text-2xl md:text-4xl font-black mb-2">{featuredTournament.title}</h2>
               <div className="flex items-center gap-4 text-zinc-300 text-sm">
@@ -252,53 +212,23 @@ const Index = () => {
         <section className="mb-16">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
-              <button 
-                onClick={() => setFilterType('All')}
-                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${filterType === 'All' ? 'bg-violet-600 text-white' : 'bg-zinc-900 text-zinc-500 hover:text-white'}`}
-              >
-                Tous
-              </button>
-              <button 
-                onClick={() => setFilterType('Online')}
-                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${filterType === 'Online' ? 'bg-cyan-600 text-white' : 'bg-zinc-900 text-zinc-500 hover:text-white'}`}
-              >
-                <Globe size={16} />
-                En ligne
-              </button>
-              <button 
-                onClick={() => setFilterType('Presentiel')}
-                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${filterType === 'Presentiel' ? 'bg-orange-600 text-white' : 'bg-zinc-900 text-zinc-500 hover:text-white'}`}
-              >
-                <MapPin size={16} />
-                Présentiel
-              </button>
+              <button onClick={() => setFilterType('All')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${filterType === 'All' ? 'bg-violet-600 text-white' : 'bg-zinc-900 text-zinc-500 hover:text-white'}`}>Tous</button>
+              <button onClick={() => setFilterType('Online')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${filterType === 'Online' ? 'bg-cyan-600 text-white' : 'bg-zinc-900 text-zinc-500 hover:text-white'}`}><Globe size={16} /> En ligne</button>
+              <button onClick={() => setFilterType('Presentiel')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${filterType === 'Presentiel' ? 'bg-orange-600 text-white' : 'bg-zinc-900 text-zinc-500 hover:text-white'}`}><MapPin size={16} /> Présentiel</button>
             </div>
-
             <div className="relative w-full md:w-72">
               <Search className="absolute left-3 top-3 text-zinc-500" size={18} />
-              <Input 
-                placeholder="Rechercher un tournoi..." 
-                className="pl-10 bg-zinc-900 border-zinc-800 rounded-xl focus:ring-violet-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              <Input placeholder="Rechercher un tournoi..." className="pl-10 bg-zinc-900 border-zinc-800 rounded-xl focus:ring-violet-500" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div>
           </div>
           
-          {filteredTournaments.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTournaments.map((t) => (
-                <TournamentCard key={t.id} {...t} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20 bg-zinc-900/30 rounded-[2rem] border border-zinc-800 border-dashed">
-              <p className="text-zinc-500">Aucun tournoi ne correspond à votre recherche.</p>
-            </div>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredTournaments.map((t) => (
+              <TournamentCard key={t.id} {...t} />
+            ))}
+          </div>
         </section>
 
-        {/* Past Tournaments Section */}
         <section className="mb-16">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-zinc-500">
@@ -306,27 +236,8 @@ const Index = () => {
             </div>
             <h2 className="text-xl font-bold">Tournois Terminés</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {pastTournaments.map((pt) => (
-              <div key={pt.id} className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-3xl">
-                <h3 className="font-bold text-sm mb-4 text-zinc-300">{pt.title}</h3>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-violet-600/20 flex items-center justify-center text-violet-500">
-                      <Trophy size={14} />
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-zinc-500 uppercase font-bold">Gagnant</p>
-                      <p className="text-xs font-black">{pt.winner}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] text-zinc-500 uppercase font-bold">Prix</p>
-                    <p className="text-xs font-black text-green-500">{pt.prize}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="text-center py-12 bg-zinc-900/30 rounded-[2rem] border border-zinc-800 border-dashed">
+            <p className="text-zinc-500 text-sm">Les résultats des tournois s'afficheront ici prochainement.</p>
           </div>
         </section>
       </main>
@@ -336,14 +247,9 @@ const Index = () => {
         <div className="flex items-center gap-8 text-zinc-500 text-xs font-bold uppercase tracking-widest">
           <Link to="/contact" className="hover:text-white transition-colors">Aide</Link>
           <Link to="/leaderboard" className="hover:text-white transition-colors">Classement</Link>
-          <Link to="/download-logo" className="flex items-center gap-2 hover:text-white transition-colors">
-            <Download size={14} />
-            Logo
-          </Link>
+          <Link to="/download-logo" className="flex items-center gap-2 hover:text-white transition-colors"><Download size={14} /> Logo</Link>
         </div>
-        <p className="text-zinc-700 text-[10px] font-bold uppercase tracking-widest">
-          eGame Benin @2026 • v1.0
-        </p>
+        <p className="text-zinc-700 text-[10px] font-bold uppercase tracking-widest">eGame Benin @2026 • v1.0</p>
       </footer>
     </div>
   );
