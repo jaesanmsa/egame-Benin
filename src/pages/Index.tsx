@@ -22,20 +22,19 @@ const Index = () => {
   const navigate = useNavigate();
 
   const fetchData = async () => {
-    // On récupère tous les tournois sans filtrer par status pour s'adapter à ta table
+    // On récupère tous les tournois
     const { data: allData } = await supabase
       .from('tournaments')
       .select('*')
-      .order('id', { ascending: false });
+      .order('created_at', { ascending: false });
     
     if (allData) {
-      // Si tu n'as pas de colonne status, on met tout dans les tournois actifs
-      // Si tu en as une, on sépare
-      const active = allData.filter(t => !t.status || t.status === 'active');
+      // Séparation Actifs / Terminés
+      const active = allData.filter(t => t.status === 'active');
       const finished = allData.filter(t => t.status === 'finished');
       
       setTournaments(active);
-      setFinishedTournaments(finished.slice(0, 3));
+      setFinishedTournaments(finished);
     }
   };
 
