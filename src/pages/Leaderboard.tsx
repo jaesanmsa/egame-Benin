@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, ArrowLeft, Gamepad2, ChevronRight, User, Star } from 'lucide-react';
+import { Trophy, ArrowLeft, Gamepad2, ChevronRight, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
@@ -29,6 +29,7 @@ const Leaderboard = () => {
 
   const fetchRankings = async (gameId: string) => {
     setLoading(true);
+    // On s'assure que gameId est traité comme du texte simple
     const { data, error } = await supabase
       .from('leaderboard')
       .select('*')
