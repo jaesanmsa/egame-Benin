@@ -10,6 +10,8 @@ import EditProfile from "./pages/EditProfile";
 import AvatarMaker from "./pages/AvatarMaker";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import AdminDashboard from "./pages/AdminDashboard";
 import PaymentHistory from "./pages/PaymentHistory";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Contact from "./pages/Contact";
@@ -29,6 +31,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/tournament/:id" element={<TournamentDetails />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-profile" element={<EditProfile />} />

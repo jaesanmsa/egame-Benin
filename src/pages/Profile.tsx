@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Mail, History, Zap } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Mail, History, Zap, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showError, showSuccess } from '@/utils/toast';
@@ -65,6 +65,7 @@ const Profile = () => {
   const progress = (tournamentCount % 5) * 20;
   const avatarUrl = user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
   const fullName = user.user_metadata?.full_name || user.email?.split('@')[0];
+  const isAdmin = user.email === 'egambenin@gmail.com';
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
@@ -102,6 +103,17 @@ const Profile = () => {
         </div>
 
         <div className="space-y-4">
+          {isAdmin && (
+            <Link to="/admin" className="block">
+              <button className="w-full flex items-center justify-between p-5 bg-violet-600/10 hover:bg-violet-600/20 rounded-2xl border border-violet-500/30 transition-all">
+                <div className="flex items-center gap-4">
+                  <ShieldCheck size={20} className="text-violet-500" />
+                  <span className="font-bold text-violet-500">Panneau d'Administration</span>
+                </div>
+              </button>
+            </Link>
+          )}
+
           <Link to="/payments" className="block">
             <button className="w-full flex items-center justify-between p-5 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-zinc-800 transition-all">
               <div className="flex items-center gap-4">
