@@ -29,7 +29,7 @@ const Leaderboard = () => {
 
   const fetchRankings = async (gameId: string) => {
     setLoading(true);
-    // On s'assure que gameId est traité comme du texte simple
+    // On interroge la table leaderboard en filtrant par game_id (qui est du texte)
     const { data, error } = await supabase
       .from('leaderboard')
       .select('*')
