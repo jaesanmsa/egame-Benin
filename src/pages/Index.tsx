@@ -22,24 +22,21 @@ const Index = () => {
   const navigate = useNavigate();
 
   const fetchData = async () => {
-    // Tournois actifs
-    const { data: activeData } = await supabase
+    // On récupère tous les tournois sans filtrer par status pour s'adapter à ta table
+    const { data: allData } = await supabase
       .from('tournaments')
       .select('*')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false });
+      .order('id', { ascending: false });
     
-    if (activeData) setTournaments(activeData);
-
-    // Tournois terminés (limité à 3)
-    const { data: finishedData } = await supabase
-      .from('tournaments')
-      .select('*')
-      .eq('status', 'finished')
-      .order('created_at', { ascending: false })
-      .limit(3);
-    
-    if (finishedData) setFinishedTournaments(finishedData);
+    if (allData) {
+      // Si tu n'as pas de colonne status, on met tout dans les tournois actifs
+      // Si tu en as une, on sépare
+      const active = allData.filter(t => !t.status || t.status === 'active');
+      const finished = allData.filter(t => t.status === 'finished');
+      
+      setTournaments(active);
+      setFinishedTournaments(finished.slice(0, 3));
+    }
   };
 
   const fetchParticipantCounts = async () => {

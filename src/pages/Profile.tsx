@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Mail, History, Zap, PlusCircle } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Mail, History, Zap } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showError, showSuccess } from '@/utils/toast';
@@ -102,16 +102,6 @@ const Profile = () => {
         </div>
 
         <div className="space-y-4">
-          {/* Bouton Admin pour ajouter un tournoi */}
-          <Link to="/add-tournament" className="block">
-            <button className="w-full flex items-center justify-between p-5 bg-violet-600/10 hover:bg-violet-600/20 rounded-2xl border border-violet-500/30 transition-all text-violet-400">
-              <div className="flex items-center gap-4">
-                <PlusCircle size={20} />
-                <span className="font-bold">Ajouter un tournoi (Admin)</span>
-              </div>
-            </button>
-          </Link>
-
           <Link to="/payments" className="block">
             <button className="w-full flex items-center justify-between p-5 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-zinc-800 transition-all">
               <div className="flex items-center gap-4">
