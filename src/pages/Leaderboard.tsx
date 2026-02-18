@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, ArrowLeft, Gamepad2, ChevronRight, Star } from 'lucide-react';
+import { Trophy, ArrowLeft, ChevronRight, Star, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
@@ -29,8 +29,20 @@ const Leaderboard = () => {
 
   const fetchRankings = async (gameId: string) => {
     setLoading(true);
-    const { data } = await supabase.from('leaderboard').select('*').eq('game_id', gameId).order('wins', { ascending: false });
-    setRankings(data || []);
+    const { data } = await supabase
+      .from('leaderboard')
+      .select('*')
+      .eq('game_id', gameId)
+      .order('rank', { ascending: true });
+    
+    // On crée un tableau de 5 places
+    const fullRankings = Array.from({ length: 5 }, (_, i) => {
+      const rank = i + 1;
+      const existing = data?.find(d => d.rank === rank);
+      return existing || { rank, username: '', wins: 0, avatar_url: '' };
+    });
+
+    setRankings(fullRankings);
     setLoading(false);
   };
 
@@ -59,16 +71,32 @@ const Leaderboard = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {loading ? <div className="text-center py-10">Chargement...</div> : rankings.length > 0 ? rankings.map((p, i) => (
-                <div key={i} className="flex items-center justify-between p-5 bg-zinc-900 border border-zinc-800 rounded-2xl">
-                  <div className="flex items-center gap-4">
-                    <span className="font-black text-violet-500">#{i+1}</span>
-                    <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username}`} className="w-10 h-10 rounded-full" alt="" />
-                    <span className="font-bold">{p.username}</span>
+              {loading ? (
+                <div className="text-center py-10">Chargement...</div>
+              ) : (
+                rankings.map((p) => (
+                  <div key={p.rank} className={`flex items-center justify-between p-5 rounded-2xl border ${p.username ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-900/20 border-zinc-800/50 border-dashed'}`}>
+                    <div className="flex items-center gap-4">
+                      <span className={`font-black text-lg ${p.rank === 1 ? 'text-yellow-500' : p.rank === 2 ? 'text-zinc-300' : p.rank === 3 ? 'text-orange-500' : 'text-zinc-600'}`}>
+                        #{p.rank}
+                      </span>
+                      <div className="w-12 h-12 rounded-full bg-zinc-800 border border-zinc-700 overflow-hidden flex items-center justify-center">
+                        {p.avatar_url ? (
+                          <img src={p.avatar_url} className="w-full h-full object-cover" alt="" />
+                        ) : (
+                          <User size={20} className="text-zinc-700" />
+                        )}
+                      </div>
+                      <span className={`font-bold ${p.username ? 'text-white' : 'text-zinc-700 italic'}`}>
+                        {p.username || "Place disponible"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-violet-500 font-black">
+                      <Star size={16} /> {p.wins}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-yellow-500 font-black"><Star size={16} /> {p.wins}</div>
-                </div>
-              )) : <div className="text-center py-10 text-zinc-500">Aucun joueur classé pour ce jeu.</div>}
+                ))
+              )}
             </div>
           )}
         </AnimatePresence>
