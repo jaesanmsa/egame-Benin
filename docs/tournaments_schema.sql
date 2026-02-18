@@ -1,5 +1,5 @@
--- Création de la table des tournois
-CREATE TABLE tournaments (
+-- Mise à jour de la table existante ou création
+CREATE TABLE IF NOT EXISTS tournaments (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
   game TEXT NOT NULL,
@@ -8,10 +8,10 @@ CREATE TABLE tournaments (
   entry_fee INTEGER DEFAULT 0,
   prize_pool TEXT,
   max_participants INTEGER DEFAULT 40,
-  type TEXT DEFAULT 'Online', -- 'Online' ou 'Presentiel'
-  rules TEXT[] -- Liste des règles
+  type TEXT DEFAULT 'Online',
+  rules TEXT[],
+  access_code TEXT -- LE CODE DU TOURNOI (ID Salle / MDP)
 );
 
--- Activer la lecture publique pour que tout le monde voit les tournois
-ALTER TABLE tournaments ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Lecture publique des tournois" ON tournaments FOR SELECT USING (true);
+-- Ajout de la colonne validation_code à la table payments
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS validation_code TEXT;

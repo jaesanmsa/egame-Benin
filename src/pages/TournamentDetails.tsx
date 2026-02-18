@@ -39,14 +39,8 @@ const TournamentDetails = () => {
     fetchTournament();
   }, [id]);
 
-  if (loading) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
-  if (!tournament) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">Tournoi non trouvé</div>;
-
-  const handleShare = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      showSuccess("Lien copié !");
-    } catch (err) { console.error(err); }
+  const generateCode = () => {
+    return `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
   };
 
   const handleFedaPay = async () => {
@@ -55,13 +49,18 @@ const TournamentDetails = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Veuillez vous connecter");
       
-      await supabase.from('payments').insert({
+      const validationCode = generateCode();
+      
+      const { error } = await supabase.from('payments').insert({
         user_id: user.id,
         tournament_id: id,
         tournament_name: tournament.title,
         amount: tournament.entry_fee,
-        status: 'En attente'
+        status: 'En attente',
+        validation_code: validationCode
       });
+
+      if (error) throw error;
       
       window.location.href = "https://me.fedapay.com/mpservices";
     } catch (err: any) {
@@ -70,6 +69,9 @@ const TournamentDetails = () => {
     }
   };
 
+  if (loading) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
+  if (!tournament) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">Tournoi non trouvé</div>;
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white pb-24">
       <Navbar />
@@ -77,7 +79,7 @@ const TournamentDetails = () => {
         <img src={tournament.image_url} className="w-full h-full object-cover opacity-50" alt="" />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent" />
         <div className="absolute top-6 left-6"><button onClick={() => navigate(-1)} className="p-3 bg-zinc-900/80 rounded-full"><ArrowLeft size={20} /></button></div>
-        <div className="absolute top-6 right-6"><button onClick={handleShare} className="p-3 bg-violet-600 rounded-full"><Share2 size={20} /></button></div>
+        <div className="absolute top-6 right-6"><button onClick={() => { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }} className="p-3 bg-violet-600 rounded-full"><Share2 size={20} /></button></div>
       </div>
 
       <main className="max-w-4xl mx-auto px-6 -mt-32 relative z-10">
@@ -125,21 +127,6 @@ const TournamentDetails = () => {
               <Lock size={20} /> Se connecter pour s'inscrire
             </Button>
           )}
-        </div>
-
-        <div className="bg-zinc-900/30 border border-zinc-800 rounded-[2rem] p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <ListChecks size={20} className="text-violet-500" />
-            <h2 className="text-xl font-bold">Règles du tournoi</h2>
-          </div>
-          <ul className="space-y-4">
-            {tournament.rules?.map((rule: string, index: number) => (
-              <li key={index} className="flex items-start gap-3 text-zinc-400 text-sm">
-                <div className="w-1.5 h-1.5 rounded-full bg-violet-500 mt-1.5 shrink-0" />
-                <span>{rule}</span>
-              </li>
-            )) || <li className="text-zinc-500">Aucune règle spécifique définie.</li>}
-          </ul>
         </div>
       </main>
 

@@ -7,7 +7,7 @@ import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, User, Phone, Save, Image as ImageIcon, MapPin, Sparkles, AtSign } from 'lucide-react';
+import { ArrowLeft, User, Phone, Save, MapPin, Sparkles, AtSign } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const EditProfile = () => {
@@ -30,12 +30,19 @@ const EditProfile = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        // On essaie de récupérer depuis la table profiles
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
         setProfile({
-          full_name: user.user_metadata?.full_name || '',
-          username: user.user_metadata?.username || '',
-          phone: user.user_metadata?.phone || '',
-          city: user.user_metadata?.city || '',
-          avatar_url: user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`
+          full_name: profileData?.full_name || user.user_metadata?.full_name || '',
+          username: profileData?.username || user.user_metadata?.username || '',
+          phone: profileData?.phone || user.user_metadata?.phone || '',
+          city: profileData?.city || user.user_metadata?.city || '',
+          avatar_url: profileData?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`
         });
       }
     } catch (error) {
@@ -49,23 +56,33 @@ const EditProfile = () => {
     e.preventDefault();
     setSaving(true);
     
-    const { error } = await supabase.auth.updateUser({
-      data: { 
-        full_name: profile.full_name,
-        username: profile.username,
-        phone: profile.phone,
-        city: profile.city,
-        avatar_url: profile.avatar_url
-      }
-    });
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Non connecté");
 
-    if (error) {
-      showError(error.message);
-    } else {
+      // 1. Mise à jour de l'Auth Metadata
+      await supabase.auth.updateUser({
+        data: { ...profile }
+      });
+
+      // 2. Mise à jour de la table profiles (pour que l'admin voit tout)
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          ...profile,
+          updated_at: new Date().toISOString()
+        });
+
+      if (profileError) throw profileError;
+
       showSuccess("Profil mis à jour !");
       navigate('/profile');
+    } catch (error: any) {
+      showError(error.message);
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   if (loading) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
@@ -81,18 +98,6 @@ const EditProfile = () => {
 
         <h1 className="text-3xl font-black mb-8">Modifier le profil</h1>
 
-        <div className="mb-12 flex flex-col items-center gap-6">
-          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-800 bg-zinc-900">
-            <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-          </div>
-          <Link to="/avatar-maker">
-            <Button variant="outline" className="rounded-xl border-violet-500/50 text-violet-400 hover:bg-violet-500/10 gap-2">
-              <Sparkles size={18} />
-              Créer un avatar Emoji
-            </Button>
-          </Link>
-        </div>
-
         <form onSubmit={handleSave} className="space-y-8">
           <div className="space-y-6 bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-800">
             <div className="space-y-2">
@@ -105,6 +110,7 @@ const EditProfile = () => {
                   onChange={(e) => setProfile({...profile, username: e.target.value})}
                   className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
                   placeholder="Ex: ProGamer229"
+                  required
                 />
               </div>
             </div>
@@ -119,6 +125,7 @@ const EditProfile = () => {
                   onChange={(e) => setProfile({...profile, full_name: e.target.value})}
                   className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
                   placeholder="Votre nom réel"
+                  required
                 />
               </div>
             </div>
@@ -134,20 +141,7 @@ const EditProfile = () => {
                   onChange={(e) => setProfile({...profile, phone: e.target.value})}
                   className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
                   placeholder="+229 01 XX XX XX XX"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="city">Ville</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 text-zinc-500" size={18} />
-                <Input 
-                  id="city" 
-                  value={profile.city}
-                  onChange={(e) => setProfile({...profile, city: e.target.value})}
-                  className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
-                  placeholder="Ex: Cotonou, Parakou..."
+                  required
                 />
               </div>
             </div>
