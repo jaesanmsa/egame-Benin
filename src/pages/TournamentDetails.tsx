@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, ListChecks } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -17,6 +17,7 @@ const TournamentDetails = () => {
   const [showPayment, setShowPayment] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing'>('select');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [participantCount, setParticipantCount] = useState(0);
 
   useEffect(() => {
     const fetchTournament = async () => {
@@ -32,19 +33,23 @@ const TournamentDetails = () => {
       setLoading(false);
     };
 
+    const fetchParticipants = async () => {
+      const { count } = await supabase
+        .from('payments')
+        .select('*', { count: 'exact', head: true })
+        .eq('tournament_id', id)
+        .eq('status', 'Réussi');
+      
+      setParticipantCount(count || 0);
+    };
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
     });
 
     fetchTournament();
+    fetchParticipants();
   }, [id]);
-
-  // Génère un code unique basé sur le temps et de l'aléatoire
-  const generateUniqueCode = () => {
-    const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
-    const timestamp = Date.now().toString().slice(-3);
-    return `EGB-${randomStr}${timestamp}`;
-  };
 
   const handleFedaPay = async () => {
     setPaymentStep('processing');
@@ -52,7 +57,7 @@ const TournamentDetails = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Veuillez vous connecter");
       
-      const validationCode = generateUniqueCode();
+      const validationCode = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
       
       const { error } = await supabase.from('payments').insert({
         user_id: user.id,
@@ -64,8 +69,6 @@ const TournamentDetails = () => {
       });
 
       if (error) throw error;
-      
-      // Redirection vers FedaPay
       window.location.href = "https://me.fedapay.com/mpservices";
     } catch (err: any) {
       showError(err.message);
@@ -90,8 +93,13 @@ const TournamentDetails = () => {
         <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 rounded-[2.5rem] p-8 shadow-2xl mb-8">
           <div className="flex justify-between items-start gap-4 mb-8">
             <div>
-              <span className="text-violet-500 font-bold uppercase tracking-widest text-sm">{tournament.game}</span>
-              <h1 className="text-3xl font-black mt-2">{tournament.title}</h1>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-violet-500 font-bold uppercase tracking-widest text-xs">{tournament.game}</span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${tournament.type === 'Online' ? 'bg-cyan-500/10 text-cyan-500' : 'bg-orange-500/10 text-orange-500'}`}>
+                  {tournament.type === 'Online' ? 'En ligne' : 'Présentiel'}
+                </span>
+              </div>
+              <h1 className="text-3xl font-black">{tournament.title}</h1>
             </div>
             <div className="bg-violet-600 px-6 py-3 rounded-2xl text-center">
               <p className="text-xs text-violet-200 uppercase font-bold">Cash Prize</p>
@@ -103,16 +111,16 @@ const TournamentDetails = () => {
             <div className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700/50 text-center">
               <Calendar className="text-violet-500 mx-auto mb-2" size={20} />
               <p className="text-zinc-400 text-xs">Date</p>
-              <p className="font-bold text-sm">{new Date(tournament.start_date).toLocaleDateString('fr-FR')}</p>
+              <p className="font-bold text-sm">{new Date(tournament.start_date || Date.now()).toLocaleDateString('fr-FR')}</p>
             </div>
             <div className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700/50 text-center">
               <Users className="text-violet-500 mx-auto mb-2" size={20} />
-              <p className="text-zinc-400 text-xs">Max Joueurs</p>
-              <p className="font-bold text-sm">{tournament.max_participants}</p>
+              <p className="text-zinc-400 text-xs">Participants</p>
+              <p className="font-bold text-sm">{participantCount} / {tournament.max_participants || 40}</p>
             </div>
             <div className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700/50 text-center">
-              <Trophy className="text-violet-500 mx-auto mb-2" size={20} />
-              <p className="text-zinc-400 text-xs">Type</p>
+              {tournament.type === 'Online' ? <Globe className="text-violet-500 mx-auto mb-2" size={20} /> : <MapPin className="text-violet-500 mx-auto mb-2" size={20} />}
+              <p className="text-zinc-400 text-xs">Lieu</p>
               <p className="font-bold text-sm">{tournament.type}</p>
             </div>
             <div className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700/50 text-center">
@@ -123,7 +131,7 @@ const TournamentDetails = () => {
           </div>
 
           {isLoggedIn ? (
-            <Button onClick={() => setShowPayment(true)} className="w-full py-6 rounded-2xl bg-violet-600 font-black">
+            <Button onClick={() => setShowPayment(true)} className="w-full py-6 rounded-2xl bg-violet-600 font-black text-lg shadow-xl shadow-violet-500/20">
               S'inscrire pour {tournament.entry_fee} FCFA
             </Button>
           ) : (

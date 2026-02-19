@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, Lock } from 'lucide-react';
+import { Users, Calendar, Lock, Globe, MapPin } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -55,7 +55,8 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent" />
-        <Badge className={`absolute top-4 right-4 ${type === 'Online' ? 'bg-cyan-500' : 'bg-orange-500'} text-white border-none`}>
+        <Badge className={`absolute top-4 right-4 ${type === 'Online' ? 'bg-cyan-500' : 'bg-orange-500'} text-white border-none flex items-center gap-1`}>
+          {type === 'Online' ? <Globe size={12} /> : <MapPin size={12} />}
           {type === 'Online' ? 'En ligne' : 'Présentiel'}
         </Badge>
       </div>
@@ -82,7 +83,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
                 <span className="text-zinc-500 text-xs">Entrée :</span>
                 <span className="text-white font-bold">{entryFee} FCFA</span>
               </div>
-              <button className="bg-violet-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
+              <button className="bg-violet-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors shadow-lg shadow-violet-500/10">
                 Participer
               </button>
             </>
