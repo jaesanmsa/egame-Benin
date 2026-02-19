@@ -7,9 +7,10 @@ import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/select";
+import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search, Settings, Edit3 } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const AdminDashboard = () => {
@@ -21,8 +22,10 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   
   const [newTournament, setNewTournament] = useState({
-    id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40
+    id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: ''
   });
+
+  const [editingTournament, setEditingTournament] = useState<any>(null);
 
   const [newLeader, setNewLeader] = useState({
     username: '', game_id: 'blur', wins: 0, avatar_url: '', rank: 1
@@ -49,11 +52,9 @@ const AdminDashboard = () => {
   };
 
   const fetchData = async () => {
-    // Tournois actifs
     const { data: tours } = await supabase.from('tournaments').select('*').eq('status', 'active');
     if (tours) setActiveTournaments(tours);
 
-    // Tous les paiements (Historique)
     const { data: pays } = await supabase
       .from('payments')
       .select('*, profiles(username, full_name)')
@@ -71,7 +72,26 @@ const AdminDashboard = () => {
     if (error) showError(error.message);
     else {
       showSuccess("Tournoi ajouté !");
-      setNewTournament({ id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40 });
+      setNewTournament({ id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '' });
+      fetchData();
+    }
+  };
+
+  const handleUpdateTournament = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { error } = await supabase
+      .from('tournaments')
+      .update({ 
+        access_code: editingTournament.access_code,
+        rules: editingTournament.rules,
+        prize_pool: editingTournament.prize_pool
+      })
+      .eq('id', editingTournament.id);
+    
+    if (error) showError(error.message);
+    else {
+      showSuccess("Tournoi mis à jour !");
+      setEditingTournament(null);
       fetchData();
     }
   };
@@ -109,7 +129,6 @@ const AdminDashboard = () => {
     else showSuccess(`Rang ${newLeader.rank} mis à jour !`);
   };
 
-  // Filtrage des paiements par recherche
   const filteredPayments = allPayments.filter(pay => {
     const query = searchQuery.toLowerCase();
     return (
@@ -130,11 +149,12 @@ const AdminDashboard = () => {
         <h1 className="text-3xl font-black mb-8">Gestion eGame Bénin</h1>
         
         <Tabs defaultValue="payments">
-          <TabsList className="grid w-full grid-cols-4 bg-zinc-900 mb-8 h-auto p-1">
-            <TabsTrigger value="payments" className="py-3">Transactions</TabsTrigger>
-            <TabsTrigger value="tournaments" className="py-3">Nouveau</TabsTrigger>
-            <TabsTrigger value="finish" className="py-3">Clôturer</TabsTrigger>
-            <TabsTrigger value="leaderboard" className="py-3">Top 5</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-5 bg-zinc-900 mb-8 h-auto p-1">
+            <TabsTrigger value="payments" className="py-3 text-[10px] md:text-sm">Transactions</TabsTrigger>
+            <TabsTrigger value="tournaments" className="py-3 text-[10px] md:text-sm">Nouveau</TabsTrigger>
+            <TabsTrigger value="edit" className="py-3 text-[10px] md:text-sm">Modifier</TabsTrigger>
+            <TabsTrigger value="finish" className="py-3 text-[10px] md:text-sm">Clôturer</TabsTrigger>
+            <TabsTrigger value="leaderboard" className="py-3 text-[10px] md:text-sm">Top 5</TabsTrigger>
           </TabsList>
 
           <TabsContent value="payments" className="space-y-6">
@@ -193,9 +213,69 @@ const AdminDashboard = () => {
                 <Input placeholder="Image URL" value={newTournament.image_url} onChange={e => setNewTournament({...newTournament, image_url: e.target.value})} className="bg-zinc-800" />
                 <Input type="number" placeholder="Frais d'entrée" value={newTournament.entry_fee} onChange={e => setNewTournament({...newTournament, entry_fee: parseInt(e.target.value)})} className="bg-zinc-800" />
                 <Input placeholder="Cash Prize" value={newTournament.prize_pool} onChange={e => setNewTournament({...newTournament, prize_pool: e.target.value})} className="bg-zinc-800" />
+                <div className="md:col-span-2">
+                  <Textarea placeholder="Règlement du tournoi..." value={newTournament.rules} onChange={e => setNewTournament({...newTournament, rules: e.target.value})} className="bg-zinc-800 min-h-[100px]" />
+                </div>
               </div>
               <Button type="submit" className="w-full bg-violet-600 py-6 font-bold">Créer le tournoi</Button>
             </form>
+          </TabsContent>
+
+          <TabsContent value="edit" className="space-y-6">
+            <div className="bg-zinc-900 p-6 rounded-3xl border border-zinc-800">
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><Edit3 className="text-cyan-500" /> Gérer les accès</h2>
+              
+              {!editingTournament ? (
+                <div className="grid gap-4">
+                  {activeTournaments.map(t => (
+                    <button 
+                      key={t.id} 
+                      onClick={() => setEditingTournament(t)}
+                      className="flex items-center justify-between p-4 bg-zinc-800 rounded-2xl border border-zinc-700 hover:border-violet-500 transition-all"
+                    >
+                      <div className="text-left">
+                        <p className="font-bold">{t.title}</p>
+                        <p className="text-xs text-zinc-500">Code actuel: {t.access_code || "Aucun"}</p>
+                      </div>
+                      <Settings size={18} className="text-zinc-500" />
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <form onSubmit={handleUpdateTournament} className="space-y-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-bold text-violet-400">{editingTournament.title}</h3>
+                    <button type="button" onClick={() => setEditingTournament(null)} className="text-xs text-zinc-500 hover:text-white">Annuler</button>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Code d'accès (Lien WhatsApp ou Code Salon)</Label>
+                    <Input 
+                      value={editingTournament.access_code || ''} 
+                      onChange={e => setEditingTournament({...editingTournament, access_code: e.target.value})}
+                      className="bg-zinc-800"
+                      placeholder="Ex: https://chat.whatsapp.com/..."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Cash Prize</Label>
+                    <Input 
+                      value={editingTournament.prize_pool || ''} 
+                      onChange={e => setEditingTournament({...editingTournament, prize_pool: e.target.value})}
+                      className="bg-zinc-800"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Règlement</Label>
+                    <Textarea 
+                      value={editingTournament.rules || ''} 
+                      onChange={e => setEditingTournament({...editingTournament, rules: e.target.value})}
+                      className="bg-zinc-800 min-h-[150px]"
+                    />
+                  </div>
+                  <Button type="submit" className="w-full bg-cyan-600 py-6 font-bold">Enregistrer les modifications</Button>
+                </form>
+              )}
+            </div>
           </TabsContent>
 
           <TabsContent value="finish" className="space-y-6">

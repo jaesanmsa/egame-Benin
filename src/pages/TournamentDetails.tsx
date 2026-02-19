@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -129,6 +129,19 @@ const TournamentDetails = () => {
               <p className="font-bold text-sm">Activé</p>
             </div>
           </div>
+
+          {/* Section Règlement */}
+          {tournament.rules && (
+            <div className="mb-8 p-6 bg-zinc-950/50 rounded-3xl border border-zinc-800">
+              <div className="flex items-center gap-2 mb-4 text-violet-400">
+                <Info size={18} />
+                <h3 className="font-bold uppercase tracking-widest text-xs">Règlement & Infos</h3>
+              </div>
+              <p className="text-zinc-400 text-sm leading-relaxed whitespace-pre-wrap">
+                {tournament.rules}
+              </p>
+            </div>
+          )}
 
           {isLoggedIn ? (
             <Button onClick={() => setShowPayment(true)} className="w-full py-6 rounded-2xl bg-violet-600 font-black text-lg shadow-xl shadow-violet-500/20">
