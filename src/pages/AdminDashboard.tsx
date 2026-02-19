@@ -18,6 +18,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [activeTournaments, setActiveTournaments] = useState<any[]>([]);
   const [allPayments, setAllPayments] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const [newTournament, setNewTournament] = useState({
     id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40
@@ -108,6 +109,17 @@ const AdminDashboard = () => {
     else showSuccess(`Rang ${newLeader.rank} mis à jour !`);
   };
 
+  // Filtrage des paiements par recherche
+  const filteredPayments = allPayments.filter(pay => {
+    const query = searchQuery.toLowerCase();
+    return (
+      pay.validation_code?.toLowerCase().includes(query) ||
+      pay.profiles?.username?.toLowerCase().includes(query) ||
+      pay.profiles?.full_name?.toLowerCase().includes(query) ||
+      pay.tournament_name?.toLowerCase().includes(query)
+    );
+  });
+
   if (loading) return null;
   if (!isAdmin) return null;
 
@@ -127,18 +139,30 @@ const AdminDashboard = () => {
 
           <TabsContent value="payments" className="space-y-6">
             <div className="bg-zinc-900 p-6 rounded-3xl border border-zinc-800">
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><CreditCard className="text-violet-500" /> Historique des paiements</h2>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <h2 className="text-xl font-bold flex items-center gap-2"><CreditCard className="text-violet-500" /> Historique</h2>
+                <div className="relative w-full md:w-64">
+                  <Search className="absolute left-3 top-3 text-zinc-500" size={18} />
+                  <Input 
+                    placeholder="Rechercher un code ou pseudo..." 
+                    className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              </div>
+
               <div className="space-y-4">
-                {allPayments.length === 0 ? (
-                  <p className="text-zinc-500 text-center py-8 italic">Aucune transaction enregistrée</p>
+                {filteredPayments.length === 0 ? (
+                  <p className="text-zinc-500 text-center py-8 italic">Aucun résultat trouvé</p>
                 ) : (
-                  allPayments.map((pay) => (
+                  filteredPayments.map((pay) => (
                     <div key={pay.id} className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700 flex items-center justify-between">
                       <div>
                         <p className="font-bold text-white">{pay.profiles?.username || pay.profiles?.full_name || "Joueur"}</p>
                         <p className="text-xs text-zinc-400">{pay.tournament_name} • {pay.amount} FCFA</p>
                         {pay.status === 'Réussi' && (
-                          <p className="text-[10px] font-mono text-violet-400 mt-1">Code Validation: {pay.validation_code}</p>
+                          <p className="text-[10px] font-mono text-violet-400 mt-1 bg-violet-500/10 px-2 py-0.5 rounded inline-block">Code: {pay.validation_code}</p>
                         )}
                       </div>
                       <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${pay.status === 'Réussi' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-orange-500/10 text-orange-500 border border-orange-500/20'}`}>
