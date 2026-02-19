@@ -56,7 +56,7 @@ const AdminDashboard = () => {
 
   const handleUpdateLeader = async (e: React.FormEvent) => {
     e.preventDefault();
-    // On utilise le rang comme identifiant unique pour le Top 5
+    // On utilise le rang comme identifiant unique pour le Top 5 par jeu
     const { error } = await supabase.from('leaderboard').upsert([{
       rank: newLeader.rank,
       username: newLeader.username,
@@ -66,7 +66,7 @@ const AdminDashboard = () => {
     }], { onConflict: 'rank,game_id' });
 
     if (error) showError(error.message);
-    else showSuccess(`Rang ${newLeader.rank} mis à jour !`);
+    else showSuccess(`Rang ${newLeader.rank} mis à jour pour ${newLeader.game_id} !`);
   };
 
   if (loading) return null;
@@ -98,7 +98,7 @@ const AdminDashboard = () => {
                 </div>
                 <div className="space-y-2">
                   <Label>Type de tournoi</Label>
-                  <Select onValueChange={(v) => setNewTournament({...newTournament, type: v})} defaultValue="Online">
+                  <Select onValueChange={(v) => setNewTournament({...newTournament, type: v as any})} defaultValue="Online">
                     <SelectTrigger className="bg-zinc-800 border-zinc-700">
                       <SelectValue placeholder="Choisir le type" />
                     </SelectTrigger>

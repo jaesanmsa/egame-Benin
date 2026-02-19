@@ -35,7 +35,7 @@ const Leaderboard = () => {
       .eq('game_id', gameId)
       .order('rank', { ascending: true });
     
-    // On crée un tableau de 5 places
+    // On crée un tableau de 5 places systématiquement
     const fullRankings = Array.from({ length: 5 }, (_, i) => {
       const rank = i + 1;
       const existing = data?.find(d => d.rank === rank);
