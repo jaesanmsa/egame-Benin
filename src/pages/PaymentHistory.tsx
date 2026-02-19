@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, Gamepad2 } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, Gamepad2, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { showSuccess } from '@/utils/toast';
@@ -13,6 +13,7 @@ interface Payment {
   tournament_name: string;
   amount: string;
   status: 'En attente' | 'Réussi' | 'Échoué';
+  validation_code: string;
   created_at: string;
   tournaments: {
     access_code: string;
@@ -23,6 +24,7 @@ const PaymentHistory = () => {
   const navigate = useNavigate();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
+  const whatsappNumber = "2290141790790";
 
   useEffect(() => {
     fetchData();
@@ -47,6 +49,11 @@ const PaymentHistory = () => {
       setPayments(data as any);
     }
     setLoading(false);
+  };
+
+  const handleWhatsAppSend = (payment: Payment) => {
+    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation : ${payment.validation_code} pour le tournoi ${payment.tournament_name}.`);
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
   const copyToClipboard = (text: string) => {
@@ -102,8 +109,23 @@ const PaymentHistory = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className="p-4 bg-zinc-800/50 rounded-2xl text-center">
-                      <p className="text-zinc-500 text-xs italic">Validation automatique en cours via FedaPay...</p>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-zinc-800/50 rounded-2xl border border-zinc-700/50">
+                        <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-2">Code de validation</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-white font-mono font-bold text-xl">{payment.validation_code}</span>
+                          <button onClick={() => copyToClipboard(payment.validation_code)} className="text-zinc-500 hover:text-white"><Copy size={18} /></button>
+                        </div>
+                      </div>
+                      
+                      <button 
+                        onClick={() => handleWhatsAppSend(payment)}
+                        className="w-full py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
+                      >
+                        <MessageSquare size={18} />
+                        Envoyer le code sur WhatsApp
+                      </button>
+                      <p className="text-[10px] text-zinc-500 text-center italic">La validation est automatique, mais envoyez ce code pour confirmer votre identité.</p>
                     </div>
                   )}
                 </motion.div>

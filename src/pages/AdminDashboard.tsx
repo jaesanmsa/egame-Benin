@@ -137,6 +137,7 @@ const AdminDashboard = () => {
                       <div>
                         <p className="font-bold text-white">{pay.profiles?.username || pay.profiles?.full_name || "Joueur"}</p>
                         <p className="text-xs text-zinc-400">{pay.tournament_name} • {pay.amount} FCFA</p>
+                        <p className="text-[10px] font-mono text-violet-400 mt-1">Code: {pay.validation_code}</p>
                       </div>
                       <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${pay.status === 'Réussi' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-orange-500/10 text-orange-500 border border-orange-500/20'}`}>
                         {pay.status}
