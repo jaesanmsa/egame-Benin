@@ -6,7 +6,7 @@ import TournamentCard from '@/components/TournamentCard';
 import FinishedTournamentCard from '@/components/FinishedTournamentCard';
 import Logo from '@/components/Logo';
 import { motion } from 'framer-motion';
-import { Search, Trophy, Globe, MapPin, PlusCircle, History, Star, ChevronRight } from 'lucide-react';
+import { Search, Trophy, Globe, MapPin, PlusCircle, History, Star, ChevronRight, Gamepad2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,7 @@ const Index = () => {
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [finishedTournaments, setFinishedTournaments] = useState<any[]>([]);
   const [topPlayers, setTopPlayers] = useState<any[]>([]);
+  const [myTournaments, setMyTournaments] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
@@ -42,6 +43,22 @@ const Index = () => {
     if (leaders) setTopPlayers(leaders);
   };
 
+  const fetchMyTournaments = async (userId: string) => {
+    const { data } = await supabase
+      .from('payments')
+      .select('tournament_id, tournaments(*)')
+      .eq('user_id', userId)
+      .eq('status', 'Réussi');
+    
+    if (data) {
+      // On ne garde que les tournois encore actifs
+      const activeOnes = data
+        .map((p: any) => p.tournaments)
+        .filter((t: any) => t && t.status === 'active');
+      setMyTournaments(activeOnes);
+    }
+  };
+
   const fetchParticipantCounts = async () => {
     const { data } = await supabase
       .from('payments')
@@ -60,11 +77,13 @@ const Index = () => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session?.user) fetchMyTournaments(session.user.id);
       setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (session?.user) fetchMyTournaments(session.user.id);
     });
 
     fetchData();
@@ -112,6 +131,32 @@ const Index = () => {
           <p className="text-violet-500 font-bold text-sm uppercase tracking-widest mb-1">Salut, {userName}</p>
           <h1 className="text-3xl font-black">Prêt pour la victoire ?</h1>
         </header>
+
+        {/* Mes Tournois (Accès Rapide) */}
+        {myTournaments.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-xl font-black flex items-center gap-2 mb-6"><Gamepad2 className="text-violet-500" size={20} /> Mes Inscriptions</h2>
+            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4">
+              {myTournaments.map((t) => (
+                <motion.div 
+                  key={t.id}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate(`/tournament/${t.id}`)}
+                  className="flex-shrink-0 w-64 bg-zinc-900 border border-zinc-800 rounded-3xl p-4 flex items-center gap-4 cursor-pointer hover:border-violet-500 transition-all"
+                >
+                  <div className="w-12 h-12 rounded-2xl overflow-hidden">
+                    <img src={t.image_url} className="w-full h-full object-cover" alt="" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-bold text-sm truncate">{t.title}</p>
+                    <p className="text-violet-400 text-[10px] font-bold uppercase">{t.game}</p>
+                  </div>
+                  <ChevronRight size={16} className="text-zinc-600" />
+                </motion.div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Top Players Mini-Section */}
         {topPlayers.length > 0 && (
