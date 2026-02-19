@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { User, Home, History, LogIn, Trophy } from 'lucide-react';
+import { User, Home, History, LogIn, Trophy, HelpCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Logo from './Logo';
@@ -52,6 +52,11 @@ const Navbar = () => {
               <span className="text-[10px] md:hidden">Historique</span>
             </Link>
           )}
+
+          <Link to="/contact" className={`flex flex-col items-center gap-1 transition-colors ${isActive('/contact') ? 'text-violet-500' : 'text-zinc-400 hover:text-white'}`}>
+            <HelpCircle size={24} />
+            <span className="text-[10px] md:hidden">Aide</span>
+          </Link>
           
           {!isLoggedIn && (
             <Link to="/auth" className={`flex flex-col items-center gap-1 md:hidden transition-colors ${isActive('/auth') ? 'text-violet-500' : 'text-zinc-400 hover:text-white'}`}>
