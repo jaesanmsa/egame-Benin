@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Mail, History, Zap, ShieldCheck, Palette, Copy, Link as LinkIcon } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Mail, History, Zap, ShieldCheck, Palette, Copy, Link as LinkIcon, MessageSquare } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showError, showSuccess } from '@/utils/toast';
@@ -24,7 +24,14 @@ const Profile = () => {
           return;
         }
         setUser(user);
-        const { count } = await supabase.from('payments').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'Réussi');
+        
+        // On compte les tournois réussis (payés)
+        const { count } = await supabase
+          .from('payments')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('status', 'Réussi');
+          
         setTournamentCount(count || 0);
       } catch (err) {
         navigate('/auth');
@@ -45,11 +52,22 @@ const Profile = () => {
     const url = user.user_metadata?.avatar_url;
     if (url) {
       navigator.clipboard.writeText(url);
-      showSuccess("Lien de l'avatar copié ! Envoie-le à l'admin.");
+      showSuccess("Lien de l'avatar copié !");
     } else {
       showError("Crée d'abord un avatar emoji !");
     }
   };
+
+  // Logique des niveaux
+  const getLevelInfo = (count: number) => {
+    if (count < 5) return { level: 1, next: 5, label: "Novice", progress: (count / 5) * 100 };
+    if (count < 10) return { level: 2, next: 10, label: "Guerrier", progress: ((count - 5) / 5) * 100 };
+    if (count < 20) return { level: 3, next: 20, label: "Élite", progress: ((count - 10) / 10) * 100 };
+    if (count < 40) return { level: 4, next: 40, label: "Maître", progress: ((count - 20) / 20) * 100 };
+    return { level: 5, next: 100, label: "Légende", progress: 100 };
+  };
+
+  const levelInfo = getLevelInfo(tournamentCount);
 
   if (loading) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
   if (!user) return null;
@@ -82,6 +100,33 @@ const Profile = () => {
           )}
         </section>
 
+        {/* Carte de Niveau */}
+        <section className="bg-zinc-900/50 border border-zinc-800 rounded-[2rem] p-8 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-violet-600/20 rounded-2xl flex items-center justify-center text-violet-500">
+                <Zap size={24} />
+              </div>
+              <div>
+                <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest">Niveau {levelInfo.level}</p>
+                <h2 className="text-xl font-black">{levelInfo.label}</h2>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest">Tournois</p>
+              <p className="text-xl font-black text-violet-500">{tournamentCount}</p>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+              <span>Progression</span>
+              <span>{tournamentCount} / {levelInfo.next}</span>
+            </div>
+            <Progress value={levelInfo.progress} className="h-3 bg-zinc-800" />
+          </div>
+        </section>
+
         <div className="space-y-4">
           {isAdmin && (
             <Link to="/admin" className="block">
@@ -90,6 +135,11 @@ const Profile = () => {
               </button>
             </Link>
           )}
+          <Link to="/contact" className="block">
+            <button className="w-full flex items-center justify-between p-5 bg-zinc-900 rounded-2xl border border-zinc-800 font-bold">
+              <div className="flex items-center gap-4"><MessageSquare size={20} className="text-green-500" /> Contact & Aide</div>
+            </button>
+          </Link>
           <Link to="/avatar-maker" className="block">
             <button className="w-full flex items-center justify-between p-5 bg-zinc-900 rounded-2xl border border-zinc-800 font-bold">
               <div className="flex items-center gap-4"><Palette size={20} className="text-pink-500" /> Studio d'Avatar (Emoji)</div>
