@@ -52,7 +52,7 @@ const PaymentHistory = () => {
   };
 
   const handleWhatsAppSend = (payment: Payment) => {
-    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation : ${payment.validation_code} pour le tournoi ${payment.tournament_name}.`);
+    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation de paiement : ${payment.validation_code} pour le tournoi ${payment.tournament_name}.`);
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
@@ -96,36 +96,42 @@ const PaymentHistory = () => {
                   </div>
 
                   {payment.status === 'Réussi' ? (
-                    <div className="bg-violet-600/10 border border-violet-500/20 p-4 rounded-2xl">
-                      <div className="flex items-center gap-2 mb-2 text-violet-400">
-                        <Gamepad2 size={16} />
-                        <span className="text-xs font-bold uppercase tracking-widest">Accès au tournoi</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-white font-mono font-bold text-lg">{payment.tournaments?.access_code || "Code bientôt disponible"}</span>
-                        {payment.tournaments?.access_code && (
-                          <button onClick={() => copyToClipboard(payment.tournaments.access_code)} className="text-violet-400 hover:text-white"><Copy size={18} /></button>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
                     <div className="space-y-4">
+                      {/* Code de Validation pour WhatsApp */}
                       <div className="p-4 bg-zinc-800/50 rounded-2xl border border-zinc-700/50">
-                        <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-2">Code de validation</p>
+                        <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-2">Code de validation (Preuve de paiement)</p>
                         <div className="flex items-center justify-between">
                           <span className="text-white font-mono font-bold text-xl">{payment.validation_code}</span>
                           <button onClick={() => copyToClipboard(payment.validation_code)} className="text-zinc-500 hover:text-white"><Copy size={18} /></button>
                         </div>
                       </div>
-                      
+
                       <button 
                         onClick={() => handleWhatsAppSend(payment)}
                         className="w-full py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
                       >
                         <MessageSquare size={18} />
-                        Envoyer le code sur WhatsApp
+                        Envoyer ma preuve sur WhatsApp
                       </button>
-                      <p className="text-[10px] text-zinc-500 text-center italic">La validation est automatique, mais envoyez ce code pour confirmer votre identité.</p>
+
+                      {/* Code d'accès au tournoi */}
+                      <div className="bg-violet-600/10 border border-violet-500/20 p-4 rounded-2xl">
+                        <div className="flex items-center gap-2 mb-2 text-violet-400">
+                          <Gamepad2 size={16} />
+                          <span className="text-xs font-bold uppercase tracking-widest">Code d'accès au tournoi</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-white font-mono font-bold text-lg">{payment.tournaments?.access_code || "Code bientôt disponible"}</span>
+                          {payment.tournaments?.access_code && (
+                            <button onClick={() => copyToClipboard(payment.tournaments.access_code)} className="text-violet-400 hover:text-white"><Copy size={18} /></button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-zinc-800/50 rounded-2xl text-center">
+                      <p className="text-zinc-500 text-xs italic">En attente de confirmation par FedaPay...</p>
+                      <p className="text-[10px] text-zinc-600 mt-1">Le code de validation apparaîtra ici après le paiement.</p>
                     </div>
                   )}
                 </motion.div>
