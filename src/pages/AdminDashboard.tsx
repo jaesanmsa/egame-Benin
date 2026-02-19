@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History } from 'lucide-react';
+import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const AdminDashboard = () => {
@@ -17,7 +17,7 @@ const AdminDashboard = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTournaments, setActiveTournaments] = useState<any[]>([]);
-  const [pendingPayments, setPendingPayments] = useState<any[]>([]);
+  const [allPayments, setAllPayments] = useState<any[]>([]);
   
   const [newTournament, setNewTournament] = useState({
     id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40
@@ -52,13 +52,12 @@ const AdminDashboard = () => {
     const { data: tours } = await supabase.from('tournaments').select('*').eq('status', 'active');
     if (tours) setActiveTournaments(tours);
 
-    // Paiements en attente
+    // Tous les paiements (Historique)
     const { data: pays } = await supabase
       .from('payments')
       .select('*, profiles(username, full_name)')
-      .eq('status', 'En attente')
       .order('created_at', { ascending: false });
-    if (pays) setPendingPayments(pays);
+    if (pays) setAllPayments(pays);
   };
 
   const handleAddTournament = async (e: React.FormEvent) => {
@@ -72,19 +71,6 @@ const AdminDashboard = () => {
     else {
       showSuccess("Tournoi ajouté !");
       setNewTournament({ id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40 });
-      fetchData();
-    }
-  };
-
-  const handleValidatePayment = async (paymentId: string) => {
-    const { error } = await supabase
-      .from('payments')
-      .update({ status: 'Réussi' })
-      .eq('id', paymentId);
-    
-    if (error) showError(error.message);
-    else {
-      showSuccess("Paiement validé !");
       fetchData();
     }
   };
@@ -133,7 +119,7 @@ const AdminDashboard = () => {
         
         <Tabs defaultValue="payments">
           <TabsList className="grid w-full grid-cols-4 bg-zinc-900 mb-8 h-auto p-1">
-            <TabsTrigger value="payments" className="py-3">Paiements</TabsTrigger>
+            <TabsTrigger value="payments" className="py-3">Transactions</TabsTrigger>
             <TabsTrigger value="tournaments" className="py-3">Nouveau</TabsTrigger>
             <TabsTrigger value="finish" className="py-3">Clôturer</TabsTrigger>
             <TabsTrigger value="leaderboard" className="py-3">Top 5</TabsTrigger>
@@ -141,20 +127,20 @@ const AdminDashboard = () => {
 
           <TabsContent value="payments" className="space-y-6">
             <div className="bg-zinc-900 p-6 rounded-3xl border border-zinc-800">
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><CreditCard className="text-violet-500" /> Inscriptions à valider</h2>
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><CreditCard className="text-violet-500" /> Historique des paiements</h2>
               <div className="space-y-4">
-                {pendingPayments.length === 0 ? (
-                  <p className="text-zinc-500 text-center py-8 italic">Aucun paiement en attente</p>
+                {allPayments.length === 0 ? (
+                  <p className="text-zinc-500 text-center py-8 italic">Aucune transaction enregistrée</p>
                 ) : (
-                  pendingPayments.map((pay) => (
+                  allPayments.map((pay) => (
                     <div key={pay.id} className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700 flex items-center justify-between">
                       <div>
-                        <p className="font-bold text-white">{pay.profiles?.username || pay.profiles?.full_name || "Joueur inconnu"}</p>
-                        <p className="text-xs text-zinc-400">{pay.tournament_name} • <span className="text-violet-400 font-mono">{pay.validation_code}</span></p>
+                        <p className="font-bold text-white">{pay.profiles?.username || pay.profiles?.full_name || "Joueur"}</p>
+                        <p className="text-xs text-zinc-400">{pay.tournament_name} • {pay.amount} FCFA</p>
                       </div>
-                      <Button onClick={() => handleValidatePayment(pay.id)} size="sm" className="bg-green-600 hover:bg-green-700 gap-2">
-                        <Check size={16} /> Valider
-                      </Button>
+                      <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${pay.status === 'Réussi' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-orange-500/10 text-orange-500 border border-orange-500/20'}`}>
+                        {pay.status}
+                      </div>
                     </div>
                   ))
                 )}
