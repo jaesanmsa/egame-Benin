@@ -6,7 +6,7 @@ import TournamentCard from '@/components/TournamentCard';
 import FinishedTournamentCard from '@/components/FinishedTournamentCard';
 import Logo from '@/components/Logo';
 import { motion } from 'framer-motion';
-import { Search, Trophy, Globe, MapPin, PlusCircle, History, Star, ChevronRight, Gamepad2 } from 'lucide-react';
+import { Search, Trophy, Globe, MapPin, PlusCircle, History, Star, ChevronRight, Gamepad2, Facebook } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -116,6 +116,12 @@ const Index = () => {
             <Link to="/auth" className="block"><button className="w-full bg-violet-600 py-5 rounded-2xl font-bold text-lg shadow-xl shadow-violet-500/20">Se connecter</button></Link>
             <Link to="/auth" className="block"><button className="w-full bg-zinc-900 py-5 rounded-2xl font-bold text-lg border border-zinc-800">Créer un compte</button></Link>
           </div>
+          <button 
+            onClick={() => window.open("https://www.facebook.com/profile.php?id=61588439640775", "_blank")}
+            className="mt-12 flex items-center gap-2 text-blue-500 font-bold hover:underline"
+          >
+            <Facebook size={18} /> Suivez-nous sur Facebook
+          </button>
         </main>
       </div>
     );
@@ -222,6 +228,23 @@ const Index = () => {
                 entryFee={t.entry_fee.toString()} type={t.type}
               />
             ))}
+          </div>
+        </section>
+
+        {/* Section Facebook Community */}
+        <section className="mb-16">
+          <div className="bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-500/30 rounded-[2.5rem] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="text-center md:text-left">
+              <h2 className="text-2xl md:text-3xl font-black mb-4">Rejoignez la communauté !</h2>
+              <p className="text-zinc-400 max-w-md">Suivez-nous sur Facebook pour ne rien rater des actualités, des lives et des résultats des tournois.</p>
+            </div>
+            <button 
+              onClick={() => window.open("https://www.facebook.com/profile.php?id=61588439640775", "_blank")}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-3 shadow-xl shadow-blue-500/20 transition-all"
+            >
+              <Facebook size={24} />
+              Voir notre Facebook
+            </button>
           </div>
         </section>
 

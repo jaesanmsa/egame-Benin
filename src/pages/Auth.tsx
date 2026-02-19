@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, Chrome, UserPlus, LogIn } from 'lucide-react';
+import { Mail, Lock, Chrome, UserPlus, LogIn, Facebook } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Logo from '@/components/Logo';
 
@@ -132,6 +132,15 @@ const Auth = () => {
             {isLogin ? "S'inscrire" : "Se connecter"}
           </button>
         </p>
+
+        <div className="pt-4 border-t border-zinc-800 text-center">
+          <button 
+            onClick={() => window.open("https://www.facebook.com/profile.php?id=61588439640775", "_blank")}
+            className="inline-flex items-center gap-2 text-xs text-zinc-500 hover:text-blue-500 transition-colors"
+          >
+            <Facebook size={14} /> Suivez notre actualité sur Facebook
+          </button>
+        </div>
       </div>
 
       <footer className="mt-12 p-8 text-center text-zinc-600 text-[10px] font-bold uppercase tracking-widest">

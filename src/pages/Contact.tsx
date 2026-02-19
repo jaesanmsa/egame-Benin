@@ -3,7 +3,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MessageSquare, Mail, HelpCircle } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Mail, HelpCircle, Facebook } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
@@ -11,6 +11,7 @@ const Contact = () => {
   const navigate = useNavigate();
   const whatsappNumber = "2290141790790";
   const email = "egamebenin@gmail.com";
+  const facebookUrl = "https://www.facebook.com/profile.php?id=61588439640775";
 
   const handleWhatsApp = () => {
     const message = encodeURIComponent("Bonjour eGame Bénin, je souhaite obtenir des informations.");
@@ -19,6 +20,10 @@ const Contact = () => {
 
   const handleEmail = () => {
     window.location.href = `mailto:${email}?subject=Support eGame Bénin`;
+  };
+
+  const handleFacebook = () => {
+    window.open(facebookUrl, '_blank');
   };
 
   const faqs = [
@@ -42,12 +47,12 @@ const Contact = () => {
           <p className="text-zinc-400">Une question ? Notre équipe est là pour vous aider.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleWhatsApp}
-            className="flex items-center gap-4 p-6 bg-green-500/10 border border-green-500/20 rounded-3xl text-left transition-all hover:bg-green-500/20"
+            className="flex flex-col items-center gap-3 p-6 bg-green-500/10 border border-green-500/20 rounded-3xl text-center transition-all hover:bg-green-500/20"
           >
             <div className="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/20">
               <MessageSquare size={24} className="text-white" />
@@ -61,8 +66,23 @@ const Contact = () => {
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={handleFacebook}
+            className="flex flex-col items-center gap-3 p-6 bg-blue-500/10 border border-blue-500/20 rounded-3xl text-center transition-all hover:bg-blue-500/20"
+          >
+            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <Facebook size={24} className="text-white" />
+            </div>
+            <div>
+              <h3 className="font-bold text-blue-500">Facebook</h3>
+              <p className="text-[10px] text-zinc-400">Actualités & News</p>
+            </div>
+          </motion.button>
+
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={handleEmail}
-            className="flex items-center gap-4 p-6 bg-violet-500/10 border border-violet-500/20 rounded-3xl text-left transition-all hover:bg-violet-500/20"
+            className="flex flex-col items-center gap-3 p-6 bg-violet-500/10 border border-violet-500/20 rounded-3xl text-center transition-all hover:bg-violet-500/20"
           >
             <div className="w-12 h-12 bg-violet-500 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/20">
               <Mail size={24} className="text-white" />
