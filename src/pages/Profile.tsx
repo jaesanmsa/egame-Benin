@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Mail, History, Zap, ShieldCheck, Palette, Copy, Link as LinkIcon, MessageSquare } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Mail, History, Zap, ShieldCheck, Palette, Copy, Link as LinkIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showError, showSuccess } from '@/utils/toast';
@@ -135,11 +135,6 @@ const Profile = () => {
               </button>
             </Link>
           )}
-          <Link to="/contact" className="block">
-            <button className="w-full flex items-center justify-between p-5 bg-zinc-900 rounded-2xl border border-zinc-800 font-bold">
-              <div className="flex items-center gap-4"><MessageSquare size={20} className="text-green-500" /> Contact & Aide</div>
-            </button>
-          </Link>
           <Link to="/avatar-maker" className="block">
             <button className="w-full flex items-center justify-between p-5 bg-zinc-900 rounded-2xl border border-zinc-800 font-bold">
               <div className="flex items-center gap-4"><Palette size={20} className="text-pink-500" /> Studio d'Avatar (Emoji)</div>
