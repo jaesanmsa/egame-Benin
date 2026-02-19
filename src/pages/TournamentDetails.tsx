@@ -4,10 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, Gamepad2, CheckCircle2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
+import { Progress } from "@/components/ui/progress";
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -18,6 +19,7 @@ const TournamentDetails = () => {
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing'>('select');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
+  const [userRegistration, setUserRegistration] = useState<any>(null);
 
   useEffect(() => {
     const fetchTournament = async () => {
@@ -43,8 +45,21 @@ const TournamentDetails = () => {
       setParticipantCount(count || 0);
     };
 
+    const checkUserRegistration = async (userId: string) => {
+      const { data } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('tournament_id', id)
+        .eq('user_id', userId)
+        .eq('status', 'Réussi')
+        .single();
+      
+      if (data) setUserRegistration(data);
+    };
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
+      if (session?.user) checkUserRegistration(session.user.id);
     });
 
     fetchTournament();
@@ -78,6 +93,8 @@ const TournamentDetails = () => {
 
   if (loading) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
   if (!tournament) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">Tournoi non trouvé</div>;
+
+  const progress = (participantCount / (tournament.max_participants || 40)) * 100;
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white pb-24">
@@ -130,9 +147,51 @@ const TournamentDetails = () => {
             </div>
           </div>
 
+          {/* Barre de progression des places */}
+          <div className="mb-8 space-y-2">
+            <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+              <span>Remplissage</span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <Progress value={progress} className="h-2 bg-zinc-800" />
+          </div>
+
+          {/* Section Inscription / Code d'accès */}
+          {userRegistration ? (
+            <div className="bg-green-500/10 border border-green-500/20 p-6 rounded-3xl mb-8">
+              <div className="flex items-center gap-3 mb-4 text-green-500">
+                <CheckCircle2 size={24} />
+                <h3 className="font-bold text-lg">Vous êtes inscrit !</h3>
+              </div>
+              <div className="space-y-4">
+                <div className="p-4 bg-zinc-950/50 rounded-2xl border border-zinc-800">
+                  <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mb-2">Code d'accès / Lien du groupe</p>
+                  <p className="text-white font-mono font-bold break-all">
+                    {tournament.access_code || "Le code sera disponible peu avant le début."}
+                  </p>
+                </div>
+                {tournament.access_code?.startsWith('http') && (
+                  <Button onClick={() => window.open(tournament.access_code, '_blank')} className="w-full bg-green-600 hover:bg-green-700 font-bold">
+                    Rejoindre le groupe WhatsApp
+                  </Button>
+                )}
+              </div>
+            </div>
+          ) : (
+            isLoggedIn ? (
+              <Button onClick={() => setShowPayment(true)} className="w-full py-6 rounded-2xl bg-violet-600 font-black text-lg shadow-xl shadow-violet-500/20">
+                S'inscrire pour {tournament.entry_fee} FCFA
+              </Button>
+            ) : (
+              <Button onClick={() => navigate('/auth')} className="w-full py-6 rounded-2xl bg-zinc-800 font-black gap-3">
+                <Lock size={20} /> Se connecter pour s'inscrire
+              </Button>
+            )
+          )}
+
           {/* Section Règlement */}
           {tournament.rules && (
-            <div className="mb-8 p-6 bg-zinc-950/50 rounded-3xl border border-zinc-800">
+            <div className="mt-8 p-6 bg-zinc-950/50 rounded-3xl border border-zinc-800">
               <div className="flex items-center gap-2 mb-4 text-violet-400">
                 <Info size={18} />
                 <h3 className="font-bold uppercase tracking-widest text-xs">Règlement & Infos</h3>
@@ -141,16 +200,6 @@ const TournamentDetails = () => {
                 {tournament.rules}
               </p>
             </div>
-          )}
-
-          {isLoggedIn ? (
-            <Button onClick={() => setShowPayment(true)} className="w-full py-6 rounded-2xl bg-violet-600 font-black text-lg shadow-xl shadow-violet-500/20">
-              S'inscrire pour {tournament.entry_fee} FCFA
-            </Button>
-          ) : (
-            <Button onClick={() => navigate('/auth')} className="w-full py-6 rounded-2xl bg-zinc-800 font-black gap-3">
-              <Lock size={20} /> Se connecter pour s'inscrire
-            </Button>
           )}
         </div>
       </main>
