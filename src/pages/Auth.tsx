@@ -56,14 +56,14 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-md space-y-8 bg-zinc-900 p-8 rounded-[2.5rem] border border-zinc-800 shadow-2xl">
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-[2.5rem] border border-border shadow-2xl">
         <div className="text-center">
           <Link to="/" className="inline-block mb-4">
             <Logo size="lg" showText={false} />
           </Link>
-          <h1 className="text-3xl font-black text-white">eGame <span className="text-violet-500">Bénin</span></h1>
-          <p className="text-zinc-400 mt-2">
+          <h1 className="text-3xl font-black">eGame <span className="text-violet-500">Bénin</span></h1>
+          <p className="text-muted-foreground mt-2">
             {isLogin ? "Connectez-vous pour rejoindre l'arène" : "Créez votre compte de joueur"}
           </p>
         </div>
@@ -72,27 +72,27 @@ const Auth = () => {
           <Button 
             onClick={handleGoogleLogin}
             variant="outline" 
-            className="w-full py-6 rounded-xl border-zinc-800 bg-zinc-800/50 hover:bg-zinc-800 text-white gap-3"
+            className="w-full py-6 rounded-xl border-border bg-muted/50 hover:bg-muted text-foreground gap-3"
           >
             <Chrome size={20} />
             Continuer avec Google
           </Button>
 
           <div className="relative py-4">
-            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-zinc-800"></span></div>
-            <div className="relative flex justify-center text-xs uppercase"><span className="bg-zinc-900 px-2 text-zinc-500">Ou par email</span></div>
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border"></span></div>
+            <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">Ou par email</span></div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 text-zinc-500" size={18} />
+                <Mail className="absolute left-3 top-3 text-muted-foreground" size={18} />
                 <Input 
                   id="email" 
                   type="email" 
                   placeholder="votre@email.com" 
-                  className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
+                  className="pl-10 bg-muted border-border rounded-xl"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -105,25 +105,25 @@ const Auth = () => {
                 {isLogin && <Link to="/forgot-password" size="sm" className="text-xs text-violet-400 hover:underline">Oublié ?</Link>}
               </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 text-zinc-500" size={18} />
+                <Lock className="absolute left-3 top-3 text-muted-foreground" size={18} />
                 <Input 
                   id="password" 
                   type="password" 
                   placeholder="••••••••" 
-                  className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
+                  className="pl-10 bg-muted border-border rounded-xl"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
             </div>
-            <Button type="submit" disabled={loading} className="w-full py-6 rounded-xl bg-violet-600 hover:bg-violet-700 font-bold gap-2">
+            <Button type="submit" disabled={loading} className="w-full py-6 rounded-xl bg-violet-600 hover:bg-violet-700 font-bold gap-2 text-white">
               {loading ? "Chargement..." : (isLogin ? <><LogIn size={18} /> Se connecter</> : <><UserPlus size={18} /> S'inscrire</>)}
             </Button>
           </form>
         </div>
 
-        <p className="text-center text-zinc-500 text-sm">
+        <p className="text-center text-muted-foreground text-sm">
           {isLogin ? "Pas encore de compte ?" : "Déjà un compte ?"} 
           <button 
             onClick={() => setIsLogin(!isLogin)} 
@@ -133,17 +133,17 @@ const Auth = () => {
           </button>
         </p>
 
-        <div className="pt-4 border-t border-zinc-800 text-center">
+        <div className="pt-4 border-t border-border text-center">
           <button 
             onClick={() => window.open("https://www.facebook.com/profile.php?id=61588439640775", "_blank")}
-            className="inline-flex items-center gap-2 text-xs text-zinc-500 hover:text-blue-500 transition-colors"
+            className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-blue-500 transition-colors"
           >
             <Facebook size={14} /> Suivez notre actualité sur Facebook
           </button>
         </div>
       </div>
 
-      <footer className="mt-12 p-8 text-center text-zinc-600 text-[10px] font-bold uppercase tracking-widest">
+      <footer className="mt-12 p-8 text-center text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
         eGame Benin @2026 • v1.0
       </footer>
     </div>
