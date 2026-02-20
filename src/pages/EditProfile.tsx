@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/supabase';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,12 +57,10 @@ const EditProfile = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Non connecté");
 
-      // 1. Mise à jour de l'Auth Metadata
       await supabase.auth.updateUser({
         data: { ...profile }
       });
 
-      // 2. Mise à jour de la table profiles
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
@@ -85,13 +83,13 @@ const EditProfile = () => {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-zinc-950 flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-2xl mx-auto px-6 py-8">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
           <ArrowLeft size={20} />
           Retour au profil
         </button>
@@ -99,16 +97,16 @@ const EditProfile = () => {
         <h1 className="text-3xl font-black mb-8">Modifier le profil</h1>
 
         <form onSubmit={handleSave} className="space-y-8">
-          <div className="space-y-6 bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-800">
+          <div className="space-y-6 bg-card p-8 rounded-[2rem] border border-border shadow-sm">
             <div className="space-y-2">
               <Label htmlFor="username">Pseudo (Nom de joueur)</Label>
               <div className="relative">
-                <AtSign className="absolute left-3 top-3 text-zinc-500" size={18} />
+                <AtSign className="absolute left-3 top-3 text-muted-foreground" size={18} />
                 <Input 
                   id="username" 
                   value={profile.username}
                   onChange={(e) => setProfile({...profile, username: e.target.value})}
-                  className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
+                  className="pl-10 bg-muted border-border rounded-xl"
                   placeholder="Ex: ProGamer229"
                   required
                 />
@@ -118,12 +116,12 @@ const EditProfile = () => {
             <div className="space-y-2">
               <Label htmlFor="name">Nom complet</Label>
               <div className="relative">
-                <User className="absolute left-3 top-3 text-zinc-500" size={18} />
+                <User className="absolute left-3 top-3 text-muted-foreground" size={18} />
                 <Input 
                   id="name" 
                   value={profile.full_name}
                   onChange={(e) => setProfile({...profile, full_name: e.target.value})}
-                  className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
+                  className="pl-10 bg-muted border-border rounded-xl"
                   placeholder="Votre nom réel"
                   required
                 />
@@ -133,13 +131,13 @@ const EditProfile = () => {
             <div className="space-y-2">
               <Label htmlFor="phone">Numéro de téléphone (Bénin)</Label>
               <div className="relative">
-                <Phone className="absolute left-3 top-3 text-zinc-500" size={18} />
+                <Phone className="absolute left-3 top-3 text-muted-foreground" size={18} />
                 <Input 
                   id="phone" 
                   type="tel"
                   value={profile.phone}
                   onChange={(e) => setProfile({...profile, phone: e.target.value})}
-                  className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
+                  className="pl-10 bg-muted border-border rounded-xl"
                   placeholder="+229 01 XX XX XX XX"
                   required
                 />
@@ -147,7 +145,7 @@ const EditProfile = () => {
             </div>
           </div>
 
-          <Button type="submit" disabled={saving} className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 text-lg font-bold shadow-xl shadow-violet-500/20 gap-2">
+          <Button type="submit" disabled={saving} className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 text-lg font-bold shadow-xl shadow-violet-500/20 gap-2 text-white">
             <Save size={20} />
             {saving ? "Enregistrement..." : "Enregistrer les modifications"}
           </Button>

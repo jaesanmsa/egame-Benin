@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, Gamepad2, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/supabase';
 import { showSuccess } from '@/utils/toast';
 
 interface Payment {
@@ -62,10 +62,10 @@ const PaymentHistory = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-2xl mx-auto px-6 py-8">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
           <ArrowLeft size={20} />
           Retour
         </button>
@@ -77,17 +77,17 @@ const PaymentHistory = () => {
         ) : (
           <div className="space-y-6">
             {payments.length === 0 ? (
-              <div className="text-center py-20 bg-zinc-900/50 rounded-[2rem] border border-zinc-800">
-                <CreditCard size={48} className="mx-auto text-zinc-700 mb-4" />
-                <p className="text-zinc-500">Aucune inscription</p>
+              <div className="text-center py-20 bg-card/50 rounded-[2rem] border border-border shadow-sm">
+                <CreditCard size={48} className="mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">Aucune inscription</p>
               </div>
             ) : (
               payments.map((payment) => (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={payment.id} className="bg-zinc-900 p-6 rounded-[2rem] border border-zinc-800 space-y-6">
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={payment.id} className="bg-card p-6 rounded-[2rem] border border-border space-y-6 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="font-bold text-lg">{payment.tournament_name}</h3>
-                      <p className="text-zinc-500 text-xs">{new Date(payment.created_at).toLocaleDateString('fr-FR')}</p>
+                      <p className="text-muted-foreground text-xs">{new Date(payment.created_at).toLocaleDateString('fr-FR')}</p>
                     </div>
                     <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] font-bold ${payment.status === 'Réussi' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}>
                       {payment.status === 'Réussi' ? <CheckCircle2 size={14} /> : <Clock size={14} />}
@@ -97,12 +97,11 @@ const PaymentHistory = () => {
 
                   {payment.status === 'Réussi' ? (
                     <div className="space-y-4">
-                      {/* Code de Validation pour WhatsApp */}
-                      <div className="p-4 bg-zinc-800/50 rounded-2xl border border-zinc-700/50">
-                        <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-2">Code de validation (Preuve de paiement)</p>
+                      <div className="p-4 bg-muted/50 rounded-2xl border border-border">
+                        <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-2">Code de validation (Preuve de paiement)</p>
                         <div className="flex items-center justify-between">
-                          <span className="text-white font-mono font-bold text-xl">{payment.validation_code}</span>
-                          <button onClick={() => copyToClipboard(payment.validation_code)} className="text-zinc-500 hover:text-white"><Copy size={18} /></button>
+                          <span className="text-foreground font-mono font-bold text-xl">{payment.validation_code}</span>
+                          <button onClick={() => copyToClipboard(payment.validation_code)} className="text-muted-foreground hover:text-foreground"><Copy size={18} /></button>
                         </div>
                       </div>
 
@@ -114,24 +113,23 @@ const PaymentHistory = () => {
                         Envoyer ma preuve sur WhatsApp
                       </button>
 
-                      {/* Code d'accès au tournoi */}
                       <div className="bg-violet-600/10 border border-violet-500/20 p-4 rounded-2xl">
                         <div className="flex items-center gap-2 mb-2 text-violet-400">
                           <Gamepad2 size={16} />
                           <span className="text-xs font-bold uppercase tracking-widest">Code d'accès au tournoi</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-white font-mono font-bold text-lg">{payment.tournaments?.access_code || "Code bientôt disponible"}</span>
+                          <span className="text-foreground font-mono font-bold text-lg">{payment.tournaments?.access_code || "Code bientôt disponible"}</span>
                           {payment.tournaments?.access_code && (
-                            <button onClick={() => copyToClipboard(payment.tournaments.access_code)} className="text-violet-400 hover:text-white"><Copy size={18} /></button>
+                            <button onClick={() => copyToClipboard(payment.tournaments.access_code)} className="text-violet-400 hover:text-foreground"><Copy size={18} /></button>
                           )}
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="p-4 bg-zinc-800/50 rounded-2xl text-center">
-                      <p className="text-zinc-500 text-xs italic">En attente de confirmation par FedaPay...</p>
-                      <p className="text-[10px] text-zinc-600 mt-1">Le code de validation apparaîtra ici après le paiement.</p>
+                    <div className="p-4 bg-muted/50 rounded-2xl text-center">
+                      <p className="text-muted-foreground text-xs italic">En attente de confirmation par FedaPay...</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Le code de validation apparaîtra ici après le paiement.</p>
                     </div>
                   )}
                 </motion.div>

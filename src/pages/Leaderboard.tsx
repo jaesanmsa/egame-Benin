@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, ArrowLeft, ChevronRight, Star, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/supabase';
 
 const DEFAULT_GAMES = [
   { id: 'blur', name: 'Blur', icon: '🏎️' },
@@ -35,7 +35,6 @@ const Leaderboard = () => {
       .eq('game_id', gameId)
       .order('rank', { ascending: true });
     
-    // On crée un tableau de 5 places systématiquement
     const fullRankings = Array.from({ length: 5 }, (_, i) => {
       const rank = i + 1;
       const existing = data?.find(d => d.rank === rank);
@@ -47,10 +46,10 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-2xl mx-auto px-6 py-8">
-        <button onClick={() => selectedGame ? setSelectedGame(null) : navigate(-1)} className="flex items-center gap-2 text-zinc-400 mb-8">
+        <button onClick={() => selectedGame ? setSelectedGame(null) : navigate(-1)} className="flex items-center gap-2 text-muted-foreground mb-8">
           <ArrowLeft size={20} /> {selectedGame ? "Retour aux jeux" : "Retour"}
         </button>
 
@@ -63,9 +62,9 @@ const Leaderboard = () => {
           {!selectedGame ? (
             <div className="grid gap-4">
               {DEFAULT_GAMES.map((game) => (
-                <button key={game.id} onClick={() => setSelectedGame(game.id)} className="flex items-center justify-between p-6 bg-zinc-900 border border-zinc-800 rounded-3xl hover:border-violet-500 transition-all">
+                <button key={game.id} onClick={() => setSelectedGame(game.id)} className="flex items-center justify-between p-6 bg-card border border-border rounded-3xl hover:border-violet-500 transition-all shadow-sm">
                   <div className="flex items-center gap-4 text-xl font-bold"><span>{game.icon}</span> {game.name}</div>
-                  <ChevronRight />
+                  <ChevronRight className="text-muted-foreground" />
                 </button>
               ))}
             </div>
@@ -75,19 +74,19 @@ const Leaderboard = () => {
                 <div className="text-center py-10">Chargement...</div>
               ) : (
                 rankings.map((p) => (
-                  <div key={p.rank} className={`flex items-center justify-between p-5 rounded-2xl border ${p.username ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-900/20 border-zinc-800/50 border-dashed'}`}>
+                  <div key={p.rank} className={`flex items-center justify-between p-5 rounded-2xl border ${p.username ? 'bg-card border-border shadow-sm' : 'bg-muted/20 border-border border-dashed'}`}>
                     <div className="flex items-center gap-4">
-                      <span className={`font-black text-lg ${p.rank === 1 ? 'text-yellow-500' : p.rank === 2 ? 'text-zinc-300' : p.rank === 3 ? 'text-orange-500' : 'text-zinc-600'}`}>
+                      <span className={`font-black text-lg ${p.rank === 1 ? 'text-yellow-500' : p.rank === 2 ? 'text-zinc-400' : p.rank === 3 ? 'text-orange-500' : 'text-muted-foreground'}`}>
                         #{p.rank}
                       </span>
-                      <div className="w-12 h-12 rounded-full bg-zinc-800 border border-zinc-700 overflow-hidden flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-muted border border-border overflow-hidden flex items-center justify-center">
                         {p.avatar_url ? (
                           <img src={p.avatar_url} className="w-full h-full object-cover" alt="" />
                         ) : (
-                          <User size={20} className="text-zinc-700" />
+                          <User size={20} className="text-muted-foreground" />
                         )}
                       </div>
-                      <span className={`font-bold ${p.username ? 'text-white' : 'text-zinc-700 italic'}`}>
+                      <span className={`font-bold ${p.username ? 'text-foreground' : 'text-muted-foreground italic'}`}>
                         {p.username || "Place disponible"}
                       </span>
                     </div>

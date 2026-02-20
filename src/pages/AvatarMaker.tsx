@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/supabase';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save } from 'lucide-react';
@@ -37,7 +37,6 @@ const AvatarMaker = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Création d'un SVG personnalisé avec l'emoji et la couleur
       const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
           <rect width="100" height="100" fill="#${selectedColor.hex}" />
@@ -45,7 +44,6 @@ const AvatarMaker = () => {
         </svg>
       `.trim();
       
-      // Conversion du SVG en Data URL Base64
       const avatarUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
       
       const { error } = await supabase.auth.updateUser({
@@ -64,10 +62,10 @@ const AvatarMaker = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-2xl mx-auto px-6 py-8">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
           <ArrowLeft size={20} />
           Retour
         </button>
@@ -75,21 +73,19 @@ const AvatarMaker = () => {
         <h1 className="text-3xl font-black mb-8 text-center">Studio d'Avatar</h1>
 
         <div className="flex flex-col items-center gap-12">
-          {/* Preview */}
-          <div className={`w-48 h-48 rounded-[3rem] ${selectedColor.class} flex items-center justify-center text-8xl shadow-2xl shadow-black/50 border-4 border-white/10 transition-all duration-500`}>
+          <div className={`w-48 h-48 rounded-[3rem] ${selectedColor.class} flex items-center justify-center text-8xl shadow-2xl border-4 border-white/10 transition-all duration-500`}>
             {selectedEmoji}
           </div>
 
-          <div className="w-full space-y-8 bg-zinc-900/50 p-8 rounded-[2.5rem] border border-zinc-800">
-            {/* Emoji Picker */}
+          <div className="w-full space-y-8 bg-card p-8 rounded-[2.5rem] border border-border shadow-sm">
             <div className="space-y-4">
-              <p className="text-sm font-bold text-zinc-500 uppercase tracking-widest">Choisir un Emoji</p>
+              <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Choisir un Emoji</p>
               <div className="grid grid-cols-6 gap-3">
                 {EMOJIS.map((emoji) => (
                   <button
                     key={emoji}
                     onClick={() => setSelectedEmoji(emoji)}
-                    className={`text-2xl p-3 rounded-xl transition-all ${selectedEmoji === emoji ? 'bg-violet-600 scale-110' : 'bg-zinc-800 hover:bg-zinc-700'}`}
+                    className={`text-2xl p-3 rounded-xl transition-all ${selectedEmoji === emoji ? 'bg-violet-600 text-white scale-110' : 'bg-muted hover:bg-muted/80'}`}
                   >
                     {emoji}
                   </button>
@@ -97,15 +93,14 @@ const AvatarMaker = () => {
               </div>
             </div>
 
-            {/* Color Picker */}
             <div className="space-y-4">
-              <p className="text-sm font-bold text-zinc-500 uppercase tracking-widest">Couleur de fond</p>
+              <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Couleur de fond</p>
               <div className="flex flex-wrap gap-3">
                 {COLOR_OPTIONS.map((color) => (
                   <button
                     key={color.hex}
                     onClick={() => setSelectedColor(color)}
-                    className={`w-10 h-10 rounded-full border-2 ${color.class} ${selectedColor.hex === color.hex ? 'border-white scale-110' : 'border-transparent'}`}
+                    className={`w-10 h-10 rounded-full border-2 ${color.class} ${selectedColor.hex === color.hex ? 'border-foreground scale-110' : 'border-transparent'}`}
                   />
                 ))}
               </div>
@@ -115,7 +110,7 @@ const AvatarMaker = () => {
           <Button 
             onClick={handleSave} 
             disabled={saving}
-            className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 text-lg font-bold shadow-xl shadow-violet-500/20 gap-2"
+            className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 text-lg font-bold shadow-xl shadow-violet-500/20 gap-2 text-white"
           >
             {saving ? "Enregistrement..." : "Définir comme photo de profil"}
           </Button>

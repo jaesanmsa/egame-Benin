@@ -34,17 +34,17 @@ const Contact = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-2xl mx-auto px-6 py-8">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
           <ArrowLeft size={20} />
           Retour
         </button>
 
         <div className="text-center mb-12">
           <h1 className="text-3xl font-black mb-4">Contact & Aide</h1>
-          <p className="text-zinc-400">Une question ? Notre équipe est là pour vous aider.</p>
+          <p className="text-muted-foreground">Une question ? Notre équipe est là pour vous aider.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
@@ -59,7 +59,7 @@ const Contact = () => {
             </div>
             <div>
               <h3 className="font-bold text-green-500">WhatsApp</h3>
-              <p className="text-[10px] text-zinc-400">Réponse rapide</p>
+              <p className="text-[10px] text-muted-foreground">Réponse rapide</p>
             </div>
           </motion.button>
 
@@ -74,7 +74,7 @@ const Contact = () => {
             </div>
             <div>
               <h3 className="font-bold text-blue-500">Facebook</h3>
-              <p className="text-[10px] text-zinc-400">Actualités & News</p>
+              <p className="text-[10px] text-muted-foreground">Actualités & News</p>
             </div>
           </motion.button>
 
@@ -89,7 +89,7 @@ const Contact = () => {
             </div>
             <div>
               <h3 className="font-bold text-violet-500">Email</h3>
-              <p className="text-[10px] text-zinc-400">Support officiel</p>
+              <p className="text-[10px] text-muted-foreground">Support officiel</p>
             </div>
           </motion.button>
         </div>
@@ -102,9 +102,9 @@ const Contact = () => {
 
           <Accordion type="single" collapsible className="w-full space-y-3">
             {faqs.map((faq, i) => (
-              <AccordionItem key={i} value={`item-${i}`} className="border border-zinc-800 bg-zinc-900/50 rounded-2xl px-4 overflow-hidden">
+              <AccordionItem key={i} value={`item-${i}`} className="border border-border bg-card/50 rounded-2xl px-4 overflow-hidden">
                 <AccordionTrigger className="hover:no-underline font-bold text-sm text-left">{faq.q}</AccordionTrigger>
-                <AccordionContent className="text-zinc-400 text-sm leading-relaxed">
+                <AccordionContent className="text-muted-foreground text-sm leading-relaxed">
                   {faq.a}
                 </AccordionContent>
               </AccordionItem>
@@ -112,8 +112,8 @@ const Contact = () => {
           </Accordion>
         </section>
 
-        <div className="mt-12 p-8 bg-zinc-900/50 rounded-[2rem] border border-zinc-800 text-center">
-          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">
+        <div className="mt-12 p-8 bg-card/50 rounded-[2rem] border border-border text-center">
+          <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
             Disponible du Lundi au Samedi <br />
             De 09h00 à 20h00
           </p>
