@@ -98,7 +98,6 @@ const Index = () => {
     return matchesSearch && matchesType;
   });
 
-  // On cherche d'abord le tournoi marqué "is_featured", sinon on prend le premier
   const featuredTournament = filteredTournaments.find(t => t.is_featured) || filteredTournaments[0];
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
@@ -210,8 +209,8 @@ const Index = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
               <button onClick={() => setFilterType('All')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white' : 'bg-card text-muted-foreground border border-border'}`}>Tous</button>
-              <button onClick={() => setFilterType('Online')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${filterType === 'Online' ? 'bg-cyan-600 text-white' : 'bg-card text-muted-foreground border border-border'}`}><Globe size={16} /> En ligne</button>
-              <button onClick={() => setFilterType('Presentiel')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${filterType === 'Presentiel' ? 'bg-orange-600 text-white' : 'bg-card text-muted-foreground border border-border'}`}><MapPin size={16} /> Présentiel</button>
+              <button onClick={() => setFilterType('Online')} className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center ${filterType === 'Online' ? 'bg-cyan-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="En ligne"><Globe size={18} /></button>
+              <button onClick={() => setFilterType('Presentiel')} className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center ${filterType === 'Presentiel' ? 'bg-orange-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="Présentiel"><MapPin size={18} /></button>
             </div>
             <div className="relative w-full md:w-72">
               <Input placeholder="Rechercher..." className="pl-10 bg-card border-border rounded-xl" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
