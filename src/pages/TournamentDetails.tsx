@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
+import SEO from '@/components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, Gamepad2, CheckCircle2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -100,6 +101,11 @@ const TournamentDetails = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
+      <SEO 
+        title={`${tournament.title} - Tournoi ${tournament.game}`}
+        description={`Inscrivez-vous au tournoi ${tournament.title} sur eGame Bénin. Cash Prize : ${tournament.prize_pool}. Frais d'entrée : ${tournament.entry_fee} FCFA.`}
+        image={tournament.image_url}
+      />
       <Navbar />
       <div className="relative h-[40vh] w-full">
         <img src={tournament.image_url} className="w-full h-full object-cover opacity-50" alt="" />

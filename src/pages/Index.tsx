@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
 import FinishedTournamentCard from '@/components/FinishedTournamentCard';
 import Logo from '@/components/Logo';
+import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { Search, Trophy, Globe, MapPin, PlusCircle, History, Star, ChevronRight, Gamepad2, Facebook } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -104,6 +105,7 @@ const Index = () => {
   if (!session) {
     return (
       <div className="min-h-screen bg-background text-foreground flex flex-col pt-12">
+        <SEO />
         <main className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="mb-8">
             <Logo size="lg" showText={false} />
@@ -129,6 +131,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-24 pt-4 md:pt-24">
+      <SEO />
       <Navbar />
       <main className="max-w-7xl mx-auto px-6 py-8">
         <header className="mb-10">
