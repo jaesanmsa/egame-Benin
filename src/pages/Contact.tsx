@@ -3,7 +3,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MessageSquare, Mail, HelpCircle, Facebook } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Mail, HelpCircle, Facebook, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
@@ -12,6 +12,7 @@ const Contact = () => {
   const whatsappNumber = "2290141790790";
   const email = "egamebenin@gmail.com";
   const facebookUrl = "https://www.facebook.com/profile.php?id=61588439640775";
+  const whatsappChannelUrl = "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E";
 
   const handleWhatsApp = () => {
     const message = encodeURIComponent("Bonjour eGame Bénin, je souhaite obtenir des informations.");
@@ -24,6 +25,10 @@ const Contact = () => {
 
   const handleFacebook = () => {
     window.open(facebookUrl, '_blank');
+  };
+
+  const handleWhatsAppChannel = () => {
+    window.open(whatsappChannelUrl, '_blank');
   };
 
   const faqs = [
@@ -47,7 +52,22 @@ const Contact = () => {
           <p className="text-muted-foreground">Une question ? Notre équipe est là pour vous aider.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-12">
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleWhatsAppChannel}
+            className="flex flex-col items-center gap-3 p-6 bg-green-600/10 border border-green-600/20 rounded-3xl text-center transition-all hover:bg-green-600/20"
+          >
+            <div className="w-12 h-12 bg-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-600/20">
+              <Users size={24} className="text-white" />
+            </div>
+            <div>
+              <h3 className="font-bold text-green-600 text-sm">Communauté</h3>
+              <p className="text-[10px] text-muted-foreground">Chaîne WhatsApp</p>
+            </div>
+          </motion.button>
+
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -58,7 +78,7 @@ const Contact = () => {
               <MessageSquare size={24} className="text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-green-500">WhatsApp</h3>
+              <h3 className="font-bold text-green-500 text-sm">Support Direct</h3>
               <p className="text-[10px] text-muted-foreground">Réponse rapide</p>
             </div>
           </motion.button>
@@ -73,7 +93,7 @@ const Contact = () => {
               <Facebook size={24} className="text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-blue-500">Facebook</h3>
+              <h3 className="font-bold text-blue-500 text-sm">Facebook</h3>
               <p className="text-[10px] text-muted-foreground">Actualités & News</p>
             </div>
           </motion.button>
@@ -88,7 +108,7 @@ const Contact = () => {
               <Mail size={24} className="text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-violet-500">Email</h3>
+              <h3 className="font-bold text-violet-500 text-sm">Email</h3>
               <p className="text-[10px] text-muted-foreground">Support officiel</p>
             </div>
           </motion.button>
