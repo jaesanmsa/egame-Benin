@@ -98,7 +98,8 @@ const Index = () => {
     return matchesSearch && matchesType;
   });
 
-  const featuredTournament = filteredTournaments[0];
+  // On cherche d'abord le tournoi marqué "is_featured", sinon on prend le premier
+  const featuredTournament = filteredTournaments.find(t => t.is_featured) || filteredTournaments[0];
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
 
@@ -198,7 +199,7 @@ const Index = () => {
                 <h2 className="text-2xl md:text-4xl font-black mb-2 text-white">{featuredTournament.title}</h2>
                 <div className="flex items-center gap-4 text-zinc-200 text-sm">
                   <div className="flex items-center gap-1"><Trophy size={16} className="text-yellow-500" /> {featuredTournament.prize_pool}</div>
-                  <div className="flex items-center gap-1"><Globe size={16} className="text-cyan-500" /> {featuredTournament.type}</div>
+                  <div className="flex items-center gap-1"><Globe size={16} className="text-cyan-500" /> {featuredTournament.type === 'Online' ? 'En ligne' : 'Présentiel'}</div>
                 </div>
               </div>
             </motion.div>
@@ -223,7 +224,7 @@ const Index = () => {
                 key={t.id} id={t.id} title={t.title} game={t.game} image={t.image_url}
                 date={new Date(t.start_date || Date.now()).toLocaleDateString('fr-FR')}
                 participants={`${participantCounts[t.id] || 0}/${t.max_participants || 40}`}
-                entryFee={t.entry_fee.toString()} type={t.type}
+                entryFee={t.entry_fee.toString()} type={t.type === 'Online' ? 'Online' : 'Presentiel'}
               />
             ))}
           </div>

@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search, Settings, Edit3 } from 'lucide-react';
+import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search, Settings, Edit3, Star } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const AdminDashboard = () => {
@@ -96,6 +96,19 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleSetFeatured = async (id: string) => {
+    // On retire d'abord le "featured" de tous les tournois
+    await supabase.from('tournaments').update({ is_featured: false }).neq('id', 'none');
+    // On met le nouveau
+    const { error } = await supabase.from('tournaments').update({ is_featured: true }).eq('id', id);
+    
+    if (error) showError(error.message);
+    else {
+      showSuccess("Tournoi mis à la une !");
+      fetchData();
+    }
+  };
+
   const handleFinishTournament = async (e: React.FormEvent) => {
     e.preventDefault();
     const { error } = await supabase
@@ -103,7 +116,8 @@ const AdminDashboard = () => {
       .update({ 
         status: 'finished',
         winner_name: finishData.winnerName,
-        winner_avatar: finishData.winnerAvatar
+        winner_avatar: finishData.winnerAvatar,
+        is_featured: false
       })
       .eq('id', finishData.tournamentId);
     
@@ -228,17 +242,36 @@ const AdminDashboard = () => {
               {!editingTournament ? (
                 <div className="grid gap-4">
                   {activeTournaments.map(t => (
-                    <button 
+                    <div 
                       key={t.id} 
-                      onClick={() => setEditingTournament(t)}
-                      className="flex items-center justify-between p-4 bg-zinc-800 rounded-2xl border border-zinc-700 hover:border-violet-500 transition-all"
+                      className="flex items-center justify-between p-4 bg-zinc-800 rounded-2xl border border-zinc-700"
                     >
                       <div className="text-left">
-                        <p className="font-bold">{t.title}</p>
+                        <p className="font-bold flex items-center gap-2">
+                          {t.title}
+                          {t.is_featured && <Star size={14} className="text-yellow-500 fill-yellow-500" />}
+                        </p>
                         <p className="text-xs text-zinc-500">Code actuel: {t.access_code || "Aucun"}</p>
                       </div>
-                      <Settings size={18} className="text-zinc-500" />
-                    </button>
+                      <div className="flex items-center gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleSetFeatured(t.id)}
+                          className={`border-zinc-700 ${t.is_featured ? 'bg-yellow-500/10 text-yellow-500' : 'hover:bg-zinc-700'}`}
+                        >
+                          <Star size={16} />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => setEditingTournament(t)}
+                          className="border-zinc-700 hover:bg-zinc-700"
+                        >
+                          <Settings size={16} />
+                        </Button>
+                      </div>
+                    </div>
                   ))}
                 </div>
               ) : (

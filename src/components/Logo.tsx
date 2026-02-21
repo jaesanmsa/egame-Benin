@@ -26,7 +26,7 @@ const Logo = ({ className = "", size = 'md', showText = true }: LogoProps) => {
       </div>
       
       {showText && (
-        <span className={`font-black tracking-tighter text-white ${currentSize.text}`}>
+        <span className={`font-black tracking-tighter text-foreground ${currentSize.text}`}>
           eGame <span className="text-violet-500">Bénin</span>
         </span>
       )}
