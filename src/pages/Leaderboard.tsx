@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, ArrowLeft, ChevronRight, Star, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/supabase';
+import { supabase } from '@/lib/supabase';
 
 const DEFAULT_GAMES = [
   { id: 'blur', name: 'Blur', icon: '🏎️' },

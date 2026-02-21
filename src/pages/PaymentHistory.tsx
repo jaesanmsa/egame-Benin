@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, Gamepad2, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/supabase';
+import { supabase } from '@/lib/supabase';
 import { showSuccess } from '@/utils/toast';
 
 interface Payment {
