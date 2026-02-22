@@ -107,55 +107,55 @@ const TournamentDetails = () => {
         image={tournament.image_url}
       />
       <Navbar />
-      <div className="relative h-[40vh] w-full">
+      <div className="relative h-[35vh] w-full">
         <img src={tournament.image_url} className="w-full h-full object-cover opacity-50" alt="" />
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
         <div className="absolute top-6 left-6"><button onClick={() => navigate(-1)} className="p-3 bg-card/80 rounded-full"><ArrowLeft size={20} /></button></div>
         <div className="absolute top-6 right-6"><button onClick={() => { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }} className="p-3 bg-violet-600 rounded-full text-white"><Share2 size={20} /></button></div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-6 -mt-32 relative z-10">
-        <div className="bg-card/50 backdrop-blur-xl border border-border rounded-[2.5rem] p-8 shadow-2xl mb-8">
-          <div className="flex justify-between items-start gap-4 mb-8">
+      <main className="max-w-4xl mx-auto px-6 -mt-24 relative z-10">
+        <div className="bg-card/50 backdrop-blur-xl border border-border rounded-[2.5rem] p-6 md:p-8 shadow-2xl mb-8">
+          <div className="flex justify-between items-start gap-4 mb-6">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-violet-500 font-bold uppercase tracking-widest text-xs">{tournament.game}</span>
+                <span className="text-violet-500 font-bold uppercase tracking-widest text-[10px]">{tournament.game}</span>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${tournament.type === 'Online' ? 'bg-cyan-500/10 text-cyan-500' : 'bg-orange-500/10 text-orange-500'}`}>
                   {tournament.type === 'Online' ? 'En ligne' : 'Présentiel'}
                 </span>
               </div>
-              <h1 className="text-3xl font-black">{tournament.title}</h1>
+              <h1 className="text-2xl md:text-3xl font-black">{tournament.title}</h1>
             </div>
-            <div className="bg-violet-600 px-6 py-3 rounded-2xl text-center text-white">
-              <p className="text-xs text-violet-200 uppercase font-bold">Cash Prize</p>
-              <p className="text-2xl font-black">{tournament.prize_pool}</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-muted/50 p-4 rounded-2xl border border-border text-center">
-              <Calendar className="text-violet-500 mx-auto mb-2" size={20} />
-              <p className="text-muted-foreground text-xs">Date</p>
-              <p className="font-bold text-sm">{new Date(tournament.start_date || Date.now()).toLocaleDateString('fr-FR')}</p>
-            </div>
-            <div className="bg-muted/50 p-4 rounded-2xl border border-border text-center">
-              <Users className="text-violet-500 mx-auto mb-2" size={20} />
-              <p className="text-muted-foreground text-xs">Participants</p>
-              <p className="font-bold text-sm">{participantCount} / {maxParticipants}</p>
-            </div>
-            <div className="bg-muted/50 p-4 rounded-2xl border border-border text-center">
-              {tournament.type === 'Online' ? <Globe className="text-violet-500 mx-auto mb-2" size={20} /> : <MapPin className="text-violet-500 mx-auto mb-2" size={20} />}
-              <p className="text-muted-foreground text-xs">Lieu</p>
-              <p className="font-bold text-sm">{tournament.type}</p>
-            </div>
-            <div className="bg-muted/50 p-4 rounded-2xl border border-border text-center">
-              <Shield className="text-violet-500 mx-auto mb-2" size={20} />
-              <p className="text-muted-foreground text-xs">Anti-Cheat</p>
-              <p className="font-bold text-sm">Activé</p>
+            <div className="bg-violet-600 px-4 py-2 rounded-xl text-center text-white">
+              <p className="text-[10px] text-violet-200 uppercase font-bold">Cash Prize</p>
+              <p className="text-xl font-black">{tournament.prize_pool}</p>
             </div>
           </div>
 
-          <div className="mb-8 space-y-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div className="bg-muted/50 p-3 rounded-2xl border border-border text-center">
+              <Calendar className="text-violet-500 mx-auto mb-1" size={18} />
+              <p className="text-muted-foreground text-[10px]">Date</p>
+              <p className="font-bold text-xs">{new Date(tournament.start_date || Date.now()).toLocaleDateString('fr-FR')}</p>
+            </div>
+            <div className="bg-muted/50 p-3 rounded-2xl border border-border text-center">
+              <Users className="text-violet-500 mx-auto mb-1" size={18} />
+              <p className="text-muted-foreground text-[10px]">Participants</p>
+              <p className="font-bold text-xs">{participantCount} / {maxParticipants}</p>
+            </div>
+            <div className="bg-muted/50 p-3 rounded-2xl border border-border text-center">
+              {tournament.type === 'Online' ? <Globe className="text-violet-500 mx-auto mb-1" size={18} /> : <MapPin className="text-violet-500 mx-auto mb-1" size={18} />}
+              <p className="text-muted-foreground text-[10px]">Lieu</p>
+              <p className="font-bold text-xs">{tournament.type === 'Online' ? 'En ligne' : 'Présentiel'}</p>
+            </div>
+            <div className="bg-muted/50 p-3 rounded-2xl border border-border text-center">
+              <Shield className="text-violet-500 mx-auto mb-1" size={18} />
+              <p className="text-muted-foreground text-[10px]">Anti-Cheat</p>
+              <p className="font-bold text-xs">Activé</p>
+            </div>
+          </div>
+
+          <div className="mb-6 space-y-2">
             <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
               <span>Remplissage</span>
               <span>{Math.round(progress)}%</span>
@@ -164,20 +164,20 @@ const TournamentDetails = () => {
           </div>
 
           {userRegistration ? (
-            <div className="bg-green-500/10 border border-green-500/20 p-6 rounded-3xl mb-8">
-              <div className="flex items-center gap-3 mb-4 text-green-500">
-                <CheckCircle2 size={24} />
-                <h3 className="font-bold text-lg">Vous êtes inscrit !</h3>
+            <div className="bg-green-500/10 border border-green-500/20 p-5 rounded-3xl mb-6">
+              <div className="flex items-center gap-3 mb-3 text-green-500">
+                <CheckCircle2 size={20} />
+                <h3 className="font-bold text-base">Vous êtes inscrit !</h3>
               </div>
-              <div className="space-y-4">
-                <div className="p-4 bg-background/50 rounded-2xl border border-border">
-                  <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-2">Code d'accès / Lien du groupe</p>
-                  <p className="text-foreground font-mono font-bold break-all">
+              <div className="space-y-3">
+                <div className="p-3 bg-background/50 rounded-xl border border-border">
+                  <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-1">Code d'accès / Lien du groupe</p>
+                  <p className="text-foreground font-mono font-bold text-sm break-all">
                     {tournament.access_code || "Le code sera disponible peu avant le début."}
                   </p>
                 </div>
                 {tournament.access_code?.startsWith('http') && (
-                  <Button onClick={() => window.open(tournament.access_code, '_blank')} className="w-full bg-green-600 hover:bg-green-700 font-bold text-white">
+                  <Button onClick={() => window.open(tournament.access_code, '_blank')} className="w-full bg-green-600 hover:bg-green-700 font-bold text-white h-10 text-sm">
                     Rejoindre le groupe WhatsApp
                   </Button>
                 )}
@@ -188,24 +188,24 @@ const TournamentDetails = () => {
               <Button 
                 onClick={() => !isFull && setShowPayment(true)} 
                 disabled={isFull}
-                className={`w-full py-6 rounded-2xl font-black text-lg shadow-xl transition-all ${isFull ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-violet-600 text-white shadow-violet-500/20 hover:bg-violet-700'}`}
+                className={`w-full py-5 rounded-xl font-black text-base shadow-xl transition-all ${isFull ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-violet-600 text-white shadow-violet-500/20 hover:bg-violet-700'}`}
               >
                 {isFull ? "Tournoi Complet" : `S'inscrire pour ${tournament.entry_fee} FCFA`}
               </Button>
             ) : (
-              <Button onClick={() => navigate('/auth')} className="w-full py-6 rounded-2xl bg-muted font-black gap-3 text-foreground">
-                <Lock size={20} /> Se connecter pour s'inscrire
+              <Button onClick={() => navigate('/auth')} className="w-full py-5 rounded-xl bg-muted font-black gap-3 text-foreground text-sm">
+                <Lock size={18} /> Se connecter pour s'inscrire
               </Button>
             )
           )}
 
           {tournament.rules && (
-            <div className="mt-8 p-6 bg-background/50 rounded-3xl border border-border">
-              <div className="flex items-center gap-2 mb-4 text-violet-400">
-                <Info size={18} />
-                <h3 className="font-bold uppercase tracking-widest text-xs">Règlement & Infos</h3>
+            <div className="mt-6 p-5 bg-background/50 rounded-2xl border border-border">
+              <div className="flex items-center gap-2 mb-3 text-violet-400">
+                <Info size={16} />
+                <h3 className="font-bold uppercase tracking-widest text-[10px]">Règlement & Infos</h3>
               </div>
-              <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
+              <p className="text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap">
                 {tournament.rules}
               </p>
             </div>

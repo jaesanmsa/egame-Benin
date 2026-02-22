@@ -97,9 +97,7 @@ const AdminDashboard = () => {
   };
 
   const handleSetFeatured = async (id: string) => {
-    // On retire d'abord le "featured" de tous les tournois
     await supabase.from('tournaments').update({ is_featured: false }).neq('id', 'none');
-    // On met le nouveau
     const { error } = await supabase.from('tournaments').update({ is_featured: true }).eq('id', id);
     
     if (error) showError(error.message);
@@ -348,7 +346,7 @@ const AdminDashboard = () => {
                     <SelectItem value="clash-royale">Clash Royale</SelectItem>
                   </SelectContent>
                 </Select>
-                <Input placeholder="Pseudo" value={newLeader.username} onChange={e => setNewLeader({...newLeader, username: e.target.value})} className="bg-zinc-800" />
+                <Input placeholder="Pseudo" value={newLeader.username} onChange={newLeader.username} className="bg-zinc-800" />
                 <Input type="number" placeholder="Points" value={newLeader.wins} onChange={e => setNewLeader({...newLeader, wins: parseInt(e.target.value)})} className="bg-zinc-800" />
                 <div className="md:col-span-2">
                   <Input placeholder="Lien Avatar Emoji" value={newLeader.avatar_url} onChange={e => setNewLeader({...newLeader, avatar_url: e.target.value})} className="bg-zinc-800" />
