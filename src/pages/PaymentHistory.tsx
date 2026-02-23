@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, MessageSquare, XCircle } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, MessageSquare, XCircle, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { showSuccess } from '@/utils/toast';
@@ -21,38 +21,56 @@ const PaymentHistory = () => {
   const navigate = useNavigate();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const whatsappNumber = "2290141790790";
+
+  const fetchData = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
+    else setIsRefreshing(true);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        const processedPayments = data.map((p: any) => {
+          const createdAt = new Date(p.created_at).getTime();
+          const now = new Date().getTime();
+          const diffMinutes = (now - createdAt) / (1000 * 60);
+          
+          if (p.status === 'En attente' && diffMinutes > 5) {
+            return { ...p, status: 'Échoué' };
+          }
+          return p;
+        });
+        setPayments(processedPayments);
+      }
+    } finally {
+      setLoading(false);
+      setIsRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  const fetchData = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data, error } = await supabase
-      .from('payments')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-
-    if (!error && data) {
-      // On traite les données pour marquer comme échoué si > 5 min
-      const processedPayments = data.map((p: any) => {
-        const createdAt = new Date(p.created_at).getTime();
-        const now = new Date().getTime();
-        const diffMinutes = (now - createdAt) / (1000 * 60);
-        
-        if (p.status === 'En attente' && diffMinutes > 5) {
-          return { ...p, status: 'Échoué' };
-        }
-        return p;
-      });
-      setPayments(processedPayments);
+  // Rafraîchissement automatique toutes les 10 secondes si un paiement est en attente
+  useEffect(() => {
+    const hasPending = payments.some(p => p.status === 'En attente');
+    if (hasPending) {
+      const interval = setInterval(() => {
+        fetchData(true);
+      }, 10000);
+      return () => clearInterval(interval);
     }
-    setLoading(false);
-  };
+  }, [payments, fetchData]);
 
   const handleWhatsAppSend = (payment: Payment) => {
     const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation de paiement : ${payment.validation_code} pour le tournoi ${payment.tournament_name}.`);
@@ -68,10 +86,19 @@ const PaymentHistory = () => {
     <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-2xl mx-auto px-6 py-8">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
-          <ArrowLeft size={20} />
-          Retour
-        </button>
+        <div className="flex items-center justify-between mb-8">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft size={20} />
+            Retour
+          </button>
+          <button 
+            onClick={() => fetchData(true)} 
+            disabled={isRefreshing}
+            className={`p-2 rounded-full bg-muted hover:bg-muted/80 transition-all ${isRefreshing ? 'animate-spin' : ''}`}
+          >
+            <RefreshCw size={18} className="text-violet-500" />
+          </button>
+        </div>
 
         <h1 className="text-3xl font-black mb-8">Mes Inscriptions</h1>
 
@@ -90,7 +117,7 @@ const PaymentHistory = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="font-bold text-lg">{payment.tournament_name}</h3>
-                      <p className="text-muted-foreground text-xs">{new Date(payment.created_at).toLocaleDateString('fr-FR')}</p>
+                      <p className="text-muted-foreground text-[10px]">{new Date(payment.created_at).toLocaleString('fr-FR')}</p>
                     </div>
                     <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] font-bold ${
                       payment.status === 'Réussi' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 
@@ -99,7 +126,7 @@ const PaymentHistory = () => {
                     }`}>
                       {payment.status === 'Réussi' ? <CheckCircle2 size={14} /> : 
                        payment.status === 'Échoué' ? <XCircle size={14} /> :
-                       <Clock size={14} />}
+                       <Clock size={14} className="animate-pulse" />}
                       {payment.status}
                     </div>
                   </div>
@@ -128,9 +155,12 @@ const PaymentHistory = () => {
                       <p className="text-[10px] text-muted-foreground mt-1">Le délai de 5 minutes est dépassé. Veuillez recommencer l'inscription.</p>
                     </div>
                   ) : (
-                    <div className="p-4 bg-muted/50 rounded-2xl text-center">
-                      <p className="text-muted-foreground text-xs italic">En attente de confirmation par FedaPay...</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">Le code de validation apparaîtra ici après le paiement.</p>
+                    <div className="p-4 bg-muted/50 rounded-2xl text-center space-y-3">
+                      <div className="flex items-center justify-center gap-2 text-orange-500">
+                        <RefreshCw size={16} className="animate-spin" />
+                        <p className="text-xs font-bold">Vérification en cours...</p>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground">Dès que votre paiement est validé sur FedaPay, cette page se mettra à jour automatiquement.</p>
                     </div>
                   )}
                 </motion.div>
