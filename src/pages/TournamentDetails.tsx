@@ -57,8 +57,6 @@ const TournamentDetails = () => {
         .single();
       
       if (data) {
-        // On ne considère l'inscription que si elle est Réussie 
-        // OU si elle est En attente depuis moins de 30 minutes
         const createdAt = new Date(data.created_at).getTime();
         const now = new Date().getTime();
         const diffMinutes = (now - createdAt) / (1000 * 60);
@@ -101,7 +99,10 @@ const TournamentDetails = () => {
 
       if (error) throw error;
       
-      const baseUrl = tournament.payment_url || "https://me.fedapay.com/mpservices";
+      // Sécurisation de l'URL
+      let baseUrl = tournament.payment_url || "https://me.fedapay.com/mpservices";
+      if (!baseUrl.startsWith('http')) baseUrl = `https://${baseUrl}`;
+      
       const paymentUrl = new URL(baseUrl);
       
       if (user.email) {
@@ -113,8 +114,9 @@ const TournamentDetails = () => {
       
       window.location.href = paymentUrl.toString();
     } catch (err: any) {
-      showError(err.message);
+      showError("Erreur de redirection. Vérifiez le lien de paiement.");
       setPaymentStep('select');
+      setShowPayment(false);
     }
   };
 
@@ -141,8 +143,8 @@ const TournamentDetails = () => {
       <div className="relative h-[35vh] w-full">
         <img src={tournament.image_url} className="w-full h-full object-cover opacity-50" alt="" />
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-        <div className="absolute top-6 left-6"><button onClick={() => navigate(-1)} className="p-3 bg-card/80 rounded-full"><ArrowLeft size={20} /></button></div>
-        <div className="absolute top-6 right-6"><button onClick={() => { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }} className="p-3 bg-violet-600 rounded-full text-white"><Share2 size={20} /></button></div>
+        <div className="absolute top-6 left-6 z-20"><button onClick={() => navigate(-1)} className="p-3 bg-card/80 rounded-full"><ArrowLeft size={20} /></button></div>
+        <div className="absolute top-6 right-6 z-20"><button onClick={() => { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }} className="p-3 bg-violet-600 rounded-full text-white"><Share2 size={20} /></button></div>
       </div>
 
       <main className="max-w-4xl mx-auto px-6 -mt-24 relative z-10">
@@ -237,12 +239,12 @@ const TournamentDetails = () => {
               <Button 
                 onClick={() => !isFull && setShowPayment(true)} 
                 disabled={isFull}
-                className={`w-full py-5 rounded-xl font-black text-base shadow-xl transition-all ${isFull ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-violet-600 text-white shadow-violet-500/20 hover:bg-violet-700'}`}
+                className={`w-full py-7 rounded-2xl font-black text-lg shadow-xl transition-all ${isFull ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-violet-600 text-white shadow-violet-500/20 hover:bg-violet-700'}`}
               >
                 {isFull ? "Tournoi Complet" : `S'inscrire pour ${tournament.entry_fee} FCFA`}
               </Button>
             ) : (
-              <Button onClick={() => navigate('/auth')} className="w-full py-5 rounded-xl bg-muted font-black gap-3 text-foreground text-sm">
+              <Button onClick={() => navigate('/auth')} className="w-full py-7 rounded-2xl bg-muted font-black gap-3 text-foreground text-sm">
                 <Lock size={18} /> Se connecter pour s'inscrire
               </Button>
             )
@@ -264,30 +266,63 @@ const TournamentDetails = () => {
 
       <AnimatePresence>
         {showPayment && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPayment(false)} className="absolute inset-0 bg-background/90 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-card border border-border w-full max-w-[340px] rounded-[2rem] p-6">
-              <button onClick={() => setShowPayment(false)} className="absolute top-4 right-4 p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-all z-50"><X size={20} /></button>
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              onClick={() => setShowPayment(false)} 
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }} 
+              animate={{ scale: 1, opacity: 1, y: 0 }} 
+              exit={{ scale: 0.9, opacity: 0, y: 20 }} 
+              className="relative bg-card border border-border w-full max-w-[360px] rounded-[2.5rem] p-8 shadow-2xl z-50"
+            >
+              <button 
+                onClick={() => setShowPayment(false)} 
+                className="absolute top-6 right-6 p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-all"
+              >
+                <X size={20} />
+              </button>
+              
               {paymentStep === 'select' ? (
-                <div className="space-y-5">
+                <div className="space-y-6">
                   <div className="text-center">
-                    <h2 className="text-lg font-bold mb-1">Paiement Local</h2>
-                    <p className="text-muted-foreground text-xs">Payez via Mobile Money au Bénin</p>
+                    <div className="w-16 h-16 bg-violet-600/10 rounded-2xl flex items-center justify-center text-violet-500 mx-auto mb-4">
+                      <Smartphone size={32} />
+                    </div>
+                    <h2 className="text-xl font-black mb-1">Paiement Mobile</h2>
+                    <p className="text-muted-foreground text-xs">Sécurisé par FedaPay Bénin</p>
                   </div>
-                  <button onClick={handleFedaPay} className="w-full flex items-center justify-between p-4 bg-muted hover:bg-muted/80 rounded-xl border border-border transition-all group">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center text-orange-500"><Smartphone size={20} /></div>
+                  
+                  <button 
+                    onClick={handleFedaPay} 
+                    className="w-full flex items-center justify-between p-5 bg-muted hover:bg-violet-600/10 rounded-2xl border border-border hover:border-violet-500/50 transition-all group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                        <Smartphone size={24} />
+                      </div>
                       <div className="text-left">
-                        <p className="font-bold text-sm">FedaPay (MTN / Moov)</p>
-                        <p className="text-[10px] text-muted-foreground">Paiement sécurisé 229</p>
+                        <p className="font-bold text-sm">MTN / Moov Money</p>
+                        <p className="text-[10px] text-muted-foreground">Validation instantanée</p>
                       </div>
                     </div>
                   </button>
+                  
+                  <p className="text-[10px] text-center text-muted-foreground px-4">
+                    En cliquant, vous serez redirigé vers la plateforme sécurisée de FedaPay pour finaliser votre transaction.
+                  </p>
                 </div>
               ) : (
-                <div className="py-8 text-center space-y-4">
-                  <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                  <h2 className="text-lg font-bold">Redirection...</h2>
+                <div className="py-12 text-center space-y-6">
+                  <div className="w-16 h-16 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                  <div>
+                    <h2 className="text-xl font-black mb-2">Redirection...</h2>
+                    <p className="text-muted-foreground text-sm">Préparation de votre paiement sécurisé</p>
+                  </div>
                 </div>
               )}
             </motion.div>
