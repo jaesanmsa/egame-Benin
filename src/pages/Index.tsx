@@ -7,7 +7,7 @@ import FinishedTournamentCard from '@/components/FinishedTournamentCard';
 import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
-import { Search, Trophy, Globe, MapPin, PlusCircle, History, Star, ChevronRight, Gamepad2 } from 'lucide-react';
+import { Search, Trophy, Globe, MapPin, PlusCircle, History, Star, ChevronRight, Gamepad2, Facebook } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -203,8 +203,8 @@ const Index = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
               <button onClick={() => setFilterType('All')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white' : 'bg-card text-muted-foreground border border-border'}`}>Tous</button>
-              <button onClick={() => setFilterType('Online')} className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center ${filterType === 'Online' ? 'bg-cyan-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="En ligne"><Globe size={18} /></button>
-              <button onClick={() => setFilterType('Presentiel')} className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center ${filterType === 'Presentiel' ? 'bg-orange-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="Présentiel"><MapPin size={18} /></button>
+              <button onClick={() => setFilterType('Online')} className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center ${filterType === 'Online' ? 'bg-cyan-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="En ligne"><Globe size={16} /></button>
+              <button onClick={() => setFilterType('Presentiel')} className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center ${filterType === 'Presentiel' ? 'bg-orange-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="Présentiel"><MapPin size={16} /></button>
             </div>
             <div className="relative w-full md:w-64">
               <Input placeholder="Rechercher..." className="pl-9 h-10 text-sm bg-card border-border rounded-xl" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
@@ -220,6 +220,22 @@ const Index = () => {
                 entryFee={t.entry_fee.toString()} type={t.type === 'Online' ? 'Online' : 'Presentiel'}
               />
             ))}
+          </div>
+        </section>
+
+        <section className="mb-12">
+          <div className="bg-gradient-to-br from-blue-600/10 to-indigo-600/10 border border-blue-500/20 rounded-[2rem] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-center md:text-left">
+              <h2 className="text-xl md:text-2xl font-black mb-2">Rejoignez la communauté !</h2>
+              <p className="text-muted-foreground text-sm max-w-md">Suivez-nous sur Facebook pour ne rien rater des actualités et des lives.</p>
+            </div>
+            <button 
+              onClick={() => window.open("https://www.facebook.com/profile.php?id=61588439640775", "_blank")}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-xl shadow-blue-500/20 transition-all text-sm"
+            >
+              <Facebook size={20} />
+              Voir notre Facebook
+            </button>
           </div>
         </section>
 
