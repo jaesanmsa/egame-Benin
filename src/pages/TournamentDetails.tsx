@@ -86,13 +86,21 @@ const TournamentDetails = () => {
 
       if (error) throw error;
       
-      // Construction de l'URL avec les paramètres de pré-remplissage
+      // Construction de l'URL avec TOUS les formats possibles pour FedaPay
       const baseUrl = tournament.payment_url || "https://me.fedapay.com/mpservices";
       const paymentUrl = new URL(baseUrl);
       
       if (user.email) {
-        // On ajoute les deux variantes possibles pour FedaPay
+        const userName = user.user_metadata?.username || user.email.split('@')[0];
+        
+        // Format standard simple
         paymentUrl.searchParams.append('email', user.email);
+        
+        // Format API / Checkout (le plus probable pour que ça marche)
+        paymentUrl.searchParams.append('customer[email]', user.email);
+        paymentUrl.searchParams.append('customer[firstname]', userName);
+        
+        // Format legacy
         paymentUrl.searchParams.append('customer_email', user.email);
       }
       
