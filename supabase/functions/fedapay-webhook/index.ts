@@ -7,21 +7,22 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Gestion du CORS
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
-  console.log("[fedapay-webhook] Requête reçue...");
+  console.log("[fedapay-webhook] Requête reçue...")
 
-  // 1. Vérification du Token de sécurité
+  // 1. Vérification du token de sécurité
   const webhookToken = req.headers.get('x-webhook-token')
-  const expectedToken = Deno.env.get('fedapaywebhook')
+  const expectedToken = Deno.env.get('FEDAPAY_WEBHOOK_TOKEN') ?? Deno.env.get('fedapaywebhook')
 
-  if (!webhookToken || webhookToken !== expectedToken) {
-    console.error("[fedapay-webhook] ERREUR: Token de sécurité manquant ou incorrect.");
-    console.log("[fedapay-webhook] Reçu:", webhookToken, "Attendu:", expectedToken);
-    return new Response(JSON.stringify({ error: 'Token non autorisé' }), { status: 401, headers: corsHeaders })
+  if (!webhookToken || !expectedToken || webhookToken !== expectedToken) {
+    console.error("[fedapay-webhook] ERREUR: Token de sécurité manquant ou incorrect.")
+    return new Response(JSON.stringify({ error: 'Token non autorisé' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 
   try {
@@ -30,57 +31,49 @@ serve(async (req) => {
 
     if (payload.event === 'transaction.approved') {
       const transaction = payload.entity
-      const customerEmail = transaction.customer?.email
-      
-      if (!customerEmail) {
-        console.error("[fedapay-webhook] ERREUR: Aucun email client dans la transaction FedaPay.");
-        return new Response("No email", { status: 200 })
+      const fedapayTransactionId = transaction?.id ? String(transaction.id) : null
+
+      if (!fedapayTransactionId) {
+        console.error("[fedapay-webhook] ERREUR: Aucun ID de transaction dans le payload.")
+        return new Response(JSON.stringify({ error: 'ID de transaction manquant' }), {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
       }
+
+      console.log("[fedapay-webhook] Transaction FedaPay ID:", fedapayTransactionId)
 
       const supabase = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
       )
 
-      // Trouver l'utilisateur par son email
-      const { data: userData, error: userError } = await supabase.auth.admin.listUsers()
-      if (userError) throw userError
-
-      const user = userData.users.find(u => u.email?.toLowerCase() === customerEmail.toLowerCase())
-
-      if (!user) {
-        console.error("[fedapay-webhook] ERREUR: Aucun utilisateur trouvé sur le site avec l'email:", customerEmail);
-        return new Response("User not found", { status: 200 })
-      }
-
-      // Valider le dernier paiement "En attente" de cet utilisateur
+      // Mise à jour du paiement correspondant par fedapay_transaction_id
       const { data: updateData, error: updateError } = await supabase
         .from('payments')
         .update({ status: 'Réussi' })
-        .eq('user_id', user.id)
+        .eq('fedapay_transaction_id', fedapayTransactionId)
         .eq('status', 'En attente')
-        .order('created_at', { ascending: false })
-        .limit(1)
         .select()
 
       if (updateError) throw updateError
 
       if (updateData && updateData.length > 0) {
-        console.log("[fedapay-webhook] SUCCÈS: Paiement validé pour", customerEmail);
+        console.log("[fedapay-webhook] SUCCÈS: Paiement validé pour la transaction", fedapayTransactionId)
       } else {
-        console.warn("[fedapay-webhook] ATTENTION: Transaction approuvée mais aucun paiement 'En attente' trouvé pour cet utilisateur.");
+        console.warn("[fedapay-webhook] ATTENTION: Transaction approuvée mais aucun paiement 'En attente' trouvé pour l'ID:", fedapayTransactionId)
       }
     }
 
-    return new Response(JSON.stringify({ ok: true }), { 
-      status: 200, 
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   } catch (error) {
     console.error("[fedapay-webhook] ERREUR CRITIQUE:", error.message)
-    return new Response(JSON.stringify({ error: error.message }), { 
-      status: 400, 
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
 })

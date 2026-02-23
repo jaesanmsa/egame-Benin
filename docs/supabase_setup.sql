@@ -23,3 +23,7 @@ CREATE POLICY "Users can insert their own payments" ON public.payments FOR INSER
 -- Donner les droits d'accès
 GRANT ALL ON public.payments TO authenticated;
 GRANT ALL ON public.payments TO service_role;
+
+-- Ajout des colonnes supplémentaires
+ALTER TABLE public.payments ADD COLUMN IF NOT EXISTS validation_code text;
+ALTER TABLE public.payments ADD COLUMN IF NOT EXISTS fedapay_transaction_id text UNIQUE;

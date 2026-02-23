@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(supabase:*)",
+      "Bash(npm:*)",
+      "Bash(winget install:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)"
+    ]
+  }
+}
