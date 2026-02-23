@@ -75,6 +75,7 @@ const TournamentDetails = () => {
       
       const validationCode = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
       
+      // On enregistre l'intention de paiement
       const { error } = await supabase.from('payments').insert({
         user_id: user.id,
         tournament_id: id,
@@ -86,9 +87,12 @@ const TournamentDetails = () => {
 
       if (error) throw error;
       
-      // Utilisation du lien de paiement spécifique au tournoi ou lien par défaut
-      const paymentUrl = tournament.payment_url || "https://me.fedapay.com/mpservices";
-      window.location.href = paymentUrl;
+      // Redirection vers FedaPay
+      // On ajoute l'email en paramètre pour pré-remplir FedaPay et faciliter le matching du webhook
+      const paymentUrl = new URL(tournament.payment_url || "https://me.fedapay.com/mpservices");
+      paymentUrl.searchParams.append('email', user.email || '');
+      
+      window.location.href = paymentUrl.toString();
     } catch (err: any) {
       showError(err.message);
       setPaymentStep('select');
