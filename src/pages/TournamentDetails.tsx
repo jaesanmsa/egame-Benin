@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, Gamepad2, CheckCircle2, History, Copy } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, Gamepad2, CheckCircle2, History, Copy, ChevronRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -139,17 +139,16 @@ const TournamentDetails = () => {
       />
       <Navbar />
       
-      {/* Header Image */}
       <div className="relative h-[35vh] w-full">
         <img src={tournament.image_url} className="w-full h-full object-cover opacity-50" alt="" />
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
         <div className="absolute top-6 left-6 z-20">
-          <button onClick={() => navigate(-1)} className="p-3 bg-zinc-900/80 rounded-full text-white">
+          <button onClick={() => navigate(-1)} className="p-3 bg-card/80 backdrop-blur-md rounded-full text-foreground border border-border">
             <ArrowLeft size={20} />
           </button>
         </div>
         <div className="absolute top-6 right-6 z-20">
-          <button onClick={() => { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }} className="p-3 bg-violet-600 rounded-full text-white">
+          <button onClick={() => { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }} className="p-3 bg-violet-600 rounded-full text-white shadow-lg shadow-violet-500/20">
             <Share2 size={20} />
           </button>
         </div>
@@ -167,7 +166,7 @@ const TournamentDetails = () => {
               </div>
               <h1 className="text-2xl md:text-3xl font-black">{tournament.title}</h1>
             </div>
-            <div className="bg-violet-600 px-4 py-2 rounded-xl text-center text-white">
+            <div className="bg-violet-600 px-4 py-2 rounded-xl text-center text-white shadow-lg shadow-violet-500/20">
               <p className="text-[10px] text-violet-200 uppercase font-bold">Cash Prize</p>
               <p className="text-xl font-black">{tournament.prize_pool}</p>
             </div>
@@ -247,16 +246,14 @@ const TournamentDetails = () => {
           ) : (
             isLoggedIn ? (
               <Button 
-                onClick={() => {
-                  if (!isFull) setShowPayment(true);
-                }} 
+                onClick={() => !isFull && setShowPayment(true)} 
                 disabled={isFull}
-                className={`w-full py-7 rounded-2xl font-black text-lg shadow-xl transition-all ${isFull ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-violet-600 text-white shadow-violet-500/20 hover:bg-violet-700'}`}
+                className={`w-full py-8 rounded-2xl font-black text-lg shadow-xl transition-all ${isFull ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-violet-600 text-white shadow-violet-500/20 hover:bg-violet-700'}`}
               >
                 {isFull ? "Tournoi Complet" : `S'inscrire pour ${tournament.entry_fee} FCFA`}
               </Button>
             ) : (
-              <Button onClick={() => navigate('/auth')} className="w-full py-7 rounded-2xl bg-muted font-black gap-3 text-foreground text-sm">
+              <Button onClick={() => navigate('/auth')} className="w-full py-8 rounded-2xl bg-muted font-black gap-3 text-foreground text-sm">
                 <Lock size={18} /> Se connecter pour s'inscrire
               </Button>
             )
@@ -276,59 +273,68 @@ const TournamentDetails = () => {
         </div>
       </main>
 
-      {/* MODAL DE PAIEMENT - VERSION BLINDÉE SANS ANIMATION */}
+      {/* MODAL DE PAIEMENT OPTIMISÉ */}
       {showPayment && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          {/* Overlay sombre fixe */}
+          {/* Overlay semi-transparent doux */}
           <div 
-            className="fixed inset-0 bg-zinc-950/95" 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
             onClick={() => setShowPayment(false)} 
           />
           
-          {/* Contenu du Modal */}
-          <div className="relative bg-zinc-900 border border-zinc-800 w-full max-w-[380px] rounded-[2.5rem] p-8 shadow-2xl z-[10000]">
+          {/* Contenu du Modal - Adaptatif Thème */}
+          <div className="relative bg-card border border-border w-full max-w-[400px] rounded-[2.5rem] p-8 shadow-2xl z-[10000] overflow-hidden">
             <button 
               onClick={() => setShowPayment(false)} 
-              className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-white bg-zinc-800 rounded-full transition-all"
+              className="absolute top-6 right-6 p-2 text-muted-foreground hover:text-foreground bg-muted rounded-full transition-all"
             >
-              <X size={24} />
+              <X size={20} />
             </button>
             
             {paymentStep === 'select' ? (
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-violet-600/20 rounded-2xl flex items-center justify-center text-violet-500 mx-auto mb-4">
-                    <Smartphone size={32} />
+                  <div className="w-20 h-20 bg-violet-600/10 rounded-3xl flex items-center justify-center text-violet-500 mx-auto mb-4">
+                    <Smartphone size={40} />
                   </div>
-                  <h2 className="text-xl font-black text-white mb-1">Paiement Mobile</h2>
-                  <p className="text-zinc-400 text-xs">Sécurisé par FedaPay Bénin</p>
+                  <h2 className="text-2xl font-black mb-1">Paiement Mobile</h2>
+                  <p className="text-muted-foreground text-sm">Sécurisé par FedaPay Bénin</p>
                 </div>
                 
-                <button 
-                  onClick={handleFedaPay} 
-                  className="w-full flex items-center justify-between p-5 bg-zinc-800 hover:bg-violet-600/20 rounded-2xl border border-zinc-700 hover:border-violet-500 transition-all group"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-colors">
-                      <Smartphone size={24} />
+                <div className="space-y-3">
+                  <button 
+                    onClick={handleFedaPay} 
+                    className="w-full flex items-center justify-between p-6 bg-muted hover:bg-violet-600/10 rounded-2xl border border-border hover:border-violet-500/50 transition-all group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                        <Smartphone size={24} />
+                      </div>
+                      <div className="text-left">
+                        <p className="font-bold text-base">MTN / Moov Money</p>
+                        <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Validation instantanée</p>
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <p className="font-bold text-sm text-white">MTN / Moov Money</p>
-                      <p className="text-[10px] text-zinc-500">Validation instantanée</p>
-                    </div>
-                  </div>
-                </button>
+                    <ChevronRight size={20} className="text-muted-foreground group-hover:text-violet-500 transition-colors" />
+                  </button>
+                </div>
                 
-                <p className="text-[10px] text-center text-zinc-500 px-4">
-                  En cliquant, vous serez redirigé vers la plateforme sécurisée de FedaPay pour finaliser votre transaction.
-                </p>
+                <div className="p-4 bg-muted/50 rounded-2xl border border-border">
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-muted-foreground">Montant à payer</span>
+                    <span className="font-black text-violet-500">{tournament.entry_fee} FCFA</span>
+                  </div>
+                  <p className="text-[10px] text-center text-muted-foreground mt-4 leading-relaxed">
+                    En continuant, vous acceptez les conditions de participation au tournoi.
+                  </p>
+                </div>
               </div>
             ) : (
-              <div className="py-12 text-center space-y-6">
+              <div className="py-16 text-center space-y-6">
                 <div className="w-16 h-16 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
                 <div>
-                  <h2 className="text-xl font-black text-white mb-2">Redirection...</h2>
-                  <p className="text-zinc-400 text-sm">Préparation de votre paiement sécurisé</p>
+                  <h2 className="text-2xl font-black mb-2">Redirection...</h2>
+                  <p className="text-muted-foreground text-sm">Préparation de votre paiement sécurisé</p>
                 </div>
               </div>
             )}
