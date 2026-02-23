@@ -12,7 +12,6 @@ serve(async (req) => {
   }
 
   try {
-    // 1. Vérification de l'authentification
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Non autorisé' }), {
@@ -22,7 +21,6 @@ serve(async (req) => {
     }
 
     const token = authHeader.replace('Bearer ', '')
-
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -30,7 +28,6 @@ serve(async (req) => {
 
     const { data: { user }, error: userError } = await supabase.auth.getUser(token)
     if (userError || !user) {
-      console.error('[create-payment] ERREUR: Utilisateur non authentifié.', userError?.message)
       return new Response(JSON.stringify({ error: 'Utilisateur non trouvé' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -38,24 +35,14 @@ serve(async (req) => {
     }
 
     const { tournament_id, tournament_name, amount } = await req.json()
-
-    if (!tournament_id || !tournament_name || !amount) {
-      return new Response(JSON.stringify({ error: 'Paramètres manquants: tournament_id, tournament_name, amount requis' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
-    }
-
     const validationCode = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`
 
-    // 2. Création de la transaction via l'API FedaPay
+    // 1. Création de la transaction FedaPay
     const fedapayEnv = Deno.env.get('FEDAPAY_ENV') ?? 'sandbox'
-    const fedapayBaseUrl = fedapayEnv === 'live'
-      ? 'https://api.fedapay.com'
-      : 'https://sandbox-api.fedapay.com'
+    const fedapayBaseUrl = fedapayEnv === 'live' ? 'https://api.fedapay.com' : 'https://sandbox-api.fedapay.com'
     const fedapayKey = Deno.env.get('FEDAPAY_SECRET_KEY') ?? ''
 
-    console.log(`[create-payment] Création de la transaction FedaPay (${fedapayEnv}) pour ${user.email}`)
+    console.log(`[create-payment] Création FedaPay pour ${user.email} - Code: ${validationCode}`)
 
     const createRes = await fetch(`${fedapayBaseUrl}/v1/transactions`, {
       method: 'POST',
@@ -65,31 +52,22 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         amount: parseInt(String(amount)),
-        description: `Inscription ${tournament_name} - ${validationCode}`,
+        description: `CODE:${validationCode} | ${tournament_name}`,
         currency: { iso: 'XOF' },
-        callback_url: `${Deno.env.get('SITE_URL') ?? ''}/payment-success`,
+        callback_url: `https://egamebenin.com/payment-success`,
         customer: { email: user.email },
       }),
     })
 
     if (!createRes.ok) {
       const errText = await createRes.text()
-      throw new Error(`FedaPay create transaction error (${createRes.status}): ${errText}`)
+      throw new Error(`Erreur FedaPay: ${errText}`)
     }
 
     const createData = await createRes.json()
-    const fedapayTransactionId =
-      createData?.v1?.transaction?.id ??
-      createData?.transaction?.id ??
-      createData?.id
+    const fedapayTransactionId = createData?.v1?.transaction?.id || createData?.transaction?.id || createData?.id
 
-    if (!fedapayTransactionId) {
-      throw new Error('ID de transaction FedaPay introuvable dans la réponse')
-    }
-
-    console.log(`[create-payment] Transaction FedaPay créée: ID=${fedapayTransactionId}`)
-
-    // 3. Génération du token de paiement pour obtenir l'URL de checkout
+    // 2. Génération du token de paiement
     const tokenRes = await fetch(`${fedapayBaseUrl}/v1/transactions/${fedapayTransactionId}/token`, {
       method: 'POST',
       headers: {
@@ -98,40 +76,27 @@ serve(async (req) => {
       },
     })
 
-    if (!tokenRes.ok) {
-      const errText = await tokenRes.text()
-      throw new Error(`FedaPay token error (${tokenRes.status}): ${errText}`)
-    }
-
     const tokenData = await tokenRes.json()
-    // FedaPay retourne { token: { url: "..." } } ou directement { url: "..." }
-    const checkoutUrl = tokenData?.token?.url ?? tokenData?.url ?? tokenData?.token_url
+    const checkoutUrl = tokenData?.token?.url || tokenData?.url
 
-    if (!checkoutUrl) {
-      throw new Error('URL de paiement FedaPay introuvable dans la réponse')
-    }
-
-    // 4. Insertion du paiement en base avec le fedapay_transaction_id
+    // 3. Insertion en base (SANS la colonne manquante)
     const { error: insertError } = await supabase.from('payments').insert({
       user_id: user.id,
       tournament_id,
       tournament_name,
       amount: String(amount),
       status: 'En attente',
-      validation_code: validationCode,
-      fedapay_transaction_id: String(fedapayTransactionId),
+      validation_code: validationCode
     })
 
     if (insertError) throw insertError
-
-    console.log(`[create-payment] SUCCÈS: Paiement créé pour ${user.email}, code=${validationCode}`)
 
     return new Response(JSON.stringify({ url: checkoutUrl, validation_code: validationCode }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   } catch (error) {
-    console.error('[create-payment] ERREUR CRITIQUE:', error.message)
+    console.error('[create-payment] ERREUR:', error.message)
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
