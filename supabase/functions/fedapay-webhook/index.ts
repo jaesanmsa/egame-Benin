@@ -20,26 +20,17 @@ serve(async (req) => {
     const payload = await req.json()
     if (payload.event === 'transaction.approved') {
       const transaction = payload.entity
-      const description = transaction.description || ""
-      
-      // On extrait le code de validation (format CODE:EGB-XXXXX)
-      const codeMatch = description.match(/CODE:(EGB-[A-Z0-9]+)/)
-      const validationCode = codeMatch ? codeMatch[1] : null
+      const fedapayId = String(transaction.id)
 
-      if (validationCode) {
-        const supabase = createClient(
-          Deno.env.get('SUPABASE_URL') ?? '',
-          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-        )
+      const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '')
 
-        await supabase
-          .from('payments')
-          .update({ status: 'Réussi' })
-          .eq('validation_code', validationCode)
-          .eq('status', 'En attente')
-          
-        console.log(`[fedapay-webhook] Paiement validé pour le code: ${validationCode}`)
-      }
+      await supabase
+        .from('payments')
+        .update({ status: 'Réussi' })
+        .eq('fedapay_transaction_id', fedapayId)
+        .eq('status', 'En attente')
+        
+      console.log(`[fedapay-webhook] Paiement validé pour l'ID FedaPay: ${fedapayId}`)
     }
 
     return new Response(JSON.stringify({ ok: true }), { status: 200, headers: corsHeaders })
