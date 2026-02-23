@@ -82,37 +82,26 @@ const TournamentDetails = () => {
   const handleFedaPay = async () => {
     setPaymentStep('processing');
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Veuillez vous connecter");
-      
-      const validationCode = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-      
-      const { error } = await supabase.from('payments').insert({
-        user_id: user.id,
-        tournament_id: id,
-        tournament_name: tournament.title,
-        amount: tournament.entry_fee,
-        status: 'En attente',
-        validation_code: validationCode
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Veuillez vous connecter");
+
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        body: {
+          tournament_id: id,
+          tournament_name: tournament.title,
+          amount: tournament.entry_fee,
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
 
       if (error) throw error;
-      
-      let baseUrl = tournament.payment_url || "https://me.fedapay.com/mpservices";
-      if (!baseUrl.startsWith('http')) baseUrl = `https://${baseUrl}`;
-      
-      const paymentUrl = new URL(baseUrl);
-      
-      if (user.email) {
-        const userName = user.user_metadata?.username || user.email.split('@')[0];
-        paymentUrl.searchParams.append('email', user.email);
-        paymentUrl.searchParams.append('customer[email]', user.email);
-        paymentUrl.searchParams.append('customer[firstname]', userName);
-      }
-      
-      window.location.href = paymentUrl.toString();
+      if (!data?.url) throw new Error("URL de paiement non reçue");
+
+      window.location.href = data.url;
     } catch (err: any) {
-      showError("Erreur de redirection. Vérifiez le lien de paiement.");
+      showError("Erreur de redirection. Veuillez réessayer.");
       setPaymentStep('select');
       setShowPayment(false);
     }
