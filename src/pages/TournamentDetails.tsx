@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, Gamepad2, CheckCircle2, History, Copy, ChevronRight } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, Gamepad2, CheckCircle2, History, Copy, ChevronRight, Clock } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -53,8 +53,8 @@ const TournamentDetails = () => {
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
-      
+        .maybeSingle();
+
       if (data) {
         const createdAt = new Date(data.created_at).getTime();
         const now = new Date().getTime();
@@ -85,6 +85,7 @@ const TournamentDetails = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("Veuillez vous connecter");
 
+      // Utilisation de la fonction Edge pour créer le paiement proprement
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: {
           tournament_id: id,
@@ -101,7 +102,8 @@ const TournamentDetails = () => {
 
       window.location.href = data.url;
     } catch (err: any) {
-      showError("Erreur de redirection. Veuillez réessayer.");
+      console.error("Erreur paiement:", err);
+      showError(err.message || "Erreur de redirection. Veuillez réessayer.");
       setPaymentStep('select');
       setShowPayment(false);
     }
@@ -265,13 +267,11 @@ const TournamentDetails = () => {
       {/* MODAL DE PAIEMENT OPTIMISÉ */}
       {showPayment && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          {/* Overlay semi-transparent doux */}
           <div 
             className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
             onClick={() => setShowPayment(false)} 
           />
           
-          {/* Contenu du Modal - Adaptatif Thème */}
           <div className="relative bg-card border border-border w-full max-w-[400px] rounded-[2.5rem] p-8 shadow-2xl z-[10000] overflow-hidden">
             <button 
               onClick={() => setShowPayment(false)} 

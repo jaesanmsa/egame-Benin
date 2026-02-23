@@ -11,17 +11,23 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
-  console.log("[fedapay-webhook] Requête reçue...")
+  console.log("[fedapay-webhook] Requête reçue...");
 
-  // 1. Vérification du token de sécurité
-  const webhookToken = req.headers.get('x-webhook-token')
-  const expectedToken = Deno.env.get('FEDAPAY_WEBHOOK_TOKEN') ?? Deno.env.get('fedapaywebhook')
+  // 1. Vérification du Token de sécurité (on teste les deux noms possibles)
+  const webhookToken = req.headers.get('x-webhook-token')?.trim();
+  const expectedToken = (Deno.env.get('fedapaywebhook') || Deno.env.get('FEDAPAY_WEBHOOK_TOKEN'))?.trim();
 
   if (!webhookToken || !expectedToken || webhookToken !== expectedToken) {
-    console.error("[fedapay-webhook] ERREUR: Token de sécurité manquant ou incorrect.")
-    return new Response(JSON.stringify({ error: 'Token non autorisé' }), {
-      status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    console.error("[fedapay-webhook] ERREUR: Token de sécurité invalide.");
+    console.log("[fedapay-webhook] Reçu dans Header:", webhookToken ? "OUI (masqué)" : "NON");
+    console.log("[fedapay-webhook] Trouvé dans Secrets Supabase:", expectedToken ? "OUI (masqué)" : "NON");
+    
+    return new Response(JSON.stringify({ 
+      error: 'Token non autorisé',
+      details: 'Vérifie que le Header X-Webhook-Token sur FedaPay correspond au secret fedapaywebhook sur Supabase.'
+    }), { 
+      status: 401, 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     })
   }
 
@@ -34,21 +40,16 @@ serve(async (req) => {
       const fedapayTransactionId = transaction?.id ? String(transaction.id) : null
 
       if (!fedapayTransactionId) {
-        console.error("[fedapay-webhook] ERREUR: Aucun ID de transaction dans le payload.")
-        return new Response(JSON.stringify({ error: 'ID de transaction manquant' }), {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
+        console.error("[fedapay-webhook] ERREUR: Aucun ID de transaction dans le payload.");
+        return new Response("Missing ID", { status: 200 })
       }
-
-      console.log("[fedapay-webhook] Transaction FedaPay ID:", fedapayTransactionId)
 
       const supabase = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
       )
 
-      // Mise à jour du paiement correspondant par fedapay_transaction_id
+      // Mise à jour du paiement par fedapay_transaction_id (plus précis que l'email)
       const { data: updateData, error: updateError } = await supabase
         .from('payments')
         .update({ status: 'Réussi' })
@@ -59,21 +60,21 @@ serve(async (req) => {
       if (updateError) throw updateError
 
       if (updateData && updateData.length > 0) {
-        console.log("[fedapay-webhook] SUCCÈS: Paiement validé pour la transaction", fedapayTransactionId)
+        console.log("[fedapay-webhook] SUCCÈS: Paiement validé pour la transaction", fedapayTransactionId);
       } else {
-        console.warn("[fedapay-webhook] ATTENTION: Transaction approuvée mais aucun paiement 'En attente' trouvé pour l'ID:", fedapayTransactionId)
+        console.warn("[fedapay-webhook] ATTENTION: Transaction approuvée mais aucun paiement 'En attente' trouvé pour l'ID:", fedapayTransactionId);
       }
     }
 
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    return new Response(JSON.stringify({ ok: true }), { 
+      status: 200, 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     })
   } catch (error) {
     console.error("[fedapay-webhook] ERREUR CRITIQUE:", error.message)
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    return new Response(JSON.stringify({ error: error.message }), { 
+      status: 400, 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     })
   }
 })

@@ -102,7 +102,7 @@ const Auth = () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <Label htmlFor="password">Mot de passe</Label>
-                {isLogin && <Link to="/forgot-password" size="sm" className="text-xs text-violet-400 hover:underline">Oublié ?</Link>}
+                {isLogin && <Link to="/forgot-password" className="text-xs text-violet-400 hover:underline">Oublié ?</Link>}
               </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 text-muted-foreground" size={18} />

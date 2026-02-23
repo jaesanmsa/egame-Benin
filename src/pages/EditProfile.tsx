@@ -33,7 +33,7 @@ const EditProfile = () => {
           .from('profiles')
           .select('full_name, username, phone, avatar_url')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
         setProfile({
           full_name: profileData?.full_name || user.user_metadata?.full_name || '',

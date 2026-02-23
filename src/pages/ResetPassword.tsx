@@ -28,30 +28,30 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
-      <div className="w-full max-w-md space-y-8 bg-zinc-900 p-8 rounded-[2.5rem] border border-zinc-800 shadow-2xl">
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
+      <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-[2.5rem] border border-border shadow-2xl">
         <div className="text-center">
-          <h1 className="text-3xl font-black text-white">Nouveau mot de passe</h1>
-          <p className="text-zinc-400 mt-2">Entrez votre nouveau mot de passe sécurisé</p>
+          <h1 className="text-3xl font-black">Nouveau mot de passe</h1>
+          <p className="text-muted-foreground mt-2">Entrez votre nouveau mot de passe sécurisé</p>
         </div>
 
         <form onSubmit={handleUpdate} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="password">Nouveau mot de passe</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 text-zinc-500" size={18} />
-              <Input 
-                id="password" 
-                type="password" 
-                placeholder="••••••••" 
-                className="pl-10 bg-zinc-800 border-zinc-700 rounded-xl"
+              <Lock className="absolute left-3 top-3 text-muted-foreground" size={18} />
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                className="pl-10 bg-muted border-border rounded-xl"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
           </div>
-          <Button type="submit" disabled={loading} className="w-full py-6 rounded-xl bg-violet-600 hover:bg-violet-700 font-bold">
+          <Button type="submit" disabled={loading} className="w-full py-6 rounded-xl bg-violet-600 hover:bg-violet-700 font-bold text-white">
             {loading ? "Mise à jour..." : "Changer le mot de passe"}
           </Button>
         </form>
