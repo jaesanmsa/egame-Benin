@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, Gamepad2, CheckCircle2 } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, Gamepad2, CheckCircle2, History } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -75,7 +75,6 @@ const TournamentDetails = () => {
       
       const validationCode = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
       
-      // On enregistre l'intention de paiement
       const { error } = await supabase.from('payments').insert({
         user_id: user.id,
         tournament_id: id,
@@ -87,8 +86,6 @@ const TournamentDetails = () => {
 
       if (error) throw error;
       
-      // Redirection vers FedaPay
-      // On ajoute l'email en paramètre pour pré-remplir FedaPay et faciliter le matching du webhook
       const paymentUrl = new URL(tournament.payment_url || "https://me.fedapay.com/mpservices");
       paymentUrl.searchParams.append('email', user.email || '');
       
@@ -171,24 +168,20 @@ const TournamentDetails = () => {
           </div>
 
           {userRegistration ? (
-            <div className="bg-green-500/10 border border-green-500/20 p-5 rounded-3xl mb-6">
-              <div className="flex items-center gap-3 mb-3 text-green-500">
-                <CheckCircle2 size={20} />
-                <h3 className="font-bold text-base">Vous êtes inscrit !</h3>
+            <div className="bg-green-500/10 border border-green-500/20 p-6 rounded-3xl mb-6 text-center">
+              <div className="flex items-center justify-center gap-3 mb-4 text-green-500">
+                <CheckCircle2 size={24} />
+                <h3 className="font-black text-lg">Vous êtes inscrit !</h3>
               </div>
-              <div className="space-y-3">
-                <div className="p-3 bg-background/50 rounded-xl border border-border">
-                  <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-1">Code d'accès / Lien du groupe</p>
-                  <p className="text-foreground font-mono font-bold text-sm break-all">
-                    {tournament.access_code || "Le code sera disponible peu avant le début."}
-                  </p>
-                </div>
-                {tournament.access_code?.startsWith('http') && (
-                  <Button onClick={() => window.open(tournament.access_code, '_blank')} className="w-full bg-green-600 hover:bg-green-700 font-bold text-white h-10 text-sm">
-                    Rejoindre le groupe WhatsApp
-                  </Button>
-                )}
-              </div>
+              <p className="text-muted-foreground text-sm mb-6">
+                Récupérez votre code de validation dans votre historique et envoyez-le nous sur WhatsApp pour finaliser.
+              </p>
+              <Link to="/payments">
+                <Button className="w-full bg-green-600 hover:bg-green-700 font-bold text-white py-6 rounded-2xl gap-2">
+                  <History size={20} />
+                  Voir mon code de validation
+                </Button>
+              </Link>
             </div>
           ) : (
             isLoggedIn ? (

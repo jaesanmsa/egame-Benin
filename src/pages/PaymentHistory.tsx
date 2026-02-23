@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, Gamepad2, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { showSuccess } from '@/utils/toast';
@@ -15,9 +15,6 @@ interface Payment {
   status: 'En attente' | 'Réussi' | 'Échoué';
   validation_code: string;
   created_at: string;
-  tournaments: {
-    access_code: string;
-  };
 }
 
 const PaymentHistory = () => {
@@ -36,12 +33,7 @@ const PaymentHistory = () => {
 
     const { data, error } = await supabase
       .from('payments')
-      .select(`
-        *,
-        tournaments (
-          access_code
-        )
-      `)
+      .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -107,24 +99,15 @@ const PaymentHistory = () => {
 
                       <button 
                         onClick={() => handleWhatsAppSend(payment)}
-                        className="w-full py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
+                        className="w-full py-5 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all shadow-lg shadow-green-500/20"
                       >
-                        <MessageSquare size={18} />
+                        <MessageSquare size={20} />
                         Envoyer ma preuve sur WhatsApp
                       </button>
-
-                      <div className="bg-violet-600/10 border border-violet-500/20 p-4 rounded-2xl">
-                        <div className="flex items-center gap-2 mb-2 text-violet-400">
-                          <Gamepad2 size={16} />
-                          <span className="text-xs font-bold uppercase tracking-widest">Code d'accès au tournoi</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-foreground font-mono font-bold text-lg">{payment.tournaments?.access_code || "Code bientôt disponible"}</span>
-                          {payment.tournaments?.access_code && (
-                            <button onClick={() => copyToClipboard(payment.tournaments.access_code)} className="text-violet-400 hover:text-foreground"><Copy size={18} /></button>
-                          )}
-                        </div>
-                      </div>
+                      
+                      <p className="text-[10px] text-center text-muted-foreground italic">
+                        Cliquez sur le bouton ci-dessus pour nous envoyer votre code et recevoir vos accès.
+                      </p>
                     </div>
                   ) : (
                     <div className="p-4 bg-muted/50 rounded-2xl text-center">
