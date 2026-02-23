@@ -18,19 +18,25 @@ serve(async (req) => {
 
   try {
     const payload = await req.json()
+    
     if (payload.event === 'transaction.approved') {
       const transaction = payload.entity
       const fedapayId = String(transaction.id)
 
-      const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '')
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      )
 
-      await supabase
+      // Validation uniquement par l'ID de transaction FedaPay
+      const { error } = await supabase
         .from('payments')
         .update({ status: 'Réussi' })
         .eq('fedapay_transaction_id', fedapayId)
         .eq('status', 'En attente')
         
-      console.log(`[fedapay-webhook] Paiement validé pour l'ID FedaPay: ${fedapayId}`)
+      if (error) console.error(`[webhook] Erreur SQL: ${error.message}`)
+      else console.log(`[webhook] Paiement ${fedapayId} validé avec succès.`)
     }
 
     return new Response(JSON.stringify({ ok: true }), { status: 200, headers: corsHeaders })
