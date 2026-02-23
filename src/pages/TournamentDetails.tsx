@@ -52,10 +52,25 @@ const TournamentDetails = () => {
         .select('*')
         .eq('tournament_id', id)
         .eq('user_id', userId)
-        .eq('status', 'Réussi')
+        .order('created_at', { ascending: false })
+        .limit(1)
         .single();
       
-      if (data) setUserRegistration(data);
+      if (data) {
+        // On ne considère l'inscription que si elle est Réussie 
+        // OU si elle est En attente depuis moins de 30 minutes
+        const createdAt = new Date(data.created_at).getTime();
+        const now = new Date().getTime();
+        const diffMinutes = (now - createdAt) / (1000 * 60);
+
+        if (data.status === 'Réussi') {
+          setUserRegistration(data);
+        } else if (data.status === 'En attente' && diffMinutes < 30) {
+          setUserRegistration(data);
+        } else {
+          setUserRegistration(null);
+        }
+      }
     };
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -86,22 +101,14 @@ const TournamentDetails = () => {
 
       if (error) throw error;
       
-      // Construction de l'URL avec TOUS les formats possibles pour FedaPay
       const baseUrl = tournament.payment_url || "https://me.fedapay.com/mpservices";
       const paymentUrl = new URL(baseUrl);
       
       if (user.email) {
         const userName = user.user_metadata?.username || user.email.split('@')[0];
-        
-        // Format standard simple
         paymentUrl.searchParams.append('email', user.email);
-        
-        // Format API / Checkout (le plus probable pour que ça marche)
         paymentUrl.searchParams.append('customer[email]', user.email);
         paymentUrl.searchParams.append('customer[firstname]', userName);
-        
-        // Format legacy
-        paymentUrl.searchParams.append('customer_email', user.email);
       }
       
       window.location.href = paymentUrl.toString();
@@ -190,28 +197,40 @@ const TournamentDetails = () => {
           {userRegistration ? (
             <div className="bg-green-500/10 border border-green-500/20 p-6 rounded-3xl mb-6 text-center">
               <div className="flex items-center justify-center gap-3 mb-4 text-green-500">
-                <CheckCircle2 size={24} />
-                <h3 className="font-black text-lg">Vous êtes inscrit !</h3>
+                {userRegistration.status === 'Réussi' ? <CheckCircle2 size={24} /> : <Clock size={24} className="animate-pulse" />}
+                <h3 className="font-black text-lg">
+                  {userRegistration.status === 'Réussi' ? "Vous êtes inscrit !" : "Paiement en cours..."}
+                </h3>
               </div>
               
-              <div className="p-4 bg-background/50 rounded-2xl border border-border mb-6">
-                <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-2">Votre Code de Validation</p>
-                <div className="flex items-center justify-center gap-4">
-                  <span className="text-foreground font-mono font-bold text-2xl">{userRegistration.validation_code}</span>
-                  <button onClick={() => copyToClipboard(userRegistration.validation_code)} className="text-muted-foreground hover:text-foreground"><Copy size={20} /></button>
+              {userRegistration.status === 'Réussi' ? (
+                <>
+                  <div className="p-4 bg-background/50 rounded-2xl border border-border mb-6">
+                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-2">Votre Code de Validation</p>
+                    <div className="flex items-center justify-center gap-4">
+                      <span className="text-foreground font-mono font-bold text-2xl">{userRegistration.validation_code}</span>
+                      <button onClick={() => copyToClipboard(userRegistration.validation_code)} className="text-muted-foreground hover:text-foreground"><Copy size={20} /></button>
+                    </div>
+                  </div>
+                  <Link to="/payments">
+                    <Button className="w-full bg-green-600 hover:bg-green-700 font-bold text-white py-6 rounded-2xl gap-2">
+                      <History size={20} />
+                      Gérer mes inscriptions
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-muted-foreground text-sm">
+                    Nous attendons la confirmation de FedaPay. Cela prend généralement moins de 2 minutes.
+                  </p>
+                  <Link to="/payments">
+                    <Button variant="outline" className="w-full py-6 rounded-2xl border-border font-bold">
+                      Suivre le statut
+                    </Button>
+                  </Link>
                 </div>
-              </div>
-
-              <p className="text-muted-foreground text-sm mb-6">
-                Envoyez ce code sur WhatsApp pour être ajouté au groupe du tournoi.
-              </p>
-              
-              <Link to="/payments">
-                <Button className="w-full bg-green-600 hover:bg-green-700 font-bold text-white py-6 rounded-2xl gap-2">
-                  <History size={20} />
-                  Gérer mes inscriptions
-                </Button>
-              </Link>
+              )}
             </div>
           ) : (
             isLoggedIn ? (

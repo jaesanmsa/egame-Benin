@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, MessageSquare, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { showSuccess } from '@/utils/toast';
@@ -38,7 +38,18 @@ const PaymentHistory = () => {
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      setPayments(data as any);
+      // On traite les données pour marquer comme échoué si > 30 min
+      const processedPayments = data.map((p: any) => {
+        const createdAt = new Date(p.created_at).getTime();
+        const now = new Date().getTime();
+        const diffMinutes = (now - createdAt) / (1000 * 60);
+        
+        if (p.status === 'En attente' && diffMinutes > 30) {
+          return { ...p, status: 'Échoué' };
+        }
+        return p;
+      });
+      setPayments(processedPayments);
     }
     setLoading(false);
   };
@@ -81,8 +92,14 @@ const PaymentHistory = () => {
                       <h3 className="font-bold text-lg">{payment.tournament_name}</h3>
                       <p className="text-muted-foreground text-xs">{new Date(payment.created_at).toLocaleDateString('fr-FR')}</p>
                     </div>
-                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] font-bold ${payment.status === 'Réussi' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}>
-                      {payment.status === 'Réussi' ? <CheckCircle2 size={14} /> : <Clock size={14} />}
+                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] font-bold ${
+                      payment.status === 'Réussi' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 
+                      payment.status === 'Échoué' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                      'bg-orange-500/10 text-orange-500 border-orange-500/20'
+                    }`}>
+                      {payment.status === 'Réussi' ? <CheckCircle2 size={14} /> : 
+                       payment.status === 'Échoué' ? <XCircle size={14} /> :
+                       <Clock size={14} />}
                       {payment.status}
                     </div>
                   </div>
@@ -104,10 +121,11 @@ const PaymentHistory = () => {
                         <MessageSquare size={20} />
                         Envoyer ma preuve sur WhatsApp
                       </button>
-                      
-                      <p className="text-[10px] text-center text-muted-foreground italic">
-                        Cliquez sur le bouton ci-dessus pour nous envoyer votre code et recevoir vos accès.
-                      </p>
+                    </div>
+                  ) : payment.status === 'Échoué' ? (
+                    <div className="p-4 bg-red-500/5 rounded-2xl border border-red-500/10 text-center">
+                      <p className="text-red-500 text-xs font-bold">Paiement expiré ou échoué</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Le délai de 30 minutes est dépassé. Veuillez recommencer l'inscription.</p>
                     </div>
                   ) : (
                     <div className="p-4 bg-muted/50 rounded-2xl text-center">
