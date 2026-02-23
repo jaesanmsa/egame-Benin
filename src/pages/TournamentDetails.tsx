@@ -85,23 +85,27 @@ const TournamentDetails = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("Veuillez vous connecter");
 
-      const { data, error } = await supabase.functions.invoke('create-payment', {
-        body: {
+      if (!tournament.payment_url) {
+        throw new Error("Le lien de paiement n'est pas encore configuré pour ce tournoi.");
+      }
+
+      // Créer une entrée de paiement en attente dans la base de données
+      const { error: insertError } = await supabase
+        .from('payments')
+        .insert({
+          user_id: session.user.id,
           tournament_id: id,
           tournament_name: tournament.title,
           amount: tournament.entry_fee,
-        },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
+          status: 'En attente',
+        });
 
-      if (error) throw error;
-      if (!data?.url) throw new Error("URL de paiement non reçue");
+      if (insertError) throw insertError;
 
-      window.location.href = data.url;
+      // Rediriger vers la page de paiement FedaPay configurée par l'admin
+      window.location.href = tournament.payment_url;
     } catch (err: any) {
-      showError("Erreur de redirection. Veuillez réessayer.");
+      showError(err.message || "Erreur de redirection. Veuillez réessayer.");
       setPaymentStep('select');
       setShowPayment(false);
     }
