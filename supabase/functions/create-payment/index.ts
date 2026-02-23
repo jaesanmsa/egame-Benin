@@ -25,7 +25,6 @@ serve(async (req) => {
     const fedapayKey = Deno.env.get('FEDAPAY_SECRET_KEY') ?? ''
     const fedapayBaseUrl = Deno.env.get('FEDAPAY_ENV') === 'live' ? 'https://api.fedapay.com' : 'https://sandbox-api.fedapay.com'
 
-    // 1. Création de la transaction sur FedaPay
     const createRes = await fetch(`${fedapayBaseUrl}/v1/transactions`, {
       method: 'POST',
       headers: { 
@@ -46,7 +45,6 @@ serve(async (req) => {
 
     if (!fedapayId) throw new Error("Erreur FedaPay : Impossible de créer la transaction")
 
-    // 2. Génération du lien de paiement
     const tokenRes = await fetch(`${fedapayBaseUrl}/v1/transactions/${fedapayId}/token`, {
       method: 'POST',
       headers: { 
@@ -57,13 +55,13 @@ serve(async (req) => {
     const tokenData = await tokenRes.json()
     const checkoutUrl = tokenData?.token?.url || tokenData?.url
 
-    // 3. Enregistrement dans la base de données
+    // Insertion avec 'en attente' en minuscules
     const { error: insertError } = await supabase.from('payments').insert({
       user_id: user.id,
       tournament_id,
       tournament_name,
       amount: String(amount),
-      status: 'En attente',
+      status: 'en attente',
       validation_code: validationCode,
       fedapay_transaction_id: String(fedapayId)
     })
