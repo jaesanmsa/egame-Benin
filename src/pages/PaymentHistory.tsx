@@ -15,6 +15,7 @@ interface Payment {
   status: 'En attente' | 'Réussi' | 'Échoué';
   validation_code: string;
   created_at: string;
+  updated_at: string;
 }
 
 const PaymentHistory = () => {
@@ -44,6 +45,7 @@ const PaymentHistory = () => {
           const now = new Date().getTime();
           const diffMinutes = (now - createdAt) / (1000 * 60);
           
+          // Si toujours en attente après 5 min, on affiche échoué
           if (p.status === 'En attente' && diffMinutes > 5) {
             return { ...p, status: 'Échoué' };
           }
@@ -59,18 +61,19 @@ const PaymentHistory = () => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
-
-  // Rafraîchissement automatique toutes les 10 secondes si un paiement est en attente
-  useEffect(() => {
-    const hasPending = payments.some(p => p.status === 'En attente');
-    if (hasPending) {
-      const interval = setInterval(() => {
+    
+    // Écoute en temps réel des changements dans la table payments
+    const channel = supabase
+      .channel('payment_updates')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'payments' }, () => {
         fetchData(true);
-      }, 10000);
-      return () => clearInterval(interval);
-    }
-  }, [payments, fetchData]);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchData]);
 
   const handleWhatsAppSend = (payment: Payment) => {
     const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation de paiement : ${payment.validation_code} pour le tournoi ${payment.tournament_name}.`);
