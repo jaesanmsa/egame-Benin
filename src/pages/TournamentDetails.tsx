@@ -5,7 +5,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, Gamepad2, CheckCircle2, History } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, Gamepad2, CheckCircle2, History, Copy } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -96,6 +96,11 @@ const TournamentDetails = () => {
     }
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    showSuccess("Code copié !");
+  };
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
   if (!tournament) return <div className="min-h-screen bg-background flex items-center justify-center text-foreground">Tournoi non trouvé</div>;
 
@@ -173,13 +178,23 @@ const TournamentDetails = () => {
                 <CheckCircle2 size={24} />
                 <h3 className="font-black text-lg">Vous êtes inscrit !</h3>
               </div>
+              
+              <div className="p-4 bg-background/50 rounded-2xl border border-border mb-6">
+                <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-2">Votre Code de Validation</p>
+                <div className="flex items-center justify-center gap-4">
+                  <span className="text-foreground font-mono font-bold text-2xl">{userRegistration.validation_code}</span>
+                  <button onClick={() => copyToClipboard(userRegistration.validation_code)} className="text-muted-foreground hover:text-foreground"><Copy size={20} /></button>
+                </div>
+              </div>
+
               <p className="text-muted-foreground text-sm mb-6">
-                Récupérez votre code de validation dans votre historique et envoyez-le nous sur WhatsApp pour finaliser.
+                Envoyez ce code sur WhatsApp pour être ajouté au groupe du tournoi.
               </p>
+              
               <Link to="/payments">
                 <Button className="w-full bg-green-600 hover:bg-green-700 font-bold text-white py-6 rounded-2xl gap-2">
                   <History size={20} />
-                  Voir mon code de validation
+                  Gérer mes inscriptions
                 </Button>
               </Link>
             </div>

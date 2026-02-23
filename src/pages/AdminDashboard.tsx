@@ -82,7 +82,6 @@ const AdminDashboard = () => {
     const { error } = await supabase
       .from('tournaments')
       .update({ 
-        access_code: editingTournament.access_code,
         rules: editingTournament.rules,
         prize_pool: editingTournament.prize_pool,
         payment_url: editingTournament.payment_url
@@ -239,7 +238,7 @@ const AdminDashboard = () => {
 
           <TabsContent value="edit" className="space-y-6">
             <div className="bg-zinc-900 p-6 rounded-3xl border border-zinc-800">
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><Edit3 className="text-cyan-500" /> Gérer les accès</h2>
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><Edit3 className="text-cyan-500" /> Modifier les infos</h2>
               
               {!editingTournament ? (
                 <div className="grid gap-4">
@@ -253,7 +252,7 @@ const AdminDashboard = () => {
                           {t.title}
                           {t.is_featured && <Star size={14} className="text-yellow-500 fill-yellow-500" />}
                         </p>
-                        <p className="text-xs text-zinc-500">Code actuel: {t.access_code || "Aucun"}</p>
+                        <p className="text-xs text-zinc-500">{t.game} • {t.prize_pool}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <Button 
@@ -289,15 +288,6 @@ const AdminDashboard = () => {
                       onChange={e => setEditingTournament({...editingTournament, payment_url: e.target.value})}
                       className="bg-zinc-800"
                       placeholder="https://me.fedapay.com/..."
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Code d'accès (Lien WhatsApp ou Code Salon)</Label>
-                    <Input 
-                      value={editingTournament.access_code || ''} 
-                      onChange={e => setEditingTournament({...editingTournament, access_code: e.target.value})}
-                      className="bg-zinc-800"
-                      placeholder="Ex: https://chat.whatsapp.com/..."
                     />
                   </div>
                   <div className="space-y-2">
