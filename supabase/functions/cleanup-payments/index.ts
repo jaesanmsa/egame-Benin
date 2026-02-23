@@ -17,17 +17,17 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    console.log("[cleanup-payments] Démarrage du nettoyage des paiements expirés...")
+    console.log("[cleanup-payments] Démarrage du nettoyage des paiements expirés (5 minutes)...")
 
-    // Calcul de la date limite (il y a 30 minutes)
-    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString()
+    // Calcul de la date limite (il y a 5 minutes)
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
 
     // Mise à jour des paiements en attente trop vieux
-    const { data, error, count } = await supabase
+    const { data, error } = await supabase
       .from('payments')
       .update({ status: 'Échoué' })
       .eq('status', 'En attente')
-      .lt('created_at', thirtyMinutesAgo)
+      .lt('created_at', fiveMinutesAgo)
       .select()
 
     if (error) throw error

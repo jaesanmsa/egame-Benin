@@ -37,7 +37,8 @@ const TournamentDetails = () => {
       const { data } = await supabase.from('payments').select('*').eq('tournament_id', id).eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle();
       if (data) {
         const diffMinutes = (new Date().getTime() - new Date(data.created_at).getTime()) / (1000 * 60);
-        if (data.status === 'Réussi' || (data.status === 'En attente' && diffMinutes < 30)) {
+        // On ne considère l'inscription valide que si elle est réussie ou en attente depuis moins de 5 minutes
+        if (data.status === 'Réussi' || (data.status === 'En attente' && diffMinutes < 5)) {
           setUserRegistration(data);
         }
       }

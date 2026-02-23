@@ -38,13 +38,13 @@ const PaymentHistory = () => {
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      // On traite les données pour marquer comme échoué si > 30 min
+      // On traite les données pour marquer comme échoué si > 5 min
       const processedPayments = data.map((p: any) => {
         const createdAt = new Date(p.created_at).getTime();
         const now = new Date().getTime();
         const diffMinutes = (now - createdAt) / (1000 * 60);
         
-        if (p.status === 'En attente' && diffMinutes > 30) {
+        if (p.status === 'En attente' && diffMinutes > 5) {
           return { ...p, status: 'Échoué' };
         }
         return p;
@@ -125,7 +125,7 @@ const PaymentHistory = () => {
                   ) : payment.status === 'Échoué' ? (
                     <div className="p-4 bg-red-500/5 rounded-2xl border border-red-500/10 text-center">
                       <p className="text-red-500 text-xs font-bold">Paiement expiré ou échoué</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">Le délai de 30 minutes est dépassé. Veuillez recommencer l'inscription.</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Le délai de 5 minutes est dépassé. Veuillez recommencer l'inscription.</p>
                     </div>
                   ) : (
                     <div className="p-4 bg-muted/50 rounded-2xl text-center">
