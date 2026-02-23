@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search, Settings, Edit3, Star } from 'lucide-react';
+import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search, Settings, Edit3, Star, Link as LinkIcon } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const AdminDashboard = () => {
@@ -22,7 +22,7 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   
   const [newTournament, setNewTournament] = useState({
-    id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: ''
+    id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: ''
   });
 
   const [editingTournament, setEditingTournament] = useState<any>(null);
@@ -72,7 +72,7 @@ const AdminDashboard = () => {
     if (error) showError(error.message);
     else {
       showSuccess("Tournoi ajouté !");
-      setNewTournament({ id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '' });
+      setNewTournament({ id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: '' });
       fetchData();
     }
   };
@@ -84,7 +84,8 @@ const AdminDashboard = () => {
       .update({ 
         access_code: editingTournament.access_code,
         rules: editingTournament.rules,
-        prize_pool: editingTournament.prize_pool
+        prize_pool: editingTournament.prize_pool,
+        payment_url: editingTournament.payment_url
       })
       .eq('id', editingTournament.id);
     
@@ -226,6 +227,9 @@ const AdminDashboard = () => {
                 <Input type="number" placeholder="Frais d'entrée" value={newTournament.entry_fee} onChange={e => setNewTournament({...newTournament, entry_fee: parseInt(e.target.value)})} className="bg-zinc-800" />
                 <Input placeholder="Cash Prize" value={newTournament.prize_pool} onChange={e => setNewTournament({...newTournament, prize_pool: e.target.value})} className="bg-zinc-800" />
                 <div className="md:col-span-2">
+                  <Input placeholder="Lien de paiement FedaPay (ex: https://me.fedapay.com/mpservices)" value={newTournament.payment_url} onChange={e => setNewTournament({...newTournament, payment_url: e.target.value})} className="bg-zinc-800" />
+                </div>
+                <div className="md:col-span-2">
                   <Textarea placeholder="Règlement du tournoi..." value={newTournament.rules} onChange={e => setNewTournament({...newTournament, rules: e.target.value})} className="bg-zinc-800 min-h-[100px]" />
                 </div>
               </div>
@@ -277,6 +281,15 @@ const AdminDashboard = () => {
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-bold text-violet-400">{editingTournament.title}</h3>
                     <button type="button" onClick={() => setEditingTournament(null)} className="text-xs text-zinc-500 hover:text-white">Annuler</button>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Lien de paiement FedaPay</Label>
+                    <Input 
+                      value={editingTournament.payment_url || ''} 
+                      onChange={e => setEditingTournament({...editingTournament, payment_url: e.target.value})}
+                      className="bg-zinc-800"
+                      placeholder="https://me.fedapay.com/..."
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Code d'accès (Lien WhatsApp ou Code Salon)</Label>
@@ -346,7 +359,7 @@ const AdminDashboard = () => {
                     <SelectItem value="clash-royale">Clash Royale</SelectItem>
                   </SelectContent>
                 </Select>
-                <Input placeholder="Pseudo" value={newLeader.username} onChange={newLeader.username} className="bg-zinc-800" />
+                <Input placeholder="Pseudo" value={newLeader.username} onChange={e => setNewLeader({...newLeader, username: e.target.value})} className="bg-zinc-800" />
                 <Input type="number" placeholder="Points" value={newLeader.wins} onChange={e => setNewLeader({...newLeader, wins: parseInt(e.target.value)})} className="bg-zinc-800" />
                 <div className="md:col-span-2">
                   <Input placeholder="Lien Avatar Emoji" value={newLeader.avatar_url} onChange={e => setNewLeader({...newLeader, avatar_url: e.target.value})} className="bg-zinc-800" />

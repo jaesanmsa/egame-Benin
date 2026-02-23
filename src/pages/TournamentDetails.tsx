@@ -85,7 +85,10 @@ const TournamentDetails = () => {
       });
 
       if (error) throw error;
-      window.location.href = "https://me.fedapay.com/mpservices";
+      
+      // Utilisation du lien de paiement spécifique au tournoi ou lien par défaut
+      const paymentUrl = tournament.payment_url || "https://me.fedapay.com/mpservices";
+      window.location.href = paymentUrl;
     } catch (err: any) {
       showError(err.message);
       setPaymentStep('select');

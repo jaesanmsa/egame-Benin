@@ -56,7 +56,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-start pt-16 md:justify-center md:pt-0 p-6">
       <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-[2.5rem] border border-border shadow-2xl">
         <div className="text-center">
           <Link to="/" className="inline-block mb-4">

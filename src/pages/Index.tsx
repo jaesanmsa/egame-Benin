@@ -104,14 +104,14 @@ const Index = () => {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex flex-col pt-12">
+      <div className="min-h-screen bg-background text-foreground flex flex-col pt-6">
         <SEO />
-        <main className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-          <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="mb-8">
+        <main className="flex-1 flex flex-col items-center justify-start pt-16 md:justify-center md:pt-0 px-8 text-center">
+          <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="mb-6">
             <Logo size="lg" showText={false} />
           </motion.div>
           <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-4xl font-black mb-4">eGame <span className="text-violet-500">Bénin</span></motion.h1>
-          <motion.p className="text-muted-foreground text-lg mb-12 max-w-xs">L'arène ultime pour les gamers béninois. Relevez le défi et gagnez des prix.</motion.p>
+          <motion.p className="text-muted-foreground text-lg mb-10 max-w-xs">L'arène ultime pour les gamers béninois. Relevez le défi et gagnez des prix.</motion.p>
           <div className="w-full max-w-xs space-y-4">
             <Link to="/auth" className="block"><button className="w-full bg-violet-600 py-5 rounded-2xl font-bold text-lg shadow-xl shadow-violet-500/20 text-white">Se connecter</button></Link>
             <Link to="/auth" className="block"><button className="w-full bg-card py-5 rounded-2xl font-bold text-lg border border-border">Créer un compte</button></Link>
