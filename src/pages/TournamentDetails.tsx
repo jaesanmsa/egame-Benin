@@ -86,8 +86,15 @@ const TournamentDetails = () => {
 
       if (error) throw error;
       
-      const paymentUrl = new URL(tournament.payment_url || "https://me.fedapay.com/mpservices");
-      paymentUrl.searchParams.append('email', user.email || '');
+      // Construction de l'URL avec les paramètres de pré-remplissage
+      const baseUrl = tournament.payment_url || "https://me.fedapay.com/mpservices";
+      const paymentUrl = new URL(baseUrl);
+      
+      if (user.email) {
+        // On ajoute les deux variantes possibles pour FedaPay
+        paymentUrl.searchParams.append('email', user.email);
+        paymentUrl.searchParams.append('customer_email', user.email);
+      }
       
       window.location.href = paymentUrl.toString();
     } catch (err: any) {
