@@ -207,6 +207,7 @@ const Index = () => {
               <button onClick={() => setFilterType('Presentiel')} className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center ${filterType === 'Presentiel' ? 'bg-orange-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="Présentiel"><MapPin size={16} /></button>
             </div>
             <div className="relative w-full md:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
               <Input placeholder="Rechercher..." className="pl-9 h-10 text-sm bg-card border-border rounded-xl" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div>
           </div>

@@ -49,7 +49,7 @@ const Navbar = () => {
           {isLoggedIn && (
             <Link to="/payments" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/payments') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
               <History size={22} />
-              <span className="text-[9px] font-bold md:hidden">Payements</span>
+              <span className="text-[9px] font-bold md:hidden">Paiements</span>
             </Link>
           )}
 

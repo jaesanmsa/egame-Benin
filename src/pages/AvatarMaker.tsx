@@ -37,21 +37,32 @@ const AvatarMaker = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Non connecté");
+
       const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
           <rect width="100" height="100" fill="#${selectedColor.hex}" />
           <text x="50%" y="56%" font-size="60" text-anchor="middle" dominant-baseline="middle">${selectedEmoji}</text>
         </svg>
       `.trim();
-      
+
       const avatarUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
-      
-      const { error } = await supabase.auth.updateUser({
+
+      const { error: authError } = await supabase.auth.updateUser({
         data: { avatar_url: avatarUrl }
       });
+      if (authError) throw authError;
 
-      if (error) throw error;
-      
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          avatar_url: avatarUrl,
+          updated_at: new Date().toISOString()
+        });
+      if (profileError) throw profileError;
+
       showSuccess("Avatar mis à jour !");
       navigate('/profile');
     } catch (error: any) {
