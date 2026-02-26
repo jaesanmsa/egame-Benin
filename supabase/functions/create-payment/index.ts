@@ -24,17 +24,18 @@ serve(async (req) => {
 
     const { tournament_id, tournament_name, amount } = await req.json()
 
-    // DIAGNOSTIC ENVIRONNEMENT
+    // RÉCUPÉRATION DE LA CLÉ
     const fedapayKey = Deno.env.get('FEDAPAY_SECRET_KEY')
-    const fedapayEnv = Deno.env.get('FEDAPAY_ENV') || 'sandbox'
-    const fedapayBaseUrl = fedapayEnv.toLowerCase() === 'live' ? 'https://api.fedapay.com' : 'https://sandbox-api.fedapay.com'
+    if (!fedapayKey) throw new Error("FEDAPAY_SECRET_KEY non configurée dans Supabase");
 
-    console.log(`[create-payment] CONFIGURATION ACTUELLE :`);
-    console.log(`[create-payment] - Environnement : ${fedapayEnv}`);
-    console.log(`[create-payment] - URL API : ${fedapayBaseUrl}`);
-    console.log(`[create-payment] - Clé commence par : ${fedapayKey?.substring(0, 7)}...`);
+    // AUTO-DÉTECTION DE L'ENVIRONNEMENT
+    // Si la clé commence par sk_live_, on FORCE le mode live, peu importe la variable d'environnement
+    const isLive = fedapayKey.startsWith('sk_live_');
+    const fedapayBaseUrl = isLive ? 'https://api.fedapay.com' : 'https://sandbox-api.fedapay.com';
 
-    if (!fedapayKey) throw new Error("FEDAPAY_SECRET_KEY non configurée");
+    console.log(`[create-payment] DIAGNOSTIC :`);
+    console.log(`[create-payment] - Clé détectée comme : ${isLive ? 'LIVE' : 'SANDBOX/TEST'}`);
+    console.log(`[create-payment] - URL utilisée : ${fedapayBaseUrl}`);
 
     // Création transaction
     const createRes = await fetch(`${fedapayBaseUrl}/v1/transactions`, {
@@ -45,7 +46,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         amount: parseInt(String(amount)),
-        description: `Inscription: ${tournament_name}`,
+        description: `Inscription eGame: ${tournament_name}`,
         currency: { iso: 'XOF' },
         callback_url: `https://egamebenin.com/payment-success`,
         customer: { 
@@ -57,7 +58,7 @@ serve(async (req) => {
 
     const createData = await createRes.json()
     if (!createRes.ok) {
-      console.error("[create-payment] Erreur API FedaPay détaillée:", JSON.stringify(createData, null, 2));
+      console.error("[create-payment] Erreur FedaPay:", createData);
       throw new Error(createData.message || "Erreur FedaPay");
     }
 
