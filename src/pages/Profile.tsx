@@ -12,6 +12,7 @@ import { useTheme } from "next-themes";
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [tournamentCount, setTournamentCount] = useState(0);
   const navigate = useNavigate();
@@ -26,6 +27,15 @@ const Profile = () => {
           return;
         }
         setUser(user);
+        
+        // Récupérer le profil depuis la table profiles
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        setProfile(profileData);
         
         const { count } = await supabase
           .from('payments')
@@ -50,7 +60,7 @@ const Profile = () => {
   };
 
   const copyAvatarLink = () => {
-    const url = user.user_metadata?.avatar_url;
+    const url = profile?.avatar_url || user?.user_metadata?.avatar_url;
     if (url) {
       navigator.clipboard.writeText(url);
       showSuccess("Lien de l'avatar copié !");
@@ -72,7 +82,8 @@ const Profile = () => {
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
   if (!user) return null;
 
-  const avatarUrl = user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
+  const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
+  const username = profile?.username || user.user_metadata?.username || user.email?.split('@')[0];
   const isAdmin = user.email === 'egamebenin@gmail.com';
 
   return (
@@ -88,9 +99,9 @@ const Profile = () => {
               <Palette size={16} />
             </Link>
           </div>
-          <h1 className="text-3xl font-black mt-4">{user.user_metadata?.username || user.email?.split('@')[0]}</h1>
+          <h1 className="text-3xl font-black mt-4">{username}</h1>
           
-          {user.user_metadata?.avatar_url && (
+          {avatarUrl.startsWith('data:image') && (
             <button 
               onClick={copyAvatarLink}
               className="mt-4 flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-violet-400 transition-colors uppercase tracking-widest"
@@ -127,7 +138,6 @@ const Profile = () => {
         </section>
 
         <div className="space-y-4">
-          {/* Toggle Thème */}
           <button 
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm"

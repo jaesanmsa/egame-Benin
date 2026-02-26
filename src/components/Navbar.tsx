@@ -10,23 +10,46 @@ const Navbar = () => {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [dbAvatar, setDbAvatar] = useState<string | null>(null);
   const isActive = (path: string) => location.pathname === path;
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
       setUser(session?.user || null);
-    });
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      }
+    };
+
+    getSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
       setUser(session?.user || null);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setDbAvatar(null);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const avatarUrl = user?.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`;
+  const fetchProfile = async (userId: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('avatar_url')
+      .eq('id', userId)
+      .maybeSingle();
+    if (data?.avatar_url) {
+      setDbAvatar(data.avatar_url);
+    }
+  };
+
+  const avatarUrl = dbAvatar || user?.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border px-2 py-3 md:top-0 md:bottom-auto md:border-b md:border-t-0">
