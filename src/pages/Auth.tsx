@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, Chrome, UserPlus, LogIn } from 'lucide-react';
+import { Mail, Lock, Chrome, UserPlus, LogIn, CheckCircle2 } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Logo from '@/components/Logo';
 
@@ -15,6 +15,7 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isEmailSent, setIsEmailSent] = useState(false);
   const navigate = useNavigate();
 
   const handleGoogleLogin = async () => {
@@ -38,22 +39,63 @@ const Auth = () => {
     if (isLogin) {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        showError("Erreur de connexion. Vérifiez vos identifiants.");
+        if (error.message.includes("Email not confirmed")) {
+          showError("Veuillez confirmer votre email avant de vous connecter.");
+        } else {
+          showError("Erreur de connexion. Vérifiez vos identifiants.");
+        }
       } else {
         showSuccess("Bienvenue sur eGame Bénin !");
         navigate('/');
       }
     } else {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error, data } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+        }
+      });
+      
       if (error) {
         showError(error.message);
       } else {
-        showSuccess("Compte créé avec succès !");
-        setIsLogin(true);
+        // Si Supabase demande la confirmation (paramètre activé dans le dashboard)
+        if (data.user && data.session === null) {
+          setIsEmailSent(true);
+          showSuccess("Lien de vérification envoyé !");
+        } else {
+          showSuccess("Compte créé avec succès !");
+          setIsLogin(true);
+        }
       }
     }
     setLoading(false);
   };
+
+  if (isEmailSent) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-md space-y-8 bg-card p-10 rounded-[2.5rem] border border-border shadow-2xl text-center">
+          <div className="w-20 h-20 bg-violet-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Mail size={40} className="text-violet-500" />
+          </div>
+          <h1 className="text-3xl font-black">Vérifiez vos mails</h1>
+          <p className="text-muted-foreground">
+            Un lien de confirmation a été envoyé à <span className="text-foreground font-bold">{email}</span>. 
+            Veuillez cliquer sur le lien pour activer votre compte.
+          </p>
+          <Button 
+            onClick={() => setIsEmailSent(false)} 
+            variant="outline" 
+            className="w-full py-6 rounded-xl border-border"
+          >
+            Retour à la connexion
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-start pt-16 md:justify-center md:pt-0 p-6">
