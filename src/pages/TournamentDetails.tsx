@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock, CreditCard } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -37,7 +37,6 @@ const TournamentDetails = () => {
       const { data } = await supabase.from('payments').select('*').eq('tournament_id', id).eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle();
       if (data) {
         const diffMinutes = (new Date().getTime() - new Date(data.created_at).getTime()) / (1000 * 60);
-        // On ne considère l'inscription valide que si elle est réussie ou en attente depuis moins de 5 minutes
         if (data.status === 'Réussi' || (data.status === 'En attente' && diffMinutes < 5)) {
           setUserRegistration(data);
         }
@@ -53,13 +52,15 @@ const TournamentDetails = () => {
     fetchParticipants();
   }, [id]);
 
-  const handleFedaPay = async () => {
+  const handlePayment = async (provider: 'fedapay' | 'geniuspay') => {
     setPaymentStep('processing');
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("Veuillez vous connecter");
 
-      const { data, error } = await supabase.functions.invoke('create-payment', {
+      const functionName = provider === 'fedapay' ? 'create-payment' : 'create-geniuspay-payment';
+      
+      const { data, error } = await supabase.functions.invoke(functionName, {
         body: { tournament_id: id, tournament_name: tournament.title, amount: tournament.entry_fee },
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
@@ -168,16 +169,27 @@ const TournamentDetails = () => {
           <div className="relative bg-card border border-border w-full max-w-[400px] rounded-[2.5rem] p-8 shadow-2xl z-[10000]">
             <button onClick={() => setShowPayment(false)} className="absolute top-6 right-6 p-2 text-muted-foreground bg-muted rounded-full"><X size={20} /></button>
             {paymentStep === 'select' ? (
-              <div className="space-y-8 text-center">
+              <div className="space-y-6 text-center">
                 <div className="w-20 h-20 bg-violet-600/10 rounded-3xl flex items-center justify-center text-violet-500 mx-auto"><Smartphone size={40} /></div>
-                <h2 className="text-2xl font-black">Paiement Mobile</h2>
-                <button onClick={handleFedaPay} className="w-full flex items-center justify-between p-6 bg-muted rounded-2xl border border-border hover:border-violet-500/50 transition-all group">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white"><Smartphone size={24} /></div>
-                    <div className="text-left"><p className="font-bold">MTN / Moov Money</p><p className="text-[10px] text-muted-foreground font-bold uppercase">Instantanné</p></div>
-                  </div>
-                  <ChevronRight size={20} className="text-muted-foreground group-hover:text-violet-500" />
-                </button>
+                <h2 className="text-2xl font-black">Choisir un mode</h2>
+                
+                <div className="space-y-3">
+                  <button onClick={() => handlePayment('fedapay')} className="w-full flex items-center justify-between p-5 bg-muted rounded-2xl border border-border hover:border-violet-500/50 transition-all group">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white"><Smartphone size={20} /></div>
+                      <div className="text-left"><p className="font-bold text-sm">FedaPay (Bénin)</p><p className="text-[9px] text-muted-foreground font-bold uppercase">MTN / Moov</p></div>
+                    </div>
+                    <ChevronRight size={18} className="text-muted-foreground group-hover:text-violet-500" />
+                  </button>
+
+                  <button onClick={() => handlePayment('geniuspay')} className="w-full flex items-center justify-between p-5 bg-muted rounded-2xl border border-border hover:border-violet-500/50 transition-all group">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white"><CreditCard size={20} /></div>
+                      <div className="text-left"><p className="font-bold text-sm">GeniusPay (RCI)</p><p className="text-[9px] text-muted-foreground font-bold uppercase">Orange / MTN / Moov</p></div>
+                    </div>
+                    <ChevronRight size={18} className="text-muted-foreground group-hover:text-violet-500" />
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="py-16 text-center space-y-6">
