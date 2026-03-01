@@ -3,33 +3,62 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Shield, Scale, Lock, Info, FileText, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Shield, Scale, Lock, FileText, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Privacy = () => {
   const navigate = useNavigate();
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-3xl mx-auto px-6 py-8">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
+        <motion.button 
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          onClick={() => navigate(-1)} 
+          className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors"
+        >
           <ArrowLeft size={20} />
           Retour
-        </button>
+        </motion.button>
 
-        <div className="text-center mb-12">
+        <motion.div 
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="text-center mb-12"
+        >
           <div className="w-20 h-20 bg-violet-600/10 rounded-3xl flex items-center justify-center text-violet-500 mx-auto mb-6">
             <Shield size={40} />
           </div>
-          <h1 className="text-3xl font-black mb-2">Politique de Confidentialité</h1>
+          <h1 className="text-3xl font-black mb-2">Privacy</h1>
           <p className="text-muted-foreground">Conditions Générales & Protection des Données • v1.1</p>
           <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">Dernière mise à jour : 20 Mars 2024</p>
-        </div>
+        </motion.div>
 
-        <div className="space-y-10">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-10"
+        >
           {/* Section CGU */}
-          <section>
+          <motion.section variants={itemVariants}>
             <div className="flex items-center gap-3 mb-6">
               <FileText className="text-violet-500" size={24} />
               <h2 className="text-xl font-bold">1. Conditions d'Utilisation</h2>
@@ -55,10 +84,10 @@ const Privacy = () => {
                 <p>Le contenu, le logo, les graphismes et le code de l'application sont la propriété exclusive de eGame Bénin. Toute reproduction sans autorisation est interdite.</p>
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* Section Règles de Conduite */}
-          <section>
+          <motion.section variants={itemVariants}>
             <div className="flex items-center gap-3 mb-6">
               <Scale className="text-violet-500" size={24} />
               <h2 className="text-xl font-bold">2. Règles de l'Arène</h2>
@@ -77,10 +106,10 @@ const Privacy = () => {
                 <p><strong>Ponctualité :</strong> Un retard de plus de 10 minutes lors d'un match programmé entraîne un forfait automatique.</p>
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* Section Confidentialité */}
-          <section>
+          <motion.section variants={itemVariants}>
             <div className="flex items-center gap-3 mb-6">
               <Lock className="text-violet-500" size={24} />
               <h2 className="text-xl font-bold">3. Politique de Confidentialité</h2>
@@ -103,10 +132,10 @@ const Privacy = () => {
                 <p>Conformément à la législation sur la protection des données, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles via les paramètres de votre profil.</p>
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* Section Remboursements */}
-          <section>
+          <motion.section variants={itemVariants}>
             <div className="flex items-center gap-3 mb-6">
               <AlertCircle className="text-violet-500" size={24} />
               <h2 className="text-xl font-bold">4. Inscriptions & Remboursements</h2>
@@ -116,15 +145,19 @@ const Privacy = () => {
               <p>• En cas d'annulation d'un tournoi par l'administration, les participants seront intégralement remboursés ou crédités pour un futur événement.</p>
               <p>• Les cash prizes sont versés dans un délai de 24h à 72h après la fin officielle du tournoi.</p>
             </div>
-          </section>
-        </div>
+          </motion.section>
+        </motion.div>
 
-        <div className="mt-16 p-8 bg-violet-600/5 rounded-[2.5rem] border border-violet-500/10 text-center">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="mt-16 p-8 bg-violet-600/5 rounded-[2.5rem] border border-violet-500/10 text-center"
+        >
           <p className="text-muted-foreground text-xs">
             Pour toute question concernant ces conditions, contactez-nous à :<br />
             <span className="text-violet-500 font-bold">contact@egamebenin.com</span>
           </p>
-        </div>
+        </motion.div>
 
         <footer className="mt-12 text-center text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
           <p>© 2026 eGame Bénin • Tous droits réservés</p>

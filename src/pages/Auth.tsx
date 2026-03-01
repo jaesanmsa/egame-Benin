@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, Chrome, UserPlus, LogIn, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, Chrome, UserPlus, LogIn, CheckCircle2, Shield } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Logo from '@/components/Logo';
 
@@ -60,7 +60,6 @@ const Auth = () => {
       if (error) {
         showError(error.message);
       } else {
-        // Si Supabase demande la confirmation (paramètre activé dans le dashboard)
         if (data.user && data.session === null) {
           setIsEmailSent(true);
           showSuccess("Lien de vérification envoyé !");
@@ -176,8 +175,13 @@ const Auth = () => {
         </p>
       </div>
 
-      <footer className="mt-12 p-8 text-center text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
-        eGame Benin @2026 • v1.0
+      <footer className="mt-12 p-8 text-center space-y-4">
+        <Link to="/privacy" className="text-[10px] font-bold text-muted-foreground hover:text-violet-500 uppercase tracking-widest flex items-center justify-center gap-1">
+          <Shield size={12} /> Privacy
+        </Link>
+        <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
+          eGame Benin @2026 • v1.0
+        </p>
       </footer>
     </div>
   );
