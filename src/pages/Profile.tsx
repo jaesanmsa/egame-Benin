@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Mail, History, Zap, ShieldCheck, Palette, Copy, Link as LinkIcon, HelpCircle, Sun, Moon } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Mail, History, Zap, ShieldCheck, Palette, Copy, Link as LinkIcon, HelpCircle, Sun, Moon, Shield } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showError, showSuccess } from '@/utils/toast';
@@ -162,6 +162,12 @@ const Profile = () => {
           <Link to="/contact" className="block">
             <button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm">
               <div className="flex items-center gap-4"><HelpCircle size={20} className="text-violet-500" /> Contact & Aide</div>
+            </button>
+          </Link>
+
+          <Link to="/terms" className="block">
+            <button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm">
+              <div className="flex items-center gap-4"><Shield size={20} className="text-cyan-500" /> Règles & Confidentialité</div>
             </button>
           </Link>
 
