@@ -120,12 +120,9 @@ const Index = () => {
         <footer className="py-10 text-center space-y-4">
           <div className="flex flex-col items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             <Link to="/privacy" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
-              <Shield size={12} /> Politique de Confidentialité
+              <Shield size={12} /> Privacy
             </Link>
-            <div className="flex items-center gap-6">
-              <Link to="/privacy" className="hover:text-violet-500 transition-colors">Conditions d'Utilisation</Link>
-              <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide</Link>
-            </div>
+            <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide</Link>
           </div>
           <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest mt-4">© 2026 eGame Bénin</p>
         </footer>
@@ -269,12 +266,9 @@ const Index = () => {
         <footer className="mt-12 py-12 border-t border-border text-center space-y-4">
           <div className="flex flex-col items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             <Link to="/privacy" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
-              <Shield size={12} /> Politique de Confidentialité
+              <Shield size={12} /> Privacy
             </Link>
-            <div className="flex items-center gap-6">
-              <Link to="/privacy" className="hover:text-violet-500 transition-colors">Conditions d'Utilisation</Link>
-              <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide & Support</Link>
-            </div>
+            <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide & Support</Link>
           </div>
           <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest mt-4">
             © 2026 eGame Bénin • Tous droits réservés
