@@ -7,7 +7,7 @@ import FinishedTournamentCard from '@/components/FinishedTournamentCard';
 import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
-import { Search, Trophy, Globe, MapPin, PlusCircle, History, Star, ChevronRight, Gamepad2, Facebook } from 'lucide-react';
+import { Search, Trophy, Globe, MapPin, PlusCircle, History, Star, ChevronRight, Gamepad2, Facebook, Shield } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -117,6 +117,13 @@ const Index = () => {
             <Link to="/auth" className="block"><button className="w-full bg-card py-5 rounded-2xl font-bold text-lg border border-border">Créer un compte</button></Link>
           </div>
         </main>
+        <footer className="py-10 text-center space-y-4">
+          <div className="flex items-center justify-center gap-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <Link to="/terms" className="hover:text-violet-500 transition-colors flex items-center gap-1"><Shield size={12} /> Confidentialité & Règles</Link>
+            <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide</Link>
+          </div>
+          <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest">© 2026 eGame Bénin</p>
+        </footer>
       </div>
     );
   }
@@ -253,6 +260,16 @@ const Index = () => {
             </div>
           </section>
         )}
+
+        <footer className="mt-12 py-12 border-t border-border text-center space-y-4">
+          <div className="flex items-center justify-center gap-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <Link to="/terms" className="hover:text-violet-500 transition-colors flex items-center gap-1"><Shield size={12} /> Confidentialité & Règles</Link>
+            <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide & Support</Link>
+          </div>
+          <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest">
+            © 2026 eGame Bénin • Tous droits réservés
+          </p>
+        </footer>
       </main>
     </div>
   );
