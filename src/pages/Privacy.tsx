@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Shield, Scale, Lock, Info, FileText, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Terms = () => {
+const Privacy = () => {
   const navigate = useNavigate();
 
   return (
@@ -22,8 +22,8 @@ const Terms = () => {
           <div className="w-20 h-20 bg-violet-600/10 rounded-3xl flex items-center justify-center text-violet-500 mx-auto mb-6">
             <Shield size={40} />
           </div>
-          <h1 className="text-3xl font-black mb-2">Conditions & Confidentialité</h1>
-          <p className="text-muted-foreground">Conditions Générales d'Utilisation (CGU) • v1.1</p>
+          <h1 className="text-3xl font-black mb-2">Politique de Confidentialité</h1>
+          <p className="text-muted-foreground">Conditions Générales & Protection des Données • v1.1</p>
           <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">Dernière mise à jour : 20 Mars 2024</p>
         </div>
 
@@ -134,4 +134,4 @@ const Terms = () => {
   );
 };
 
-export default Terms;
+export default Privacy;

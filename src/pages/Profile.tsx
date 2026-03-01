@@ -165,9 +165,9 @@ const Profile = () => {
             </button>
           </Link>
 
-          <Link to="/terms" className="block">
+          <Link to="/privacy" className="block">
             <button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm">
-              <div className="flex items-center gap-4"><Shield size={20} className="text-cyan-500" /> Règles & Confidentialité</div>
+              <div className="flex items-center gap-4"><Shield size={20} className="text-cyan-500" /> Politique de Confidentialité</div>
             </button>
           </Link>
 

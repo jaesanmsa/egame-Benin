@@ -119,11 +119,11 @@ const Index = () => {
         </main>
         <footer className="py-10 text-center space-y-4">
           <div className="flex flex-col items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            <Link to="/terms" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
+            <Link to="/privacy" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
               <Shield size={12} /> Politique de Confidentialité
             </Link>
             <div className="flex items-center gap-6">
-              <Link to="/terms" className="hover:text-violet-500 transition-colors">Conditions d'Utilisation</Link>
+              <Link to="/privacy" className="hover:text-violet-500 transition-colors">Conditions d'Utilisation</Link>
               <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide</Link>
             </div>
           </div>
@@ -268,11 +268,11 @@ const Index = () => {
 
         <footer className="mt-12 py-12 border-t border-border text-center space-y-4">
           <div className="flex flex-col items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            <Link to="/terms" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
+            <Link to="/privacy" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
               <Shield size={12} /> Politique de Confidentialité
             </Link>
             <div className="flex items-center gap-6">
-              <Link to="/terms" className="hover:text-violet-500 transition-colors">Conditions d'Utilisation</Link>
+              <Link to="/privacy" className="hover:text-violet-500 transition-colors">Conditions d'Utilisation</Link>
               <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide & Support</Link>
             </div>
           </div>

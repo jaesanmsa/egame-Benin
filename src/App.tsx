@@ -19,7 +19,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import Contact from "./pages/Contact";
 import Leaderboard from "./pages/Leaderboard";
 import DownloadLogo from "./pages/DownloadLogo";
-import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,7 +47,7 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/download-logo" element={<DownloadLogo />} />
-              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
