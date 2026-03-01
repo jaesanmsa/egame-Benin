@@ -122,7 +122,6 @@ const Index = () => {
             <Link to="/privacy" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
               <Shield size={12} /> Privacy
             </Link>
-            <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide</Link>
           </div>
           <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest mt-4">© 2026 eGame Bénin</p>
         </footer>
@@ -268,7 +267,6 @@ const Index = () => {
             <Link to="/privacy" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
               <Shield size={12} /> Privacy
             </Link>
-            <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide & Support</Link>
           </div>
           <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest mt-4">
             © 2026 eGame Bénin • Tous droits réservés
