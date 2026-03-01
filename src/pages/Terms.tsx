@@ -95,7 +95,7 @@ const Terms = () => {
 
               <div>
                 <h3 className="font-bold text-foreground mb-2">Sécurité des paiements</h3>
-                <p>Les transactions financières sont gérées par nos partenaires certifiés (FedaPay, GeniusPay). eGame Bénin n'a jamais accès à vos codes PIN ou informations de carte bancaire.</p>
+                <p>Les transactions financières sont gérées par nos partenaires certifiés (FedaPay, GeniusPay, Kkiapay). eGame Bénin n'a jamais accès à vos codes PIN ou informations de carte bancaire.</p>
               </div>
 
               <div>
