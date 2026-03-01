@@ -10,7 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 const Contact = () => {
   const navigate = useNavigate();
   const whatsappNumber = "2290141790790";
-  const email = "egamebenin@gmail.com";
+  const email = "contact@egamebenin.com";
   const facebookUrl = "https://www.facebook.com/profile.php?id=61588439640775";
   const whatsappChannelUrl = "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E";
 

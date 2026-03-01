@@ -84,7 +84,7 @@ const Profile = () => {
 
   const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
   const username = profile?.username || user.user_metadata?.username || user.email?.split('@')[0];
-  const isAdmin = user.email === 'egamebenin@gmail.com';
+  const isAdmin = user.email === 'contact@egamebenin.com';
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">

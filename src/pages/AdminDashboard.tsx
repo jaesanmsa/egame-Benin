@@ -42,7 +42,7 @@ const AdminDashboard = () => {
 
   const checkAdmin = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (user?.email === 'egamebenin@gmail.com') {
+    if (user?.email === 'contact@egamebenin.com') {
       setIsAdmin(true);
     } else {
       navigate('/');
