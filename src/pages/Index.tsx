@@ -118,11 +118,16 @@ const Index = () => {
           </div>
         </main>
         <footer className="py-10 text-center space-y-4">
-          <div className="flex items-center justify-center gap-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            <Link to="/terms" className="hover:text-violet-500 transition-colors flex items-center gap-1"><Shield size={12} /> Confidentialité & Règles</Link>
-            <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide</Link>
+          <div className="flex flex-col items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <Link to="/terms" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
+              <Shield size={12} /> Politique de Confidentialité
+            </Link>
+            <div className="flex items-center gap-6">
+              <Link to="/terms" className="hover:text-violet-500 transition-colors">Conditions d'Utilisation</Link>
+              <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide</Link>
+            </div>
           </div>
-          <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest">© 2026 eGame Bénin</p>
+          <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest mt-4">© 2026 eGame Bénin</p>
         </footer>
       </div>
     );
@@ -262,11 +267,16 @@ const Index = () => {
         )}
 
         <footer className="mt-12 py-12 border-t border-border text-center space-y-4">
-          <div className="flex items-center justify-center gap-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            <Link to="/terms" className="hover:text-violet-500 transition-colors flex items-center gap-1"><Shield size={12} /> Confidentialité & Règles</Link>
-            <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide & Support</Link>
+          <div className="flex flex-col items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <Link to="/terms" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
+              <Shield size={12} /> Politique de Confidentialité
+            </Link>
+            <div className="flex items-center gap-6">
+              <Link to="/terms" className="hover:text-violet-500 transition-colors">Conditions d'Utilisation</Link>
+              <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide & Support</Link>
+            </div>
           </div>
-          <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest">
+          <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest mt-4">
             © 2026 eGame Bénin • Tous droits réservés
           </p>
         </footer>
