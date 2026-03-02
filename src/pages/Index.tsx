@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { showSuccess, showError } from '@/utils/toast';
 
 const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
-const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Autre"];
+const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale"];
 
 const Index = () => {
   const [session, setSession] = useState<any>(null);
@@ -95,7 +95,6 @@ const Index = () => {
         .eq('id', session.user.id);
       
       if (error) {
-        // Code 23505 = Violation de contrainte unique dans PostgreSQL
         if (error.code === '23505') {
           throw new Error("Ce pseudo est déjà utilisé par un autre joueur.");
         }
@@ -171,7 +170,7 @@ const Index = () => {
                          t.game.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === 'All' || t.type === filterType;
     const matchesCity = selectedCity === "all" || t.city === selectedCity;
-    const matchesGame = selectedGame === "all" || t.game === selectedGame || (selectedGame === "Autre" && !GAMES.includes(t.game));
+    const matchesGame = selectedGame === "all" || t.game === selectedGame;
     return matchesSearch && matchesType && matchesCity && matchesGame;
   });
 
