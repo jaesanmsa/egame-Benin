@@ -165,3 +165,6 @@ const Privacy = () => {
       </main>
     </div>
   );
+};
+
+export default Privacy;
