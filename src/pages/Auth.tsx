@@ -6,14 +6,19 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, Chrome, UserPlus, LogIn, CheckCircle2, Shield } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Mail, Lock, Chrome, UserPlus, LogIn, AtSign, MapPin, Shield } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Logo from '@/components/Logo';
+
+const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [city, setCity] = useState('Autre');
   const [loading, setLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
   const navigate = useNavigate();
@@ -49,16 +54,33 @@ const Auth = () => {
         navigate('/');
       }
     } else {
+      // Validation du pseudo
+      const cleanUsername = username.trim();
+      if (cleanUsername.length < 3) {
+        showError("Le pseudo doit faire au moins 3 caractères.");
+        setLoading(false);
+        return;
+      }
+
       const { error, data } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
           emailRedirectTo: window.location.origin,
+          data: {
+            username: cleanUsername,
+            city: city,
+            full_name: cleanUsername // Par défaut le pseudo sert de nom complet
+          }
         }
       });
       
       if (error) {
-        showError(error.message);
+        if (error.message.includes("unique constraint") || error.message.includes("already exists")) {
+          showError("Ce pseudo est déjà utilisé par un autre joueur.");
+        } else {
+          showError(error.message);
+        }
       } else {
         if (data.user && data.session === null) {
           setIsEmailSent(true);
@@ -125,6 +147,41 @@ const Auth = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="username">Pseudo Unique</Label>
+                  <div className="relative">
+                    <AtSign className="absolute left-3 top-3 text-muted-foreground" size={18} />
+                    <Input 
+                      id="username" 
+                      placeholder="Ex: ProGamer229" 
+                      className="pl-10 bg-muted border-border rounded-xl"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city">Ville</Label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-3 text-muted-foreground z-10" size={18} />
+                    <Select value={city} onValueChange={setCity}>
+                      <SelectTrigger className="pl-10 bg-muted border-border rounded-xl">
+                        <SelectValue placeholder="Choisir une ville" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card border-border">
+                        {CITIES.map(c => (
+                          <SelectItem key={c} value={c}>{c}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
