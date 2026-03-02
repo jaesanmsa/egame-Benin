@@ -13,6 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search, Settings, Edit3, Star, Link as LinkIcon } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
+const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi"];
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -22,7 +24,7 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   
   const [newTournament, setNewTournament] = useState({
-    id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: ''
+    id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: '', city: 'Cotonou'
   });
 
   const [editingTournament, setEditingTournament] = useState<any>(null);
@@ -72,7 +74,7 @@ const AdminDashboard = () => {
     if (error) showError(error.message);
     else {
       showSuccess("Tournoi ajouté !");
-      setNewTournament({ id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: '' });
+      setNewTournament({ id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: '', city: 'Cotonou' });
       fetchData();
     }
   };
@@ -84,7 +86,8 @@ const AdminDashboard = () => {
       .update({ 
         rules: editingTournament.rules,
         prize_pool: editingTournament.prize_pool,
-        payment_url: editingTournament.payment_url
+        payment_url: editingTournament.payment_url,
+        city: editingTournament.city
       })
       .eq('id', editingTournament.id);
     
@@ -213,6 +216,19 @@ const AdminDashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input placeholder="ID Unique (ex: blur-01)" value={newTournament.id} onChange={e => setNewTournament({...newTournament, id: e.target.value})} className="bg-zinc-800" required />
                 <Input placeholder="Titre" value={newTournament.title} onChange={e => setNewTournament({...newTournament, title: e.target.value})} className="bg-zinc-800" required />
+                
+                <div className="space-y-2">
+                  <Label>Ville</Label>
+                  <Select onValueChange={(v) => setNewTournament({...newTournament, city: v})} defaultValue="Cotonou">
+                    <SelectTrigger className="bg-zinc-800 border-zinc-700"><SelectValue placeholder="Ville" /></SelectTrigger>
+                    <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
+                      {CITIES.map(city => (
+                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <Select onValueChange={(v) => setNewTournament({...newTournament, type: v as any})} defaultValue="Online">
                   <SelectTrigger className="bg-zinc-800 border-zinc-700"><SelectValue placeholder="Type" /></SelectTrigger>
                   <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
@@ -252,7 +268,7 @@ const AdminDashboard = () => {
                           {t.title}
                           {t.is_featured && <Star size={14} className="text-yellow-500 fill-yellow-500" />}
                         </p>
-                        <p className="text-xs text-zinc-500">{t.game} • {t.prize_pool}</p>
+                        <p className="text-xs text-zinc-500">{t.game} • {t.prize_pool} • {t.city}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <Button 
@@ -281,6 +297,19 @@ const AdminDashboard = () => {
                     <h3 className="font-bold text-violet-400">{editingTournament.title}</h3>
                     <button type="button" onClick={() => setEditingTournament(null)} className="text-xs text-zinc-500 hover:text-white">Annuler</button>
                   </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Ville</Label>
+                    <Select onValueChange={(v) => setEditingTournament({...editingTournament, city: v})} defaultValue={editingTournament.city}>
+                      <SelectTrigger className="bg-zinc-800 border-zinc-700"><SelectValue placeholder="Ville" /></SelectTrigger>
+                      <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
+                        {CITIES.map(city => (
+                          <SelectItem key={city} value={city}>{city}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <div className="space-y-2">
                     <Label>Lien de paiement FedaPay</Label>
                     <Input 

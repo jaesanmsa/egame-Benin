@@ -11,6 +11,9 @@ import { Search, Trophy, Globe, MapPin, PlusCircle, History, Star, ChevronRight,
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi"];
 
 const Index = () => {
   const [session, setSession] = useState<any>(null);
@@ -22,6 +25,7 @@ const Index = () => {
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
+  const [selectedCity, setSelectedCity] = useState<string>("all");
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -95,7 +99,8 @@ const Index = () => {
     const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          t.game.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === 'All' || t.type === filterType;
-    return matchesSearch && matchesType;
+    const matchesCity = selectedCity === "all" || t.city === selectedCity;
+    return matchesSearch && matchesType && matchesCity;
   });
 
   const featuredTournament = filteredTournaments.find(t => t.is_featured) || filteredTournaments[0];
@@ -213,6 +218,20 @@ const Index = () => {
               <button onClick={() => setFilterType('All')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white' : 'bg-card text-muted-foreground border border-border'}`}>Tous</button>
               <button onClick={() => setFilterType('Online')} className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center ${filterType === 'Online' ? 'bg-cyan-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="En ligne"><Globe size={16} /></button>
               <button onClick={() => setFilterType('Presentiel')} className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center ${filterType === 'Presentiel' ? 'bg-orange-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="Présentiel"><MapPin size={16} /></button>
+              
+              <div className="min-w-[140px]">
+                <Select value={selectedCity} onValueChange={setSelectedCity}>
+                  <SelectTrigger className="bg-card border-border rounded-xl h-10 text-xs font-bold">
+                    <SelectValue placeholder="Ville" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    <SelectItem value="all">Toutes les villes</SelectItem>
+                    {CITIES.map(city => (
+                      <SelectItem key={city} value={city}>{city}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div className="relative w-full md:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
