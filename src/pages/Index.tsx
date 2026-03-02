@@ -6,26 +6,40 @@ import TournamentCard from '@/components/TournamentCard';
 import FinishedTournamentCard from '@/components/FinishedTournamentCard';
 import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
-import { motion } from 'framer-motion';
-import { Search, Trophy, Globe, MapPin, PlusCircle, History, Star, ChevronRight, Gamepad2, Facebook, Shield } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from '@/components/ui/button';
+import { showSuccess, showError } from '@/utils/toast';
 
-const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi"];
+const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
+const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Autre"];
 
 const Index = () => {
   const [session, setSession] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [finishedTournaments, setFinishedTournaments] = useState<any[]>([]);
   const [topPlayers, setTopPlayers] = useState<any[]>([]);
   const [myTournaments, setMyTournaments] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
+  
+  // Filtres
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
+  const [selectedGame, setSelectedGame] = useState<string>("all");
+  
+  // Finalisation profil
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [tempUsername, setTempUsername] = useState("");
+  const [tempCity, setTempCity] = useState("Autre");
+  const [savingProfile, setSavingProfile] = useState(false);
+
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -45,6 +59,47 @@ const Index = () => {
       .order('wins', { ascending: false })
       .limit(3);
     if (leaders) setTopPlayers(leaders);
+  };
+
+  const fetchProfile = async (userId: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle();
+    
+    if (data) {
+      setProfile(data);
+      if (!data.username || !data.city) {
+        setShowOnboarding(true);
+        setTempUsername(data.username || "");
+        setTempCity(data.city || "Autre");
+      }
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (!tempUsername.trim()) return showError("Le pseudo est obligatoire");
+    setSavingProfile(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+          username: tempUsername, 
+          city: tempCity,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', session.user.id);
+      
+      if (error) throw error;
+      showSuccess("Profil mis à jour !");
+      setShowOnboarding(false);
+      fetchProfile(session.user.id);
+    } catch (err: any) {
+      showError(err.message);
+    } finally {
+      setSavingProfile(false);
+    }
   };
 
   const fetchMyTournaments = async (userId: string) => {
@@ -80,13 +135,19 @@ const Index = () => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session?.user) fetchMyTournaments(session.user.id);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+        fetchMyTournaments(session.user.id);
+      }
       setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (session?.user) fetchMyTournaments(session.user.id);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+        fetchMyTournaments(session.user.id);
+      }
     });
 
     fetchData();
@@ -100,7 +161,8 @@ const Index = () => {
                          t.game.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === 'All' || t.type === filterType;
     const matchesCity = selectedCity === "all" || t.city === selectedCity;
-    return matchesSearch && matchesType && matchesCity;
+    const matchesGame = selectedGame === "all" || t.game === selectedGame || (selectedGame === "Autre" && !GAMES.includes(t.game));
+    return matchesSearch && matchesType && matchesCity && matchesGame;
   });
 
   const featuredTournament = filteredTournaments.find(t => t.is_featured) || filteredTournaments[0];
@@ -122,30 +184,131 @@ const Index = () => {
             <Link to="/auth" className="block"><button className="w-full bg-card py-5 rounded-2xl font-bold text-lg border border-border">Créer un compte</button></Link>
           </div>
         </main>
-        <footer className="py-10 text-center space-y-4">
-          <div className="flex flex-col items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            <Link to="/privacy" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
-              <Shield size={12} /> Privacy
-            </Link>
-          </div>
-          <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest mt-4">© 2026 eGame Bénin</p>
-        </footer>
       </div>
     );
   }
 
-  const userName = session.user.user_metadata?.username || session.user.email?.split('@')[0];
+  const userName = profile?.username || session.user.email?.split('@')[0];
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-24 pt-4 md:pt-24">
       <SEO />
       <Navbar />
       <main className="max-w-7xl mx-auto px-6 py-6">
+        
+        <AnimatePresence>
+          {showOnboarding && (
+            <motion.section 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="mb-10 overflow-hidden"
+            >
+              <div className="bg-violet-600/10 border border-violet-500/30 rounded-[2.5rem] p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <UserCheck className="text-violet-500" size={24} />
+                  <h2 className="text-xl font-black">Finalisez votre profil</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase text-muted-foreground ml-2">Votre Pseudo</label>
+                    <Input 
+                      placeholder="Ex: ProGamer229" 
+                      value={tempUsername}
+                      onChange={(e) => setTempUsername(e.target.value)}
+                      className="bg-card border-border rounded-2xl h-14"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase text-muted-foreground ml-2">Votre Ville</label>
+                    <Select value={tempCity} onValueChange={setTempCity}>
+                      <SelectTrigger className="bg-card border-border rounded-2xl h-14">
+                        <SelectValue placeholder="Choisir une ville" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card border-border">
+                        {CITIES.map(city => (
+                          <SelectItem key={city} value={city}>{city}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-end">
+                    <Button 
+                      onClick={handleSaveProfile} 
+                      disabled={savingProfile}
+                      className="w-full h-14 bg-violet-600 hover:bg-violet-700 text-white rounded-2xl font-bold gap-2"
+                    >
+                      <Save size={20} />
+                      {savingProfile ? "Enregistrement..." : "Enregistrer"}
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-4 ml-2 italic">Si vous ne voyez pas votre ville, choisissez "Autre".</p>
+              </div>
+            </motion.section>
+          )}
+        </AnimatePresence>
+
         <header className="mb-8">
           <p className="text-violet-500 font-bold text-xs uppercase tracking-widest mb-1">Salut, {userName}</p>
           <h1 className="text-2xl md:text-3xl font-black">Prêt pour la victoire ?</h1>
         </header>
 
+        {/* Filtres */}
+        <section className="mb-12">
+          <div className="flex flex-col gap-4 mb-6">
+            <div className="flex flex-wrap items-center gap-2">
+              <button onClick={() => setFilterType('All')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white' : 'bg-card text-muted-foreground border border-border'}`}>Tous</button>
+              <button onClick={() => setFilterType('Online')} className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center ${filterType === 'Online' ? 'bg-cyan-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="En ligne"><Globe size={16} /></button>
+              <button onClick={() => setFilterType('Presentiel')} className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center ${filterType === 'Presentiel' ? 'bg-orange-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="Présentiel"><MapPin size={16} /></button>
+              
+              <div className="min-w-[140px]">
+                <Select value={selectedCity} onValueChange={setSelectedCity}>
+                  <SelectTrigger className="bg-card border-border rounded-xl h-10 text-xs font-bold">
+                    <SelectValue placeholder="Ville" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    <SelectItem value="all">Toutes les villes</SelectItem>
+                    {CITIES.map(city => (
+                      <SelectItem key={city} value={city}>{city}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="min-w-[140px]">
+                <Select value={selectedGame} onValueChange={setSelectedGame}>
+                  <SelectTrigger className="bg-card border-border rounded-xl h-10 text-xs font-bold">
+                    <SelectValue placeholder="Jeu" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    <SelectItem value="all">Tous les jeux</SelectItem>
+                    {GAMES.map(game => (
+                      <SelectItem key={game} value={game}>{game}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+              <Input placeholder="Rechercher un tournoi..." className="pl-9 h-12 text-sm bg-card border-border rounded-xl" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredTournaments.map((t) => (
+              <TournamentCard 
+                key={t.id} id={t.id} title={t.title} game={t.game} image={t.image_url}
+                date={new Date(t.start_date || Date.now()).toLocaleDateString('fr-FR')}
+                participants={`${participantCounts[t.id] || 0}/${t.max_participants || 40}`}
+                entryFee={t.entry_fee.toString()} type={t.type === 'Online' ? 'Online' : 'Presentiel'}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Reste du contenu (Mes Inscriptions, Top Joueurs, etc.) */}
         {myTournaments.length > 0 && (
           <section className="mb-10">
             <h2 className="text-lg font-black flex items-center gap-2 mb-4"><Gamepad2 className="text-violet-500" size={18} /> Mes Inscriptions</h2>
@@ -190,82 +353,6 @@ const Index = () => {
             </div>
           </section>
         )}
-
-        {featuredTournament && (
-          <section className="mb-10">
-            <motion.div 
-              whileHover={{ scale: 1.01 }}
-              onClick={() => navigate(`/tournament/${featuredTournament.id}`)}
-              className="relative h-[180px] md:h-[300px] rounded-[2rem] overflow-hidden cursor-pointer group shadow-xl"
-            >
-              <img src={featuredTournament.image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6">
-                <span className="bg-violet-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest mb-2 inline-block">À la une</span>
-                <h2 className="text-xl md:text-3xl font-black mb-1 text-white">{featuredTournament.title}</h2>
-                <div className="flex items-center gap-3 text-zinc-200 text-xs">
-                  <div className="flex items-center gap-1"><Trophy size={14} className="text-yellow-500" /> {featuredTournament.prize_pool}</div>
-                  <div className="flex items-center gap-1"><Globe size={14} className="text-cyan-500" /> {featuredTournament.type === 'Online' ? 'En ligne' : 'Présentiel'}</div>
-                </div>
-              </div>
-            </motion.div>
-          </section>
-        )}
-
-        <section className="mb-12">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-              <button onClick={() => setFilterType('All')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white' : 'bg-card text-muted-foreground border border-border'}`}>Tous</button>
-              <button onClick={() => setFilterType('Online')} className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center ${filterType === 'Online' ? 'bg-cyan-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="En ligne"><Globe size={16} /></button>
-              <button onClick={() => setFilterType('Presentiel')} className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center ${filterType === 'Presentiel' ? 'bg-orange-600 text-white' : 'bg-card text-muted-foreground border border-border'}`} title="Présentiel"><MapPin size={16} /></button>
-              
-              <div className="min-w-[140px]">
-                <Select value={selectedCity} onValueChange={setSelectedCity}>
-                  <SelectTrigger className="bg-card border-border rounded-xl h-10 text-xs font-bold">
-                    <SelectValue placeholder="Ville" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border">
-                    <SelectItem value="all">Toutes les villes</SelectItem>
-                    {CITIES.map(city => (
-                      <SelectItem key={city} value={city}>{city}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-              <Input placeholder="Rechercher..." className="pl-9 h-10 text-sm bg-card border-border rounded-xl" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredTournaments.map((t) => (
-              <TournamentCard 
-                key={t.id} id={t.id} title={t.title} game={t.game} image={t.image_url}
-                date={new Date(t.start_date || Date.now()).toLocaleDateString('fr-FR')}
-                participants={`${participantCounts[t.id] || 0}/${t.max_participants || 40}`}
-                entryFee={t.entry_fee.toString()} type={t.type === 'Online' ? 'Online' : 'Presentiel'}
-              />
-            ))}
-          </div>
-        </section>
-
-        <section className="mb-12">
-          <div className="bg-gradient-to-br from-blue-600/10 to-indigo-600/10 border border-blue-500/20 rounded-[2rem] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-center md:text-left">
-              <h2 className="text-xl md:text-2xl font-black mb-2">Rejoignez la communauté !</h2>
-              <p className="text-muted-foreground text-sm max-w-md">Suivez-nous sur Facebook pour ne rien rater des actualités et des lives.</p>
-            </div>
-            <button 
-              onClick={() => window.open("https://www.facebook.com/profile.php?id=61588439640775", "_blank")}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-xl shadow-blue-500/20 transition-all text-sm"
-            >
-              <Facebook size={20} />
-              Voir notre Facebook
-            </button>
-          </div>
-        </section>
 
         {finishedTournaments.length > 0 && (
           <section className="mb-12">

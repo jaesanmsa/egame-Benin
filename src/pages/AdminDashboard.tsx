@@ -13,7 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search, Settings, Edit3, Star, Link as LinkIcon } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
-const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi"];
+const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
+const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Autre"];
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   
   const [newTournament, setNewTournament] = useState({
-    id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: '', city: 'Cotonou'
+    id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: '', city: 'Cotonou'
   });
 
   const [editingTournament, setEditingTournament] = useState<any>(null);
@@ -74,7 +75,7 @@ const AdminDashboard = () => {
     if (error) showError(error.message);
     else {
       showSuccess("Tournoi ajouté !");
-      setNewTournament({ id: '', title: '', game: '', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: '', city: 'Cotonou' });
+      setNewTournament({ id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: '', city: 'Cotonou' });
       fetchData();
     }
   };
@@ -87,7 +88,8 @@ const AdminDashboard = () => {
         rules: editingTournament.rules,
         prize_pool: editingTournament.prize_pool,
         payment_url: editingTournament.payment_url,
-        city: editingTournament.city
+        city: editingTournament.city,
+        game: editingTournament.game
       })
       .eq('id', editingTournament.id);
     
@@ -229,6 +231,18 @@ const AdminDashboard = () => {
                   </Select>
                 </div>
 
+                <div className="space-y-2">
+                  <Label>Jeu</Label>
+                  <Select onValueChange={(v) => setNewTournament({...newTournament, game: v})} defaultValue="Blur">
+                    <SelectTrigger className="bg-zinc-800 border-zinc-700"><SelectValue placeholder="Jeu" /></SelectTrigger>
+                    <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
+                      {GAMES.map(game => (
+                        <SelectItem key={game} value={game}>{game}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <Select onValueChange={(v) => setNewTournament({...newTournament, type: v as any})} defaultValue="Online">
                   <SelectTrigger className="bg-zinc-800 border-zinc-700"><SelectValue placeholder="Type" /></SelectTrigger>
                   <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
@@ -237,12 +251,11 @@ const AdminDashboard = () => {
                   </SelectContent>
                 </Select>
                 <Input type="number" placeholder="Max participants" value={newTournament.max_participants} onChange={e => setNewTournament({...newTournament, max_participants: parseInt(e.target.value)})} className="bg-zinc-800" required />
-                <Input placeholder="Jeu" value={newTournament.game} onChange={e => setNewTournament({...newTournament, game: e.target.value})} className="bg-zinc-800" required />
                 <Input placeholder="Image URL" value={newTournament.image_url} onChange={e => setNewTournament({...newTournament, image_url: e.target.value})} className="bg-zinc-800" />
                 <Input type="number" placeholder="Frais d'entrée" value={newTournament.entry_fee} onChange={e => setNewTournament({...newTournament, entry_fee: parseInt(e.target.value)})} className="bg-zinc-800" />
                 <Input placeholder="Cash Prize" value={newTournament.prize_pool} onChange={e => setNewTournament({...newTournament, prize_pool: e.target.value})} className="bg-zinc-800" />
                 <div className="md:col-span-2">
-                  <Input placeholder="Lien de paiement FedaPay (ex: https://me.fedapay.com/mpservices)" value={newTournament.payment_url} onChange={e => setNewTournament({...newTournament, payment_url: e.target.value})} className="bg-zinc-800" />
+                  <Input placeholder="Lien de paiement FedaPay" value={newTournament.payment_url} onChange={e => setNewTournament({...newTournament, payment_url: e.target.value})} className="bg-zinc-800" />
                 </div>
                 <div className="md:col-span-2">
                   <Textarea placeholder="Règlement du tournoi..." value={newTournament.rules} onChange={e => setNewTournament({...newTournament, rules: e.target.value})} className="bg-zinc-800 min-h-[100px]" />
@@ -305,6 +318,18 @@ const AdminDashboard = () => {
                       <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
                         {CITIES.map(city => (
                           <SelectItem key={city} value={city}>{city}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Jeu</Label>
+                    <Select onValueChange={(v) => setEditingTournament({...editingTournament, game: v})} defaultValue={editingTournament.game}>
+                      <SelectTrigger className="bg-zinc-800 border-zinc-700"><SelectValue placeholder="Jeu" /></SelectTrigger>
+                      <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
+                        {GAMES.map(game => (
+                          <SelectItem key={game} value={game}>{game}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
