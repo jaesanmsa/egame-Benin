@@ -79,19 +79,29 @@ const Index = () => {
   };
 
   const handleSaveProfile = async () => {
-    if (!tempUsername.trim()) return showError("Le pseudo est obligatoire");
+    const username = tempUsername.trim();
+    if (!username) return showError("Le pseudo est obligatoire");
+    if (username.length < 3) return showError("Le pseudo doit faire au moins 3 caractères");
+    
     setSavingProfile(true);
     try {
       const { error } = await supabase
         .from('profiles')
         .update({ 
-          username: tempUsername, 
+          username: username, 
           city: tempCity,
           updated_at: new Date().toISOString()
         })
         .eq('id', session.user.id);
       
-      if (error) throw error;
+      if (error) {
+        // Code 23505 = Violation de contrainte unique dans PostgreSQL
+        if (error.code === '23505') {
+          throw new Error("Ce pseudo est déjà utilisé par un autre joueur.");
+        }
+        throw error;
+      }
+
       showSuccess("Profil mis à jour !");
       setShowOnboarding(false);
       fetchProfile(session.user.id);
@@ -209,7 +219,7 @@ const Index = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase text-muted-foreground ml-2">Votre Pseudo</label>
+                    <label className="text-[10px] font-bold uppercase text-muted-foreground ml-2">Votre Pseudo Unique</label>
                     <Input 
                       placeholder="Ex: ProGamer229" 
                       value={tempUsername}
@@ -241,7 +251,7 @@ const Index = () => {
                     </Button>
                   </div>
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-4 ml-2 italic">Si vous ne voyez pas votre ville, choisissez "Autre".</p>
+                <p className="text-[10px] text-muted-foreground mt-4 ml-2 italic">Le pseudo est définitif et doit être unique.</p>
               </div>
             </motion.section>
           )}

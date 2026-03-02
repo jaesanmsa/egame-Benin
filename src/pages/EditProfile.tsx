@@ -56,29 +56,37 @@ const EditProfile = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    const username = profile.username.trim();
+    if (!username) return showError("Le pseudo est obligatoire");
+    if (username.length < 3) return showError("Le pseudo doit faire au moins 3 caractères");
+
     setSaving(true);
-    
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Non connecté");
-
-      await supabase.auth.updateUser({
-        data: { ...profile }
-      });
 
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
           id: user.id,
           full_name: profile.full_name,
-          username: profile.username,
+          username: username,
           phone: profile.phone,
           city: profile.city,
           avatar_url: profile.avatar_url,
           updated_at: new Date().toISOString()
         });
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        if (profileError.code === '23505') {
+          throw new Error("Ce pseudo est déjà utilisé par un autre joueur.");
+        }
+        throw profileError;
+      }
+
+      await supabase.auth.updateUser({
+        data: { ...profile, username: username }
+      });
 
       showSuccess("Profil mis à jour !");
       navigate('/profile');
@@ -105,7 +113,7 @@ const EditProfile = () => {
         <form onSubmit={handleSave} className="space-y-8">
           <div className="space-y-6 bg-card p-8 rounded-[2rem] border border-border shadow-sm">
             <div className="space-y-2">
-              <Label htmlFor="username">Pseudo (Nom de joueur)</Label>
+              <Label htmlFor="username">Pseudo Unique (Nom de joueur)</Label>
               <div className="relative">
                 <AtSign className="absolute left-3 top-3 text-muted-foreground" size={18} />
                 <Input 
