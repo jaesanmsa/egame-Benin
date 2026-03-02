@@ -16,11 +16,13 @@ interface TournamentProps {
   participants: string;
   entryFee: string;
   type: 'Online' | 'Presentiel';
+  city?: string;
 }
 
-const TournamentCard = ({ id, title, game, image, date, participants, entryFee, type }: TournamentProps) => {
+const TournamentCard = ({ id, title, game, image, date, participants, entryFee, type, city }: TournamentProps) => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [tournamentCity, setTournamentCity] = useState(city);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -31,8 +33,15 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
       setIsLoggedIn(!!session);
     });
 
+    // Si la ville n'est pas passée en prop, on la récupère
+    if (!city) {
+      supabase.from('tournaments').select('city').eq('id', id).single().then(({ data }) => {
+        if (data) setTournamentCity(data.city);
+      });
+    }
+
     return () => subscription.unsubscribe();
-  }, []);
+  }, [id, city]);
 
   const handleClick = () => {
     if (!isLoggedIn) {
@@ -57,7 +66,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent" />
         <Badge className={`absolute top-3 right-3 ${type === 'Online' ? 'bg-cyan-500' : 'bg-orange-500'} text-white border-none flex items-center gap-1 text-[10px] py-0.5`}>
           {type === 'Online' ? <Globe size={10} /> : <MapPin size={10} />}
-          {type === 'Online' ? 'En ligne' : 'Présentiel'}
+          {type === 'Online' ? 'En ligne' : (tournamentCity || 'Présentiel')}
         </Badge>
       </div>
       
