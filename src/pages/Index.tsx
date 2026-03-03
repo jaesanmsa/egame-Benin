@@ -19,6 +19,12 @@ import { showSuccess, showError } from '@/utils/toast';
 const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
 const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale"];
 
+// STATISTIQUES MANUELLES (Modifiez ces valeurs ici)
+const MANUAL_STATS = {
+  tournaments: 0,
+  prizes: "0"
+};
+
 const Index = () => {
   const [session, setSession] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
@@ -28,6 +34,7 @@ const Index = () => {
   const [topPlayers, setTopPlayers] = useState<any[]>([]);
   const [myTournaments, setMyTournaments] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
+  const [userCount, setUserCount] = useState(0);
   
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
@@ -58,6 +65,16 @@ const Index = () => {
       .order('wins', { ascending: false })
       .limit(3);
     if (leaders) setTopPlayers(leaders);
+  };
+
+  const fetchUserCount = async () => {
+    const { count, error } = await supabase
+      .from('profiles')
+      .select('*', { count: 'exact', head: true });
+    
+    if (!error && count !== null) {
+      setUserCount(count);
+    }
   };
 
   const fetchProfile = async (userId: string) => {
@@ -104,6 +121,7 @@ const Index = () => {
       showSuccess("Profil mis à jour !");
       setShowOnboarding(false);
       fetchProfile(session.user.id);
+      fetchUserCount(); // Actualiser le compteur après inscription
     } catch (err: any) {
       showError(err.message);
     } finally {
@@ -161,6 +179,7 @@ const Index = () => {
 
     fetchData();
     fetchParticipantCounts();
+    fetchUserCount();
 
     return () => subscription.unsubscribe();
   }, []);
@@ -271,17 +290,17 @@ const Index = () => {
         <section className="grid grid-cols-3 gap-3 mb-12">
           <div className="bg-card border border-border p-4 rounded-2xl text-center">
             <Users size={18} className="text-violet-500 mx-auto mb-2" />
-            <p className="text-lg font-black">500+</p>
+            <p className="text-lg font-black">{userCount}</p>
             <p className="text-[8px] text-muted-foreground font-bold uppercase">Joueurs</p>
           </div>
           <div className="bg-card border border-border p-4 rounded-2xl text-center">
             <Trophy size={18} className="text-yellow-500 mx-auto mb-2" />
-            <p className="text-lg font-black">50+</p>
+            <p className="text-lg font-black">{MANUAL_STATS.tournaments}</p>
             <p className="text-[8px] text-muted-foreground font-bold uppercase">Tournois</p>
           </div>
           <div className="bg-card border border-border p-4 rounded-2xl text-center">
             <Award size={18} className="text-cyan-500 mx-auto mb-2" />
-            <p className="text-lg font-black">1M+</p>
+            <p className="text-lg font-black">{MANUAL_STATS.prizes}</p>
             <p className="text-[8px] text-muted-foreground font-bold uppercase">Prix versés</p>
           </div>
         </section>
