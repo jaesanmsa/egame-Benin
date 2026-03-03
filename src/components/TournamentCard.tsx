@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, Lock, Globe, MapPin } from 'lucide-react';
+import { Users, Calendar, Globe, MapPin, Share2 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { showSuccess } from '@/utils/toast';
 
 interface TournamentProps {
   id: string;
@@ -42,6 +43,17 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
     return () => subscription.unsubscribe();
   }, [id, city]);
 
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/tournament/${id}`;
+    if (navigator.share) {
+      navigator.share({ title, text: `Rejoins-moi sur eGame Bénin pour le tournoi ${game} !`, url });
+    } else {
+      navigator.clipboard.writeText(url);
+      showSuccess("Lien copié !");
+    }
+  };
+
   const handleClick = () => {
     if (!isLoggedIn) {
       navigate('/auth');
@@ -70,6 +82,13 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
             {type === 'Online' ? 'Online' : (tournamentCity || 'Local')}
           </Badge>
         </div>
+
+        <button 
+          onClick={handleShare}
+          className="absolute top-3 right-3 p-2 bg-zinc-950/80 backdrop-blur-md rounded-full border border-zinc-800 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <Share2 size={14} />
+        </button>
 
         <div className="absolute bottom-3 right-3">
           <div className="bg-violet-600 text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg">

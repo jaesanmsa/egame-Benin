@@ -8,7 +8,7 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import NewUserGuide from '@/components/NewUserGuide';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight } from 'lucide-react';
+import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight, Activity } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,7 @@ const Index = () => {
   const [featuredTournament, setFeaturedTournament] = useState<any>(null);
   const [topPlayers, setTopPlayers] = useState<any[]>([]);
   const [myTournaments, setMyTournaments] = useState<any[]>([]);
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   
   const [userCount, setUserCount] = useState(0);
@@ -76,6 +77,15 @@ const Index = () => {
       .order('wins', { ascending: false })
       .limit(3);
     if (leaders) setTopPlayers(leaders);
+
+    // Fetch recent successful payments for activity feed
+    const { data: activity } = await supabase
+      .from('payments')
+      .select('tournament_name, profiles(username)')
+      .eq('status', 'Réussi')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (activity) setRecentActivity(activity);
   };
 
   const fetchUserCount = async () => {
@@ -234,6 +244,21 @@ const Index = () => {
         <div className="flex items-center justify-start mb-8 md:hidden">
           <Logo size="md" />
         </div>
+
+        {/* Live Activity Feed */}
+        {recentActivity.length > 0 && (
+          <div className="mb-8 overflow-hidden bg-violet-600/5 border-y border-violet-500/10 py-2 -mx-6 px-6">
+            <div className="flex items-center gap-4 animate-marquee whitespace-nowrap">
+              {recentActivity.map((act, i) => (
+                <div key={i} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-violet-500">
+                  <Activity size={12} />
+                  <span>{act.profiles?.username || "Un joueur"} s'est inscrit à {act.tournament_name}</span>
+                  <span className="mx-4 text-muted-foreground/30">•</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {featuredTournament && (
           <motion.section 
