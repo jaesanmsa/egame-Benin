@@ -104,7 +104,7 @@ const Profile = () => {
           <Progress value={levelInfo.progress} className="h-3 bg-muted" />
         </section>
 
-        {/* Section Badges - Nouveau ! */}
+        {/* Section Badges */}
         <section className="mb-8">
           <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4 ml-2">Badges de l'Arène</h3>
           <div className="grid grid-cols-4 gap-4">
@@ -140,10 +140,6 @@ const Profile = () => {
 
           <Link to="/privacy" className="block">
             <button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><Shield size={20} className="text-cyan-500" /> Politique de Confidentialité</div></button>
-          </Link>
-
-          <Link to="/download-logo" className="block">
-            <button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><Trophy size={20} className="text-yellow-500" /> Télécharger le Logo</div></button>
           </Link>
           
           <Link to="/edit-profile" className="block">

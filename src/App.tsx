@@ -18,7 +18,6 @@ import PaymentHistory from "./pages/PaymentHistory";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Contact from "./pages/Contact";
 import Leaderboard from "./pages/Leaderboard";
-import DownloadLogo from "./pages/DownloadLogo";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 import FloatingSupport from "./components/FloatingSupport";
@@ -47,7 +46,6 @@ const App = () => (
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route path="/download-logo" element={<DownloadLogo />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

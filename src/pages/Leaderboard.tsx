@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, ArrowLeft, ChevronRight, Star, User, Award, Zap } from 'lucide-react';
+import { Trophy, ArrowLeft, ChevronRight, Star, User, Award, Zap, Gamepad2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 

@@ -132,28 +132,11 @@ const Contact = () => {
           </Accordion>
         </section>
 
-        <div className="space-y-4">
-          <Link to="/download-logo" className="block">
-            <div className="p-6 bg-card border border-border rounded-3xl flex items-center justify-between hover:border-violet-500 transition-all group">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                  <Image size={20} />
-                </div>
-                <div>
-                  <h3 className="font-bold text-sm">Logo eGame Bénin</h3>
-                  <p className="text-[10px] text-muted-foreground">Télécharger le logo officiel</p>
-                </div>
-              </div>
-              <HelpCircle size={18} className="text-muted-foreground" />
-            </div>
-          </Link>
-
-          <div className="p-8 bg-card/50 rounded-[2rem] border border-border text-center">
-            <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
-              Disponible du Lundi au Samedi <br />
-              De 09h00 à 20h00
-            </p>
-          </div>
+        <div className="p-8 bg-card/50 rounded-[2rem] border border-border text-center">
+          <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
+            Disponible du Lundi au Samedi <br />
+            De 09h00 à 20h00
+          </p>
         </div>
       </main>
     </div>

@@ -8,7 +8,7 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import NewUserGuide from '@/components/NewUserGuide';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight, Activity } from 'lucide-react';
+import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight, Activity, MessageSquare } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -196,7 +196,7 @@ const Index = () => {
           </Link>
         </div>
 
-        {/* Progression de Niveau - Nouveau ! */}
+        {/* Progression de Niveau */}
         <motion.section 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -313,8 +313,8 @@ const Index = () => {
         <footer className="mt-12 py-12 border-t border-border text-center space-y-8">
           <div className="flex items-center justify-center gap-6">
             <a href="https://www.facebook.com/profile.php?id=61588439640775" target="_blank" className="w-10 h-10 bg-blue-600/10 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all"><Facebook size={20} /></a>
-            <a href="https://wa.me/2290141790790" target="_blank" className="w-10 h-10 bg-green-600/10 rounded-full flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all"><Activity size={20} /></a>
-            <Link to="/download-logo" className="w-10 h-10 bg-zinc-900/10 rounded-full flex items-center justify-center text-zinc-900 hover:bg-zinc-900 hover:text-white transition-all"><Trophy size={20} /></Link>
+            <a href="https://wa.me/2290141790790" target="_blank" className="w-10 h-10 bg-green-600/10 rounded-full flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all"><MessageSquare size={20} /></a>
+            <Link to="/leaderboard" className="w-10 h-10 bg-zinc-900/10 rounded-full flex items-center justify-center text-zinc-900 hover:bg-zinc-900 hover:text-white transition-all"><Trophy size={20} /></Link>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             <Link to="/privacy" className="hover:text-violet-500 transition-colors underline decoration-violet-500/30 underline-offset-4">Privacy</Link>
