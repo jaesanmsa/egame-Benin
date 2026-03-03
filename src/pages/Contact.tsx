@@ -3,8 +3,8 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MessageSquare, Mail, HelpCircle, Facebook, Users } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, MessageSquare, Mail, HelpCircle, Facebook, Users, Image } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const Contact = () => {
@@ -89,7 +89,7 @@ const Contact = () => {
             onClick={handleFacebook}
             className="flex flex-col items-center gap-3 p-6 bg-blue-500/10 border border-blue-500/20 rounded-3xl text-center transition-all hover:bg-blue-500/20"
           >
-            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/20">
               <Facebook size={24} className="text-white" />
             </div>
             <div>
@@ -114,7 +114,7 @@ const Contact = () => {
           </motion.button>
         </div>
 
-        <section className="space-y-6">
+        <section className="space-y-6 mb-12">
           <div className="flex items-center gap-2 mb-4">
             <HelpCircle className="text-violet-500" size={20} />
             <h2 className="text-xl font-bold">Questions Fréquentes</h2>
@@ -132,11 +132,28 @@ const Contact = () => {
           </Accordion>
         </section>
 
-        <div className="mt-12 p-8 bg-card/50 rounded-[2rem] border border-border text-center">
-          <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
-            Disponible du Lundi au Samedi <br />
-            De 09h00 à 20h00
-          </p>
+        <div className="space-y-4">
+          <Link to="/download-logo" className="block">
+            <div className="p-6 bg-card border border-border rounded-3xl flex items-center justify-between hover:border-violet-500 transition-all group">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                  <Image size={20} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm">Logo eGame Bénin</h3>
+                  <p className="text-[10px] text-muted-foreground">Télécharger le logo officiel</p>
+                </div>
+              </div>
+              <HelpCircle size={18} className="text-muted-foreground" />
+            </div>
+          </Link>
+
+          <div className="p-8 bg-card/50 rounded-[2rem] border border-border text-center">
+            <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
+              Disponible du Lundi au Samedi <br />
+              De 09h00 à 20h00
+            </p>
+          </div>
         </div>
       </main>
     </div>
