@@ -203,6 +203,11 @@ const Index = () => {
       <Navbar />
       <main className="max-w-7xl mx-auto px-6 py-6">
         
+        {/* Mobile Logo Header */}
+        <div className="flex items-center justify-center mb-8 md:hidden">
+          <Logo size="md" />
+        </div>
+
         <AnimatePresence>
           {showOnboarding && (
             <motion.section 
