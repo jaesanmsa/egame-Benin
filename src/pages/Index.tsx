@@ -293,22 +293,22 @@ const Index = () => {
           <p className="text-violet-500 font-bold text-xs uppercase tracking-widest mb-1">Salut, {userName}</p>
         </header>
 
-        {/* Statistiques de la communauté - Format Compact */}
+        {/* Statistiques de la communauté - Format Lisible */}
         <section className="grid grid-cols-3 gap-3 mb-12">
-          <div className="bg-card border border-border h-10 rounded-xl flex items-center justify-center gap-2 px-3">
-            <Users size={14} className="text-violet-500" />
-            <span className="text-[11px] font-black">{userCount}</span>
-            <span className="text-[8px] text-muted-foreground font-bold uppercase hidden sm:inline">Joueurs</span>
+          <div className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm">
+            <Users size={20} className="text-violet-500 mx-auto mb-2" />
+            <p className="text-xl font-black leading-none mb-1">{userCount}</p>
+            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Joueurs</p>
           </div>
-          <div className="bg-card border border-border h-10 rounded-xl flex items-center justify-center gap-2 px-3">
-            <Trophy size={14} className="text-yellow-500" />
-            <span className="text-[11px] font-black">{totalTournaments}</span>
-            <span className="text-[8px] text-muted-foreground font-bold uppercase hidden sm:inline">Tournois</span>
+          <div className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm">
+            <Trophy size={20} className="text-yellow-500 mx-auto mb-2" />
+            <p className="text-xl font-black leading-none mb-1">{totalTournaments}</p>
+            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
           </div>
-          <div className="bg-card border border-border h-10 rounded-xl flex items-center justify-center gap-2 px-3">
-            <Award size={14} className="text-cyan-500" />
-            <span className="text-[11px] font-black">{totalPrizes.toLocaleString('fr-FR')}</span>
-            <span className="text-[8px] text-muted-foreground font-bold uppercase hidden sm:inline">Prix</span>
+          <div className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm">
+            <Award size={20} className="text-cyan-500 mx-auto mb-2" />
+            <p className="text-xl font-black leading-none mb-1">{totalPrizes.toLocaleString('fr-FR')}</p>
+            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Prix (FCFA)</p>
           </div>
         </section>
 
