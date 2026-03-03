@@ -48,7 +48,7 @@ const Privacy = () => {
           </div>
           <h1 className="text-3xl font-black mb-2">Privacy</h1>
           <p className="text-muted-foreground">Conditions Générales & Protection des Données • v1.1</p>
-          <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">Dernière mise à jour : 22 Mai 2024</p>
+          <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">Dernière mise à jour : 4 Mars 2026</p>
         </motion.div>
 
         <motion.div 
