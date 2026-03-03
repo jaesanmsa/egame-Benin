@@ -8,7 +8,7 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import NewUserGuide from '@/components/NewUserGuide';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, Search, ArrowRight } from 'lucide-react';
+import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -34,7 +34,6 @@ const Index = () => {
   const [totalTournaments, setTotalTournaments] = useState(0);
   const [totalPrizes, setTotalPrizes] = useState(0);
   
-  const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<string>("all");
@@ -59,7 +58,6 @@ const Index = () => {
       setFinishedTournaments(allData.filter(t => t.status === 'finished'));
       setTotalTournaments(allData.length);
       
-      // On récupère le tournoi à la une
       const featured = active.find(t => t.is_featured) || active[0];
       setFeaturedTournament(featured);
 
@@ -198,12 +196,10 @@ const Index = () => {
   }, []);
 
   const filteredTournaments = tournaments.filter(t => {
-    const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         t.game.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === 'All' || t.type === filterType;
     const matchesCity = selectedCity === "all" || t.city === selectedCity;
     const matchesGame = selectedGame === "all" || t.game === selectedGame;
-    return matchesSearch && matchesType && matchesCity && matchesGame;
+    return matchesType && matchesCity && matchesGame;
   });
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
@@ -239,8 +235,7 @@ const Index = () => {
           <Logo size="md" />
         </div>
 
-        {/* Hero Section - Tournoi à la Une */}
-        {featuredTournament && !searchQuery && (
+        {featuredTournament && (
           <motion.section 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -346,42 +341,26 @@ const Index = () => {
           </div>
         </header>
 
-        {/* Statistiques de la communauté */}
-        <section className="grid grid-cols-3 gap-3 mb-12">
-          <div className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm">
-            <Users size={20} className="text-violet-500 mx-auto mb-2" />
-            <p className="text-xl font-black leading-none mb-1">{userCount}</p>
-            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Joueurs</p>
+        {/* Statistiques de la communauté - Format TOUT PETIT */}
+        <section className="grid grid-cols-3 gap-3 mb-8">
+          <div className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm">
+            <p className="text-xs font-black text-violet-500 leading-none mb-1">{userCount}</p>
+            <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Joueurs</p>
           </div>
-          <div className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm">
-            <Trophy size={20} className="text-yellow-500 mx-auto mb-2" />
-            <p className="text-xl font-black leading-none mb-1">{totalTournaments}</p>
-            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
+          <div className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm">
+            <p className="text-xs font-black text-violet-500 leading-none mb-1">{totalTournaments}</p>
+            <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
           </div>
-          <div className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm">
-            <Award size={20} className="text-cyan-500 mx-auto mb-2" />
-            <p className="text-xl font-black leading-none mb-1">{totalPrizes.toLocaleString('fr-FR')}</p>
-            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Prix (FCFA)</p>
+          <div className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm">
+            <p className="text-xs font-black text-violet-500 leading-none mb-1">{totalPrizes.toLocaleString('fr-FR')}</p>
+            <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Prix (FCFA)</p>
           </div>
         </section>
 
         <section className="mb-12 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Filter size={16} className="text-violet-500" />
-              <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Explorer les tournois</h2>
-            </div>
-            
-            {/* Barre de Recherche */}
-            <div className="relative w-full md:w-80">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-              <Input 
-                placeholder="Rechercher un tournoi ou un jeu..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 bg-card border-border rounded-2xl h-12 shadow-sm"
-              />
-            </div>
+          <div className="flex items-center gap-2">
+            <Filter size={16} className="text-violet-500" />
+            <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Explorer les tournois</h2>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

@@ -19,7 +19,7 @@ const FloatingSupport = () => {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={handleWhatsApp}
-      className="fixed bottom-24 right-6 z-[40] w-14 h-14 bg-green-500 text-white rounded-full shadow-2xl shadow-green-500/40 flex items-center justify-center md:bottom-8"
+      className="fixed bottom-24 right-6 z-[40] w-14 h-14 bg-violet-600 text-white rounded-full shadow-2xl shadow-violet-500/40 flex items-center justify-center md:bottom-8"
     >
       <MessageSquare size={24} />
       <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white animate-pulse" />
