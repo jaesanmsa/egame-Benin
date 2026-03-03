@@ -8,7 +8,7 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import NewUserGuide from '@/components/NewUserGuide';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter } from 'lucide-react';
+import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -30,7 +30,6 @@ const Index = () => {
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   
   // Filtres
-  const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<string>("all");
@@ -169,12 +168,10 @@ const Index = () => {
   }, []);
 
   const filteredTournaments = tournaments.filter(t => {
-    const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         t.game.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === 'All' || t.type === filterType;
     const matchesCity = selectedCity === "all" || t.city === selectedCity;
     const matchesGame = selectedGame === "all" || t.game === selectedGame;
-    return matchesSearch && matchesType && matchesCity && matchesGame;
+    return matchesType && matchesCity && matchesGame;
   });
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
@@ -274,52 +271,41 @@ const Index = () => {
           <p className="text-violet-500 font-bold text-xs uppercase tracking-widest mb-1">Salut, {userName}</p>
         </header>
 
-        {/* Filtres Améliorés */}
+        {/* Filtres Améliorés et Compacts */}
         <section className="mb-12 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <Filter size={16} className="text-violet-500" />
             <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Filtres</h2>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {/* Recherche */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-              <Input 
-                placeholder="Rechercher..." 
-                className="pl-9 h-12 bg-card border-border rounded-2xl text-sm" 
-                value={searchQuery} 
-                onChange={(e) => setSearchQuery(e.target.value)} 
-              />
-            </div>
-
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Type (En ligne / Présentiel) */}
-            <div className="flex bg-card border border-border rounded-2xl p-1 h-12">
+            <div className="flex bg-card border border-border rounded-xl p-1 h-10">
               <button 
                 onClick={() => setFilterType('All')} 
-                className={`flex-1 rounded-xl text-[10px] font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`flex-1 rounded-lg text-[9px] font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 Tous
               </button>
               <button 
                 onClick={() => setFilterType('Online')} 
-                className={`flex-1 rounded-xl text-[10px] font-bold transition-all flex items-center justify-center gap-1 ${filterType === 'Online' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/20' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`flex-1 rounded-lg text-[9px] font-bold transition-all flex items-center justify-center gap-1 ${filterType === 'Online' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/20' : 'text-muted-foreground hover:text-foreground'}`}
               >
-                <Globe size={14} /> En ligne
+                <Globe size={12} /> En ligne
               </button>
               <button 
                 onClick={() => setFilterType('Presentiel')} 
-                className={`flex-1 rounded-xl text-[10px] font-bold transition-all flex items-center justify-center gap-1 ${filterType === 'Presentiel' ? 'bg-orange-600 text-white shadow-lg shadow-orange-500/20' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`flex-1 rounded-lg text-[9px] font-bold transition-all flex items-center justify-center gap-1 ${filterType === 'Presentiel' ? 'bg-orange-600 text-white shadow-lg shadow-orange-500/20' : 'text-muted-foreground hover:text-foreground'}`}
               >
-                <MapPin size={14} /> Présentiel
+                <MapPin size={12} /> Présentiel
               </button>
             </div>
 
             {/* Ville */}
             <Select value={selectedCity} onValueChange={setSelectedCity}>
-              <SelectTrigger className="bg-card border-border rounded-2xl h-12 text-sm font-bold">
+              <SelectTrigger className="bg-card border-border rounded-xl h-10 text-[11px] font-bold">
                 <div className="flex items-center gap-2">
-                  <MapPin size={16} className="text-violet-500" />
+                  <MapPin size={14} className="text-violet-500" />
                   <SelectValue placeholder="Ville" />
                 </div>
               </SelectTrigger>
@@ -333,9 +319,9 @@ const Index = () => {
 
             {/* Jeu */}
             <Select value={selectedGame} onValueChange={setSelectedGame}>
-              <SelectTrigger className="bg-card border-border rounded-2xl h-12 text-sm font-bold">
+              <SelectTrigger className="bg-card border-border rounded-xl h-10 text-[11px] font-bold">
                 <div className="flex items-center gap-2">
-                  <Gamepad2 size={16} className="text-violet-500" />
+                  <Gamepad2 size={14} className="text-violet-500" />
                   <SelectValue placeholder="Jeu" />
                 </div>
               </SelectTrigger>
@@ -360,7 +346,7 @@ const Index = () => {
               ))
             ) : (
               <div className="col-span-full py-20 text-center bg-card/50 rounded-[2.5rem] border border-border border-dashed">
-                <Search size={48} className="mx-auto text-muted-foreground mb-4 opacity-20" />
+                <Trophy size={48} className="mx-auto text-muted-foreground mb-4 opacity-20" />
                 <p className="text-muted-foreground font-bold">Aucun tournoi ne correspond à vos critères.</p>
               </div>
             )}
