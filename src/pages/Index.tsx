@@ -8,7 +8,7 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import NewUserGuide from '@/components/NewUserGuide';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award } from 'lucide-react';
+import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, Search, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -25,15 +25,16 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [finishedTournaments, setFinishedTournaments] = useState<any[]>([]);
+  const [featuredTournament, setFeaturedTournament] = useState<any>(null);
   const [topPlayers, setTopPlayers] = useState<any[]>([]);
   const [myTournaments, setMyTournaments] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   
-  // Statistiques automatiques
   const [userCount, setUserCount] = useState(0);
   const [totalTournaments, setTotalTournaments] = useState(0);
   const [totalPrizes, setTotalPrizes] = useState(0);
   
+  const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<string>("all");
@@ -53,9 +54,14 @@ const Index = () => {
       .order('created_at', { ascending: false });
     
     if (allData) {
-      setTournaments(allData.filter(t => t.status === 'active'));
+      const active = allData.filter(t => t.status === 'active');
+      setTournaments(active);
       setFinishedTournaments(allData.filter(t => t.status === 'finished'));
       setTotalTournaments(allData.length);
+      
+      // On récupère le tournoi à la une
+      const featured = active.find(t => t.is_featured) || active[0];
+      setFeaturedTournament(featured);
 
       const prizesSum = allData
         .filter(t => t.status === 'finished' && t.prize_pool)
@@ -192,10 +198,12 @@ const Index = () => {
   }, []);
 
   const filteredTournaments = tournaments.filter(t => {
+    const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         t.game.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === 'All' || t.type === filterType;
     const matchesCity = selectedCity === "all" || t.city === selectedCity;
     const matchesGame = selectedGame === "all" || t.game === selectedGame;
-    return matchesType && matchesCity && matchesGame;
+    return matchesSearch && matchesType && matchesCity && matchesGame;
   });
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
@@ -230,6 +238,48 @@ const Index = () => {
         <div className="flex items-center justify-start mb-8 md:hidden">
           <Logo size="md" />
         </div>
+
+        {/* Hero Section - Tournoi à la Une */}
+        {featuredTournament && !searchQuery && (
+          <motion.section 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative h-[400px] rounded-[3rem] overflow-hidden mb-12 group cursor-pointer"
+            onClick={() => navigate(`/tournament/${featuredTournament.id}`)}
+          >
+            <img 
+              src={featuredTournament.image_url} 
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+              alt={featuredTournament.title} 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+            
+            <div className="absolute bottom-8 left-8 right-8">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="bg-violet-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest flex items-center gap-2">
+                  <Star size={12} fill="currentColor" /> À la Une
+                </div>
+                <div className="bg-white/10 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
+                  {featuredTournament.game}
+                </div>
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black text-white mb-4 leading-tight">{featuredTournament.title}</h2>
+              <div className="flex items-center gap-6">
+                <div className="flex flex-col">
+                  <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">Cash Prize</span>
+                  <span className="text-white font-black text-xl">{featuredTournament.prize_pool}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">Frais</span>
+                  <span className="text-white font-black text-xl">{featuredTournament.entry_fee} FCFA</span>
+                </div>
+                <Button className="ml-auto bg-white text-black hover:bg-zinc-200 rounded-2xl font-bold px-8 py-6 gap-2">
+                  Participer <ArrowRight size={18} />
+                </Button>
+              </div>
+            </div>
+          </motion.section>
+        )}
 
         <AnimatePresence>
           {showGuide && (
@@ -289,11 +339,14 @@ const Index = () => {
           )}
         </AnimatePresence>
 
-        <header className="mb-8">
-          <p className="text-violet-500 font-bold text-xs uppercase tracking-widest mb-1">Salut, {userName}</p>
+        <header className="mb-8 flex items-center justify-between">
+          <div>
+            <p className="text-violet-500 font-bold text-xs uppercase tracking-widest mb-1">Salut, {userName}</p>
+            <h2 className="text-2xl font-black">Prêt pour le combat ?</h2>
+          </div>
         </header>
 
-        {/* Statistiques de la communauté - Format Lisible */}
+        {/* Statistiques de la communauté */}
         <section className="grid grid-cols-3 gap-3 mb-12">
           <div className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm">
             <Users size={20} className="text-violet-500 mx-auto mb-2" />
@@ -312,10 +365,23 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="mb-12 space-y-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Filter size={16} className="text-violet-500" />
-            <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Filtres</h2>
+        <section className="mb-12 space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <Filter size={16} className="text-violet-500" />
+              <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Explorer les tournois</h2>
+            </div>
+            
+            {/* Barre de Recherche */}
+            <div className="relative w-full md:w-80">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+              <Input 
+                placeholder="Rechercher un tournoi ou un jeu..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 bg-card border-border rounded-2xl h-12 shadow-sm"
+              />
+            </div>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -359,7 +425,7 @@ const Index = () => {
             ) : (
               <div className="col-span-full py-20 text-center bg-card/50 rounded-[2.5rem] border border-border border-dashed">
                 <Trophy size={48} className="mx-auto text-muted-foreground mb-4 opacity-20" />
-                <p className="text-muted-foreground font-bold">Aucun tournoi disponible.</p>
+                <p className="text-muted-foreground font-bold">Aucun tournoi ne correspond à votre recherche.</p>
               </div>
             )}
           </div>
