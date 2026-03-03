@@ -33,7 +33,6 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
       setIsLoggedIn(!!session);
     });
 
-    // Si la ville n'est pas passée en prop, on la récupère
     if (!city) {
       supabase.from('tournaments').select('city').eq('id', id).single().then(({ data }) => {
         if (data) setTournamentCity(data.city);
@@ -55,53 +54,46 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
     <motion.div 
       whileHover={{ y: -5 }}
       onClick={handleClick}
-      className="group relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 hover:border-violet-500/50 transition-all cursor-pointer"
+      className="group relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 hover:border-violet-500/50 transition-all cursor-pointer shadow-lg shadow-black/20"
     >
       <div className="aspect-video overflow-hidden relative">
         <img 
           src={image} 
           alt={title} 
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent" />
-        <Badge className={`absolute top-3 right-3 ${type === 'Online' ? 'bg-cyan-500' : 'bg-orange-500'} text-white border-none flex items-center gap-1 text-[10px] py-0.5`}>
-          {type === 'Online' ? <Globe size={10} /> : <MapPin size={10} />}
-          {type === 'Online' ? 'En ligne' : (tournamentCity || 'Présentiel')}
-        </Badge>
-      </div>
-      
-      <div className="p-4">
-        <p className="text-violet-400 text-[10px] font-bold uppercase tracking-wider mb-1">{game}</p>
-        <h3 className="text-white font-bold text-base mb-3 line-clamp-1">{title}</h3>
         
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px]">
-            <Calendar size={14} className="text-violet-500" />
-            <span>{date}</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-zinc-400 text-[11px]">
-            <Users size={14} className="text-violet-500" />
-            <span>{participants}</span>
+        <div className="absolute top-3 left-3 flex gap-2">
+          <Badge className={`bg-zinc-950/80 backdrop-blur-md text-white border-zinc-800 flex items-center gap-1 text-[9px] font-black uppercase tracking-tighter py-1 px-2`}>
+            {type === 'Online' ? <Globe size={10} className="text-cyan-400" /> : <MapPin size={10} className="text-orange-400" />}
+            {type === 'Online' ? 'Online' : (tournamentCity || 'Local')}
+          </Badge>
+        </div>
+
+        <div className="absolute bottom-3 right-3">
+          <div className="bg-violet-600 text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg">
+            {entryFee} FCFA
           </div>
         </div>
+      </div>
+      
+      <div className="p-5">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
+          <p className="text-violet-400 text-[10px] font-black uppercase tracking-widest">{game}</p>
+        </div>
+        <h3 className="text-white font-bold text-base mb-4 line-clamp-1 group-hover:text-violet-400 transition-colors">{title}</h3>
         
-        <div className="flex items-center justify-between pt-3 border-t border-zinc-800">
-          {isLoggedIn ? (
-            <>
-              <div className="flex items-center gap-1">
-                <span className="text-zinc-500 text-[10px]">Entrée :</span>
-                <span className="text-white font-bold text-xs">{entryFee} FCFA</span>
-              </div>
-              <button className="bg-violet-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold transition-colors shadow-lg shadow-violet-500/10">
-                Participer
-              </button>
-            </>
-          ) : (
-            <div className="w-full flex items-center justify-center gap-2 py-1 text-zinc-500 text-[11px] font-medium">
-              <Lock size={12} />
-              <span>Connectez-vous</span>
-            </div>
-          )}
+        <div className="flex items-center justify-between text-zinc-500 text-[11px] font-bold">
+          <div className="flex items-center gap-1.5">
+            <Calendar size={14} className="text-zinc-600" />
+            <span>{date}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Users size={14} className="text-zinc-600" />
+            <span>{participants}</span>
+          </div>
         </div>
       </div>
     </motion.div>

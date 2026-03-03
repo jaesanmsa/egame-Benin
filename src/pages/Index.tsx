@@ -8,7 +8,7 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import NewUserGuide from '@/components/NewUserGuide';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter } from 'lucide-react';
+import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -29,12 +29,10 @@ const Index = () => {
   const [myTournaments, setMyTournaments] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   
-  // Filtres
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<string>("all");
   
-  // Finalisation profil & Guide
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [tempUsername, setTempUsername] = useState("");
@@ -203,7 +201,6 @@ const Index = () => {
       <Navbar />
       <main className="max-w-7xl mx-auto px-6 py-6">
         
-        {/* Mobile Logo Header - Aligned Left */}
         <div className="flex items-center justify-start mb-8 md:hidden">
           <Logo size="md" />
         </div>
@@ -261,7 +258,6 @@ const Index = () => {
                     </Button>
                   </div>
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-4 ml-2 italic">Le pseudo est définitif et doit être unique.</p>
               </div>
             </motion.section>
           )}
@@ -271,7 +267,25 @@ const Index = () => {
           <p className="text-violet-500 font-bold text-xs uppercase tracking-widest mb-1">Salut, {userName}</p>
         </header>
 
-        {/* Filtres Améliorés et Compacts */}
+        {/* Statistiques de la communauté */}
+        <section className="grid grid-cols-3 gap-3 mb-12">
+          <div className="bg-card border border-border p-4 rounded-2xl text-center">
+            <Users size={18} className="text-violet-500 mx-auto mb-2" />
+            <p className="text-lg font-black">500+</p>
+            <p className="text-[8px] text-muted-foreground font-bold uppercase">Joueurs</p>
+          </div>
+          <div className="bg-card border border-border p-4 rounded-2xl text-center">
+            <Trophy size={18} className="text-yellow-500 mx-auto mb-2" />
+            <p className="text-lg font-black">50+</p>
+            <p className="text-[8px] text-muted-foreground font-bold uppercase">Tournois</p>
+          </div>
+          <div className="bg-card border border-border p-4 rounded-2xl text-center">
+            <Award size={18} className="text-cyan-500 mx-auto mb-2" />
+            <p className="text-lg font-black">1M+</p>
+            <p className="text-[8px] text-muted-foreground font-bold uppercase">Prix versés</p>
+          </div>
+        </section>
+
         <section className="mb-12 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <Filter size={16} className="text-violet-500" />
@@ -279,57 +293,29 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {/* Type (En ligne / Présentiel) */}
             <div className="flex bg-card border border-border rounded-xl p-1 h-10">
-              <button 
-                onClick={() => setFilterType('All')} 
-                className={`flex-1 rounded-lg text-[9px] font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                Tous
-              </button>
-              <button 
-                onClick={() => setFilterType('Online')} 
-                className={`flex-1 rounded-lg text-[9px] font-bold transition-all flex items-center justify-center gap-1 ${filterType === 'Online' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/20' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                <Globe size={12} /> En ligne
-              </button>
-              <button 
-                onClick={() => setFilterType('Presentiel')} 
-                className={`flex-1 rounded-lg text-[9px] font-bold transition-all flex items-center justify-center gap-1 ${filterType === 'Presentiel' ? 'bg-orange-600 text-white shadow-lg shadow-orange-500/20' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                <MapPin size={12} /> Présentiel
-              </button>
+              <button onClick={() => setFilterType('All')} className={`flex-1 rounded-lg text-[9px] font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20' : 'text-muted-foreground hover:text-foreground'}`}>Tous</button>
+              <button onClick={() => setFilterType('Online')} className={`flex-1 rounded-lg text-[9px] font-bold transition-all flex items-center justify-center gap-1 ${filterType === 'Online' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/20' : 'text-muted-foreground hover:text-foreground'}`}><Globe size={12} /> En ligne</button>
+              <button onClick={() => setFilterType('Presentiel')} className={`flex-1 rounded-lg text-[9px] font-bold transition-all flex items-center justify-center gap-1 ${filterType === 'Presentiel' ? 'bg-orange-600 text-white shadow-lg shadow-orange-500/20' : 'text-muted-foreground hover:text-foreground'}`}><MapPin size={12} /> Présentiel</button>
             </div>
 
-            {/* Ville */}
             <Select value={selectedCity} onValueChange={setSelectedCity}>
               <SelectTrigger className="bg-card border-border rounded-xl h-10 text-[11px] font-bold">
-                <div className="flex items-center gap-2">
-                  <MapPin size={14} className="text-violet-500" />
-                  <SelectValue placeholder="Ville" />
-                </div>
+                <div className="flex items-center gap-2"><MapPin size={14} className="text-violet-500" /><SelectValue placeholder="Ville" /></div>
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
                 <SelectItem value="all">Toutes les villes</SelectItem>
-                {CITIES.map(city => (
-                  <SelectItem key={city} value={city}>{city}</SelectItem>
-                ))}
+                {CITIES.map(city => (<SelectItem key={city} value={city}>{city}</SelectItem>))}
               </SelectContent>
             </Select>
 
-            {/* Jeu */}
             <Select value={selectedGame} onValueChange={setSelectedGame}>
               <SelectTrigger className="bg-card border-border rounded-xl h-10 text-[11px] font-bold">
-                <div className="flex items-center gap-2">
-                  <Gamepad2 size={14} className="text-violet-500" />
-                  <SelectValue placeholder="Jeu" />
-                </div>
+                <div className="flex items-center gap-2"><Gamepad2 size={14} className="text-violet-500" /><SelectValue placeholder="Jeu" /></div>
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
                 <SelectItem value="all">Tous les jeux</SelectItem>
-                {GAMES.map(game => (
-                  <SelectItem key={game} value={game}>{game}</SelectItem>
-                ))}
+                {GAMES.map(game => (<SelectItem key={game} value={game}>{game}</SelectItem>))}
               </SelectContent>
             </Select>
           </div>
@@ -347,31 +333,20 @@ const Index = () => {
             ) : (
               <div className="col-span-full py-20 text-center bg-card/50 rounded-[2.5rem] border border-border border-dashed">
                 <Trophy size={48} className="mx-auto text-muted-foreground mb-4 opacity-20" />
-                <p className="text-muted-foreground font-bold">Aucun tournoi ne correspond à vos critères.</p>
+                <p className="text-muted-foreground font-bold">Aucun tournoi disponible.</p>
               </div>
             )}
           </div>
         </section>
 
-        {/* Mes Inscriptions */}
         {myTournaments.length > 0 && (
           <section className="mb-10">
             <h2 className="text-lg font-black flex items-center gap-2 mb-4"><Gamepad2 className="text-violet-500" size={18} /> Mes Inscriptions</h2>
             <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
               {myTournaments.map((t) => (
-                <motion.div 
-                  key={t.id}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate(`/tournament/${t.id}`)}
-                  className="flex-shrink-0 w-56 bg-card border border-border rounded-2xl p-3 flex items-center gap-3 cursor-pointer hover:border-violet-500 transition-all"
-                >
-                  <div className="w-10 h-10 rounded-xl overflow-hidden">
-                    <img src={t.image_url} className="w-full h-full object-cover" alt="" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-xs truncate">{t.title}</p>
-                    <p className="text-violet-400 text-[9px] font-bold uppercase">{t.game}</p>
-                  </div>
+                <motion.div key={t.id} whileTap={{ scale: 0.95 }} onClick={() => navigate(`/tournament/${t.id}`)} className="flex-shrink-0 w-56 bg-card border border-border rounded-2xl p-3 flex items-center gap-3 cursor-pointer hover:border-violet-500 transition-all">
+                  <div className="w-10 h-10 rounded-xl overflow-hidden"><img src={t.image_url} className="w-full h-full object-cover" alt="" /></div>
+                  <div className="flex-1 min-w-0"><p className="font-bold text-xs truncate">{t.title}</p><p className="text-violet-400 text-[9px] font-bold uppercase">{t.game}</p></div>
                   <ChevronRight size={14} className="text-muted-foreground" />
                 </motion.div>
               ))}
@@ -379,7 +354,6 @@ const Index = () => {
           </section>
         )}
 
-        {/* Top Joueurs */}
         {topPlayers.length > 0 && (
           <section className="mb-10">
             <div className="flex items-center justify-between mb-4">
@@ -400,16 +374,12 @@ const Index = () => {
           </section>
         )}
 
-        {/* Tournois Terminés */}
         {finishedTournaments.length > 0 && (
           <section className="mb-12">
             <h2 className="text-lg font-black mb-6 flex items-center gap-2"><History size={18} className="text-muted-foreground" /> Tournois Terminés</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {finishedTournaments.map((t) => (
-                <FinishedTournamentCard 
-                  key={t.id} title={t.title} game={t.game} image={t.image_url}
-                  prizePool={t.prize_pool} winnerName={t.winner_name || "Inconnu"} winnerAvatar={t.winner_avatar}
-                />
+                <FinishedTournamentCard key={t.id} title={t.title} game={t.game} image={t.image_url} prizePool={t.prize_pool} winnerName={t.winner_name || "Inconnu"} winnerAvatar={t.winner_avatar} />
               ))}
             </div>
           </section>
@@ -417,13 +387,9 @@ const Index = () => {
 
         <footer className="mt-12 py-12 border-t border-border text-center space-y-4">
           <div className="flex flex-col items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            <Link to="/privacy" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4">
-              <Shield size={12} /> Privacy
-            </Link>
+            <Link to="/privacy" className="hover:text-violet-500 transition-colors flex items-center gap-1 underline decoration-violet-500/30 underline-offset-4"><Shield size={12} /> Privacy</Link>
           </div>
-          <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest mt-4">
-            © 2026 eGame Bénin • Tous droits réservés
-          </p>
+          <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest mt-4">© 2026 eGame Bénin • Tous droits réservés</p>
         </footer>
       </main>
     </div>
