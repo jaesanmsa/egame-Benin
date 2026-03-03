@@ -341,18 +341,21 @@ const Index = () => {
           </div>
         </header>
 
-        {/* Statistiques de la communauté - Format TOUT PETIT */}
+        {/* Statistiques de la communauté - Format TOUT PETIT avec icônes colorées */}
         <section className="grid grid-cols-3 gap-3 mb-8">
-          <div className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm">
-            <p className="text-xs font-black text-violet-500 leading-none mb-1">{userCount}</p>
+          <div className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
+            <Users size={14} className="text-violet-500 mb-1" />
+            <p className="text-xs font-black text-foreground leading-none mb-1">{userCount}</p>
             <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Joueurs</p>
           </div>
-          <div className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm">
-            <p className="text-xs font-black text-violet-500 leading-none mb-1">{totalTournaments}</p>
+          <div className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
+            <Trophy size={14} className="text-yellow-500 mb-1" />
+            <p className="text-xs font-black text-foreground leading-none mb-1">{totalTournaments}</p>
             <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
           </div>
-          <div className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm">
-            <p className="text-xs font-black text-violet-500 leading-none mb-1">{totalPrizes.toLocaleString('fr-FR')}</p>
+          <div className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
+            <Award size={14} className="text-cyan-500 mb-1" />
+            <p className="text-xs font-black text-foreground leading-none mb-1">{totalPrizes.toLocaleString('fr-FR')}</p>
             <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Prix (FCFA)</p>
           </div>
         </section>
