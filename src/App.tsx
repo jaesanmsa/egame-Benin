@@ -21,6 +21,7 @@ import Leaderboard from "./pages/Leaderboard";
 import DownloadLogo from "./pages/DownloadLogo";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
+import FloatingSupport from "./components/FloatingSupport";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
               <Route path="/privacy" element={<Privacy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <FloatingSupport />
           </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>

@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search, Settings, Edit3, Star, Link as LinkIcon } from 'lucide-react';
+import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search, Settings, Edit3, Star, Link as LinkIcon, User } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
@@ -23,6 +23,9 @@ const AdminDashboard = () => {
   const [activeTournaments, setActiveTournaments] = useState<any[]>([]);
   const [allPayments, setAllPayments] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  const [selectedTournamentForParticipants, setSelectedTournamentForParticipants] = useState<string>("");
+  const [participantsList, setParticipantsList] = useState<any[]>([]);
   
   const [newTournament, setNewTournament] = useState({
     id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: '', city: 'Cotonou'
@@ -60,9 +63,19 @@ const AdminDashboard = () => {
 
     const { data: pays } = await supabase
       .from('payments')
-      .select('*, profiles(username, full_name)')
+      .select('*, profiles(username, full_name, phone)')
       .order('created_at', { ascending: false });
     if (pays) setAllPayments(pays);
+  };
+
+  const fetchParticipants = async (tournamentId: string) => {
+    setSelectedTournamentForParticipants(tournamentId);
+    const { data } = await supabase
+      .from('payments')
+      .select('*, profiles(username, full_name, phone, city)')
+      .eq('tournament_id', tournamentId)
+      .eq('status', 'Réussi');
+    if (data) setParticipantsList(data);
   };
 
   const handleAddTournament = async (e: React.FormEvent) => {
@@ -166,8 +179,9 @@ const AdminDashboard = () => {
         <h1 className="text-3xl font-black mb-8">Gestion eGame Bénin</h1>
         
         <Tabs defaultValue="payments">
-          <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 bg-zinc-900 mb-8 h-auto p-1 gap-1">
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 bg-zinc-900 mb-8 h-auto p-1 gap-1">
             <TabsTrigger value="payments" className="py-3 text-[10px] md:text-sm">Transactions</TabsTrigger>
+            <TabsTrigger value="participants" className="py-3 text-[10px] md:text-sm">Joueurs</TabsTrigger>
             <TabsTrigger value="tournaments" className="py-3 text-[10px] md:text-sm">Nouveau</TabsTrigger>
             <TabsTrigger value="edit" className="py-3 text-[10px] md:text-sm">Modifier</TabsTrigger>
             <TabsTrigger value="finish" className="py-3 text-[10px] md:text-sm">Clôturer</TabsTrigger>
@@ -209,6 +223,51 @@ const AdminDashboard = () => {
                   ))
                 )}
               </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="participants" className="space-y-6">
+            <div className="bg-zinc-900 p-6 rounded-3xl border border-zinc-800">
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><Users className="text-cyan-500" /> Liste des Joueurs</h2>
+              
+              <div className="mb-8">
+                <Label className="mb-2 block">Sélectionner un tournoi</Label>
+                <Select onValueChange={fetchParticipants}>
+                  <SelectTrigger className="bg-zinc-800 border-zinc-700"><SelectValue placeholder="Choisir un tournoi" /></SelectTrigger>
+                  <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
+                    {activeTournaments.map(t => (
+                      <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {selectedTournamentForParticipants && (
+                <div className="space-y-4">
+                  <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest">{participantsList.length} Joueurs inscrits</p>
+                  {participantsList.length === 0 ? (
+                    <p className="text-zinc-500 italic py-4">Aucun joueur inscrit pour le moment.</p>
+                  ) : (
+                    <div className="grid gap-3">
+                      {participantsList.map((p, i) => (
+                        <div key={i} className="bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700 flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-zinc-700 rounded-full flex items-center justify-center text-zinc-400"><User size={20} /></div>
+                            <div>
+                              <p className="font-bold text-white">{p.profiles?.username || "Sans pseudo"}</p>
+                              <p className="text-[10px] text-zinc-500">{p.profiles?.full_name} • {p.profiles?.city}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs font-bold text-violet-400">{p.profiles?.phone || "Pas de numéro"}</p>
+                            <p className="text-[9px] text-zinc-600 font-mono">{p.validation_code}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </TabsContent>
 

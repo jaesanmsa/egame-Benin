@@ -52,6 +52,25 @@ const TournamentDetails = () => {
     fetchParticipants();
   }, [id]);
 
+  const handleShare = async () => {
+    const shareData = {
+      title: tournament.title,
+      text: `Rejoins-moi sur eGame Bénin pour le tournoi ${tournament.game} ! Cash prize: ${tournament.prize_pool}`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        showSuccess("Lien copié dans le presse-papier !");
+      }
+    } catch (err) {
+      console.error("Erreur de partage", err);
+    }
+  };
+
   const handlePayment = async (provider: 'fedapay' | 'geniuspay') => {
     setPaymentStep('processing');
     try {
@@ -89,8 +108,9 @@ const TournamentDetails = () => {
       <div className="relative h-[35vh] w-full">
         <img src={tournament.image_url} className="w-full h-full object-cover opacity-50" alt="" />
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-        <div className="absolute top-6 left-6 z-20">
+        <div className="absolute top-6 left-6 z-20 flex gap-3">
           <button onClick={() => navigate(-1)} className="p-3 bg-card/80 backdrop-blur-md rounded-full border border-border"><ArrowLeft size={20} /></button>
+          <button onClick={handleShare} className="p-3 bg-card/80 backdrop-blur-md rounded-full border border-border text-violet-500"><Share2 size={20} /></button>
         </div>
       </div>
 
@@ -161,6 +181,15 @@ const TournamentDetails = () => {
             )
           )}
         </div>
+
+        {tournament.rules && (
+          <div className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm">
+            <h2 className="text-xl font-black mb-6 flex items-center gap-2"><Info className="text-violet-500" /> Règlement</h2>
+            <div className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
+              {tournament.rules}
+            </div>
+          </div>
+        )}
       </main>
 
       {showPayment && (
