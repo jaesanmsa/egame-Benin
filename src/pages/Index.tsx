@@ -19,12 +19,6 @@ import { showSuccess, showError } from '@/utils/toast';
 const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
 const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale"];
 
-// STATISTIQUES MANUELLES (Modifiez ces valeurs ici)
-const MANUAL_STATS = {
-  tournaments: 0,
-  prizes: "0"
-};
-
 const Index = () => {
   const [session, setSession] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
@@ -34,7 +28,11 @@ const Index = () => {
   const [topPlayers, setTopPlayers] = useState<any[]>([]);
   const [myTournaments, setMyTournaments] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
+  
+  // Statistiques automatiques
   const [userCount, setUserCount] = useState(0);
+  const [totalTournaments, setTotalTournaments] = useState(0);
+  const [totalPrizes, setTotalPrizes] = useState(0);
   
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
@@ -57,6 +55,17 @@ const Index = () => {
     if (allData) {
       setTournaments(allData.filter(t => t.status === 'active'));
       setFinishedTournaments(allData.filter(t => t.status === 'finished'));
+      setTotalTournaments(allData.length);
+
+      // Calcul automatique des prix versés (somme des prize_pool des tournois terminés)
+      const prizesSum = allData
+        .filter(t => t.status === 'finished' && t.prize_pool)
+        .reduce((acc, t) => {
+          // On extrait les chiffres du texte (ex: "50.000 FCFA" -> 50000)
+          const amount = parseInt(t.prize_pool.replace(/[^0-9]/g, '')) || 0;
+          return acc + amount;
+        }, 0);
+      setTotalPrizes(prizesSum);
     }
 
     const { data: leaders } = await supabase
@@ -121,7 +130,7 @@ const Index = () => {
       showSuccess("Profil mis à jour !");
       setShowOnboarding(false);
       fetchProfile(session.user.id);
-      fetchUserCount(); // Actualiser le compteur après inscription
+      fetchUserCount();
     } catch (err: any) {
       showError(err.message);
     } finally {
@@ -295,13 +304,13 @@ const Index = () => {
           </div>
           <div className="bg-card border border-border p-4 rounded-2xl text-center">
             <Trophy size={18} className="text-yellow-500 mx-auto mb-2" />
-            <p className="text-lg font-black">{MANUAL_STATS.tournaments}</p>
+            <p className="text-lg font-black">{totalTournaments}</p>
             <p className="text-[8px] text-muted-foreground font-bold uppercase">Tournois</p>
           </div>
           <div className="bg-card border border-border p-4 rounded-2xl text-center">
             <Award size={18} className="text-cyan-500 mx-auto mb-2" />
-            <p className="text-lg font-black">{MANUAL_STATS.prizes}</p>
-            <p className="text-[8px] text-muted-foreground font-bold uppercase">Prix versés</p>
+            <p className="text-lg font-black">{totalPrizes.toLocaleString('fr-FR')}</p>
+            <p className="text-[8px] text-muted-foreground font-bold uppercase">Prix versés (FCFA)</p>
           </div>
         </section>
 
