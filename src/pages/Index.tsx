@@ -6,6 +6,7 @@ import TournamentCard from '@/components/TournamentCard';
 import FinishedTournamentCard from '@/components/FinishedTournamentCard';
 import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
+import NewUserGuide from '@/components/NewUserGuide';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -34,8 +35,9 @@ const Index = () => {
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<string>("all");
   
-  // Finalisation profil
+  // Finalisation profil & Guide
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
   const [tempUsername, setTempUsername] = useState("");
   const [tempCity, setTempCity] = useState("Autre");
   const [savingProfile, setSavingProfile] = useState(false);
@@ -72,6 +74,7 @@ const Index = () => {
       setProfile(data);
       if (!data.username || !data.city) {
         setShowOnboarding(true);
+        setShowGuide(true);
         setTempUsername(data.username || "");
         setTempCity(data.city || "Autre");
       }
@@ -203,10 +206,16 @@ const Index = () => {
       <Navbar />
       <main className="max-w-7xl mx-auto px-6 py-6">
         
-        {/* Mobile Logo Header */}
-        <div className="flex items-center justify-center mb-8 md:hidden">
+        {/* Mobile Logo Header - Aligned Left */}
+        <div className="flex items-center justify-start mb-8 md:hidden">
           <Logo size="md" />
         </div>
+
+        <AnimatePresence>
+          {showGuide && (
+            <NewUserGuide onClose={() => setShowGuide(false)} />
+          )}
+        </AnimatePresence>
 
         <AnimatePresence>
           {showOnboarding && (
@@ -263,7 +272,6 @@ const Index = () => {
 
         <header className="mb-8">
           <p className="text-violet-500 font-bold text-xs uppercase tracking-widest mb-1">Salut, {userName}</p>
-          <h1 className="text-2xl md:text-3xl font-black">Prêt pour la victoire ?</h1>
         </header>
 
         {/* Filtres Améliorés */}
