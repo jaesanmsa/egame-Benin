@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock, CreditCard } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock, CreditCard, Zap } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
 import { Progress } from "@/components/ui/progress";
+import { motion } from 'framer-motion';
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -64,7 +65,7 @@ const TournamentDetails = () => {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        showSuccess("Lien copié dans le presse-papier !");
+        showSuccess("Lien copié !");
       }
     } catch (err) {
       console.error("Erreur de partage", err);
@@ -105,130 +106,161 @@ const TournamentDetails = () => {
       <SEO title={tournament.title} description={tournament.game} image={tournament.image_url} />
       <Navbar />
       
-      <div className="relative h-[35vh] w-full">
-        <img src={tournament.image_url} className="w-full h-full object-cover opacity-50" alt="" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+      <div className="relative h-[30vh] w-full overflow-hidden">
+        <img src={tournament.image_url} className="w-full h-full object-cover opacity-40 scale-105" alt="" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
         <div className="absolute top-6 left-6 z-20 flex gap-3">
-          <button onClick={() => navigate(-1)} className="p-3 bg-card/80 backdrop-blur-md rounded-full border border-border"><ArrowLeft size={20} /></button>
-          <button onClick={handleShare} className="p-3 bg-card/80 backdrop-blur-md rounded-full border border-border text-violet-500"><Share2 size={20} /></button>
+          <button onClick={() => navigate(-1)} className="p-2.5 bg-card/80 backdrop-blur-md rounded-full border border-border shadow-lg"><ArrowLeft size={18} /></button>
+          <button onClick={handleShare} className="p-2.5 bg-card/80 backdrop-blur-md rounded-full border border-border text-violet-500 shadow-lg"><Share2 size={18} /></button>
         </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-6 -mt-24 relative z-10">
-        <div className="bg-card border border-border rounded-[2.5rem] p-6 md:p-8 shadow-2xl mb-8">
-          <div className="flex justify-between items-start gap-4 mb-6">
+      <main className="max-w-3xl mx-auto px-6 -mt-16 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-card border border-border rounded-[2.5rem] p-6 md:p-8 shadow-2xl mb-6"
+        >
+          <div className="flex justify-between items-start gap-4 mb-8">
             <div>
-              <p className="text-violet-500 font-bold uppercase tracking-widest text-[10px] mb-1">{tournament.game}</p>
-              <h1 className="text-2xl md:text-3xl font-black">{tournament.title}</h1>
+              <div className="flex items-center gap-2 mb-1">
+                <Zap size={12} className="text-violet-500 fill-violet-500" />
+                <p className="text-violet-500 font-black uppercase tracking-[0.2em] text-[9px]">{tournament.game}</p>
+              </div>
+              <h1 className="text-2xl md:text-3xl font-black tracking-tight">{tournament.title}</h1>
             </div>
-            <div className="bg-violet-600 px-4 py-2 rounded-xl text-center text-white">
-              <p className="text-[10px] uppercase font-bold">Cash Prize</p>
-              <p className="text-xl font-black">{tournament.prize_pool}</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-            <div className="bg-muted/50 p-3 rounded-2xl border border-border text-center">
-              <Calendar className="text-violet-500 mx-auto mb-1" size={18} />
-              <p className="font-bold text-xs">{new Date(tournament.start_date || Date.now()).toLocaleDateString('fr-FR')}</p>
-            </div>
-            <div className="bg-muted/50 p-3 rounded-2xl border border-border text-center">
-              <Users className="text-violet-500 mx-auto mb-1" size={18} />
-              <p className="font-bold text-xs">{participantCount} / {maxParticipants}</p>
-            </div>
-            <div className="bg-muted/50 p-3 rounded-2xl border border-border text-center">
-              {tournament.type === 'Online' ? <Globe className="text-violet-500 mx-auto mb-1" size={18} /> : <MapPin className="text-violet-500 mx-auto mb-1" size={18} />}
-              <p className="font-bold text-xs">{tournament.type === 'Online' ? 'En ligne' : 'Présentiel'}</p>
-            </div>
-            <div className="bg-muted/50 p-3 rounded-2xl border border-border text-center">
-              <Shield className="text-violet-500 mx-auto mb-1" size={18} />
-              <p className="font-bold text-xs">Anti-Cheat</p>
+            <div className="bg-violet-600 px-4 py-2.5 rounded-2xl text-center text-white shadow-lg shadow-violet-500/20">
+              <p className="text-[8px] uppercase font-black tracking-widest opacity-80">Cash Prize</p>
+              <p className="text-lg font-black">{tournament.prize_pool}</p>
             </div>
           </div>
 
-          <div className="mb-6 space-y-2">
-            <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              <span>Remplissage</span>
-              <span>{Math.round(progress)}%</span>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+            <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center">
+              <Calendar className="text-violet-500 mx-auto mb-1.5" size={16} />
+              <p className="font-bold text-[10px] uppercase tracking-wider">{new Date(tournament.start_date || Date.now()).toLocaleDateString('fr-FR')}</p>
             </div>
-            <Progress value={progress} className="h-2 bg-muted" />
+            <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center">
+              <Users className="text-violet-500 mx-auto mb-1.5" size={16} />
+              <p className="font-bold text-[10px] uppercase tracking-wider">{participantCount} / {maxParticipants}</p>
+            </div>
+            <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center">
+              {tournament.type === 'Online' ? <Globe className="text-violet-500 mx-auto mb-1.5" size={16} /> : <MapPin className="text-violet-500 mx-auto mb-1.5" size={16} />}
+              <p className="font-bold text-[10px] uppercase tracking-wider">{tournament.type === 'Online' ? 'En ligne' : 'Local'}</p>
+            </div>
+            <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center">
+              <Shield className="text-violet-500 mx-auto mb-1.5" size={16} />
+              <p className="font-bold text-[10px] uppercase tracking-wider">Anti-Cheat</p>
+            </div>
+          </div>
+
+          <div className="mb-8 space-y-2.5">
+            <div className="flex justify-between text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground">
+              <span>Remplissage de l'arène</span>
+              <span className="text-violet-500">{Math.round(progress)}%</span>
+            </div>
+            <Progress value={progress} className="h-1.5 bg-muted" />
           </div>
 
           {userRegistration ? (
-            <div className="bg-green-500/10 border border-green-500/20 p-6 rounded-3xl mb-6 text-center">
+            <div className="bg-green-500/5 border border-green-500/20 p-6 rounded-[2rem] mb-2 text-center">
               <div className="flex items-center justify-center gap-3 mb-4 text-green-500">
-                {userRegistration.status === 'Réussi' ? <CheckCircle2 size={24} /> : <Clock size={24} className="animate-pulse" />}
-                <h3 className="font-black text-lg">{userRegistration.status === 'Réussi' ? "Inscrit !" : "Paiement en cours..."}</h3>
+                {userRegistration.status === 'Réussi' ? <CheckCircle2 size={20} /> : <Clock size={20} className="animate-pulse" />}
+                <h3 className="font-black text-base">{userRegistration.status === 'Réussi' ? "Inscription Validée" : "Paiement en attente"}</h3>
               </div>
               {userRegistration.status === 'Réussi' && (
                 <div className="p-4 bg-background/50 rounded-2xl border border-border mb-4">
-                  <p className="text-muted-foreground text-[10px] font-bold uppercase mb-2">Code de Validation</p>
+                  <p className="text-muted-foreground text-[9px] font-black uppercase tracking-widest mb-2">Code de Validation</p>
                   <div className="flex items-center justify-center gap-4">
-                    <span className="text-foreground font-mono font-bold text-2xl">{userRegistration.validation_code}</span>
-                    <button onClick={() => { navigator.clipboard.writeText(userRegistration.validation_code); showSuccess("Copié !"); }} className="text-muted-foreground"><Copy size={20} /></button>
+                    <span className="text-foreground font-mono font-black text-xl tracking-wider">{userRegistration.validation_code}</span>
+                    <button onClick={() => { navigator.clipboard.writeText(userRegistration.validation_code); showSuccess("Copié !"); }} className="text-muted-foreground hover:text-violet-500 transition-colors"><Copy size={18} /></button>
                   </div>
                 </div>
               )}
-              <Link to="/payments"><Button className="w-full bg-green-600 font-bold text-white py-6 rounded-2xl">Voir mes inscriptions</Button></Link>
+              <Link to="/payments"><Button className="w-full bg-green-600 hover:bg-green-700 font-bold text-white py-6 rounded-2xl shadow-lg shadow-green-500/10">Voir mes inscriptions</Button></Link>
             </div>
           ) : (
             isLoggedIn ? (
-              <Button onClick={() => !isFull && setShowPayment(true)} disabled={isFull} className="w-full py-8 rounded-2xl font-black text-lg bg-violet-600 text-white shadow-xl shadow-violet-500/20">
-                {isFull ? "Complet" : `S'inscrire (${tournament.entry_fee} FCFA)`}
+              <Button onClick={() => !isFull && setShowPayment(true)} disabled={isFull} className="w-full py-7 rounded-2xl font-black text-base bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/20 transition-all active:scale-[0.98]">
+                {isFull ? "Tournoi Complet" : `S'inscrire • ${tournament.entry_fee} FCFA`}
               </Button>
             ) : (
-              <Button onClick={() => navigate('/auth')} className="w-full py-8 rounded-2xl bg-muted font-black text-foreground"><Lock size={18} className="mr-2" /> Se connecter</Button>
+              <Button onClick={() => navigate('/auth')} className="w-full py-7 rounded-2xl bg-muted font-black text-foreground hover:bg-muted/80 transition-all"><Lock size={16} className="mr-2" /> Se connecter pour jouer</Button>
             )
           )}
-        </div>
+        </motion.div>
 
         {tournament.rules && (
-          <div className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm">
-            <h2 className="text-xl font-black mb-6 flex items-center gap-2"><Info className="text-violet-500" /> Règlement</h2>
-            <div className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"
+          >
+            <h2 className="text-lg font-black mb-6 flex items-center gap-2.5"><Info className="text-violet-500" size={20} /> Règlement Officiel</h2>
+            <div className="text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap font-medium">
               {tournament.rules}
             </div>
-          </div>
+          </motion.div>
         )}
       </main>
 
-      {showPayment && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPayment(false)} />
-          <div className="relative bg-card border border-border w-full max-w-[400px] rounded-[2.5rem] p-8 shadow-2xl z-[10000]">
-            <button onClick={() => setShowPayment(false)} className="absolute top-6 right-6 p-2 text-muted-foreground bg-muted rounded-full"><X size={20} /></button>
-            {paymentStep === 'select' ? (
-              <div className="space-y-6 text-center">
-                <div className="w-20 h-20 bg-violet-600/10 rounded-3xl flex items-center justify-center text-violet-500 mx-auto"><Smartphone size={40} /></div>
-                <h2 className="text-2xl font-black">Choisir un mode</h2>
-                
-                <div className="space-y-3">
-                  <button onClick={() => handlePayment('fedapay')} className="w-full flex items-center justify-between p-5 bg-muted rounded-2xl border border-border hover:border-violet-500/50 transition-all group">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white"><Smartphone size={20} /></div>
-                      <div className="text-left"><p className="font-bold text-sm">FedaPay (Bénin)</p><p className="text-[9px] text-muted-foreground font-bold uppercase">MTN / Moov</p></div>
-                    </div>
-                    <ChevronRight size={18} className="text-muted-foreground group-hover:text-violet-500" />
-                  </button>
+      <AnimatePresence>
+        {showPayment && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
+              onClick={() => setShowPayment(false)} 
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-card border border-border w-full max-w-[380px] rounded-[2.5rem] p-8 shadow-2xl z-[10000]"
+            >
+              <button onClick={() => setShowPayment(false)} className="absolute top-6 right-6 p-2 text-muted-foreground bg-muted rounded-full hover:text-foreground transition-colors"><X size={18} /></button>
+              {paymentStep === 'select' ? (
+                <div className="space-y-6 text-center">
+                  <div className="w-16 h-16 bg-violet-600/10 rounded-2xl flex items-center justify-center text-violet-500 mx-auto"><Smartphone size={32} /></div>
+                  <div>
+                    <h2 className="text-xl font-black mb-1">Mode de Paiement</h2>
+                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Sécurisé par nos partenaires</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <button onClick={() => handlePayment('fedapay')} className="w-full flex items-center justify-between p-4 bg-muted/50 rounded-2xl border border-border hover:border-violet-500/50 transition-all group">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-colors"><Smartphone size={18} /></div>
+                        <div className="text-left"><p className="font-bold text-xs">FedaPay (Bénin)</p><p className="text-[8px] text-muted-foreground font-black uppercase tracking-tighter">MTN / Moov Money</p></div>
+                      </div>
+                      <ChevronRight size={16} className="text-muted-foreground group-hover:text-violet-500 transition-colors" />
+                    </button>
 
-                  <button onClick={() => handlePayment('geniuspay')} className="w-full flex items-center justify-between p-5 bg-muted rounded-2xl border border-border hover:border-violet-500/50 transition-all group">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white"><CreditCard size={20} /></div>
-                      <div className="text-left"><p className="font-bold text-sm">GeniusPay (RCI)</p><p className="text-[9px] text-muted-foreground font-bold uppercase">Orange / MTN / Moov</p></div>
-                    </div>
-                    <ChevronRight size={18} className="text-muted-foreground group-hover:text-violet-500" />
-                  </button>
+                    <button onClick={() => handlePayment('geniuspay')} className="w-full flex items-center justify-between p-4 bg-muted/50 rounded-2xl border border-border hover:border-violet-500/50 transition-all group">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors"><CreditCard size={18} /></div>
+                        <div className="text-left"><p className="font-bold text-xs">GeniusPay (RCI)</p><p className="text-[8px] text-muted-foreground font-black uppercase tracking-tighter">Orange / MTN / Moov</p></div>
+                      </div>
+                      <ChevronRight size={16} className="text-muted-foreground group-hover:text-violet-500 transition-colors" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="py-16 text-center space-y-6">
-                <div className="w-16 h-16 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                <h2 className="text-2xl font-black">Redirection...</h2>
-              </div>
-            )}
+              ) : (
+                <div className="py-12 text-center space-y-6">
+                  <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                  <div>
+                    <h2 className="text-xl font-black mb-1">Redirection...</h2>
+                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Vers la plateforme de paiement</p>
+                  </div>
+                </div>
+              )}
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 };
