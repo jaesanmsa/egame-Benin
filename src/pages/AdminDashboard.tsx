@@ -114,17 +114,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleSetFeatured = async (id: string) => {
-    await supabase.from('tournaments').update({ is_featured: false }).neq('id', 'none');
-    const { error } = await supabase.from('tournaments').update({ is_featured: true }).eq('id', id);
-    
-    if (error) showError(error.message);
-    else {
-      showSuccess("Tournoi mis à la une !");
-      fetchData();
-    }
-  };
-
   const handleFinishTournament = async (e: React.FormEvent) => {
     e.preventDefault();
     const { error } = await supabase
@@ -132,8 +121,7 @@ const AdminDashboard = () => {
       .update({ 
         status: 'finished',
         winner_name: finishData.winnerName,
-        winner_avatar: finishData.winnerAvatar,
-        is_featured: false
+        winner_avatar: finishData.winnerAvatar
       })
       .eq('id', finishData.tournamentId);
     
@@ -338,19 +326,10 @@ const AdminDashboard = () => {
                       <div className="text-left">
                         <p className="font-bold flex items-center gap-2">
                           {t.title}
-                          {t.is_featured && <Star size={14} className="text-yellow-500 fill-yellow-500" />}
                         </p>
                         <p className="text-xs text-zinc-500">{t.game} • {t.prize_pool} • {t.city}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => handleSetFeatured(t.id)}
-                          className={`border-zinc-700 ${t.is_featured ? 'bg-yellow-500/10 text-yellow-500' : 'hover:bg-zinc-700'}`}
-                        >
-                          <Star size={16} />
-                        </Button>
                         <Button 
                           variant="outline" 
                           size="sm" 

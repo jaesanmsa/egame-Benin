@@ -26,7 +26,6 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [finishedTournaments, setFinishedTournaments] = useState<any[]>([]);
-  const [featuredTournament, setFeaturedTournament] = useState<any>(null);
   const [topPlayers, setTopPlayers] = useState<any[]>([]);
   const [myTournaments, setMyTournaments] = useState<any[]>([]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
@@ -61,9 +60,6 @@ const Index = () => {
       setFinishedTournaments(allData.filter(t => t.status === 'finished'));
       setTotalTournaments(allData.length);
       
-      const featured = active.find(t => t.is_featured) || active[0];
-      setFeaturedTournament(featured);
-
       const prizesSum = allData
         .filter(t => t.status === 'finished' && t.prize_pool)
         .reduce((acc, t) => {
@@ -179,8 +175,6 @@ const Index = () => {
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
 
-  const userName = profile?.username || session?.user.email?.split('@')[0];
-
   return (
     <div className="min-h-screen bg-background text-foreground pb-24 pt-4 md:pt-24">
       <SEO />
@@ -232,29 +226,6 @@ const Index = () => {
               ))}
             </div>
           </div>
-        )}
-
-        {featuredTournament && (
-          <motion.section 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="relative h-[400px] rounded-[3rem] overflow-hidden mb-12 group cursor-pointer"
-            onClick={() => navigate(`/tournament/${featuredTournament.id}`)}
-          >
-            <img src={featuredTournament.image_url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="" />
-            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
-            <div className="absolute bottom-8 left-8 right-8">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="bg-violet-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest flex items-center gap-2"><Star size={12} fill="currentColor" /> À la Une</div>
-                <div className="bg-white/10 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">{featuredTournament.game}</div>
-              </div>
-              <h2 className="text-3xl md:text-5xl font-black text-white mb-4 leading-tight">{featuredTournament.title}</h2>
-              <div className="flex items-center gap-6">
-                <div className="flex flex-col"><span className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">Cash Prize</span><span className="text-white font-black text-xl">{featuredTournament.prize_pool}</span></div>
-                <Button className="ml-auto bg-white text-black hover:bg-zinc-200 rounded-2xl font-bold px-8 py-6 gap-2">Participer <ArrowRight size={18} /></Button>
-              </div>
-            </div>
-          </motion.section>
         )}
 
         <AnimatePresence>{showGuide && <NewUserGuide onClose={() => setShowGuide(false)} />}</AnimatePresence>
