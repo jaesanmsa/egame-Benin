@@ -205,34 +205,34 @@ const Index = () => {
         <motion.section 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 bg-card border border-border p-5 rounded-[2rem] shadow-sm"
+          className="mb-8 bg-card border border-border p-4 rounded-[1.5rem] shadow-sm"
         >
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-violet-600/10 rounded-xl flex items-center justify-center text-violet-500">
-                <Zap size={20} />
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-violet-600/10 rounded-lg flex items-center justify-center text-violet-500">
+                <Zap size={16} />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Niveau {levelInfo.level}</p>
-                <h3 className="font-black text-sm">{levelInfo.label}</h3>
+                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Niveau {levelInfo.level}</p>
+                <h3 className="font-black text-xs">{levelInfo.label}</h3>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Prochain</p>
-              <p className="text-xs font-black text-violet-500">{myTournamentCount} / {levelInfo.next}</p>
+              <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Prochain</p>
+              <p className="text-[10px] font-black text-violet-500">{myTournamentCount} / {levelInfo.next}</p>
             </div>
           </div>
-          <Progress value={levelInfo.progress} className="h-2 bg-muted" />
+          <Progress value={levelInfo.progress} className="h-1.5 bg-muted" />
         </motion.section>
 
         {recentActivity.length > 0 && (
-          <div className="mb-8 overflow-hidden bg-violet-600/5 border-y border-violet-500/10 py-2 -mx-6 px-6">
+          <div className="mb-8 overflow-hidden bg-violet-600/5 border-y border-violet-500/5 py-1.5 -mx-6 px-6">
             <div className="flex items-center gap-4 animate-marquee whitespace-nowrap">
               {recentActivity.map((act, i) => (
-                <div key={i} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-violet-500">
-                  <Activity size={12} />
-                  <span>{act.profiles?.username || "Un joueur"} s'est inscrit à {act.tournament_name}</span>
-                  <span className="mx-4 text-muted-foreground/30">•</span>
+                <div key={i} className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-violet-500/80">
+                  <Activity size={10} />
+                  <span>{act.profiles?.username || "Joueur"} inscrit à {act.tournament_name}</span>
+                  <span className="mx-4 text-muted-foreground/20">•</span>
                 </div>
               ))}
             </div>
@@ -260,7 +260,7 @@ const Index = () => {
         </section>
 
         <section className="mb-12 space-y-6">
-          <div className="flex items-center gap-2"><Filter size={16} className="text-violet-500" /><h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Explorer</h2></div>
+          <div className="flex items-center gap-2"><Filter size={14} className="text-violet-500" /><h2 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Explorer</h2></div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="flex bg-card border border-border rounded-xl p-1 h-10">
               <button onClick={() => setFilterType('All')} className={`flex-1 rounded-lg text-[9px] font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white' : 'text-muted-foreground'}`}>Tous</button>
@@ -279,13 +279,13 @@ const Index = () => {
 
         {myTournaments.length > 0 && (
           <section className="mb-10">
-            <h2 className="text-lg font-black flex items-center gap-2 mb-4"><Gamepad2 className="text-violet-500" size={18} /> Mes Inscriptions</h2>
+            <h2 className="text-sm font-black flex items-center gap-2 mb-4 uppercase tracking-widest text-muted-foreground"><Gamepad2 className="text-violet-500" size={16} /> Mes Inscriptions</h2>
             <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
               {myTournaments.map((t) => (
-                <div key={t.id} onClick={() => navigate(`/tournament/${t.id}`)} className="flex-shrink-0 w-56 bg-card border border-border rounded-2xl p-3 flex items-center gap-3 cursor-pointer hover:border-violet-500 transition-all">
-                  <div className="w-10 h-10 rounded-xl overflow-hidden"><img src={t.image_url} className="w-full h-full object-cover" alt="" /></div>
-                  <div className="flex-1 min-w-0"><p className="font-bold text-xs truncate">{t.title}</p><p className="text-violet-400 text-[9px] font-bold uppercase">{t.game}</p></div>
-                  <ChevronRight size={14} className="text-muted-foreground" />
+                <div key={t.id} onClick={() => navigate(`/tournament/${t.id}`)} className="flex-shrink-0 w-52 bg-card border border-border rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer hover:border-violet-500/50 transition-all shadow-sm">
+                  <div className="w-9 h-9 rounded-lg overflow-hidden"><img src={t.image_url} className="w-full h-full object-cover" alt="" /></div>
+                  <div className="flex-1 min-w-0"><p className="font-bold text-[10px] truncate">{t.title}</p><p className="text-violet-500 text-[8px] font-black uppercase tracking-tighter">{t.game}</p></div>
+                  <ChevronRight size={12} className="text-muted-foreground" />
                 </div>
               ))}
             </div>
