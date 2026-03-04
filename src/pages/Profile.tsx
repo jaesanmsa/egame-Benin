@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Mail, History, Zap, ShieldCheck, Palette, Copy, Link as LinkIcon, HelpCircle, Sun, Moon, Shield } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Mail, History, Zap, ShieldCheck, Palette, Copy, Link as LinkIcon, HelpCircle, Sun, Moon, Shield, Award, Activity, Share2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showError, showSuccess } from '@/utils/toast';
@@ -15,6 +15,7 @@ const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [tournamentCount, setTournamentCount] = useState(0);
+  const [winCount, setWinCount] = useState(0);
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
 
@@ -33,6 +34,13 @@ const Profile = () => {
         
         const { count } = await supabase.from('payments').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'Réussi');
         setTournamentCount(count || 0);
+
+        // On simule ou récupère les victoires depuis le leaderboard si le pseudo correspond
+        if (profileData?.username) {
+          const { data: leaderData } = await supabase.from('leaderboard').select('wins').eq('username', profileData.username);
+          const totalWins = leaderData?.reduce((acc, curr) => acc + (curr.wins || 0), 0) || 0;
+          setWinCount(totalWins);
+        }
       } catch (err) {
         navigate('/auth');
       } finally {
@@ -46,6 +54,12 @@ const Profile = () => {
     await supabase.auth.signOut();
     showSuccess("Déconnexion réussie");
     navigate('/');
+  };
+
+  const handleShareProfile = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    showSuccess("Lien du profil copié !");
   };
 
   const getLevelInfo = (count: number) => {
@@ -78,10 +92,32 @@ const Profile = () => {
             </Link>
           </div>
           <h1 className="text-3xl font-black mt-4">{username}</h1>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-3 mt-2">
             <div className={`px-3 py-1 rounded-full bg-muted border border-border text-[10px] font-black uppercase tracking-widest ${levelInfo.color}`}>
               {levelInfo.label}
             </div>
+            <button onClick={handleShareProfile} className="p-2 bg-muted rounded-full border border-border hover:text-violet-500 transition-colors">
+              <Share2 size={14} />
+            </button>
+          </div>
+        </section>
+
+        {/* Player Stats Card */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="bg-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
+            <Activity className="mx-auto text-violet-500 mb-2" size={24} />
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Tournois</p>
+            <p className="text-2xl font-black">{tournamentCount}</p>
+          </div>
+          <div className="bg-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
+            <Trophy className="mx-auto text-yellow-500 mb-2" size={24} />
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Victoires</p>
+            <p className="text-2xl font-black">{winCount}</p>
+          </div>
+          <div className="bg-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
+            <Star className="mx-auto text-cyan-500 mb-2" size={24} />
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Points</p>
+            <p className="text-2xl font-black">{winCount * 100}</p>
           </div>
         </section>
 
@@ -97,8 +133,8 @@ const Profile = () => {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Tournois</p>
-              <p className="text-xl font-black text-violet-500">{tournamentCount}</p>
+              <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Progression</p>
+              <p className="text-xl font-black text-violet-500">{Math.round(levelInfo.progress)}%</p>
             </div>
           </div>
           <Progress value={levelInfo.progress} className="h-3 bg-muted" />

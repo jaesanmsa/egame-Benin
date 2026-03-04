@@ -4,12 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock, CreditCard, Zap } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock, CreditCard, Zap, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
 import { Progress } from "@/components/ui/progress";
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -20,6 +20,7 @@ const TournamentDetails = () => {
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing'>('select');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
+  const [participants, setParticipants] = useState<any[]>([]);
   const [userRegistration, setUserRegistration] = useState<any>(null);
 
   useEffect(() => {
@@ -30,8 +31,15 @@ const TournamentDetails = () => {
     };
 
     const fetchParticipants = async () => {
-      const { count } = await supabase.from('payments').select('*', { count: 'exact', head: true }).eq('tournament_id', id).eq('status', 'Réussi');
+      const { data, count } = await supabase
+        .from('payments')
+        .select('*, profiles(username, avatar_url)', { count: 'exact' })
+        .eq('tournament_id', id)
+        .eq('status', 'Réussi')
+        .limit(12);
+      
       setParticipantCount(count || 0);
+      if (data) setParticipants(data.map(p => p.profiles));
     };
 
     const checkUserRegistration = async (userId: string) => {
@@ -106,7 +114,7 @@ const TournamentDetails = () => {
       <SEO title={tournament.title} description={tournament.game} image={tournament.image_url} />
       <Navbar />
       
-      <div className="relative h-[30vh] w-full overflow-hidden">
+      <div className="relative h-[35vh] w-full overflow-hidden">
         <img src={tournament.image_url} className="w-full h-full object-cover opacity-40 scale-105" alt="" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
         <div className="absolute top-6 left-6 z-20 flex gap-3">
@@ -115,7 +123,7 @@ const TournamentDetails = () => {
         </div>
       </div>
 
-      <main className="max-w-3xl mx-auto px-6 -mt-16 relative z-10">
+      <main className="max-w-3xl mx-auto px-6 -mt-20 relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -190,19 +198,51 @@ const TournamentDetails = () => {
           )}
         </motion.div>
 
-        {tournament.rules && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Participants Section */}
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
             className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"
           >
-            <h2 className="text-lg font-black mb-6 flex items-center gap-2.5"><Info className="text-violet-500" size={20} /> Règlement Officiel</h2>
-            <div className="text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap font-medium">
-              {tournament.rules}
+            <h2 className="text-sm font-black mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Users className="text-violet-500" size={18} /> Participants ({participantCount})</h2>
+            <div className="flex flex-wrap gap-3">
+              {participants.length > 0 ? (
+                participants.map((p, i) => (
+                  <div key={i} className="group relative">
+                    <div className="w-10 h-10 rounded-full border-2 border-border overflow-hidden bg-muted group-hover:border-violet-500 transition-colors">
+                      <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username}`} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 text-white text-[8px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                      {p.username}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-[10px] text-muted-foreground font-bold italic">Soyez le premier à rejoindre l'arène !</p>
+              )}
+              {participantCount > 12 && (
+                <div className="w-10 h-10 rounded-full border-2 border-dashed border-border flex items-center justify-center text-[10px] font-black text-muted-foreground">
+                  +{participantCount - 12}
+                </div>
+              )}
             </div>
           </motion.div>
-        )}
+
+          {/* Rules Section */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"
+          >
+            <h2 className="text-sm font-black mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Info className="text-violet-500" size={18} /> Règlement</h2>
+            <div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium max-h-[150px] overflow-y-auto no-scrollbar">
+              {tournament.rules || "Aucun règlement spécifique communiqué pour le moment."}
+            </div>
+          </motion.div>
+        </div>
       </main>
 
       <AnimatePresence>
