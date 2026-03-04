@@ -79,7 +79,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
         <div className="absolute top-3 left-3 flex gap-2">
           <Badge className={`bg-zinc-950/80 backdrop-blur-md text-white border-zinc-800 flex items-center gap-1 text-[9px] font-black uppercase tracking-tighter py-1 px-2`}>
             {type === 'Online' ? <Globe size={10} className="text-cyan-400" /> : <MapPin size={10} className="text-orange-400" />}
-            {type === 'Online' ? 'Online' : (tournamentCity || 'Local')}
+            {type === 'Online' ? 'En ligne' : (tournamentCity || 'Local')}
           </Badge>
         </div>
 

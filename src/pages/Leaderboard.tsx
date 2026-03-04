@@ -109,14 +109,14 @@ const Leaderboard = () => {
                   <Gamepad2 className="text-violet-500" size={20} />
                   <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Classements par Jeu</h2>
                 </div>
-                <div className="grid gap-4">
+                <div className="grid gap-3">
                   {DEFAULT_GAMES.map((game) => (
-                    <button key={game.id} onClick={() => setSelectedGame(game.id)} className="flex items-center justify-between p-6 bg-card border border-border rounded-3xl hover:border-violet-500 transition-all shadow-sm group">
-                      <div className="flex items-center gap-4 text-xl font-bold">
-                        <span className="group-hover:scale-125 transition-transform">{game.icon}</span> 
+                    <button key={game.id} onClick={() => setSelectedGame(game.id)} className="flex items-center justify-between p-4 bg-card border border-border rounded-2xl hover:border-violet-500 transition-all shadow-sm group">
+                      <div className="flex items-center gap-3 text-base font-bold">
+                        <span className="group-hover:scale-110 transition-transform">{game.icon}</span> 
                         {game.name}
                       </div>
-                      <ChevronRight className="text-muted-foreground group-hover:text-violet-500 transition-colors" />
+                      <ChevronRight className="text-muted-foreground group-hover:text-violet-500 transition-colors" size={18} />
                     </button>
                   ))}
                 </div>
