@@ -379,6 +379,30 @@ const Index = () => {
           </section>
         )}
 
+        {finishedTournaments.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <Award size={16} className="text-yellow-500" />
+                <h2 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Légendes de l'Arène</h2>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {finishedTournaments.map((t) => (
+                <FinishedTournamentCard 
+                  key={t.id}
+                  title={t.title}
+                  game={t.game}
+                  image={t.image_url}
+                  prizePool={t.prize_pool}
+                  winnerName={t.winner_name || "Champion"}
+                  winnerAvatar={t.winner_avatar}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
         <footer className="mt-12 py-12 border-t border-border text-center space-y-8">
           <div className="flex items-center justify-center gap-6">
             <a href="https://www.facebook.com/profile.php?id=61588439640775" target="_blank" className="w-10 h-10 bg-blue-600/10 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm"><Facebook size={20} /></a>
