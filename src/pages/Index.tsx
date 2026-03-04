@@ -185,6 +185,8 @@ const Index = () => {
     return matchesType && matchesCity && matchesGame;
   });
 
+  const featuredTournament = tournaments.find(t => t.is_featured) || tournaments[0];
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -214,6 +216,36 @@ const Index = () => {
             </div>
           </Link>
         </div>
+
+        {/* Hero Section - Featured Tournament */}
+        {featuredTournament && (
+          <motion.section 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative h-[40vh] md:h-[50vh] rounded-[2.5rem] overflow-hidden mb-10 group cursor-pointer"
+            onClick={() => navigate(`/tournament/${featuredTournament.id}`)}
+          >
+            <img 
+              src={featuredTournament.image_url} 
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" 
+              alt="" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+            
+            <div className="absolute bottom-8 left-8 right-8">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="bg-violet-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">À la Une</div>
+                <div className="bg-zinc-950/60 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-white/10">{featuredTournament.game}</div>
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight leading-none">{featuredTournament.title}</h2>
+              <div className="flex items-center gap-6 text-white/80 text-xs font-bold">
+                <div className="flex items-center gap-2"><Trophy size={16} className="text-yellow-500" /> {featuredTournament.prize_pool}</div>
+                <div className="flex items-center gap-2"><Users size={16} className="text-cyan-500" /> {participantCounts[featuredTournament.id] || 0} Joueurs</div>
+                <div className="flex items-center gap-2"><Calendar size={16} className="text-violet-500" /> {new Date(featuredTournament.start_date).toLocaleDateString('fr-FR')}</div>
+              </div>
+            </div>
+          </motion.section>
+        )}
 
         {/* Progression de Niveau */}
         <motion.section 

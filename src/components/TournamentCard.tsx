@@ -68,7 +68,10 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
       onClick={handleClick}
       className="group relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 hover:border-violet-500/50 transition-all cursor-pointer shadow-lg shadow-black/20"
     >
-      <div className="aspect-video overflow-hidden relative">
+      {/* Glow effect on hover */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-3xl blur opacity-0 group-hover:opacity-20 transition duration-500" />
+      
+      <div className="relative aspect-video overflow-hidden">
         <img 
           src={image} 
           alt={title} 
@@ -97,7 +100,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
         </div>
       </div>
       
-      <div className="p-5">
+      <div className="relative p-5">
         <div className="flex items-center gap-2 mb-2">
           <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
           <p className="text-violet-400 text-[10px] font-black uppercase tracking-widest">{game}</p>
