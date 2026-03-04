@@ -8,13 +8,14 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import NewUserGuide from '@/components/NewUserGuide';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight, Activity, MessageSquare } from 'lucide-react';
+import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight, Activity, MessageSquare, SearchX } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { showSuccess, showError } from '@/utils/toast';
 
 const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
@@ -184,8 +185,6 @@ const Index = () => {
     return matchesType && matchesCity && matchesGame;
   });
 
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -264,17 +263,17 @@ const Index = () => {
         >
           <motion.div variants={itemVariants} className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
             <Users size={14} className="text-violet-500 mb-1" />
-            <p className="text-xs font-black text-foreground leading-none mb-1">{userCount}</p>
+            <p className="text-xs font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : userCount}</p>
             <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Joueurs</p>
           </motion.div>
           <motion.div variants={itemVariants} className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
             <Trophy size={14} className="text-yellow-500 mb-1" />
-            <p className="text-xs font-black text-foreground leading-none mb-1">{totalTournaments}</p>
+            <p className="text-xs font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : totalTournaments}</p>
             <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
           </motion.div>
           <motion.div variants={itemVariants} className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
             <Award size={14} className="text-cyan-500 mb-1" />
-            <p className="text-xs font-black text-foreground leading-none mb-1">{totalPrizes.toLocaleString('fr-FR')}</p>
+            <p className="text-xs font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-12 mx-auto" /> : totalPrizes.toLocaleString('fr-FR')}</p>
             <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Prix (FCFA)</p>
           </motion.div>
         </motion.section>
@@ -297,11 +296,34 @@ const Index = () => {
             animate="visible"
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6"
           >
-            {filteredTournaments.map((t) => (
-              <motion.div key={t.id} variants={itemVariants}>
-                <TournamentCard id={t.id} title={t.title} game={t.game} image={t.image_url} date={new Date(t.start_date).toLocaleDateString('fr-FR')} participants={`${participantCounts[t.id] || 0}/${t.max_participants}`} entryFee={t.entry_fee.toString()} type={t.type as any} />
-              </motion.div>
-            ))}
+            {loading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="bg-card border border-border rounded-3xl overflow-hidden p-4 space-y-4">
+                  <Skeleton className="aspect-video w-full rounded-2xl" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                </div>
+              ))
+            ) : filteredTournaments.length === 0 ? (
+              <div className="col-span-full py-20 text-center space-y-4">
+                <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto text-muted-foreground/30">
+                  <SearchX size={40} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black">Aucun tournoi trouvé</h3>
+                  <p className="text-xs text-muted-foreground">Essayez de modifier vos filtres pour voir plus de résultats.</p>
+                </div>
+                <Button variant="outline" onClick={() => { setFilterType('All'); setSelectedCity('all'); setSelectedGame('all'); }} className="rounded-xl text-[10px] font-black uppercase tracking-widest">Réinitialiser</Button>
+              </div>
+            ) : (
+              filteredTournaments.map((t) => (
+                <motion.div key={t.id} variants={itemVariants}>
+                  <TournamentCard id={t.id} title={t.title} game={t.game} image={t.image_url} date={new Date(t.start_date).toLocaleDateString('fr-FR')} participants={`${participantCounts[t.id] || 0}/${t.max_participants}`} entryFee={t.entry_fee.toString()} type={t.type as any} />
+                </motion.div>
+              ))
+            )}
           </motion.div>
         </section>
 
