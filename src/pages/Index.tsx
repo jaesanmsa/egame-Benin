@@ -8,7 +8,7 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import NewUserGuide from '@/components/NewUserGuide';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight, Activity, MessageSquare, SearchX } from 'lucide-react';
+import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight, Activity, MessageSquare, SearchX, Search } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from '@/components/ui/button';
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Label } from '@/components/ui/label';
 import { showSuccess, showError } from '@/utils/toast';
 
 const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
@@ -27,7 +28,6 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [finishedTournaments, setFinishedTournaments] = useState<any[]>([]);
-  const [topPlayers, setTopPlayers] = useState<any[]>([]);
   const [myTournaments, setMyTournaments] = useState<any[]>([]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
@@ -37,12 +37,12 @@ const Index = () => {
   const [totalPrizes, setTotalPrizes] = useState(0);
   const [myTournamentCount, setMyTournamentCount] = useState(0);
   
+  const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<string>("all");
   
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showGuide, setShowGuide] = useState(false);
   const [tempUsername, setTempUsername] = useState("");
   const [tempCity, setTempCity] = useState("Autre");
   const [savingProfile, setSavingProfile] = useState(false);
@@ -70,13 +70,6 @@ const Index = () => {
       setTotalPrizes(prizesSum);
     }
 
-    const { data: leaders } = await supabase
-      .from('leaderboard')
-      .select('*')
-      .order('wins', { ascending: false })
-      .limit(3);
-    if (leaders) setTopPlayers(leaders);
-
     const { data: activity } = await supabase
       .from('payments')
       .select('tournament_name, profiles(username)')
@@ -95,11 +88,8 @@ const Index = () => {
     const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
     if (data) {
       setProfile(data);
-      
-      // Logique du guide : seulement si pas encore vu et profil incomplet
-      const hasSeenGuide = localStorage.getItem('egame_guide_seen');
-      if (!hasSeenGuide && (!data.username || !data.city)) {
-        setShowGuide(true);
+      // Si le profil est incomplet, on force l'onboarding
+      if (!data.username || !data.city || data.city === 'Autre') {
         setShowOnboarding(true);
         setTempUsername(data.username || "");
         setTempCity(data.city || "Autre");
@@ -114,21 +104,23 @@ const Index = () => {
     setMyTournamentCount(count || 0);
   };
 
-  const handleCloseGuide = () => {
-    setShowGuide(false);
-    localStorage.setItem('egame_guide_seen', 'true');
-  };
-
   const handleSaveProfile = async () => {
     const username = tempUsername.trim();
     if (!username) return showError("Le pseudo est obligatoire");
+    if (username.length < 3) return showError("Le pseudo doit faire au moins 3 caractères");
+    
     setSavingProfile(true);
     try {
-      const { error } = await supabase.from('profiles').update({ username, city: tempCity }).eq('id', session.user.id);
+      const { error } = await supabase.from('profiles').update({ 
+        username, 
+        city: tempCity,
+        updated_at: new Date().toISOString()
+      }).eq('id', session.user.id);
+      
       if (error) throw error;
-      showSuccess("Profil mis à jour !");
+      
+      showSuccess("Profil de champion activé !");
       setShowOnboarding(false);
-      handleCloseGuide();
       fetchProfile(session.user.id);
     } catch (err: any) {
       showError(err.message);
@@ -178,11 +170,14 @@ const Index = () => {
   };
 
   const levelInfo = getLevelInfo(myTournamentCount);
+  
   const filteredTournaments = tournaments.filter(t => {
+    const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         t.game.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === 'All' || t.type === filterType;
     const matchesCity = selectedCity === "all" || t.city === selectedCity;
     const matchesGame = selectedGame === "all" || t.game === selectedGame;
-    return matchesType && matchesCity && matchesGame;
+    return matchesSearch && matchesType && matchesCity && matchesGame;
   });
 
   const featuredTournament = tournaments.find(t => t.is_featured) || tournaments[0];
@@ -285,33 +280,20 @@ const Index = () => {
           </div>
         )}
 
-        <AnimatePresence>{showGuide && <NewUserGuide onClose={handleCloseGuide} />}</AnimatePresence>
-
-        <motion.section 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-3 gap-3 mb-8"
-        >
-          <motion.div variants={itemVariants} className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
-            <Users size={14} className="text-violet-500 mb-1" />
-            <p className="text-xs font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : userCount}</p>
-            <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Joueurs</p>
-          </motion.div>
-          <motion.div variants={itemVariants} className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
-            <Trophy size={14} className="text-yellow-500 mb-1" />
-            <p className="text-xs font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : totalTournaments}</p>
-            <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
-          </motion.div>
-          <motion.div variants={itemVariants} className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
-            <Award size={14} className="text-cyan-500 mb-1" />
-            <p className="text-xs font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-12 mx-auto" /> : totalPrizes.toLocaleString('fr-FR')}</p>
-            <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Prix (FCFA)</p>
-          </motion.div>
-        </motion.section>
-
         <section className="mb-12 space-y-6">
-          <div className="flex items-center gap-2"><Filter size={14} className="text-violet-500" /><h2 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Explorer l'Arène</h2></div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2"><Filter size={14} className="text-violet-500" /><h2 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Explorer l'Arène</h2></div>
+            <div className="relative w-48 md:w-64">
+              <Search className="absolute left-3 top-2.5 text-muted-foreground" size={14} />
+              <Input 
+                placeholder="Rechercher..." 
+                className="pl-9 h-9 bg-card border-border rounded-xl text-[11px] font-bold"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="flex bg-card border border-border rounded-xl p-1 h-10 shadow-sm">
               <button onClick={() => setFilterType('All')} className={`flex-1 rounded-lg text-[9px] font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white shadow-md' : 'text-muted-foreground'}`}>Tous</button>
@@ -347,7 +329,7 @@ const Index = () => {
                   <h3 className="text-lg font-black">Aucun tournoi trouvé</h3>
                   <p className="text-xs text-muted-foreground">Essayez de modifier vos filtres pour voir plus de résultats.</p>
                 </div>
-                <Button variant="outline" onClick={() => { setFilterType('All'); setSelectedCity('all'); setSelectedGame('all'); }} className="rounded-xl text-[10px] font-black uppercase tracking-widest">Réinitialiser</Button>
+                <Button variant="outline" onClick={() => { setFilterType('All'); setSelectedCity('all'); setSelectedGame('all'); setSearchQuery(""); }} className="rounded-xl text-[10px] font-black uppercase tracking-widest">Réinitialiser</Button>
               </div>
             ) : (
               filteredTournaments.map((t) => (
@@ -417,6 +399,67 @@ const Index = () => {
           <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest">© 2026 eGame Bénin • Tous droits réservés</p>
         </footer>
       </main>
+
+      {/* Onboarding Modal */}
+      <AnimatePresence>
+        {showOnboarding && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-card border border-border w-full max-w-md rounded-[3rem] p-10 shadow-2xl z-[101] text-center"
+            >
+              <div className="w-20 h-20 bg-violet-600 rounded-3xl flex items-center justify-center text-white mx-auto mb-8 shadow-xl shadow-violet-500/20">
+                <UserCheck size={40} />
+              </div>
+              <h2 className="text-2xl font-black mb-2">Bienvenue, Champion !</h2>
+              <p className="text-muted-foreground text-sm mb-8">Complète ton profil pour rejoindre l'arène et participer aux tournois.</p>
+              
+              <div className="space-y-6 text-left">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Ton Pseudo de Joueur</Label>
+                  <Input 
+                    placeholder="Ex: ProGamer229" 
+                    value={tempUsername}
+                    onChange={(e) => setTempUsername(e.target.value)}
+                    className="py-6 bg-muted/50 border-border rounded-2xl font-bold"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Ta Ville</Label>
+                  <Select value={tempCity} onValueChange={setTempCity}>
+                    <SelectTrigger className="py-6 bg-muted/50 border-border rounded-2xl font-bold">
+                      <SelectValue placeholder="Choisir ta ville" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border">
+                      {CITIES.map(city => (
+                        <SelectItem key={city} value={city} className="font-bold">{city}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button 
+                  onClick={handleSaveProfile} 
+                  disabled={savingProfile}
+                  className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 text-lg font-black shadow-xl shadow-violet-500/20 gap-2 text-white"
+                >
+                  {savingProfile ? "Activation..." : "Activer mon profil"}
+                  <ArrowRight size={20} />
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
