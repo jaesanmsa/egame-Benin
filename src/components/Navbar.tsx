@@ -11,6 +11,7 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [dbAvatar, setDbAvatar] = useState<string | null>(null);
+  const [loadingAvatar, setLoadingAvatar] = useState(true);
   const isActive = (path: string) => location.pathname === path;
 
   useEffect(() => {
@@ -19,7 +20,13 @@ const Navbar = () => {
       setIsLoggedIn(!!session);
       setUser(session?.user || null);
       if (session?.user) {
+        // On essaie d'abord de prendre l'avatar des métadonnées pour éviter le clignotement
+        if (session.user.user_metadata?.avatar_url) {
+          setDbAvatar(session.user.user_metadata.avatar_url);
+        }
         fetchProfile(session.user.id);
+      } else {
+        setLoadingAvatar(false);
       }
     };
 
@@ -32,6 +39,7 @@ const Navbar = () => {
         fetchProfile(session.user.id);
       } else {
         setDbAvatar(null);
+        setLoadingAvatar(false);
       }
     });
 
@@ -47,8 +55,10 @@ const Navbar = () => {
     if (data?.avatar_url) {
       setDbAvatar(data.avatar_url);
     }
+    setLoadingAvatar(false);
   };
 
+  // Priorité : Avatar de la DB > Avatar des métadonnées > Dicebear
   const avatarUrl = dbAvatar || user?.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`;
 
   return (
@@ -90,8 +100,8 @@ const Navbar = () => {
 
           <Link to="/profile" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/profile') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
             {isLoggedIn ? (
-              <div className={`w-6 h-6 rounded-full overflow-hidden border ${isActive('/profile') ? 'border-violet-500' : 'border-border'}`}>
-                <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />
+              <div className={`w-6 h-6 rounded-full overflow-hidden border bg-muted ${isActive('/profile') ? 'border-violet-500' : 'border-border'}`}>
+                {!loadingAvatar && <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />}
               </div>
             ) : (
               <User size={22} />
@@ -111,7 +121,7 @@ const Navbar = () => {
           ) : (
             <Link to="/profile">
               <div className="w-10 h-10 rounded-full bg-muted border border-border overflow-hidden hover:border-violet-500 transition-colors">
-                <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />
+                {!loadingAvatar && <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />}
               </div>
             </Link>
           )}

@@ -94,9 +94,12 @@ const Index = () => {
     const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
     if (data) {
       setProfile(data);
-      if (!data.username || !data.city) {
-        setShowOnboarding(true);
+      
+      // Logique du guide : seulement si pas encore vu et profil incomplet
+      const hasSeenGuide = localStorage.getItem('egame_guide_seen');
+      if (!hasSeenGuide && (!data.username || !data.city)) {
         setShowGuide(true);
+        setShowOnboarding(true);
         setTempUsername(data.username || "");
         setTempCity(data.city || "Autre");
       }
@@ -110,6 +113,11 @@ const Index = () => {
     setMyTournamentCount(count || 0);
   };
 
+  const handleCloseGuide = () => {
+    setShowGuide(false);
+    localStorage.setItem('egame_guide_seen', 'true');
+  };
+
   const handleSaveProfile = async () => {
     const username = tempUsername.trim();
     if (!username) return showError("Le pseudo est obligatoire");
@@ -119,6 +127,7 @@ const Index = () => {
       if (error) throw error;
       showSuccess("Profil mis à jour !");
       setShowOnboarding(false);
+      handleCloseGuide();
       fetchProfile(session.user.id);
     } catch (err: any) {
       showError(err.message);
@@ -145,14 +154,16 @@ const Index = () => {
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const init = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       if (session?.user) {
-        fetchProfile(session.user.id);
+        await fetchProfile(session.user.id);
         fetchMyTournaments(session.user.id);
       }
       setLoading(false);
-    });
+    };
+    init();
     fetchData();
     fetchParticipantCounts();
     fetchUserCount();
@@ -184,8 +195,8 @@ const Index = () => {
         <div className="flex items-center justify-between mb-8">
           <Logo size="md" />
           <Link to="/profile" className="md:hidden">
-            <div className="w-10 h-10 rounded-full border-2 border-violet-600 overflow-hidden">
-              <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${session?.user.email}`} alt="" />
+            <div className="w-10 h-10 rounded-full border-2 border-violet-600 overflow-hidden bg-muted">
+              {profile?.avatar_url && <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />}
             </div>
           </Link>
         </div>
@@ -228,7 +239,7 @@ const Index = () => {
           </div>
         )}
 
-        <AnimatePresence>{showGuide && <NewUserGuide onClose={() => setShowGuide(false)} />}</AnimatePresence>
+        <AnimatePresence>{showGuide && <NewUserGuide onClose={handleCloseGuide} />}</AnimatePresence>
 
         <section className="grid grid-cols-3 gap-3 mb-8">
           <div className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
