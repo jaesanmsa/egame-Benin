@@ -162,7 +162,7 @@ const AdminDashboard = () => {
   if (!isAdmin) return null;
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-background text-foreground pb-32 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-5xl mx-auto px-6 py-8">
         <div className="flex items-center gap-4 mb-10">
@@ -176,14 +176,16 @@ const AdminDashboard = () => {
         </div>
         
         <Tabs defaultValue="payments" className="space-y-8">
-          <TabsList className="flex w-full overflow-x-auto no-scrollbar bg-muted/50 p-1 rounded-2xl border border-border gap-1 h-auto">
-            <TabsTrigger value="payments" className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Transactions</TabsTrigger>
-            <TabsTrigger value="participants" className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Joueurs</TabsTrigger>
-            <TabsTrigger value="tournaments" className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Nouveau</TabsTrigger>
-            <TabsTrigger value="edit" className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Modifier</TabsTrigger>
-            <TabsTrigger value="finish" className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Clôturer</TabsTrigger>
-            <TabsTrigger value="leaderboard" className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Top 5</TabsTrigger>
-          </TabsList>
+          <div className="bg-muted/50 p-1.5 rounded-[25px] border border-border overflow-x-auto no-scrollbar">
+            <TabsList className="flex w-full bg-transparent h-auto gap-1 min-w-max px-2">
+              <TabsTrigger value="payments" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Transactions</TabsTrigger>
+              <TabsTrigger value="participants" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Joueurs</TabsTrigger>
+              <TabsTrigger value="tournaments" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Nouveau</TabsTrigger>
+              <TabsTrigger value="edit" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Modifier</TabsTrigger>
+              <TabsTrigger value="finish" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Clôturer</TabsTrigger>
+              <TabsTrigger value="leaderboard" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Top 5</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="payments" className="space-y-6">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm">

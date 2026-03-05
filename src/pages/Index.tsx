@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
-import FinishedTournamentCard from '@/components/FinishedTournamentCard';
 import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import NewUserGuide from '@/components/NewUserGuide';
@@ -14,7 +13,6 @@ import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { showSuccess, showError } from '@/utils/toast';
 
@@ -26,26 +24,18 @@ const Index = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [tournaments, setTournaments] = useState<any[]>([]);
-  const [finishedTournaments, setFinishedTournaments] = useState<any[]>([]);
-  const [topPlayers, setTopPlayers] = useState<any[]>([]);
-  const [myTournaments, setMyTournaments] = useState<any[]>([]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   
   const [userCount, setUserCount] = useState(0);
   const [totalTournaments, setTotalTournaments] = useState(0);
   const [totalPrizes, setTotalPrizes] = useState(0);
-  const [myTournamentCount, setMyTournamentCount] = useState(0);
   
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<string>("all");
   
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
-  const [tempUsername, setTempUsername] = useState("");
-  const [tempCity, setTempCity] = useState("Autre");
-  const [savingProfile, setSavingProfile] = useState(false);
 
   const navigate = useNavigate();
 
@@ -58,7 +48,6 @@ const Index = () => {
     if (allData) {
       const active = allData.filter(t => t.status === 'active');
       setTournaments(active);
-      setFinishedTournaments(allData.filter(t => t.status === 'finished'));
       setTotalTournaments(allData.length);
       
       const prizesSum = allData
@@ -69,13 +58,6 @@ const Index = () => {
         }, 0);
       setTotalPrizes(prizesSum);
     }
-
-    const { data: leaders } = await supabase
-      .from('leaderboard')
-      .select('*')
-      .order('wins', { ascending: false })
-      .limit(3);
-    if (leaders) setTopPlayers(leaders);
 
     const { data: activity } = await supabase
       .from('payments')
@@ -95,54 +77,16 @@ const Index = () => {
     const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
     if (data) {
       setProfile(data);
-      
-      // Logique du guide : seulement si pas encore vu et profil incomplet
       const hasSeenGuide = localStorage.getItem('egame_guide_seen');
       if (!hasSeenGuide && (!data.username || !data.city)) {
         setShowGuide(true);
-        setShowOnboarding(true);
-        setTempUsername(data.username || "");
-        setTempCity(data.city || "Autre");
       }
     }
-
-    const { count } = await supabase
-      .from('payments')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('status', 'Réussi');
-    setMyTournamentCount(count || 0);
   };
 
   const handleCloseGuide = () => {
     setShowGuide(false);
     localStorage.setItem('egame_guide_seen', 'true');
-  };
-
-  const handleSaveProfile = async () => {
-    const username = tempUsername.trim();
-    if (!username) return showError("Le pseudo est obligatoire");
-    setSavingProfile(true);
-    try {
-      const { error } = await supabase.from('profiles').update({ username, city: tempCity }).eq('id', session.user.id);
-      if (error) throw error;
-      showSuccess("Profil mis à jour !");
-      setShowOnboarding(false);
-      handleCloseGuide();
-      fetchProfile(session.user.id);
-    } catch (err: any) {
-      showError(err.message);
-    } finally {
-      setSavingProfile(false);
-    }
-  };
-
-  const fetchMyTournaments = async (userId: string) => {
-    const { data } = await supabase.from('payments').select('tournament_id, tournaments(*)').eq('user_id', userId).eq('status', 'Réussi');
-    if (data) {
-      const activeOnes = data.map((p: any) => p.tournaments).filter((t: any) => t && t.status === 'active');
-      setMyTournaments(activeOnes);
-    }
   };
 
   const fetchParticipantCounts = async () => {
@@ -160,7 +104,6 @@ const Index = () => {
       setSession(session);
       if (session?.user) {
         await fetchProfile(session.user.id);
-        fetchMyTournaments(session.user.id);
       }
       setLoading(false);
     };
@@ -170,14 +113,6 @@ const Index = () => {
     fetchUserCount();
   }, []);
 
-  const getLevelInfo = (count: number) => {
-    if (count < 5) return { level: 1, next: 5, label: "Novice", progress: (count / 5) * 100 };
-    if (count < 10) return { level: 2, next: 10, label: "Guerrier", progress: ((count - 5) / 5) * 100 };
-    if (count < 20) return { level: 3, next: 20, label: "Élite", progress: ((count - 10) / 10) * 100 };
-    return { level: 4, next: 40, label: "Maître", progress: ((count - 20) / 20) * 100 };
-  };
-
-  const levelInfo = getLevelInfo(myTournamentCount);
   const filteredTournaments = tournaments.filter(t => {
     const matchesType = filterType === 'All' || t.type === filterType;
     const matchesCity = selectedCity === "all" || t.city === selectedCity;
@@ -203,7 +138,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-24 pt-4 md:pt-24">
+    <div className="min-h-screen bg-background text-foreground pb-32 pt-4 md:pt-24">
       <SEO />
       <Navbar />
       <main className="max-w-7xl mx-auto px-6 py-6">
@@ -217,7 +152,6 @@ const Index = () => {
           </Link>
         </div>
 
-        {/* Hero Section - Featured Tournament */}
         {featuredTournament && (
           <motion.section 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -247,30 +181,6 @@ const Index = () => {
           </motion.section>
         )}
 
-        {/* Progression de Niveau */}
-        <motion.section 
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 bg-card border border-border p-4 rounded-[1.5rem] shadow-sm"
-        >
-          <div className="flex items-center justify-between mb-2.5">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-violet-600/10 rounded-lg flex items-center justify-center text-violet-500">
-                <Zap size={16} />
-              </div>
-              <div>
-                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Niveau {levelInfo.level}</p>
-                <h3 className="font-black text-xs">{levelInfo.label}</h3>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Prochain</p>
-              <p className="text-[10px] font-black text-violet-500">{myTournamentCount} / {levelInfo.next}</p>
-            </div>
-          </div>
-          <Progress value={levelInfo.progress} className="h-1.5 bg-muted" />
-        </motion.section>
-
         {recentActivity.length > 0 && (
           <div className="mb-8 overflow-hidden bg-violet-600/5 border-y border-violet-500/5 py-1.5 -mx-6 px-6">
             <div className="flex items-center gap-4 animate-marquee whitespace-nowrap">
@@ -291,22 +201,17 @@ const Index = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-3 gap-3 mb-8"
+          className="grid grid-cols-2 gap-3 mb-8"
         >
-          <motion.div variants={itemVariants} className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
-            <Users size={14} className="text-violet-500 mb-1" />
-            <p className="text-xs font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : userCount}</p>
-            <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Joueurs</p>
+          <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
+            <Users size={18} className="text-violet-500 mb-1" />
+            <p className="text-sm font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : userCount}</p>
+            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Joueurs</p>
           </motion.div>
-          <motion.div variants={itemVariants} className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
-            <Trophy size={14} className="text-yellow-500 mb-1" />
-            <p className="text-xs font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : totalTournaments}</p>
-            <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
-          </motion.div>
-          <motion.div variants={itemVariants} className="bg-card border border-border p-3 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
-            <Award size={14} className="text-cyan-500 mb-1" />
-            <p className="text-xs font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-12 mx-auto" /> : totalPrizes.toLocaleString('fr-FR')}</p>
-            <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-wider">Prix (FCFA)</p>
+          <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
+            <Trophy size={18} className="text-yellow-500 mb-1" />
+            <p className="text-sm font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : totalTournaments}</p>
+            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
           </motion.div>
         </motion.section>
 
@@ -358,50 +263,6 @@ const Index = () => {
             )}
           </motion.div>
         </section>
-
-        {myTournaments.length > 0 && (
-          <section className="mb-10">
-            <h2 className="text-sm font-black flex items-center gap-2 mb-4 uppercase tracking-widest text-muted-foreground"><Gamepad2 className="text-violet-500" size={16} /> Mes Inscriptions</h2>
-            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-              {myTournaments.map((t) => (
-                <motion.div 
-                  whileTap={{ scale: 0.95 }}
-                  key={t.id} 
-                  onClick={() => navigate(`/tournament/${t.id}`)} 
-                  className="flex-shrink-0 w-52 bg-card border border-border rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer hover:border-violet-500/50 transition-all shadow-sm"
-                >
-                  <div className="w-9 h-9 rounded-lg overflow-hidden"><img src={t.image_url} className="w-full h-full object-cover" alt="" /></div>
-                  <div className="flex-1 min-w-0"><p className="font-bold text-[10px] truncate">{t.title}</p><p className="text-violet-500 text-[8px] font-black uppercase tracking-tighter">{t.game}</p></div>
-                  <ChevronRight size={12} className="text-muted-foreground" />
-                </motion.div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {finishedTournaments.length > 0 && (
-          <section className="mb-12">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <Award size={16} className="text-yellow-500" />
-                <h2 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Légendes de l'Arène</h2>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {finishedTournaments.map((t) => (
-                <FinishedTournamentCard 
-                  key={t.id}
-                  title={t.title}
-                  game={t.game}
-                  image={t.image_url}
-                  prizePool={t.prize_pool}
-                  winnerName={t.winner_name || "Champion"}
-                  winnerAvatar={t.winner_avatar}
-                />
-              ))}
-            </div>
-          </section>
-        )}
 
         <footer className="mt-12 py-12 border-t border-border text-center space-y-8">
           <div className="flex items-center justify-center gap-6">

@@ -20,7 +20,6 @@ const Navbar = () => {
       setIsLoggedIn(!!session);
       setUser(session?.user || null);
       if (session?.user) {
-        // On essaie d'abord de prendre l'avatar des métadonnées pour éviter le clignotement
         if (session.user.user_metadata?.avatar_url) {
           setDbAvatar(session.user.user_metadata.avatar_url);
         }
@@ -58,12 +57,11 @@ const Navbar = () => {
     setLoadingAvatar(false);
   };
 
-  // Priorité : Avatar de la DB > Avatar des métadonnées > Dicebear
   const avatarUrl = dbAvatar || user?.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border px-2 py-3 md:top-0 md:bottom-auto md:border-b md:border-t-0">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <nav className="fixed bottom-4 left-4 right-4 z-50 bg-background/90 backdrop-blur-xl border border-border px-4 py-3 rounded-[30px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] md:top-4 md:bottom-auto md:max-w-fit md:mx-auto md:px-8">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-8">
         <Link to="/" className="hidden md:block">
           <Logo size="sm" />
         </Link>

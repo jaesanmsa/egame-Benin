@@ -65,7 +65,7 @@ const Leaderboard = () => {
         </div>
         <div className="text-center">
           <p className="font-black text-xs truncate max-w-[80px]">{player?.username || "---"}</p>
-          <p className={`text-[10px] font-black ${config.color}`}>{player?.wins || 0} PTS</p>
+          <p className={`text-[10px] font-black ${config.color}`}>{player?.wins || 0} Victoires</p>
         </div>
         <div className={`w-full ${config.height} ${config.bg} rounded-t-2xl border-x border-t ${config.border} flex items-end justify-center pb-4`}>
           <span className={`text-2xl font-black ${config.color} opacity-40`}>#{rank}</span>
@@ -75,7 +75,7 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-background text-foreground pb-32 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-2xl mx-auto px-6 py-8">
         <button onClick={() => selectedGame ? setSelectedGame(null) : navigate(-1)} className="flex items-center gap-2 text-muted-foreground mb-6 hover:text-foreground transition-colors text-xs font-bold uppercase tracking-widest">
@@ -130,14 +130,12 @@ const Leaderboard = () => {
                 </div>
               ) : (
                 <>
-                  {/* Podium Section */}
                   <div className="flex items-end justify-center gap-2 px-4 pt-8">
                     <PodiumItem player={rankings[1]} rank={2} />
                     <PodiumItem player={rankings[0]} rank={1} />
                     <PodiumItem player={rankings[2]} rank={3} />
                   </div>
 
-                  {/* Rest of the list */}
                   <div className="space-y-2">
                     {rankings.slice(3).map((p, i) => (
                       <motion.div 
@@ -155,15 +153,10 @@ const Leaderboard = () => {
                           <span className="text-sm font-bold">{p.username}</span>
                         </div>
                         <div className="flex items-center gap-2 text-violet-500 font-black text-xs">
-                          <Star size={14} className="fill-violet-500/20" /> {p.wins}
+                          {p.wins} Victoires
                         </div>
                       </motion.div>
                     ))}
-                    {rankings.length < 4 && (
-                      <div className="text-center py-12 bg-muted/20 rounded-3xl border border-dashed border-border">
-                        <p className="text-muted-foreground text-xs font-bold italic">En attente de nouveaux champions...</p>
-                      </div>
-                    )}
                   </div>
                 </>
               )}
