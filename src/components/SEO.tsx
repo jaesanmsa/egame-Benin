@@ -12,13 +12,13 @@ interface SEOProps {
 }
 
 const SEO = ({ 
-  title = "eGame Benin | L'arène ultime des gamers béninois", 
-  description = "Participez aux meilleurs tournois de jeux vidéo au Bénin (Blur, COD, Clash Royale). Gagnez des cash prizes et rejoignez la communauté.",
+  title = "eGame Bénin | La communauté gaming #1 au Bénin", 
+  description = "Rejoins la communauté gaming #1 au Bénin. Inscris-toi aux tournois, paye via Mobile Money et gagne des cash prizes. Blur, COD, Clash Royale et plus.",
   image = "https://ajbpdaxtynkazdrzyopd.supabase.co/storage/v1/object/public/assets/og-image.jpg",
   url = "https://www.egamebenin.com",
   type = "website"
 }: SEOProps) => {
-  const siteTitle = title.includes("eGame Benin") ? title : `${title} | eGame Benin`;
+  const siteTitle = title.includes("eGame Bénin") ? title : `${title} | eGame Bénin`;
 
   return (
     <Helmet>
