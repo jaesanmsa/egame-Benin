@@ -96,7 +96,7 @@ const Navbar = () => {
             </Link>
           )}
 
-          <Link to="/profile" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/profile') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
+          <Link to="/profile" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/profile') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'} md:hidden`}>
             {isLoggedIn ? (
               <div className={`w-6 h-6 rounded-full overflow-hidden border bg-muted ${isActive('/profile') ? 'border-violet-500' : 'border-border'}`}>
                 {!loadingAvatar && <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />}
@@ -104,7 +104,7 @@ const Navbar = () => {
             ) : (
               <User size={22} />
             )}
-            <span className="text-[9px] font-bold md:hidden">Profil</span>
+            <span className="text-[9px] font-bold">Profil</span>
           </Link>
         </div>
 
