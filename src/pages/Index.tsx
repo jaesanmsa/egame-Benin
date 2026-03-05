@@ -7,7 +7,7 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import NewUserGuide from '@/components/NewUserGuide';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight, Activity, MessageSquare, SearchX } from 'lucide-react';
+import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight, Activity, MessageSquare, SearchX, Coins } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
@@ -50,6 +50,7 @@ const Index = () => {
       setTournaments(active);
       setTotalTournaments(allData.length);
       
+      // Calcul du total des prix pour les tournois terminés
       const prizesSum = allData
         .filter(t => t.status === 'finished' && t.prize_pool)
         .reduce((acc, t) => {
@@ -201,7 +202,7 @@ const Index = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-2 gap-3 mb-8"
+          className="grid grid-cols-3 gap-3 mb-8"
         >
           <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
             <Users size={18} className="text-violet-500 mb-1" />
@@ -212,6 +213,11 @@ const Index = () => {
             <Trophy size={18} className="text-yellow-500 mb-1" />
             <p className="text-sm font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : totalTournaments}</p>
             <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
+          </motion.div>
+          <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
+            <Coins size={18} className="text-green-500 mb-1" />
+            <p className="text-sm font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : totalPrizes.toLocaleString()}</p>
+            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Cash Prizes</p>
           </motion.div>
         </motion.section>
 
