@@ -27,10 +27,6 @@ const Index = () => {
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   
-  const [userCount, setUserCount] = useState(0);
-  const [totalTournaments, setTotalTournaments] = useState(0);
-  const [totalPrizes, setTotalPrizes] = useState(0);
-  
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<string>("all");
@@ -48,16 +44,6 @@ const Index = () => {
     if (allData) {
       const active = allData.filter(t => t.status === 'active');
       setTournaments(active);
-      setTotalTournaments(allData.length);
-      
-      // Calcul du total des prix pour les tournois terminés
-      const prizesSum = allData
-        .filter(t => t.status === 'finished' && t.prize_pool)
-        .reduce((acc, t) => {
-          const amount = parseInt(t.prize_pool.replace(/[^0-9]/g, '')) || 0;
-          return acc + amount;
-        }, 0);
-      setTotalPrizes(prizesSum);
     }
 
     const { data: activity } = await supabase
@@ -67,11 +53,6 @@ const Index = () => {
       .order('created_at', { ascending: false })
       .limit(5);
     if (activity) setRecentActivity(activity);
-  };
-
-  const fetchUserCount = async () => {
-    const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-    if (count !== null) setUserCount(count);
   };
 
   const fetchProfile = async (userId: string) => {
@@ -111,7 +92,6 @@ const Index = () => {
     init();
     fetchData();
     fetchParticipantCounts();
-    fetchUserCount();
   }, []);
 
   const filteredTournaments = tournaments.filter(t => {
@@ -206,17 +186,17 @@ const Index = () => {
         >
           <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
             <Users size={18} className="text-violet-500 mb-1" />
-            <p className="text-sm font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : userCount}</p>
+            <p className="text-sm font-black text-foreground leading-none mb-1">00</p>
             <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Joueurs</p>
           </motion.div>
           <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
             <Trophy size={18} className="text-yellow-500 mb-1" />
-            <p className="text-sm font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : totalTournaments}</p>
+            <p className="text-sm font-black text-foreground leading-none mb-1">00</p>
             <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
           </motion.div>
           <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
             <Coins size={18} className="text-green-500 mb-1" />
-            <p className="text-sm font-black text-foreground leading-none mb-1">{loading ? <Skeleton className="h-3 w-8 mx-auto" /> : totalPrizes.toLocaleString()}</p>
+            <p className="text-sm font-black text-foreground leading-none mb-1">00</p>
             <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Cash Prizes</p>
           </motion.div>
         </motion.section>
