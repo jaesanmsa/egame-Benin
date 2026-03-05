@@ -126,11 +126,7 @@ const Index = () => {
         
         <div className="flex items-center justify-between mb-8">
           <Logo size="md" />
-          <Link to="/profile" className="md:hidden">
-            <div className="w-10 h-10 rounded-full border-2 border-violet-600 overflow-hidden bg-muted shadow-lg shadow-violet-500/10">
-              {profile?.avatar_url && <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />}
-            </div>
-          </Link>
+          {/* Photo de profil supprimée ici */}
         </div>
 
         {featuredTournament && (

@@ -118,9 +118,10 @@ const Navbar = () => {
             </Link>
           ) : (
             <Link to="/profile">
-              <div className="w-10 h-10 rounded-full bg-muted border border-border overflow-hidden hover:border-violet-500 transition-colors">
-                {!loadingAvatar && <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />}
-              </div>
+              <button className="bg-muted hover:bg-muted/80 text-foreground px-6 py-2 rounded-full font-medium transition-all border border-border flex items-center gap-2">
+                <User size={18} />
+                Mon Profil
+              </button>
             </Link>
           )}
         </div>
