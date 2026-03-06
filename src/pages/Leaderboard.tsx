@@ -12,7 +12,9 @@ const DEFAULT_GAMES = [
   { id: 'cod-mw4', name: 'COD MW4', icon: '🔫' },
   { id: 'cod-mobile', name: 'COD Mobile', icon: '📱' },
   { id: 'bombsquad', name: 'BombSquad', icon: '💣' },
-  { id: 'clash-royale', name: 'Clash Royale', icon: '👑' }
+  { id: 'clash-royale', name: 'Clash Royale', icon: '👑' },
+  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰' },
+  { id: 'free-fire', name: 'Free Fire', icon: '🔥' }
 ];
 
 const Leaderboard = () => {
