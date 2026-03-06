@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock, CreditCard, Zap, User } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock, CreditCard, Zap, User, AlertTriangle, FileText } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -17,6 +17,7 @@ const TournamentDetails = () => {
   const [tournament, setTournament] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showPayment, setShowPayment] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing'>('select');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
@@ -189,7 +190,7 @@ const TournamentDetails = () => {
             </div>
           ) : (
             isLoggedIn ? (
-              <Button onClick={() => !isFull && setShowPayment(true)} disabled={isFull} className="w-full py-7 rounded-2xl font-black text-base bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/20 transition-all active:scale-[0.98]">
+              <Button onClick={() => !isFull && setShowConfirmation(true)} disabled={isFull} className="w-full py-7 rounded-2xl font-black text-base bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/20 transition-all active:scale-[0.98]">
                 {isFull ? "Tournoi Complet" : `S'inscrire • ${tournament.entry_fee} FCFA`}
               </Button>
             ) : (
@@ -199,34 +200,16 @@ const TournamentDetails = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Participants Section */}
+          {/* Description Section */}
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
             className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"
           >
-            <h2 className="text-sm font-black mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Users className="text-violet-500" size={18} /> Participants ({participantCount})</h2>
-            <div className="flex flex-wrap gap-3">
-              {participants.length > 0 ? (
-                participants.map((p, i) => (
-                  <div key={i} className="group relative">
-                    <div className="w-10 h-10 rounded-full border-2 border-border overflow-hidden bg-muted group-hover:border-violet-500 transition-colors">
-                      <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username}`} alt="" className="w-full h-full object-cover" />
-                    </div>
-                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 text-white text-[8px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
-                      {p.username}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-[10px] text-muted-foreground font-bold italic">Soyez le premier à rejoindre l'arène !</p>
-              )}
-              {participantCount > 12 && (
-                <div className="w-10 h-10 rounded-full border-2 border-dashed border-border flex items-center justify-center text-[10px] font-black text-muted-foreground">
-                  +{participantCount - 12}
-                </div>
-              )}
+            <h2 className="text-sm font-black mb-6 flex items-center gap-2.5 uppercase tracking-widest"><FileText className="text-violet-500" size={18} /> Déroulement</h2>
+            <div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium max-h-[200px] overflow-y-auto no-scrollbar">
+              {tournament.description || "Le déroulement détaillé sera communiqué prochainement."}
             </div>
           </motion.div>
 
@@ -238,29 +221,68 @@ const TournamentDetails = () => {
             className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"
           >
             <h2 className="text-sm font-black mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Info className="text-violet-500" size={18} /> Règlement</h2>
-            <div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium max-h-[150px] overflow-y-auto no-scrollbar">
+            <div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium max-h-[200px] overflow-y-auto no-scrollbar">
               {tournament.rules || "Aucun règlement spécifique communiqué pour le moment."}
             </div>
           </motion.div>
         </div>
+
+        {/* Participants Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm mt-6"
+        >
+          <h2 className="text-sm font-black mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Users className="text-violet-500" size={18} /> Participants ({participantCount})</h2>
+          <div className="flex flex-wrap gap-3">
+            {participants.length > 0 ? (
+              participants.map((p, i) => (
+                <div key={i} className="group relative">
+                  <div className="w-10 h-10 rounded-full border-2 border-border overflow-hidden bg-muted group-hover:border-violet-500 transition-colors">
+                    <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username}`} alt="" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 text-white text-[8px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                    {p.username}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-[10px] text-muted-foreground font-bold italic">Soyez le premier à rejoindre l'arène !</p>
+            )}
+            {participantCount > 12 && (
+              <div className="w-10 h-10 rounded-full border-2 border-dashed border-border flex items-center justify-center text-[10px] font-black text-muted-foreground">
+                +{participantCount - 12}
+              </div>
+            )}
+          </div>
+        </motion.div>
       </main>
 
       <AnimatePresence>
+        {/* Confirmation Modal */}
+        {showConfirmation && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowConfirmation(false)} />
+            <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }} className="relative bg-card border border-border w-full max-w-[400px] rounded-[2.5rem] p-8 shadow-2xl z-[10000] text-center">
+              <div className="w-16 h-16 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500 mx-auto mb-6"><AlertTriangle size={32} /></div>
+              <h2 className="text-xl font-black mb-4">Attention Champion !</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-8">
+                Veuillez lire attentivement la <span className="text-foreground font-bold">description</span> et le <span className="text-foreground font-bold">règlement</span> du tournoi avant de procéder au paiement.
+              </p>
+              <div className="space-y-3">
+                <Button onClick={() => { setShowConfirmation(false); setShowPayment(true); }} className="w-full py-6 rounded-2xl bg-violet-600 hover:bg-violet-700 font-black text-white">J'ai lu, je continue</Button>
+                <Button variant="ghost" onClick={() => setShowConfirmation(false)} className="w-full py-6 rounded-2xl font-bold text-muted-foreground">Retourner lire</Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Payment Modal */}
         {showPayment && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
-              onClick={() => setShowPayment(false)} 
-            />
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative bg-card border border-border w-full max-w-[380px] rounded-[2.5rem] p-8 shadow-2xl z-[10000]"
-            >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPayment(false)} />
+            <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }} className="relative bg-card border border-border w-full max-w-[380px] rounded-[2.5rem] p-8 shadow-2xl z-[10000]">
               <button onClick={() => setShowPayment(false)} className="absolute top-6 right-6 p-2 text-muted-foreground bg-muted rounded-full hover:text-foreground transition-colors"><X size={18} /></button>
               {paymentStep === 'select' ? (
                 <div className="space-y-6 text-center">

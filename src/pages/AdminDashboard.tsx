@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search, Settings, Edit3, Star, Link as LinkIcon, User, LayoutDashboard, BarChart3 } from 'lucide-react';
+import { Trophy, Plus, Users, Globe, MapPin, Check, X, CreditCard, History, Search, Settings, Edit3, Star, Link as LinkIcon, User, LayoutDashboard, BarChart3, FileText } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import { motion } from 'framer-motion';
 
@@ -29,7 +29,7 @@ const AdminDashboard = () => {
   const [participantsList, setParticipantsList] = useState<any[]>([]);
   
   const [newTournament, setNewTournament] = useState({
-    id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: '', city: 'Cotonou'
+    id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '', city: 'Cotonou'
   });
 
   const [editingTournament, setEditingTournament] = useState<any>(null);
@@ -89,7 +89,7 @@ const AdminDashboard = () => {
     if (error) showError(error.message);
     else {
       showSuccess("Tournoi ajouté !");
-      setNewTournament({ id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', payment_url: '', city: 'Cotonou' });
+      setNewTournament({ id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '', city: 'Cotonou' });
       fetchData();
     }
   };
@@ -100,6 +100,7 @@ const AdminDashboard = () => {
       .from('tournaments')
       .update({ 
         rules: editingTournament.rules,
+        description: editingTournament.description,
         prize_pool: editingTournament.prize_pool,
         payment_url: editingTournament.payment_url,
         city: editingTournament.city,
@@ -363,13 +364,13 @@ const AdminDashboard = () => {
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Lien de paiement FedaPay</Label>
-                  <Input placeholder="https://me.fedapay.com/..." value={newTournament.payment_url} onChange={e => setNewTournament({...newTournament, payment_url: e.target.value})} className="py-6 bg-muted/50 border-border rounded-xl" />
+                  <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Description (Déroulement)</Label>
+                  <Textarea placeholder="Expliquez comment le tournoi va se dérouler..." value={newTournament.description} onChange={e => setNewTournament({...newTournament, description: e.target.value})} className="bg-muted/50 border-border rounded-2xl min-h-[100px] p-4" />
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
                   <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Règlement</Label>
-                  <Textarea placeholder="Règlement du tournoi..." value={newTournament.rules} onChange={e => setNewTournament({...newTournament, rules: e.target.value})} className="bg-muted/50 border-border rounded-2xl min-h-[120px] p-4" />
+                  <Textarea placeholder="Règlement du tournoi..." value={newTournament.rules} onChange={e => setNewTournament({...newTournament, rules: e.target.value})} className="bg-muted/50 border-border rounded-2xl min-h-[100px] p-4" />
                 </div>
               </div>
               <Button type="submit" className="w-full bg-violet-600 hover:bg-violet-700 py-8 rounded-2xl font-black text-base shadow-xl shadow-violet-500/20 text-white">Créer le tournoi</Button>
@@ -442,15 +443,6 @@ const AdminDashboard = () => {
                     </div>
 
                     <div className="md:col-span-2 space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Lien de paiement FedaPay</Label>
-                      <Input 
-                        value={editingTournament.payment_url || ''} 
-                        onChange={e => setEditingTournament({...editingTournament, payment_url: e.target.value})}
-                        className="py-6 bg-muted/50 border-border rounded-xl"
-                        placeholder="https://me.fedapay.com/..."
-                      />
-                    </div>
-                    <div className="md:col-span-2 space-y-2">
                       <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Cash Prize</Label>
                       <Input 
                         value={editingTournament.prize_pool || ''} 
@@ -459,11 +451,19 @@ const AdminDashboard = () => {
                       />
                     </div>
                     <div className="md:col-span-2 space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Description (Déroulement)</Label>
+                      <Textarea 
+                        value={editingTournament.description || ''} 
+                        onChange={e => setEditingTournament({...editingTournament, description: e.target.value})}
+                        className="bg-muted/50 border-border rounded-2xl min-h-[120px] p-4"
+                      />
+                    </div>
+                    <div className="md:col-span-2 space-y-2">
                       <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Règlement</Label>
                       <Textarea 
                         value={editingTournament.rules || ''} 
                         onChange={e => setEditingTournament({...editingTournament, rules: e.target.value})}
-                        className="bg-muted/50 border-border rounded-2xl min-h-[150px] p-4"
+                        className="bg-muted/50 border-border rounded-2xl min-h-[120px] p-4"
                       />
                     </div>
                   </div>
