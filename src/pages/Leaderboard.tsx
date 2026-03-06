@@ -14,7 +14,8 @@ const DEFAULT_GAMES = [
   { id: 'bombsquad', name: 'BombSquad', icon: '💣' },
   { id: 'clash-royale', name: 'Clash Royale', icon: '👑' },
   { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰' },
-  { id: 'free-fire', name: 'Free Fire', icon: '🔥' }
+  { id: 'free-fire', name: 'Free Fire', icon: '🔥' },
+  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗' }
 ];
 
 const Leaderboard = () => {

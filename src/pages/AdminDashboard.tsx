@@ -15,7 +15,7 @@ import { showError, showSuccess } from '@/utils/toast';
 import { motion } from 'framer-motion';
 
 const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
-const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Clash of Clans", "Free Fire", "Autre"];
+const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Clash of Clans", "Free Fire", "PUBG Mobile", "Autre"];
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -525,6 +525,7 @@ const AdminDashboard = () => {
                       <SelectItem value="clash-royale" className="font-bold">Clash Royale</SelectItem>
                       <SelectItem value="clash-of-clans" className="font-bold">Clash of Clans</SelectItem>
                       <SelectItem value="free-fire" className="font-bold">Free Fire</SelectItem>
+                      <SelectItem value="pubg-mobile" className="font-bold">PUBG Mobile</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

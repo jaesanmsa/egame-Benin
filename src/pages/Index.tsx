@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { showSuccess, showError } from '@/utils/toast';
 
 const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
-const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Clash of Clans", "Free Fire"];
+const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Clash of Clans", "Free Fire", "PUBG Mobile"];
 
 const Index = () => {
   const [session, setSession] = useState<any>(null);
