@@ -46,15 +46,20 @@ const Index = () => {
     
     if (allData) {
       const active = allData.filter(t => t.status === 'active');
+      const finished = allData.filter(t => t.status === 'finished');
       setTournaments(active);
       
-      // Calcul du total cash prize (approximatif car c'est du texte, on extrait les nombres)
-      const totalPrize = active.reduce((acc, t) => {
+      // Calcul du total cash prize versé (tournois terminés)
+      const totalPaidPrize = finished.reduce((acc, t) => {
         const amount = parseInt(t.prize_pool?.replace(/[^0-9]/g, '') || '0');
         return acc + amount;
       }, 0);
       
-      setStats(prev => ({ ...prev, tournaments: active.length, cashPrize: totalPrize }));
+      setStats(prev => ({ 
+        ...prev, 
+        tournaments: active.length, 
+        cashPrize: totalPaidPrize 
+      }));
     }
 
     // Nombre total de joueurs (profils)
@@ -207,7 +212,7 @@ const Index = () => {
           <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
             <Coins size={18} className="text-green-500 mb-1" />
             <p className="text-sm font-black text-foreground leading-none mb-1">{stats.cashPrize.toLocaleString()}</p>
-            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">FCFA en jeu</p>
+            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Cash Prize total versé</p>
           </motion.div>
         </motion.section>
 
