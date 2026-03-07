@@ -27,6 +27,9 @@ const Index = () => {
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   
+  // Stats
+  const [stats, setStats] = useState({ players: 0, tournaments: 0, cashPrize: 0 });
+  
   const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<string>("all");
@@ -44,7 +47,19 @@ const Index = () => {
     if (allData) {
       const active = allData.filter(t => t.status === 'active');
       setTournaments(active);
+      
+      // Calcul du total cash prize (approximatif car c'est du texte, on extrait les nombres)
+      const totalPrize = active.reduce((acc, t) => {
+        const amount = parseInt(t.prize_pool?.replace(/[^0-9]/g, '') || '0');
+        return acc + amount;
+      }, 0);
+      
+      setStats(prev => ({ ...prev, tournaments: active.length, cashPrize: totalPrize }));
     }
+
+    // Nombre total de joueurs (profils)
+    const { count: playerCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+    setStats(prev => ({ ...prev, players: playerCount || 0 }));
 
     const { data: activity } = await supabase
       .from('payments')
@@ -126,7 +141,6 @@ const Index = () => {
         
         <div className="flex items-center justify-between mb-8">
           <Logo size="md" />
-          {/* Photo de profil supprimée ici */}
         </div>
 
         {featuredTournament && (
@@ -182,18 +196,18 @@ const Index = () => {
         >
           <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
             <Users size={18} className="text-violet-500 mb-1" />
-            <p className="text-sm font-black text-foreground leading-none mb-1">00</p>
+            <p className="text-sm font-black text-foreground leading-none mb-1">{stats.players}</p>
             <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Joueurs</p>
           </motion.div>
           <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
             <Trophy size={18} className="text-yellow-500 mb-1" />
-            <p className="text-sm font-black text-foreground leading-none mb-1">00</p>
+            <p className="text-sm font-black text-foreground leading-none mb-1">{stats.tournaments}</p>
             <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
           </motion.div>
           <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
             <Coins size={18} className="text-green-500 mb-1" />
-            <p className="text-sm font-black text-foreground leading-none mb-1">00</p>
-            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Cash Prizes</p>
+            <p className="text-sm font-black text-foreground leading-none mb-1">{stats.cashPrize.toLocaleString()}</p>
+            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">FCFA en jeu</p>
           </motion.div>
         </motion.section>
 
