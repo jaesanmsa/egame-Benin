@@ -46,23 +46,17 @@ const Index = () => {
     
     if (allData) {
       const active = allData.filter(t => t.status === 'active');
-      const finished = allData.filter(t => t.status === 'finished');
       setTournaments(active);
       
-      // Calcul du total cash prize versé (tournois terminés)
-      const totalPaidPrize = finished.reduce((acc, t) => {
-        const amount = parseInt(t.prize_pool?.replace(/[^0-9]/g, '') || '0');
-        return acc + amount;
-      }, 0);
-      
+      // Note: Les stats tournois et cash prize sont forcées à 0 pour le moment sur demande
       setStats(prev => ({ 
         ...prev, 
-        tournaments: active.length, 
-        cashPrize: totalPaidPrize 
+        tournaments: 0, 
+        cashPrize: 0 
       }));
     }
 
-    // Nombre total de joueurs (profils)
+    // Nombre total de joueurs (profils) reste dynamique
     const { count: playerCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
     setStats(prev => ({ ...prev, players: playerCount || 0 }));
 
