@@ -11,7 +11,7 @@ import { supabase } from '@/lib/supabase';
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from 'framer-motion';
 // @ts-ignore
-import KKiapay from "kkiapay";
+import * as KKiapayModule from "kkiapay";
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -99,6 +99,10 @@ const TournamentDetails = () => {
       if (!user) throw new Error("Veuillez vous connecter");
 
       const validationCode = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+      
+      // On récupère le constructeur KKiapay depuis le module importé
+      // @ts-ignore
+      const KKiapay = KKiapayModule.default || KKiapayModule.KKiapay || KKiapayModule;
       
       const kkiapay = new KKiapay({
         amount: tournament.entry_fee,
