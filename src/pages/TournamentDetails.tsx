@@ -10,6 +10,8 @@ import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from 'framer-motion';
+// @ts-ignore
+import KKiapay from "kkiapay";
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -23,6 +25,7 @@ const TournamentDetails = () => {
   const [participantCount, setParticipantCount] = useState(0);
   const [participants, setParticipants] = useState<any[]>([]);
   const [userRegistration, setUserRegistration] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
     const fetchTournament = async () => {
@@ -53,9 +56,17 @@ const TournamentDetails = () => {
       }
     };
 
+    const fetchUserProfile = async (userId: string) => {
+      const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      if (data) setUserProfile(data);
+    };
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
-      if (session?.user) checkUserRegistration(session.user.id);
+      if (session?.user) {
+        checkUserRegistration(session.user.id);
+        fetchUserProfile(session.user.id);
+      }
     });
 
     fetchTournament();
@@ -81,23 +92,59 @@ const TournamentDetails = () => {
     }
   };
 
-  const handlePayment = async (provider: 'fedapay' | 'geniuspay') => {
+  const handleKKiaPay = async () => {
     setPaymentStep('processing');
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("Veuillez vous connecter");
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Veuillez vous connecter");
 
-      const functionName = provider === 'fedapay' ? 'create-payment' : 'create-geniuspay-payment';
+      const validationCode = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
       
-      const { data, error } = await supabase.functions.invoke(functionName, {
-        body: { tournament_id: id, tournament_name: tournament.title, amount: tournament.entry_fee },
-        headers: { Authorization: `Bearer ${session.access_token}` },
+      const kkiapay = new KKiapay({
+        amount: tournament.entry_fee,
+        api_key: "55aabcdf1c8398c899fa55d79f1c33beb8ace5df",
+        sandbox: false,
+        email: user.email,
+        phone: userProfile?.phone || "",
+        name: userProfile?.full_name || userProfile?.username || "Joueur",
       });
 
-      if (error) throw error;
-      if (data?.url) window.location.href = data.url;
+      kkiapay.onSuccess(async (response: any) => {
+        console.log("Paiement réussi:", response);
+        
+        // Enregistrement en base
+        await supabase.from('payments').insert({
+          user_id: user.id,
+          tournament_id: id,
+          tournament_name: tournament.title,
+          amount: String(tournament.entry_fee),
+          status: 'Réussi',
+          validation_code: validationCode,
+          kkiapay_transaction_id: response.transactionId
+        });
+
+        // Notification WhatsApp via Edge Function
+        await supabase.functions.invoke('notify-payment', {
+          body: {
+            joueur_nom: userProfile?.full_name || userProfile?.username || "Joueur",
+            joueur_prenom: "",
+            joueur_telephone: userProfile?.phone || "N/A",
+            tournoi_nom: tournament.title,
+            montant: tournament.entry_fee,
+            transactionId: response.transactionId
+          }
+        });
+
+        showSuccess("Paiement validé !");
+        navigate('/payment-success');
+      });
+
+      kkiapay.open();
+      setPaymentStep('select');
+      setShowPayment(false);
+
     } catch (err: any) {
-      showError(err.message || "Erreur de redirection.");
+      showError(err.message || "Erreur lors de l'initialisation du paiement.");
       setPaymentStep('select');
       setShowPayment(false);
     }
@@ -289,22 +336,14 @@ const TournamentDetails = () => {
                   <div className="w-16 h-16 bg-violet-600/10 rounded-2xl flex items-center justify-center text-violet-500 mx-auto"><Smartphone size={32} /></div>
                   <div>
                     <h2 className="text-xl font-black mb-1">Mode de Paiement</h2>
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Sécurisé par nos partenaires</p>
+                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Sécurisé par KKiaPay</p>
                   </div>
                   
                   <div className="space-y-3">
-                    <button onClick={() => handlePayment('fedapay')} className="w-full flex items-center justify-between p-4 bg-muted/50 rounded-2xl border border-border hover:border-violet-500/50 transition-all group">
+                    <button onClick={handleKKiaPay} className="w-full flex items-center justify-between p-4 bg-muted/50 rounded-2xl border border-border hover:border-violet-500/50 transition-all group">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-colors"><Smartphone size={18} /></div>
-                        <div className="text-left"><p className="font-bold text-xs">FedaPay (Bénin)</p><p className="text-[8px] text-muted-foreground font-black uppercase tracking-tighter">MTN / Moov Money</p></div>
-                      </div>
-                      <ChevronRight size={16} className="text-muted-foreground group-hover:text-violet-500 transition-colors" />
-                    </button>
-
-                    <button onClick={() => handlePayment('geniuspay')} className="w-full flex items-center justify-between p-4 bg-muted/50 rounded-2xl border border-border hover:border-violet-500/50 transition-all group">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors"><CreditCard size={18} /></div>
-                        <div className="text-left"><p className="font-bold text-xs">GeniusPay (RCI)</p><p className="text-[8px] text-muted-foreground font-black uppercase tracking-tighter">Orange / MTN / Moov</p></div>
+                        <div className="w-10 h-10 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-500 group-hover:bg-violet-500 group-hover:text-white transition-colors"><Smartphone size={18} /></div>
+                        <div className="text-left"><p className="font-bold text-xs">KKiaPay (Bénin)</p><p className="text-[8px] text-muted-foreground font-black uppercase tracking-tighter">MTN / Moov / Celtiis</p></div>
                       </div>
                       <ChevronRight size={16} className="text-muted-foreground group-hover:text-violet-500 transition-colors" />
                     </button>
@@ -314,8 +353,8 @@ const TournamentDetails = () => {
                 <div className="py-12 text-center space-y-6">
                   <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
                   <div>
-                    <h2 className="text-xl font-black mb-1">Redirection...</h2>
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Vers la plateforme de paiement</p>
+                    <h2 className="text-xl font-black mb-1">Initialisation...</h2>
+                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Préparation du widget KKiaPay</p>
                   </div>
                 </div>
               )}
