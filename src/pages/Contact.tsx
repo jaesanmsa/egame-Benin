@@ -32,7 +32,7 @@ const Contact = () => {
   };
 
   const faqs = [
-    { q: "Comment s'inscrire à un tournoi ?", a: "Choisissez un tournoi sur l'accueil, cliquez sur 'Participer' et suivez les instructions de paiement via FedaPay (MTN/Moov)." },
+    { q: "Comment s'inscrire à un tournoi ?", a: "Choisissez un tournoi sur l'accueil, cliquez sur 'Participer' et suivez les instructions de paiement via KKiaPay (MTN, Moov ou Celtiis)." },
     { q: "Comment valider ma participation ?", a: "Après le paiement, allez dans votre 'Historique', copiez votre code de validation et envoyez-le nous sur WhatsApp." },
     { q: "Les tournois sont-ils gratuits ?", a: "La plupart des tournois ont des frais d'entrée qui servent à constituer le 'Cash Prize' pour les gagnants." },
     { q: "Où se déroulent les tournois présentiels ?", a: "Les lieux exacts (souvent à Cotonou) sont communiqués aux participants via WhatsApp après validation." }

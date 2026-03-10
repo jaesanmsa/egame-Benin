@@ -163,7 +163,7 @@ const PaymentHistory = () => {
                         <RefreshCw size={16} className="animate-spin" />
                         <p className="text-xs font-bold">Vérification en cours...</p>
                       </div>
-                      <p className="text-[10px] text-muted-foreground">Dès que votre paiement est validé sur FedaPay, cette page se mettra à jour automatiquement.</p>
+                      <p className="text-[10px] text-muted-foreground">Dès que votre paiement est validé sur KKiaPay, cette page se mettra à jour automatiquement.</p>
                     </div>
                   )}
                 </motion.div>
