@@ -10,8 +10,6 @@ import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from 'framer-motion';
-// @ts-ignore
-import * as KKiapayModule from "kkiapay";
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -100,50 +98,55 @@ const TournamentDetails = () => {
 
       const validationCode = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
       
-      // On récupère le constructeur KKiapay depuis le module importé
       // @ts-ignore
-      const KKiapay = KKiapayModule.default || KKiapayModule.KKiapay || KKiapayModule;
-      
-      const kkiapay = new KKiapay({
-        amount: tournament.entry_fee,
-        api_key: "55aabcdf1c8398c899fa55d79f1c33beb8ace5df",
-        sandbox: false,
-        email: user.email,
-        phone: userProfile?.phone || "",
-        name: userProfile?.full_name || userProfile?.username || "Joueur",
-      });
-
-      kkiapay.onSuccess(async (response: any) => {
-        console.log("Paiement réussi:", response);
-        
-        // Enregistrement en base
-        await supabase.from('payments').insert({
-          user_id: user.id,
-          tournament_id: id,
-          tournament_name: tournament.title,
-          amount: String(tournament.entry_fee),
-          status: 'Réussi',
-          validation_code: validationCode,
-          kkiapay_transaction_id: response.transactionId
+      if (typeof openKkiapayWidget === 'function') {
+        // @ts-ignore
+        openKkiapayWidget({
+          amount: tournament.entry_fee,
+          api_key: "55aabcdf1c8398c899fa55d79f1c33beb8ace5df",
+          sandbox: false,
+          email: user.email,
+          phone: userProfile?.phone || "",
+          name: userProfile?.full_name || userProfile?.username || "Joueur",
+          callback: `${window.location.origin}/payment-success`
         });
 
-        // Notification WhatsApp via Edge Function
-        await supabase.functions.invoke('notify-payment', {
-          body: {
-            joueur_nom: userProfile?.full_name || userProfile?.username || "Joueur",
-            joueur_prenom: "",
-            joueur_telephone: userProfile?.phone || "N/A",
-            tournoi_nom: tournament.title,
-            montant: tournament.entry_fee,
-            transactionId: response.transactionId
-          }
-        });
+        // Écouteur pour le succès du paiement via l'événement window
+        const handlePaymentSuccess = async (response: any) => {
+          console.log("Paiement réussi:", response);
+          
+          // Enregistrement en base
+          await supabase.from('payments').insert({
+            user_id: user.id,
+            tournament_id: id,
+            tournament_name: tournament.title,
+            amount: String(tournament.entry_fee),
+            status: 'Réussi',
+            validation_code: validationCode,
+            kkiapay_transaction_id: response.transactionId
+          });
 
-        showSuccess("Paiement validé !");
-        navigate('/payment-success');
-      });
+          // Notification WhatsApp via Edge Function
+          await supabase.functions.invoke('notify-payment', {
+            body: {
+              joueur_nom: userProfile?.full_name || userProfile?.username || "Joueur",
+              joueur_telephone: userProfile?.phone || "N/A",
+              tournoi_nom: tournament.title,
+              montant: tournament.entry_fee,
+              transactionId: response.transactionId
+            }
+          });
 
-      kkiapay.open();
+          showSuccess("Paiement validé !");
+          navigate('/payment-success');
+          window.removeEventListener('kkiapay_success', handlePaymentSuccess);
+        };
+
+        window.addEventListener('kkiapay_success', handlePaymentSuccess);
+      } else {
+        throw new Error("Le service de paiement n'est pas encore chargé. Réessayez dans un instant.");
+      }
+
       setPaymentStep('select');
       setShowPayment(false);
 

@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 
 const TWILIO_ACCOUNT_SID = "AC08e003bc21fec21e19662b7dd9c8d564";
 const TWILIO_AUTH_TOKEN = "3e9e74939927870b24e2a4ab94b4be29";
@@ -18,48 +17,16 @@ serve(async (req) => {
     const body = await req.json();
     console.log("[notify-payment] Payload reçu:", body);
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    const { joueur_nom, joueur_telephone, tournoi_nom, montant, transactionId } = body;
 
-    let transactionId = body.transactionId || body.transaction_id;
-    let joueur_nom = body.joueur_nom;
-    let joueur_prenom = body.joueur_prenom;
-    let joueur_telephone = body.joueur_telephone;
-    let tournoi_nom = body.tournoi_nom;
-    let montant = body.montant;
-
-    // Si c'est un webhook KKiaPay, on récupère les infos depuis la DB
-    if (transactionId && !tournoi_nom) {
-      const { data: payment, error: payError } = await supabase
-        .from('payments')
-        .select('*, profiles(full_name, phone, username)')
-        .eq('kkiapay_transaction_id', transactionId)
-        .single();
-
-      if (payment) {
-        joueur_nom = payment.profiles?.full_name || payment.profiles?.username || "Joueur";
-        joueur_prenom = "";
-        joueur_telephone = payment.profiles?.phone || "N/A";
-        tournoi_nom = payment.tournament_name;
-        montant = payment.amount;
-
-        // Mise à jour du statut en base
-        await supabase
-          .from('payments')
-          .update({ status: 'Réussi', updated_at: new Date().toISOString() })
-          .eq('kkiapay_transaction_id', transactionId);
-      }
-    }
-
-    // Message WhatsApp
+    // Message WhatsApp formaté
     const message =
       `✅ *Nouveau paiement confirmé !*\n\n` +
       `🎮 *Tournoi :* ${tournoi_nom}\n` +
-      `👤 *Joueur :* ${joueur_prenom} ${joueur_nom}\n` +
+      `👤 *Joueur :* ${joueur_nom}\n` +
       `📱 *WhatsApp :* ${joueur_telephone}\n` +
       `💰 *Montant :* ${montant} FCFA\n` +
+      `🆔 *Transaction :* ${transactionId}\n` +
       `🕐 *Date :* ${new Date().toLocaleString("fr-FR", { timeZone: "Africa/Porto-Novo" })}`;
 
     // Appel API Twilio
