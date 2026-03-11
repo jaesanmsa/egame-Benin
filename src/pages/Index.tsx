@@ -2,36 +2,25 @@
 
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
-import TournamentCard from '@/components/TournamentCard';
 import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
 import { motion } from 'framer-motion';
-import { Trophy, Gamepad2, Users, Coins, ShieldCheck, CreditCard, MessageSquare, SearchX, ArrowRight } from 'lucide-react';
+import { Trophy, Gamepad2, Users, Coins, ShieldCheck, CreditCard, MessageSquare, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from "@/components/ui/skeleton";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
-  const [tournaments, setTournaments] = useState<any[]>([]);
   const [stats, setStats] = useState({ players: 0, tournaments: 0, cashPrize: 0 });
   const [lastWinners, setLastWinners] = useState<any[]>([]);
-  const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   
   const navigate = useNavigate();
 
   const fetchData = async () => {
     setLoading(true);
     
-    const { data: tours } = await supabase
-      .from('tournaments')
-      .select('*')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false });
-    if (tours) setTournaments(tours);
-
     const { count: playerCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
     const { count: tourCount } = await supabase.from('tournaments').select('*', { count: 'exact', head: true });
     
@@ -68,13 +57,6 @@ const Index = () => {
       setLastWinners(winnersWithBadges);
     }
 
-    const { data: participants } = await supabase.from('payments').select('tournament_id').eq('status', 'Réussi');
-    if (participants) {
-      const counts: Record<string, number> = {};
-      participants.forEach((p: any) => { counts[p.tournament_id] = (counts[p.tournament_id] || 0) + 1; });
-      setParticipantCounts(counts);
-    }
-
     setLoading(false);
   };
 
@@ -83,11 +65,16 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-24">
+    <div className="min-h-screen bg-background text-foreground pb-24 relative">
       <SEO />
       <Navbar />
       
-      {/* Hero Section - Affinée */}
+      {/* Logo en haut à gauche de la page */}
+      <div className="absolute top-6 left-6 z-50">
+        <Logo size="sm" />
+      </div>
+      
+      {/* Hero Section */}
       <section className="relative h-[65vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
@@ -104,7 +91,6 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <Logo size="md" className="mx-auto mb-6" showText={false} />
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter mb-4 leading-tight">
               Joue. Compétis. <span className="text-violet-500">Gagne.</span>
             </h1>
@@ -120,10 +106,10 @@ const Index = () => {
               </Button>
               <Button 
                 variant="outline" 
-                onClick={() => document.getElementById('tournaments')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => navigate('/games')}
                 className="w-full sm:w-auto py-6 px-8 rounded-xl border-border text-sm font-bold"
               >
-                Voir les tournois
+                Voir les jeux
               </Button>
             </div>
           </motion.div>
@@ -132,7 +118,7 @@ const Index = () => {
 
       <main className="max-w-6xl mx-auto px-6 space-y-24">
         
-        {/* Stats Section - Corrigée et Affinée */}
+        {/* Stats Section */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-20 -mt-12">
           <div className="bg-card border border-border p-6 rounded-[20px] shadow-sm text-center group hover:border-violet-500/30 transition-colors">
             <div className="w-10 h-10 bg-violet-600/10 rounded-xl flex items-center justify-center text-violet-500 mx-auto mb-3">
@@ -154,50 +140,6 @@ const Index = () => {
             </div>
             <p className="text-3xl font-black mb-0.5">{stats.cashPrize.toLocaleString()}</p>
             <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest">Cash Prizes (FCFA)</p>
-          </div>
-        </section>
-
-        {/* Tournaments Section */}
-        <section id="tournaments" className="space-y-8">
-          <div className="text-center md:text-left">
-            <h2 className="text-3xl font-black tracking-tight mb-1">Tournois Actifs</h2>
-            <p className="text-xs text-muted-foreground font-medium">Entre dans l'arène et prouve ta valeur.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {loading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="bg-card border border-border rounded-[24px] overflow-hidden p-3 space-y-3">
-                  <Skeleton className="h-40 w-full rounded-2xl" />
-                  <div className="space-y-2 px-1">
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-3 w-1/2" />
-                  </div>
-                </div>
-              ))
-            ) : tournaments.length === 0 ? (
-              <div className="col-span-full py-16 text-center space-y-4 bg-muted/10 rounded-[24px] border border-dashed border-border">
-                <SearchX size={40} className="mx-auto text-muted-foreground/20" />
-                <div>
-                  <h3 className="text-lg font-black">Aucun tournoi trouvé</h3>
-                  <p className="text-xs text-muted-foreground">Reviens plus tard pour de nouvelles compétitions.</p>
-                </div>
-              </div>
-            ) : (
-              tournaments.map((t) => (
-                <TournamentCard 
-                  key={t.id} 
-                  id={t.id} 
-                  title={t.title} 
-                  game={t.game} 
-                  image={t.image_url} 
-                  date={new Date(t.start_date).toLocaleDateString('fr-FR')} 
-                  participants={`${participantCounts[t.id] || 0}/${t.max_participants}`} 
-                  entryFee={t.entry_fee.toString()} 
-                  type={t.type as any} 
-                />
-              ))
-            )}
           </div>
         </section>
 
