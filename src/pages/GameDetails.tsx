@@ -4,9 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
-import { ArrowLeft, Trophy, Users, Zap, Gamepad2, Star, History } from 'lucide-react';
+import { ArrowLeft, Trophy, Users, Zap, Gamepad2, Star, MapPin, Filter } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah", "Autre"];
 
 const GameDetails = () => {
   const { id } = useParams();
@@ -14,6 +17,7 @@ const GameDetails = () => {
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [winners, setWinners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCity, setSelectedCity] = useState<string>("all");
 
   const gameInfo = {
     'free-fire': { name: 'Free Fire', icon: '🔥', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800' },
@@ -46,8 +50,12 @@ const GameDetails = () => {
     fetchData();
   }, [id, gameInfo.name]);
 
-  const activeTournaments = tournaments.filter(t => t.status === 'active');
-  const upcomingTournaments = tournaments.filter(t => t.status === 'upcoming');
+  const filteredTournaments = tournaments.filter(t => 
+    selectedCity === "all" || t.city === selectedCity
+  );
+
+  const activeTournaments = filteredTournaments.filter(t => t.status === 'active');
+  const upcomingTournaments = filteredTournaments.filter(t => t.status === 'upcoming');
   const totalPrize = tournaments.reduce((acc, t) => acc + (parseInt(t.prize_pool?.replace(/\D/g, '') || '0')), 0);
 
   return (
@@ -81,17 +89,36 @@ const GameDetails = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-12">
             <section>
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-violet-600/10 rounded-xl flex items-center justify-center text-violet-500">
-                  <Zap size={20} />
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-violet-600/10 rounded-xl flex items-center justify-center text-violet-500">
+                    <Zap size={20} />
+                  </div>
+                  <h2 className="text-xl font-black">Tournois Actifs</h2>
                 </div>
-                <h2 className="text-xl font-black">Tournois Actifs</h2>
+
+                <div className="w-full md:w-64">
+                  <Select value={selectedCity} onValueChange={setSelectedCity}>
+                    <SelectTrigger className="bg-card border-border rounded-xl h-10 text-[11px] font-bold shadow-sm">
+                      <div className="flex items-center gap-2">
+                        <MapPin size={14} className="text-violet-500" />
+                        <SelectValue placeholder="Filtrer par ville" />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border">
+                      <SelectItem value="all">Toutes les villes</SelectItem>
+                      {CITIES.map(city => (
+                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               
               {activeTournaments.length === 0 ? (
                 <div className="bg-muted/30 border border-dashed border-border rounded-[2rem] p-12 text-center">
                   <Gamepad2 size={40} className="mx-auto text-muted-foreground/20 mb-4" />
-                  <p className="text-muted-foreground font-bold italic">Aucun tournoi actif pour le moment.</p>
+                  <p className="text-muted-foreground font-bold italic">Aucun tournoi actif trouvé pour cette ville.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -5,272 +5,361 @@ import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
 import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
-import NewUserGuide from '@/components/NewUserGuide';
+import PlayerBadge from '@/components/PlayerBadge';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Globe, MapPin, History, Star, ChevronRight, Gamepad2, Facebook, Shield, UserCheck, Save, Filter, Zap, Users, Award, ArrowRight, Activity, MessageSquare, SearchX, Coins } from 'lucide-react';
+import { Trophy, Globe, MapPin, Star, ChevronRight, Gamepad2, Users, Award, ArrowRight, Activity, SearchX, Coins, ShieldCheck, CreditCard, MessageSquare } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
 import { Skeleton } from "@/components/ui/skeleton";
-import { showSuccess, showError } from '@/utils/toast';
 
-const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
-const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Clash of Clans", "Free Fire", "PUBG Mobile"];
+const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah", "Autre"];
+const GAMES = ["Free Fire", "eFootball", "Clash Royale", "COD Mobile", "PUBG Mobile"];
+
+const GAMES_CARDS = [
+  { id: 'free-fire', name: 'Free Fire', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800' },
+  { id: 'efootball', name: 'eFootball', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800' },
+  { id: 'clash-royale', name: 'Clash Royale', image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=800' },
+  { id: 'cod-mobile', name: 'COD Mobile', image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&q=80&w=800' },
+  { id: 'pubg-mobile', name: 'PUBG Mobile', image: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&q=80&w=800' }
+];
 
 const Index = () => {
-  const [session, setSession] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [tournaments, setTournaments] = useState<any[]>([]);
-  const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const [stats, setStats] = useState({ players: 0, tournaments: 0, cashPrize: 0 });
+  const [lastWinners, setLastWinners] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   
-  // Stats
-  const [stats, setStats] = useState({ players: 0, tournaments: 0, cashPrize: 0 });
-  
-  const [filterType, setFilterType] = useState<'All' | 'Online' | 'Presentiel'>('All');
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<string>("all");
   
-  const [showGuide, setShowGuide] = useState(false);
-
   const navigate = useNavigate();
 
   const fetchData = async () => {
-    const { data: allData } = await supabase
+    setLoading(true);
+    
+    // 1. Tournois actifs
+    const { data: tours } = await supabase
       .from('tournaments')
       .select('*')
+      .eq('status', 'active')
       .order('created_at', { ascending: false });
-    
-    if (allData) {
-      const active = allData.filter(t => t.status === 'active');
-      setTournaments(active);
-      
-      // Note: Les stats tournois et cash prize sont forcées à 0 pour le moment sur demande
-      setStats(prev => ({ 
-        ...prev, 
-        tournaments: 0, 
-        cashPrize: 0 
-      }));
-    }
+    if (tours) setTournaments(tours);
 
-    // Nombre total de joueurs (profils) reste dynamique
+    // 2. Stats globales
     const { count: playerCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-    setStats(prev => ({ ...prev, players: playerCount || 0 }));
+    const { count: tourCount } = await supabase.from('tournaments').select('*', { count: 'exact', head: true });
+    
+    const { data: finishedTours } = await supabase
+      .from('tournaments')
+      .select('prize_pool')
+      .eq('status', 'finished');
+    
+    const totalCash = finishedTours?.reduce((acc, t) => acc + (parseInt(t.prize_pool?.replace(/\D/g, '') || '0')), 0) || 0;
 
-    const { data: activity } = await supabase
-      .from('payments')
-      .select('tournament_name, profiles(username)')
-      .eq('status', 'Réussi')
-      .order('created_at', { ascending: false })
-      .limit(5);
-    if (activity) setRecentActivity(activity);
-  };
+    setStats({
+      players: playerCount || 0,
+      tournaments: tourCount || 0,
+      cashPrize: totalCash
+    });
 
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
-    if (data) {
-      setProfile(data);
-      const hasSeenGuide = localStorage.getItem('egame_guide_seen');
-      if (!hasSeenGuide && (!data.username || !data.city)) {
-        setShowGuide(true);
-      }
+    // 3. Derniers gagnants
+    const { data: winners } = await supabase
+      .from('tournaments')
+      .select('winner_name, winner_avatar, prize_pool, title')
+      .eq('status', 'finished')
+      .order('updated_at', { ascending: false })
+      .limit(3);
+    
+    if (winners) {
+      // Récupérer les badges des gagnants
+      const winnersWithBadges = await Promise.all(winners.map(async (w) => {
+        const { data: prof } = await supabase.from('profiles').select('id').eq('username', w.winner_name).maybeSingle();
+        let tCount = 0;
+        if (prof) {
+          const { count } = await supabase.from('payments').select('*', { count: 'exact', head: true }).eq('user_id', prof.id).eq('status', 'Réussi');
+          tCount = count || 0;
+        }
+        return { ...w, tournamentCount: tCount };
+      }));
+      setLastWinners(winnersWithBadges);
     }
-  };
 
-  const handleCloseGuide = () => {
-    setShowGuide(false);
-    localStorage.setItem('egame_guide_seen', 'true');
-  };
-
-  const fetchParticipantCounts = async () => {
-    const { data } = await supabase.from('payments').select('tournament_id').eq('status', 'Réussi');
-    if (data) {
+    // 4. Counts participants
+    const { data: participants } = await supabase.from('payments').select('tournament_id').eq('status', 'Réussi');
+    if (participants) {
       const counts: Record<string, number> = {};
-      data.forEach((p: any) => { counts[p.tournament_id] = (counts[p.tournament_id] || 0) + 1; });
+      participants.forEach((p: any) => { counts[p.tournament_id] = (counts[p.tournament_id] || 0) + 1; });
       setParticipantCounts(counts);
     }
+
+    setLoading(false);
   };
 
   useEffect(() => {
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      if (session?.user) {
-        await fetchProfile(session.user.id);
-      }
-      setLoading(false);
-    };
-    init();
     fetchData();
-    fetchParticipantCounts();
   }, []);
 
   const filteredTournaments = tournaments.filter(t => {
-    const matchesType = filterType === 'All' || t.type === filterType;
     const matchesCity = selectedCity === "all" || t.city === selectedCity;
     const matchesGame = selectedGame === "all" || t.game === selectedGame;
-    return matchesType && matchesCity && matchesGame;
+    return matchesCity && matchesGame;
   });
 
-  const featuredTournament = tournaments.find(t => t.is_featured) || tournaments[0];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1 }
-  };
-
   return (
-    <div className="min-h-screen bg-background text-foreground pb-32 pt-4 md:pt-24">
+    <div className="min-h-screen bg-background text-foreground pb-32">
       <SEO />
       <Navbar />
-      <main className="max-w-7xl mx-auto px-6 py-6">
-        
-        <div className="flex items-center justify-between mb-8">
-          <Logo size="md" />
+      
+      {/* Section 1: Hero */}
+      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=2000" 
+            className="w-full h-full object-cover opacity-30 scale-105" 
+            alt="Gaming Background" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/60 to-background" />
         </div>
-
-        {featuredTournament && (
-          <motion.section 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="relative h-[40vh] md:h-[50vh] rounded-[2.5rem] overflow-hidden mb-10 group cursor-pointer"
-            onClick={() => navigate(`/tournament/${featuredTournament.id}`)}
+        
+        <div className="relative z-10 text-center px-6 max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            <img 
-              src={featuredTournament.image_url} 
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" 
-              alt="" 
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+            <Logo size="lg" className="mx-auto mb-8" showText={false} />
+            <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-6 leading-none">
+              Joue. Compétis. <span className="text-violet-500">Gagne.</span>
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground mb-10 font-medium max-w-2xl mx-auto">
+              Rejoins la communauté gaming #1 au Bénin. Participe aux tournois officiels et remporte des cash prizes réels.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button 
+                onClick={() => navigate('/auth')} 
+                className="w-full sm:w-auto py-8 px-10 rounded-2xl bg-violet-600 hover:bg-violet-700 text-lg font-black shadow-2xl shadow-violet-500/40 text-white"
+              >
+                Rejoindre maintenant
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => document.getElementById('tournaments')?.scrollIntoView({ behavior: 'smooth' })}
+                className="w-full sm:w-auto py-8 px-10 rounded-2xl border-border text-lg font-black"
+              >
+                Voir les tournois
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <main className="max-w-7xl mx-auto px-6 space-y-32">
+        
+        {/* Section 2: Chiffres clés */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 -mt-20 relative z-20">
+          <motion.div whileHover={{ y: -5 }} className="bg-card border border-border p-8 rounded-[2.5rem] shadow-xl text-center">
+            <div className="w-12 h-12 bg-violet-600/10 rounded-2xl flex items-center justify-center text-violet-500 mx-auto mb-4">
+              <Gamepad2 size={24} />
+            </div>
+            <p className="text-4xl font-black mb-1">{stats.tournaments}</p>
+            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Tournois organisés</p>
+          </motion.div>
+          <motion.div whileHover={{ y: -5 }} className="bg-card border border-border p-8 rounded-[2.5rem] shadow-xl text-center">
+            <div className="w-12 h-12 bg-cyan-600/10 rounded-2xl flex items-center justify-center text-cyan-500 mx-auto mb-4">
+              <Users size={24} />
+            </div>
+            <p className="text-4xl font-black mb-1">{stats.players}</p>
+            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Joueurs inscrits</p>
+          </motion.div>
+          <motion.div whileHover={{ y: -5 }} className="bg-card border border-border p-8 rounded-[2.5rem] shadow-xl text-center">
+            <div className="w-12 h-12 bg-green-600/10 rounded-2xl flex items-center justify-center text-green-500 mx-auto mb-4">
+              <Coins size={24} />
+            </div>
+            <p className="text-4xl font-black mb-1">{stats.cashPrize.toLocaleString()}</p>
+            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Cash Prizes versés (FCFA)</p>
+          </motion.div>
+        </section>
+
+        {/* Section 3: Tournois en cours */}
+        <section id="tournaments" className="space-y-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div>
+              <h2 className="text-4xl font-black tracking-tight mb-2">Tournois Actifs</h2>
+              <p className="text-muted-foreground font-medium">Entre dans l'arène et prouve ta valeur.</p>
+            </div>
             
-            <div className="absolute bottom-8 left-8 right-8">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="bg-violet-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">À la Une</div>
-                <div className="bg-zinc-950/60 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-white/10">{featuredTournament.game}</div>
-              </div>
-              <h2 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight leading-none">{featuredTournament.title}</h2>
-              <div className="flex items-center gap-6 text-white/80 text-xs font-bold">
-                <div className="flex items-center gap-2"><Trophy size={16} className="text-yellow-500" /> {featuredTournament.prize_pool}</div>
-                <div className="flex items-center gap-2"><Users size={16} className="text-cyan-500" /> {participantCounts[featuredTournament.id] || 0} Joueurs</div>
-                <div className="flex items-center gap-2"><Calendar size={16} className="text-violet-500" /> {new Date(featuredTournament.start_date).toLocaleDateString('fr-FR')}</div>
-              </div>
-            </div>
-          </motion.section>
-        )}
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <Select value={selectedCity} onValueChange={setSelectedCity}>
+                <SelectTrigger className="bg-card border-border rounded-xl h-12 text-[11px] font-bold shadow-sm min-w-[160px]">
+                  <div className="flex items-center gap-2">
+                    <MapPin size={14} className="text-violet-500" />
+                    <SelectValue placeholder="Ville" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="all">Toutes les villes</SelectItem>
+                  {CITIES.map(city => (<SelectItem key={city} value={city}>{city}</SelectItem>))}
+                </SelectContent>
+              </Select>
 
-        {recentActivity.length > 0 && (
-          <div className="mb-8 overflow-hidden bg-violet-600/5 border-y border-violet-500/5 py-1.5 -mx-6 px-6">
-            <div className="flex items-center gap-4 animate-marquee whitespace-nowrap">
-              {recentActivity.map((act, i) => (
-                <div key={i} className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-violet-500/80">
-                  <Activity size={10} />
-                  <span>{act.profiles?.username || "Joueur"} inscrit à {act.tournament_name}</span>
-                  <span className="mx-4 text-muted-foreground/20">•</span>
-                </div>
-              ))}
+              <Select value={selectedGame} onValueChange={setSelectedGame}>
+                <SelectTrigger className="bg-card border-border rounded-xl h-12 text-[11px] font-bold shadow-sm min-w-[160px]">
+                  <div className="flex items-center gap-2">
+                    <Gamepad2 size={14} className="text-violet-500" />
+                    <SelectValue placeholder="Jeu" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="all">Tous les jeux</SelectItem>
+                  {GAMES.map(game => (<SelectItem key={game} value={game}>{game}</SelectItem>))}</SelectContent>
+              </Select>
             </div>
           </div>
-        )}
 
-        <AnimatePresence>{showGuide && <NewUserGuide onClose={handleCloseGuide} />}</AnimatePresence>
-
-        <motion.section 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-3 gap-3 mb-8"
-        >
-          <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
-            <Users size={18} className="text-violet-500 mb-1" />
-            <p className="text-sm font-black text-foreground leading-none mb-1">{stats.players}</p>
-            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Joueurs</p>
-          </motion.div>
-          <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
-            <Trophy size={18} className="text-yellow-500 mb-1" />
-            <p className="text-sm font-black text-foreground leading-none mb-1">{stats.tournaments}</p>
-            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Tournois</p>
-          </motion.div>
-          <motion.div variants={itemVariants} className="bg-card border border-border p-4 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center">
-            <Coins size={18} className="text-green-500 mb-1" />
-            <p className="text-sm font-black text-foreground leading-none mb-1">{stats.cashPrize.toLocaleString()}</p>
-            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Cash Prize total versé</p>
-          </motion.div>
-        </motion.section>
-
-        <section className="mb-12 space-y-6">
-          <div className="flex items-center gap-2"><Filter size={14} className="text-violet-500" /><h2 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Explorer l'Arène</h2></div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="flex bg-card border border-border rounded-xl p-1 h-10 shadow-sm">
-              <button onClick={() => setFilterType('All')} className={`flex-1 rounded-lg text-[9px] font-bold transition-all ${filterType === 'All' ? 'bg-violet-600 text-white shadow-md' : 'text-muted-foreground'}`}>Tous</button>
-              <button onClick={() => setFilterType('Online')} className={`flex-1 rounded-lg text-[9px] font-bold transition-all flex items-center justify-center gap-1 ${filterType === 'Online' ? 'bg-cyan-600 text-white shadow-md' : 'text-muted-foreground'}`}><Globe size={12} /> En ligne</button>
-              <button onClick={() => setFilterType('Presentiel')} className={`flex-1 rounded-lg text-[9px] font-bold transition-all flex items-center justify-center gap-1 ${filterType === 'Presentiel' ? 'bg-orange-600 text-white shadow-md' : 'text-muted-foreground'}`}><MapPin size={12} /> Local</button>
-            </div>
-            <Select value={selectedCity} onValueChange={setSelectedCity}><SelectTrigger className="bg-card border-border rounded-xl h-10 text-[11px] font-bold shadow-sm"><div className="flex items-center gap-2"><MapPin size={14} className="text-violet-500" /><SelectValue placeholder="Ville" /></div></SelectTrigger><SelectContent className="bg-card border-border"><SelectItem value="all">Toutes les villes</SelectItem>{CITIES.map(city => (<SelectItem key={city} value={city}>{city}</SelectItem>))}</SelectContent></Select>
-            <Select value={selectedGame} onValueChange={setSelectedGame}><SelectTrigger className="bg-card border-border rounded-xl h-10 text-[11px] font-bold shadow-sm"><div className="flex items-center gap-2"><Gamepad2 size={14} className="text-violet-500" /><SelectValue placeholder="Jeu" /></div></SelectTrigger><SelectContent className="bg-card border-border"><SelectItem value="all">Tous les jeux</SelectItem>{GAMES.map(game => (<SelectItem key={game} value={game}>{game}</SelectItem>))}</SelectContent></Select>
-          </div>
-          
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (
               Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="bg-card border border-border rounded-3xl overflow-hidden p-4 space-y-4">
-                  <Skeleton className="aspect-video w-full rounded-2xl" />
+                <div key={i} className="bg-card border border-border rounded-[2.5rem] overflow-hidden p-4 space-y-4">
+                  <Skeleton className="aspect-video w-full rounded-3xl" />
                   <div className="space-y-2">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-3 w-1/2" />
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
                   </div>
                 </div>
               ))
             ) : filteredTournaments.length === 0 ? (
-              <div className="col-span-full py-20 text-center space-y-4">
-                <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto text-muted-foreground/30">
-                  <SearchX size={40} />
-                </div>
+              <div className="col-span-full py-20 text-center space-y-6 bg-muted/20 rounded-[3rem] border border-dashed border-border">
+                <SearchX size={48} className="mx-auto text-muted-foreground/30" />
                 <div>
-                  <h3 className="text-lg font-black">Aucun tournoi trouvé</h3>
-                  <p className="text-xs text-muted-foreground">Essayez de modifier vos filtres pour voir plus de résultats.</p>
+                  <h3 className="text-xl font-black">Aucun tournoi trouvé</h3>
+                  <p className="text-sm text-muted-foreground">Modifie tes filtres pour voir d'autres opportunités.</p>
                 </div>
-                <Button variant="outline" onClick={() => { setFilterType('All'); setSelectedCity('all'); setSelectedGame('all'); }} className="rounded-xl text-[10px] font-black uppercase tracking-widest">Réinitialiser</Button>
+                <Button variant="outline" onClick={() => { setSelectedCity('all'); setSelectedGame('all'); }} className="rounded-xl font-black uppercase tracking-widest text-[10px]">Réinitialiser</Button>
               </div>
             ) : (
               filteredTournaments.map((t) => (
-                <motion.div key={t.id} variants={itemVariants}>
-                  <TournamentCard id={t.id} title={t.title} game={t.game} image={t.image_url} date={new Date(t.start_date).toLocaleDateString('fr-FR')} participants={`${participantCounts[t.id] || 0}/${t.max_participants}`} entryFee={t.entry_fee.toString()} type={t.type as any} />
+                <TournamentCard 
+                  key={t.id} 
+                  id={t.id} 
+                  title={t.title} 
+                  game={t.game} 
+                  image={t.image_url} 
+                  date={new Date(t.start_date).toLocaleDateString('fr-FR')} 
+                  participants={`${participantCounts[t.id] || 0}/${t.max_participants}`} 
+                  entryFee={t.entry_fee.toString()} 
+                  type={t.type as any} 
+                />
+              ))
+            )}
+          </div>
+        </section>
+
+        {/* Section 4: Nos jeux */}
+        <section className="space-y-10">
+          <div className="text-center">
+            <h2 className="text-4xl font-black tracking-tight mb-2">Nos Disciplines</h2>
+            <p className="text-muted-foreground font-medium">Choisis ton arène de prédilection.</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {GAMES_CARDS.map((game) => (
+              <Link key={game.id} to={`/game/${game.id}`} className="group relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-border hover:border-violet-500/50 transition-all shadow-lg">
+                <img src={game.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60" alt={game.name} />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
+                <div className="absolute bottom-6 left-0 right-0 text-center">
+                  <h3 className="text-white font-black text-sm uppercase tracking-widest">{game.name}</h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Section 5: Derniers gagnants */}
+        <section className="space-y-10">
+          <div className="flex items-center justify-between">
+            <h2 className="text-4xl font-black tracking-tight">Derniers Champions</h2>
+            <Link to="/leaderboard" className="text-violet-500 font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:underline">
+              Voir tout le classement <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {lastWinners.length === 0 ? (
+              <div className="col-span-full py-12 text-center text-muted-foreground italic font-medium">L'histoire est en train de s'écrire...</div>
+            ) : (
+              lastWinners.map((w, i) => (
+                <motion.div 
+                  key={i} 
+                  whileHover={{ y: -5 }}
+                  className="bg-card border border-border p-8 rounded-[2.5rem] shadow-xl flex flex-col items-center text-center"
+                >
+                  <div className="relative mb-6">
+                    <div className="w-20 h-20 rounded-full border-4 border-violet-600/20 overflow-hidden bg-muted">
+                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${w.winner_name}`} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="absolute -bottom-2 -right-2">
+                      <PlayerBadge tournamentCount={w.tournamentCount} size="sm" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-black mb-1">{w.winner_name}</h3>
+                  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-4">{w.title}</p>
+                  <div className="bg-green-500/10 text-green-500 px-6 py-2 rounded-full font-black text-sm border border-green-500/20">
+                    +{w.prize_pool}
+                  </div>
                 </motion.div>
               ))
             )}
-          </motion.div>
+          </div>
         </section>
 
-        <footer className="mt-12 py-12 border-t border-border text-center space-y-8">
-          <div className="flex items-center justify-center gap-6">
-            <a href="https://www.facebook.com/profile.php?id=61588439640775" target="_blank" className="w-10 h-10 bg-blue-600/10 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm"><Facebook size={20} /></a>
-            <a href="https://wa.me/2290141790790" target="_blank" className="w-10 h-10 bg-green-600/10 rounded-full flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all shadow-sm"><MessageSquare size={20} /></a>
-            <Link to="/leaderboard" className="w-10 h-10 bg-zinc-900/10 rounded-full flex items-center justify-center text-zinc-900 hover:bg-zinc-900 hover:text-white transition-all shadow-sm"><Trophy size={20} /></Link>
+        {/* Section 6: Pourquoi eGame Bénin ? */}
+        <section className="bg-violet-600 rounded-[3rem] p-12 md:p-20 text-white shadow-2xl shadow-violet-500/20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">Pourquoi eGame Bénin ?</h2>
+            <p className="text-violet-100 font-medium max-w-2xl mx-auto">La plateforme de référence pour l'esport au Bénin.</p>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            <Link to="/privacy" className="hover:text-violet-500 transition-colors underline decoration-violet-500/30 underline-offset-4">Privacy</Link>
-            <Link to="/contact" className="hover:text-violet-500 transition-colors underline decoration-violet-500/30 underline-offset-4">Aide</Link>
-            <Link to="/leaderboard" className="hover:text-violet-500 transition-colors underline decoration-violet-500/30 underline-offset-4">Classement</Link>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="space-y-4 text-center">
+              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <ShieldCheck size={32} />
+              </div>
+              <h3 className="text-xl font-black">Paiement Sécurisé</h3>
+              <p className="text-violet-100 text-sm leading-relaxed">Inscris-toi en toute confiance via MTN et Moov Money grâce à notre partenaire KKiaPay.</p>
+            </div>
+            <div className="space-y-4 text-center">
+              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <CreditCard size={32} />
+              </div>
+              <h3 className="text-xl font-black">Paiements Automatiques</h3>
+              <p className="text-violet-100 text-sm leading-relaxed">Les cash prizes sont versés directement sur ton compte Mobile Money après chaque tournoi.</p>
+            </div>
+            <div className="space-y-4 text-center">
+              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Users size={32} />
+              </div>
+              <h3 className="text-xl font-black">Communauté #1</h3>
+              <p className="text-violet-100 text-sm leading-relaxed">Rejoins des milliers de joueurs passionnés et participe à l'essor du gaming au Bénin.</p>
+            </div>
           </div>
-          <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest">© 2026 eGame Bénin • Tous droits réservés</p>
+        </section>
+
+        <footer className="py-20 border-t border-border text-center space-y-10">
+          <div className="flex items-center justify-center gap-8">
+            <a href="https://wa.me/2290141790790" target="_blank" className="text-muted-foreground hover:text-green-500 transition-colors"><MessageSquare size={24} /></a>
+            <Link to="/leaderboard" className="text-muted-foreground hover:text-yellow-500 transition-colors"><Trophy size={24} /></Link>
+            <Link to="/privacy" className="text-muted-foreground hover:text-violet-500 transition-colors"><ShieldCheck size={24} /></Link>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+            <Link to="/privacy" className="hover:text-violet-500 transition-colors">Privacy</Link>
+            <Link to="/contact" className="hover:text-violet-500 transition-colors">Aide</Link>
+            <Link to="/leaderboard" className="hover:text-violet-500 transition-colors">Classement</Link>
+            <Link to="/games" className="hover:text-violet-500 transition-colors">Jeux</Link>
+          </div>
+          <p className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-widest">© 2026 eGame Bénin • Tous droits réservés</p>
         </footer>
       </main>
     </div>
