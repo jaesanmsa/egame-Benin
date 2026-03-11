@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { User, Home, History, LogIn, Trophy, HelpCircle } from 'lucide-react';
+import { User, Home, History, LogIn, Trophy, HelpCircle, Gamepad2 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Logo from './Logo';
@@ -20,9 +20,6 @@ const Navbar = () => {
       setIsLoggedIn(!!session);
       setUser(session?.user || null);
       if (session?.user) {
-        if (session.user.user_metadata?.avatar_url) {
-          setDbAvatar(session.user.user_metadata.avatar_url);
-        }
         fetchProfile(session.user.id);
       } else {
         setLoadingAvatar(false);
@@ -72,6 +69,11 @@ const Navbar = () => {
             <span className="text-[9px] font-bold md:hidden">Accueil</span>
           </Link>
 
+          <Link to="/games" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/games') || location.pathname.startsWith('/game/') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
+            <Gamepad2 size={22} />
+            <span className="text-[9px] font-bold md:hidden">Jeux</span>
+          </Link>
+
           <Link to="/leaderboard" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/leaderboard') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
             <Trophy size={22} />
             <span className="text-[9px] font-bold md:hidden">Classement</span>
@@ -81,18 +83,6 @@ const Navbar = () => {
             <Link to="/payments" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/payments') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
               <History size={22} />
               <span className="text-[9px] font-bold md:hidden">Paiements</span>
-            </Link>
-          )}
-
-          <Link to="/contact" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/contact') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
-            <HelpCircle size={22} />
-            <span className="text-[9px] font-bold md:hidden">Aide</span>
-          </Link>
-          
-          {!isLoggedIn && (
-            <Link to="/auth" className={`flex flex-col items-center gap-1 flex-1 md:hidden transition-colors ${isActive('/auth') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
-              <LogIn size={22} />
-              <span className="text-[9px] font-bold">Connexion</span>
             </Link>
           )}
 

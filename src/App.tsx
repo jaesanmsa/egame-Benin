@@ -19,6 +19,8 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import Contact from "./pages/Contact";
 import Leaderboard from "./pages/Leaderboard";
 import Privacy from "./pages/Privacy";
+import Games from "./pages/Games";
+import GameDetails from "./pages/GameDetails";
 import NotFound from "./pages/NotFound";
 import FloatingSupport from "./components/FloatingSupport";
 
@@ -47,6 +49,8 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/games" element={<Games />} />
+              <Route path="/game/:id" element={<GameDetails />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <FloatingSupport />

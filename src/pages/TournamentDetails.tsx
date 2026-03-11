@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
+import PlayerBadge from '@/components/PlayerBadge';
 import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock, CreditCard, Zap, User, AlertTriangle, FileText } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
@@ -35,13 +36,25 @@ const TournamentDetails = () => {
     const fetchParticipants = async () => {
       const { data, count } = await supabase
         .from('payments')
-        .select('*, profiles(username, avatar_url)', { count: 'exact' })
+        .select('*, profiles(username, avatar_url, id)', { count: 'exact' })
         .eq('tournament_id', id)
         .eq('status', 'Réussi')
         .limit(12);
       
       setParticipantCount(count || 0);
-      if (data) setParticipants(data.map(p => p.profiles));
+      
+      if (data) {
+        // Pour chaque participant, on récupère son nombre de tournois pour le badge
+        const participantsWithStats = await Promise.all(data.map(async (p: any) => {
+          const { count: tCount } = await supabase
+            .from('payments')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', p.profiles.id)
+            .eq('status', 'Réussi');
+          return { ...p.profiles, tournamentCount: tCount || 0 };
+        }));
+        setParticipants(participantsWithStats);
+      }
     };
 
     const checkUserRegistration = async (userId: string) => {
@@ -111,11 +124,7 @@ const TournamentDetails = () => {
           callback: `${window.location.origin}/payment-success`
         });
 
-        // Écouteur pour le succès du paiement via l'événement window
         const handlePaymentSuccess = async (response: any) => {
-          console.log("Paiement réussi:", response);
-          
-          // Enregistrement en base
           await supabase.from('payments').insert({
             user_id: user.id,
             tournament_id: id,
@@ -126,7 +135,6 @@ const TournamentDetails = () => {
             kkiapay_transaction_id: response.transactionId
           });
 
-          // Notification WhatsApp via Edge Function
           await supabase.functions.invoke('notify-payment', {
             body: {
               joueur_nom: userProfile?.full_name || userProfile?.username || "Joueur",
@@ -144,7 +152,7 @@ const TournamentDetails = () => {
 
         window.addEventListener('kkiapay_success', handlePaymentSuccess);
       } else {
-        throw new Error("Le service de paiement n'est pas encore chargé. Réessayez dans un instant.");
+        throw new Error("Le service de paiement n'est pas encore chargé.");
       }
 
       setPaymentStep('select');
@@ -254,7 +262,6 @@ const TournamentDetails = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Description Section */}
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -267,7 +274,6 @@ const TournamentDetails = () => {
             </div>
           </motion.div>
 
-          {/* Rules Section */}
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -281,7 +287,6 @@ const TournamentDetails = () => {
           </motion.div>
         </div>
 
-        {/* Participants Section */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -295,6 +300,9 @@ const TournamentDetails = () => {
                 <div key={i} className="group relative">
                   <div className="w-10 h-10 rounded-full border-2 border-border overflow-hidden bg-muted group-hover:border-violet-500 transition-colors">
                     <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username}`} alt="" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="absolute -top-2 -right-2 z-10">
+                    <PlayerBadge tournamentCount={p.tournamentCount} size="sm" />
                   </div>
                   <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 text-white text-[8px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
                     {p.username}
@@ -314,7 +322,6 @@ const TournamentDetails = () => {
       </main>
 
       <AnimatePresence>
-        {/* Confirmation Modal */}
         {showConfirmation && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowConfirmation(false)} />
@@ -332,7 +339,6 @@ const TournamentDetails = () => {
           </div>
         )}
 
-        {/* Payment Modal */}
         {showPayment && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPayment(false)} />

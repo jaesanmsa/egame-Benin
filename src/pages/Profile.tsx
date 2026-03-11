@@ -2,12 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
+import PlayerBadge from '@/components/PlayerBadge';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Mail, History, Zap, ShieldCheck, Palette, Copy, Link as LinkIcon, HelpCircle, Sun, Moon, Shield, Award, Activity, Share2 } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Mail, History, Zap, ShieldCheck, Palette, Copy, Link as LinkIcon, HelpCircle, Sun, Moon, Shield, Award, Activity, Share2, Bell, BellOff } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showError, showSuccess } from '@/utils/toast';
 import { useTheme } from "next-themes";
+import { requestNotificationPermission } from '@/lib/firebase';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
@@ -54,10 +56,26 @@ const Profile = () => {
     navigate('/');
   };
 
-  const handleShareProfile = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    showSuccess("Lien du profil copié !");
+  const toggleNotifications = async () => {
+    if (!profile?.notifications_enabled) {
+      const token = await requestNotificationPermission(user.id);
+      if (token) {
+        setProfile({ ...profile, notifications_enabled: true });
+        showSuccess("Notifications activées !");
+      } else {
+        showError("Permission refusée ou erreur.");
+      }
+    } else {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ notifications_enabled: false })
+        .eq('id', user.id);
+      
+      if (!error) {
+        setProfile({ ...profile, notifications_enabled: false });
+        showSuccess("Notifications désactivées.");
+      }
+    }
   };
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
@@ -80,12 +98,11 @@ const Profile = () => {
               <Palette size={16} />
             </Link>
           </div>
-          <h1 className="text-3xl font-black mt-4">{username}</h1>
-          <div className="flex items-center gap-3 mt-2">
-            <button onClick={handleShareProfile} className="p-2 bg-muted rounded-full border border-border hover:text-violet-500 transition-colors">
-              <Share2 size={14} />
-            </button>
+          <div className="flex items-center gap-3 mt-4">
+            <h1 className="text-3xl font-black">{username}</h1>
+            <PlayerBadge tournamentCount={tournamentCount} size="md" />
           </div>
+          <p className="text-muted-foreground text-[10px] font-black uppercase tracking-widest mt-1">{profile?.city || 'Bénin'}</p>
         </section>
 
         <section className="grid grid-cols-2 gap-4 mb-8">
@@ -102,6 +119,16 @@ const Profile = () => {
         </section>
 
         <div className="space-y-4">
+          <button onClick={toggleNotifications} className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm">
+            <div className="flex items-center gap-4">
+              {profile?.notifications_enabled ? <Bell size={20} className="text-green-500" /> : <BellOff size={20} className="text-muted-foreground" />}
+              Notifications Push
+            </div>
+            <div className={`w-10 h-5 rounded-full relative transition-colors ${profile?.notifications_enabled ? 'bg-green-500' : 'bg-muted'}`}>
+              <div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${profile?.notifications_enabled ? 'right-1' : 'left-1'}`} />
+            </div>
+          </button>
+
           <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm">
             <div className="flex items-center gap-4">{theme === 'dark' ? <Sun size={20} className="text-yellow-500" /> : <Moon size={20} className="text-indigo-500" />} Mode {theme === 'dark' ? 'Clair' : 'Sombre'}</div>
             <div className={`w-10 h-5 rounded-full relative transition-colors ${theme === 'dark' ? 'bg-violet-600' : 'bg-muted'}`}><div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${theme === 'dark' ? 'right-1' : 'left-1'}`} /></div>

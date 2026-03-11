@@ -2,20 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
+import PlayerBadge from '@/components/PlayerBadge';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, ArrowLeft, ChevronRight, Star, User, Award, Zap, Gamepad2, Medal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
 const DEFAULT_GAMES = [
+  { id: 'free-fire', name: 'Free Fire', icon: '🔥' },
+  { id: 'efootball', name: 'eFootball', icon: '⚽' },
+  { id: 'clash-royale', name: 'Clash Royale', icon: '👑' },
+  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱' },
+  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗' },
   { id: 'blur', name: 'Blur', icon: '🏎️' },
   { id: 'cod-mw4', name: 'COD MW4', icon: '🔫' },
-  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱' },
-  { id: 'bombsquad', name: 'BombSquad', icon: '💣' },
-  { id: 'clash-royale', name: 'Clash Royale', icon: '👑' },
-  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰' },
-  { id: 'free-fire', name: 'Free Fire', icon: '🔥' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗' }
+  { id: 'bombsquad', name: 'BombSquad', icon: '💣' }
 ];
 
 const Leaderboard = () => {
@@ -67,7 +68,10 @@ const Leaderboard = () => {
           </div>
         </div>
         <div className="text-center">
-          <p className="font-black text-xs truncate max-w-[80px]">{player?.username || "---"}</p>
+          <div className="flex items-center justify-center gap-1">
+            <p className="font-black text-xs truncate max-w-[80px]">{player?.username || "---"}</p>
+            {player?.wins > 0 && <PlayerBadge tournamentCount={player.wins} size="sm" />}
+          </div>
           <p className={`text-[10px] font-black ${config.color}`}>{player?.wins || 0} Victoires</p>
         </div>
         <div className={`w-full ${config.height} ${config.bg} rounded-t-2xl border-x border-t ${config.border} flex items-end justify-center pb-4`}>
@@ -153,7 +157,10 @@ const Leaderboard = () => {
                           <div className="w-10 h-10 rounded-full bg-muted border border-border overflow-hidden">
                             <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username}`} className="w-full h-full object-cover" alt="" />
                           </div>
-                          <span className="text-sm font-bold">{p.username}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold">{p.username}</span>
+                            {p.wins > 0 && <PlayerBadge tournamentCount={p.wins} size="sm" />}
+                          </div>
                         </div>
                         <div className="flex items-center gap-2 text-violet-500 font-black text-xs">
                           {p.wins} Victoires
