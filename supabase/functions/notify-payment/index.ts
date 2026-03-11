@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const TWILIO_ACCOUNT_SID = "AC08e003bc21fec21e19662b7dd9c8d564";
-const TWILIO_AUTH_TOKEN = "3e9e74939927870b24e2a4ab94b4be29";
+// Récupération des secrets depuis l'environnement Supabase
+const TWILIO_ACCOUNT_SID = Deno.env.get('TWILIO_ACCOUNT_SID');
+const TWILIO_AUTH_TOKEN = Deno.env.get('TWILIO_AUTH_TOKEN');
 const TWILIO_WHATSAPP_NUMBER = "whatsapp:+14155238886";
 const MON_WHATSAPP = "whatsapp:+2290141790790";
 
@@ -14,6 +15,10 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
+    if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
+      throw new Error("Les identifiants Twilio ne sont pas configurés dans les secrets Supabase.");
+    }
+
     const body = await req.json();
     console.log("[notify-payment] Payload reçu:", body);
 
