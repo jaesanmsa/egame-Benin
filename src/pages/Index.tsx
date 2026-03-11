@@ -10,11 +10,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Globe, MapPin, Star, ChevronRight, Gamepad2, Users, Award, ArrowRight, Activity, SearchX, Coins, ShieldCheck, CreditCard, MessageSquare } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
 import { Skeleton } from "@/components/ui/skeleton";
-
-const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah", "Autre"];
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -23,13 +20,12 @@ const Index = () => {
   const [lastWinners, setLastWinners] = useState<any[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   
-  const [selectedCity, setSelectedCity] = useState<string>("all");
-  
   const navigate = useNavigate();
 
   const fetchData = async () => {
     setLoading(true);
     
+    // 1. Tournois actifs
     const { data: tours } = await supabase
       .from('tournaments')
       .select('*')
@@ -37,6 +33,7 @@ const Index = () => {
       .order('created_at', { ascending: false });
     if (tours) setTournaments(tours);
 
+    // 2. Stats globales
     const { count: playerCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
     const { count: tourCount } = await supabase.from('tournaments').select('*', { count: 'exact', head: true });
     
@@ -53,6 +50,7 @@ const Index = () => {
       cashPrize: totalCash
     });
 
+    // 3. Derniers gagnants
     const { data: winners } = await supabase
       .from('tournaments')
       .select('winner_name, winner_avatar, prize_pool, title')
@@ -73,6 +71,7 @@ const Index = () => {
       setLastWinners(winnersWithBadges);
     }
 
+    // 4. Counts participants
     const { data: participants } = await supabase.from('payments').select('tournament_id').eq('status', 'Réussi');
     if (participants) {
       const counts: Record<string, number> = {};
@@ -87,15 +86,12 @@ const Index = () => {
     fetchData();
   }, []);
 
-  const filteredTournaments = tournaments.filter(t => {
-    return selectedCity === "all" || t.city === selectedCity;
-  });
-
   return (
     <div className="min-h-screen bg-background text-foreground pb-32">
       <SEO />
       <Navbar />
       
+      {/* Section 1: Hero */}
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
@@ -140,6 +136,7 @@ const Index = () => {
 
       <main className="max-w-7xl mx-auto px-6 space-y-32">
         
+        {/* Section 2: Chiffres clés */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 -mt-20 relative z-20">
           <motion.div whileHover={{ y: -5 }} className="bg-card border border-border p-8 rounded-[2.5rem] shadow-xl text-center">
             <div className="w-12 h-12 bg-violet-600/10 rounded-2xl flex items-center justify-center text-violet-500 mx-auto mb-4">
@@ -164,26 +161,12 @@ const Index = () => {
           </motion.div>
         </section>
 
+        {/* Section 3: Tournois en cours */}
         <section id="tournaments" className="space-y-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div>
               <h2 className="text-4xl font-black tracking-tight mb-2">Tournois Actifs</h2>
               <p className="text-muted-foreground font-medium">Entre dans l'arène et prouve ta valeur.</p>
-            </div>
-            
-            <div className="w-full md:w-64">
-              <Select value={selectedCity} onValueChange={setSelectedCity}>
-                <SelectTrigger className="bg-card border-border rounded-xl h-12 text-[11px] font-bold shadow-sm">
-                  <div className="flex items-center gap-2">
-                    <MapPin size={14} className="text-violet-500" />
-                    <SelectValue placeholder="Filtrer par ville" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent className="bg-card border-border">
-                  <SelectItem value="all">Toutes les villes</SelectItem>
-                  {CITIES.map(city => (<SelectItem key={city} value={city}>{city}</SelectItem>))}
-                </SelectContent>
-              </Select>
             </div>
           </div>
 
@@ -198,17 +181,16 @@ const Index = () => {
                   </div>
                 </div>
               ))
-            ) : filteredTournaments.length === 0 ? (
+            ) : tournaments.length === 0 ? (
               <div className="col-span-full py-20 text-center space-y-6 bg-muted/20 rounded-[3rem] border border-dashed border-border">
                 <SearchX size={48} className="mx-auto text-muted-foreground/30" />
                 <div>
                   <h3 className="text-xl font-black">Aucun tournoi trouvé</h3>
-                  <p className="text-sm text-muted-foreground">Modifie tes filtres pour voir d'autres opportunités.</p>
+                  <p className="text-sm text-muted-foreground">Reviens plus tard pour de nouvelles compétitions.</p>
                 </div>
-                <Button variant="outline" onClick={() => setSelectedCity('all')} className="rounded-xl font-black uppercase tracking-widest text-[10px]">Réinitialiser</Button>
               </div>
             ) : (
-              filteredTournaments.map((t) => (
+              tournaments.map((t) => (
                 <TournamentCard 
                   key={t.id} 
                   id={t.id} 
@@ -225,6 +207,7 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Section 5: Derniers gagnants */}
         <section className="space-y-10">
           <div className="flex items-center justify-between">
             <h2 className="text-4xl font-black tracking-tight">Derniers Champions</h2>
@@ -262,6 +245,7 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Section 6: Pourquoi eGame Bénin ? */}
         <section className="bg-violet-600 rounded-[3rem] p-12 md:p-20 text-white shadow-2xl shadow-violet-500/20">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">Pourquoi eGame Bénin ?</h2>
