@@ -91,9 +91,20 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl md:text-6xl font-black tracking-tighter mb-4 leading-tight">
+            <motion.h1 
+              animate={{ 
+                opacity: [1, 0.4, 1],
+                scale: [1, 1.05, 1]
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="text-[26px] sm:text-4xl md:text-6xl font-black tracking-tighter mb-4 leading-tight whitespace-nowrap"
+            >
               Joue. Compétis. <span className="text-violet-500">Gagne.</span>
-            </h1>
+            </motion.h1>
             <p className="text-sm md:text-base text-muted-foreground mb-8 font-medium max-w-xl mx-auto leading-relaxed">
               Rejoins la communauté gaming #1 au Bénin. Participe aux tournois officiels et remporte des cash prizes réels.
             </p>
