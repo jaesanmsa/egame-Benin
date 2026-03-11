@@ -8,10 +8,10 @@ import { Link } from 'react-router-dom';
 
 const GAMES_LIST = [
   { id: 'free-fire', name: 'Free Fire', icon: '🔥', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800' },
-  { id: 'efootball', name: 'eFootball', icon: '⚽', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800' },
-  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=800' },
-  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&q=80&w=800' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗', image: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&q=80&w=800' }
+  { id: 'efootball', name: 'eFootball', icon: '⚽', image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=800' },
+  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=800' },
+  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=800' },
+  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗', image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&q=80&w=800' }
 ];
 
 const Games = () => {

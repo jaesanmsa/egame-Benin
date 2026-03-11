@@ -16,14 +16,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah", "Autre"];
 
-const GAMES_CARDS = [
-  { id: 'free-fire', name: 'Free Fire', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800' },
-  { id: 'efootball', name: 'eFootball', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800' },
-  { id: 'clash-royale', name: 'Clash Royale', image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=800' },
-  { id: 'cod-mobile', name: 'COD Mobile', image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&q=80&w=800' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', image: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&q=80&w=800' }
-];
-
 const Index = () => {
   const [loading, setLoading] = useState(true);
   const [tournaments, setTournaments] = useState<any[]>([]);
@@ -230,25 +222,6 @@ const Index = () => {
                 />
               ))
             )}
-          </div>
-        </section>
-
-        <section className="space-y-10">
-          <div className="text-center">
-            <h2 className="text-4xl font-black tracking-tight mb-2">Nos Disciplines</h2>
-            <p className="text-muted-foreground font-medium">Choisis ton arène de prédilection.</p>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {GAMES_CARDS.map((game) => (
-              <Link key={game.id} to={`/game/${game.id}`} className="group relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-border hover:border-violet-500/50 transition-all shadow-lg">
-                <img src={game.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60" alt={game.name} />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
-                <div className="absolute bottom-6 left-0 right-0 text-center">
-                  <h3 className="text-white font-black text-sm uppercase tracking-widest">{game.name}</h3>
-                </div>
-              </Link>
-            ))}
           </div>
         </section>
 
