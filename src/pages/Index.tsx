@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah", "Autre"];
-const GAMES = ["Free Fire", "eFootball", "Clash Royale", "COD Mobile", "PUBG Mobile"];
 
 const GAMES_CARDS = [
   { id: 'free-fire', name: 'Free Fire', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800' },
@@ -33,14 +32,12 @@ const Index = () => {
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   
   const [selectedCity, setSelectedCity] = useState<string>("all");
-  const [selectedGame, setSelectedGame] = useState<string>("all");
   
   const navigate = useNavigate();
 
   const fetchData = async () => {
     setLoading(true);
     
-    // 1. Tournois actifs
     const { data: tours } = await supabase
       .from('tournaments')
       .select('*')
@@ -48,7 +45,6 @@ const Index = () => {
       .order('created_at', { ascending: false });
     if (tours) setTournaments(tours);
 
-    // 2. Stats globales
     const { count: playerCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
     const { count: tourCount } = await supabase.from('tournaments').select('*', { count: 'exact', head: true });
     
@@ -65,7 +61,6 @@ const Index = () => {
       cashPrize: totalCash
     });
 
-    // 3. Derniers gagnants
     const { data: winners } = await supabase
       .from('tournaments')
       .select('winner_name, winner_avatar, prize_pool, title')
@@ -74,7 +69,6 @@ const Index = () => {
       .limit(3);
     
     if (winners) {
-      // Récupérer les badges des gagnants
       const winnersWithBadges = await Promise.all(winners.map(async (w) => {
         const { data: prof } = await supabase.from('profiles').select('id').eq('username', w.winner_name).maybeSingle();
         let tCount = 0;
@@ -87,7 +81,6 @@ const Index = () => {
       setLastWinners(winnersWithBadges);
     }
 
-    // 4. Counts participants
     const { data: participants } = await supabase.from('payments').select('tournament_id').eq('status', 'Réussi');
     if (participants) {
       const counts: Record<string, number> = {};
@@ -103,9 +96,7 @@ const Index = () => {
   }, []);
 
   const filteredTournaments = tournaments.filter(t => {
-    const matchesCity = selectedCity === "all" || t.city === selectedCity;
-    const matchesGame = selectedGame === "all" || t.game === selectedGame;
-    return matchesCity && matchesGame;
+    return selectedCity === "all" || t.city === selectedCity;
   });
 
   return (
@@ -113,7 +104,6 @@ const Index = () => {
       <SEO />
       <Navbar />
       
-      {/* Section 1: Hero */}
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
@@ -158,7 +148,6 @@ const Index = () => {
 
       <main className="max-w-7xl mx-auto px-6 space-y-32">
         
-        {/* Section 2: Chiffres clés */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 -mt-20 relative z-20">
           <motion.div whileHover={{ y: -5 }} className="bg-card border border-border p-8 rounded-[2.5rem] shadow-xl text-center">
             <div className="w-12 h-12 bg-violet-600/10 rounded-2xl flex items-center justify-center text-violet-500 mx-auto mb-4">
@@ -183,7 +172,6 @@ const Index = () => {
           </motion.div>
         </section>
 
-        {/* Section 3: Tournois en cours */}
         <section id="tournaments" className="space-y-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div>
@@ -191,30 +179,18 @@ const Index = () => {
               <p className="text-muted-foreground font-medium">Entre dans l'arène et prouve ta valeur.</p>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            <div className="w-full md:w-64">
               <Select value={selectedCity} onValueChange={setSelectedCity}>
-                <SelectTrigger className="bg-card border-border rounded-xl h-12 text-[11px] font-bold shadow-sm min-w-[160px]">
+                <SelectTrigger className="bg-card border-border rounded-xl h-12 text-[11px] font-bold shadow-sm">
                   <div className="flex items-center gap-2">
                     <MapPin size={14} className="text-violet-500" />
-                    <SelectValue placeholder="Ville" />
+                    <SelectValue placeholder="Filtrer par ville" />
                   </div>
                 </SelectTrigger>
                 <SelectContent className="bg-card border-border">
                   <SelectItem value="all">Toutes les villes</SelectItem>
                   {CITIES.map(city => (<SelectItem key={city} value={city}>{city}</SelectItem>))}
                 </SelectContent>
-              </Select>
-
-              <Select value={selectedGame} onValueChange={setSelectedGame}>
-                <SelectTrigger className="bg-card border-border rounded-xl h-12 text-[11px] font-bold shadow-sm min-w-[160px]">
-                  <div className="flex items-center gap-2">
-                    <Gamepad2 size={14} className="text-violet-500" />
-                    <SelectValue placeholder="Jeu" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent className="bg-card border-border">
-                  <SelectItem value="all">Tous les jeux</SelectItem>
-                  {GAMES.map(game => (<SelectItem key={game} value={game}>{game}</SelectItem>))}</SelectContent>
               </Select>
             </div>
           </div>
@@ -223,7 +199,7 @@ const Index = () => {
             {loading ? (
               Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="bg-card border border-border rounded-[2.5rem] overflow-hidden p-4 space-y-4">
-                  <Skeleton className="aspect-video w-full rounded-3xl" />
+                  <Skeleton className="h-48 w-full rounded-3xl" />
                   <div className="space-y-2">
                     <Skeleton className="h-6 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
@@ -237,7 +213,7 @@ const Index = () => {
                   <h3 className="text-xl font-black">Aucun tournoi trouvé</h3>
                   <p className="text-sm text-muted-foreground">Modifie tes filtres pour voir d'autres opportunités.</p>
                 </div>
-                <Button variant="outline" onClick={() => { setSelectedCity('all'); setSelectedGame('all'); }} className="rounded-xl font-black uppercase tracking-widest text-[10px]">Réinitialiser</Button>
+                <Button variant="outline" onClick={() => setSelectedCity('all')} className="rounded-xl font-black uppercase tracking-widest text-[10px]">Réinitialiser</Button>
               </div>
             ) : (
               filteredTournaments.map((t) => (
@@ -257,7 +233,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Section 4: Nos jeux */}
         <section className="space-y-10">
           <div className="text-center">
             <h2 className="text-4xl font-black tracking-tight mb-2">Nos Disciplines</h2>
@@ -277,7 +252,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Section 5: Derniers gagnants */}
         <section className="space-y-10">
           <div className="flex items-center justify-between">
             <h2 className="text-4xl font-black tracking-tight">Derniers Champions</h2>
@@ -315,7 +289,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Section 6: Pourquoi eGame Bénin ? */}
         <section className="bg-violet-600 rounded-[3rem] p-12 md:p-20 text-white shadow-2xl shadow-violet-500/20">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">Pourquoi eGame Bénin ?</h2>
