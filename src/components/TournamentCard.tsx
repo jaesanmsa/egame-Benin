@@ -64,23 +64,20 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
 
   return (
     <motion.div 
-      whileHover={{ y: -5 }}
+      whileHover={{ y: -4 }}
       onClick={handleClick}
-      className="group relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 hover:border-violet-500/50 transition-all cursor-pointer shadow-lg shadow-black/20"
+      className="group relative bg-card rounded-[24px] overflow-hidden border border-border hover:border-violet-500/40 transition-all cursor-pointer shadow-sm"
     >
-      {/* Glow effect on hover */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-3xl blur opacity-0 group-hover:opacity-20 transition duration-500" />
-      
-      <div className="relative aspect-video overflow-hidden">
+      <div className="relative aspect-[16/10] overflow-hidden">
         <img 
           src={image} 
           alt={title} 
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         
-        <div className="absolute top-3 left-3 flex gap-2">
-          <Badge className={`bg-zinc-950/80 backdrop-blur-md text-white border-zinc-800 flex items-center gap-1 text-[9px] font-black uppercase tracking-tighter py-1 px-2`}>
+        <div className="absolute top-2.5 left-2.5 flex gap-1.5">
+          <Badge className="bg-black/60 backdrop-blur-md text-white border-white/10 flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter py-0.5 px-2">
             {type === 'Online' ? <Globe size={10} className="text-cyan-400" /> : <MapPin size={10} className="text-orange-400" />}
             {type === 'Online' ? 'En ligne' : (tournamentCity || 'Local')}
           </Badge>
@@ -88,32 +85,32 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
 
         <button 
           onClick={handleShare}
-          className="absolute top-3 right-3 p-2 bg-zinc-950/80 backdrop-blur-md rounded-full border border-zinc-800 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute top-2.5 right-2.5 p-1.5 bg-black/60 backdrop-blur-md rounded-full border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-opacity"
         >
-          <Share2 size={14} />
+          <Share2 size={12} />
         </button>
 
-        <div className="absolute bottom-3 right-3">
-          <div className="bg-violet-600 text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg">
+        <div className="absolute bottom-2.5 right-2.5">
+          <div className="bg-violet-600 text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-lg">
             {entryFee} FCFA
           </div>
         </div>
       </div>
       
-      <div className="relative p-5">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
-          <p className="text-violet-400 text-[10px] font-black uppercase tracking-widest">{game}</p>
+      <div className="p-4">
+        <div className="flex items-center gap-1.5 mb-1">
+          <span className="w-1 h-1 rounded-full bg-violet-500" />
+          <p className="text-violet-500 text-[8px] font-black uppercase tracking-widest">{game}</p>
         </div>
-        <h3 className="text-white font-bold text-base mb-4 line-clamp-1 group-hover:text-violet-400 transition-colors">{title}</h3>
+        <h3 className="font-bold text-sm mb-3 line-clamp-1 group-hover:text-violet-500 transition-colors">{title}</h3>
         
-        <div className="flex items-center justify-between text-zinc-500 text-[11px] font-bold">
-          <div className="flex items-center gap-1.5">
-            <Calendar size={14} className="text-zinc-600" />
+        <div className="flex items-center justify-between text-muted-foreground text-[10px] font-bold">
+          <div className="flex items-center gap-1">
+            <Calendar size={12} className="text-muted-foreground/60" />
             <span>{date}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Users size={14} className="text-zinc-600" />
+          <div className="flex items-center gap-1">
+            <Users size={12} className="text-muted-foreground/60" />
             <span>{participants}</span>
           </div>
         </div>

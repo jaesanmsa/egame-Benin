@@ -57,59 +57,61 @@ const Navbar = () => {
   const avatarUrl = dbAvatar || user?.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`;
 
   return (
-    <nav className="fixed bottom-4 left-4 right-4 z-50 bg-background/90 backdrop-blur-xl border border-border px-4 py-3 rounded-[30px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] md:top-4 md:bottom-auto md:max-w-fit md:mx-auto md:px-8">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-8">
-        <Link to="/" className="hidden md:block">
+    <nav className="fixed bottom-4 left-4 right-4 z-50 bg-background/80 backdrop-blur-xl border border-border px-4 py-2.5 rounded-[24px] shadow-xl md:top-4 md:bottom-auto md:max-w-4xl md:mx-auto">
+      <div className="flex items-center justify-between gap-4">
+        <Link to="/" className="flex-shrink-0">
           <Logo size="sm" />
         </Link>
 
-        <div className="flex items-center justify-between w-full md:w-auto md:gap-8 px-2">
-          <Link to="/" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
-            <Home size={22} />
-            <span className="text-[9px] font-bold md:hidden">Accueil</span>
+        <div className="flex items-center justify-center flex-1 gap-2 md:gap-8">
+          <Link to="/" className={`flex flex-col items-center gap-0.5 transition-colors ${isActive('/') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
+            <Home size={20} />
+            <span className="text-[8px] font-bold md:hidden">Accueil</span>
           </Link>
 
-          <Link to="/games" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/games') || location.pathname.startsWith('/game/') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
-            <Gamepad2 size={22} />
-            <span className="text-[9px] font-bold md:hidden">Jeux</span>
+          <Link to="/games" className={`flex flex-col items-center gap-0.5 transition-colors ${isActive('/games') || location.pathname.startsWith('/game/') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
+            <Gamepad2 size={20} />
+            <span className="text-[8px] font-bold md:hidden">Jeux</span>
           </Link>
 
-          <Link to="/leaderboard" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/leaderboard') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
-            <Trophy size={22} />
-            <span className="text-[9px] font-bold md:hidden">Classement</span>
+          <Link to="/leaderboard" className={`flex flex-col items-center gap-0.5 transition-colors ${isActive('/leaderboard') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
+            <Trophy size={20} />
+            <span className="text-[8px] font-bold md:hidden">Classement</span>
           </Link>
           
           {isLoggedIn && (
-            <Link to="/payments" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/payments') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
-              <History size={22} />
-              <span className="text-[9px] font-bold md:hidden">Paiements</span>
+            <Link to="/payments" className={`flex flex-col items-center gap-0.5 transition-colors ${isActive('/payments') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'}`}>
+              <History size={20} />
+              <span className="text-[8px] font-bold md:hidden">Paiements</span>
             </Link>
           )}
 
-          <Link to="/profile" className={`flex flex-col items-center gap-1 flex-1 transition-colors ${isActive('/profile') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'} md:hidden`}>
+          <Link to="/profile" className={`flex flex-col items-center gap-0.5 transition-colors ${isActive('/profile') ? 'text-violet-500' : 'text-muted-foreground hover:text-foreground'} md:hidden`}>
             {isLoggedIn ? (
-              <div className={`w-6 h-6 rounded-full overflow-hidden border bg-muted ${isActive('/profile') ? 'border-violet-500' : 'border-border'}`}>
+              <div className={`w-5 h-5 rounded-full overflow-hidden border bg-muted ${isActive('/profile') ? 'border-violet-500' : 'border-border'}`}>
                 {!loadingAvatar && <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />}
               </div>
             ) : (
-              <User size={22} />
+              <User size={20} />
             )}
-            <span className="text-[9px] font-bold">Profil</span>
+            <span className="text-[8px] font-bold">Profil</span>
           </Link>
         </div>
 
         <div className="hidden md:block">
           {!isLoggedIn ? (
             <Link to="/auth">
-              <button className="bg-violet-600 hover:bg-violet-700 text-white px-6 py-2 rounded-full font-medium transition-all shadow-lg shadow-violet-500/20 flex items-center gap-2">
-                <LogIn size={18} />
+              <button className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-1.5 rounded-full text-xs font-bold transition-all shadow-lg shadow-violet-500/20 flex items-center gap-2">
+                <LogIn size={14} />
                 Connexion
               </button>
             </Link>
           ) : (
             <Link to="/profile">
-              <button className="bg-muted hover:bg-muted/80 text-foreground px-6 py-2 rounded-full font-medium transition-all border border-border flex items-center gap-2">
-                <User size={18} />
+              <button className="bg-muted hover:bg-muted/80 text-foreground px-5 py-1.5 rounded-full text-xs font-bold transition-all border border-border flex items-center gap-2">
+                <div className="w-4 h-4 rounded-full overflow-hidden">
+                  <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+                </div>
                 Mon Profil
               </button>
             </Link>
