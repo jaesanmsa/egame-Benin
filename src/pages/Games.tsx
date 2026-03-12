@@ -45,7 +45,20 @@ const Games = () => {
       }
       setLoading(false);
     };
+
     fetchActiveTournaments();
+
+    // Écoute en temps réel des changements de tournois
+    const channel = supabase
+      .channel('games_active_status')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tournaments' }, () => {
+        fetchActiveTournaments();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const filteredGames = ALL_GAMES.filter(game => {
@@ -99,10 +112,12 @@ const Games = () => {
                   {ALL_GAMES.map(game => (
                     <SelectItem key={game.id} value={game.id}>
                       <div className="flex items-center gap-2">
-                        {game.name}
                         {activeGames.has(game.id) && (
-                          <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                          <span className="w-2 h-2 bg-green-500 rounded-full shrink-0 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
                         )}
+                        <span className={activeGames.has(game.id) ? "font-black" : "font-medium"}>
+                          {game.name}
+                        </span>
                       </div>
                     </SelectItem>
                   ))}
