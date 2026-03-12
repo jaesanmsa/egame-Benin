@@ -71,17 +71,22 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <span className="h-px w-6 bg-violet-500/50" />
-              <span className="text-violet-500 font-black uppercase tracking-[0.3em] text-[9px]">eGame Bénin Official</span>
-              <span className="h-px w-6 bg-violet-500/50" />
-            </div>
-
-            <h1 className="text-3xl md:text-6xl font-black tracking-tighter mb-6 leading-tight">
+            <motion.h1 
+              animate={{ 
+                y: [0, -10, 0],
+                opacity: [1, 0.7, 1]
+              }}
+              transition={{ 
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="text-3xl md:text-6xl font-black tracking-tighter mb-6 leading-tight"
+            >
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-foreground/50">JOUE. </span>
               <span className="text-violet-500">COMPÉTIS. </span>
               <span>GAGNE.</span>
-            </h1>
+            </motion.h1>
 
             <p className="text-xs md:text-sm text-muted-foreground mb-8 font-medium max-w-lg mx-auto leading-relaxed">
               Rejoins la communauté gaming #1 au Bénin. Participe aux tournois officiels et remporte des cash prizes réels.
