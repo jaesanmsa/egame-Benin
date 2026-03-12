@@ -6,7 +6,7 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
 import { motion } from 'framer-motion';
-import { Trophy, Gamepad2, Users, Coins, ShieldCheck, CreditCard, MessageSquare, ArrowRight, Star, Zap, Target } from 'lucide-react';
+import { Trophy, Gamepad2, Users, Coins, ShieldCheck, CreditCard, MessageSquare, ArrowRight, Star, Zap, Shield } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -26,7 +26,6 @@ const Index = () => {
 
       setStats({ players: playerCount || 0, tournaments: tourCount || 0, cashPrize: totalCash });
 
-      // Récupération des derniers champions
       const { data: winners } = await supabase
         .from('tournaments')
         .select('winner_name, winner_avatar, prize_pool, title')
@@ -60,7 +59,7 @@ const Index = () => {
         <Logo size="sm" />
       </div>
       
-      <section className="relative h-[85vh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=2000" className="w-full h-full object-cover opacity-20 scale-105" alt="" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/40 to-background" />
@@ -68,32 +67,32 @@ const Index = () => {
         
         <div className="relative z-10 text-center px-6 max-w-4xl">
           <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
+            initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <span className="h-px w-8 bg-violet-500/50" />
-              <span className="text-violet-500 font-black uppercase tracking-[0.4em] text-[10px]">eGame Bénin Official</span>
-              <span className="h-px w-8 bg-violet-500/50" />
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <span className="h-px w-6 bg-violet-500/50" />
+              <span className="text-violet-500 font-black uppercase tracking-[0.3em] text-[9px]">eGame Bénin Official</span>
+              <span className="h-px w-6 bg-violet-500/50" />
             </div>
 
-            <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.9]">
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-foreground to-foreground/50">JOUE.</span>
-              <span className="block text-violet-500">COMPÉTIS.</span>
-              <span className="block">GAGNE.</span>
+            <h1 className="text-3xl md:text-6xl font-black tracking-tighter mb-6 leading-tight">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-foreground/50">JOUE. </span>
+              <span className="text-violet-500">COMPÉTIS. </span>
+              <span>GAGNE.</span>
             </h1>
 
-            <p className="text-sm md:text-lg text-muted-foreground mb-10 font-medium max-w-xl mx-auto leading-relaxed">
-              Rejoins l'élite du gaming au Bénin. Participe aux tournois officiels et remporte des cash prizes réels.
+            <p className="text-xs md:text-sm text-muted-foreground mb-8 font-medium max-w-lg mx-auto leading-relaxed">
+              Rejoins la communauté gaming #1 au Bénin. Participe aux tournois officiels et remporte des cash prizes réels.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button onClick={() => navigate('/games')} className="w-full sm:w-auto py-8 px-10 rounded-2xl bg-violet-600 hover:bg-violet-700 font-black text-lg text-white shadow-2xl shadow-violet-500/40 group transition-all">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button onClick={() => navigate('/games')} className="w-full sm:w-auto py-6 px-8 rounded-xl bg-violet-600 hover:bg-violet-700 font-black text-sm text-white shadow-xl shadow-violet-500/30 group transition-all">
                 Entrer dans l'Arène
-                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={16} />
               </Button>
-              <Button variant="outline" onClick={() => navigate('/leaderboard')} className="w-full sm:w-auto py-8 px-10 rounded-2xl border-border font-black text-lg hover:bg-muted transition-all">
+              <Button variant="outline" onClick={() => navigate('/leaderboard')} className="w-full sm:w-auto py-6 px-8 rounded-xl border-border font-black text-sm hover:bg-muted transition-all">
                 Voir le Classement
               </Button>
             </div>
@@ -101,59 +100,57 @@ const Index = () => {
         </div>
       </section>
 
-      <main className="max-w-6xl mx-auto px-6 space-y-32">
-        {/* Section Stats: Champion, Classement, Complet */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-20 -mt-20">
-          <motion.div whileHover={{ y: -5 }} className="bg-card border border-border p-8 rounded-[32px] shadow-xl text-center group">
-            <div className="w-14 h-14 bg-violet-600/10 rounded-2xl flex items-center justify-center text-violet-500 mx-auto mb-4 group-hover:scale-110 transition-transform"><Trophy size={28} /></div>
-            <p className="text-4xl font-black mb-1">{stats.tournaments}</p>
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Tournois Complets</p>
+      <main className="max-w-5xl mx-auto px-6 space-y-24">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-20 -mt-16">
+          <motion.div whileHover={{ y: -3 }} className="bg-card border border-border p-6 rounded-[24px] shadow-lg text-center group">
+            <div className="w-12 h-12 bg-violet-600/10 rounded-xl flex items-center justify-center text-violet-500 mx-auto mb-3 group-hover:scale-110 transition-transform"><Trophy size={24} /></div>
+            <p className="text-3xl font-black mb-0.5">{stats.tournaments}</p>
+            <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest">Tournois Complets</p>
           </motion.div>
-          <motion.div whileHover={{ y: -5 }} className="bg-card border border-border p-8 rounded-[32px] shadow-xl text-center group">
-            <div className="w-14 h-14 bg-cyan-600/10 rounded-2xl flex items-center justify-center text-cyan-500 mx-auto mb-4 group-hover:scale-110 transition-transform"><Star size={28} /></div>
-            <p className="text-4xl font-black mb-1">{stats.players}</p>
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Champions Inscrits</p>
+          <motion.div whileHover={{ y: -3 }} className="bg-card border border-border p-6 rounded-[24px] shadow-lg text-center group">
+            <div className="w-12 h-12 bg-cyan-600/10 rounded-xl flex items-center justify-center text-cyan-500 mx-auto mb-3 group-hover:scale-110 transition-transform"><Star size={24} /></div>
+            <p className="text-3xl font-black mb-0.5">{stats.players}</p>
+            <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest">Champions Inscrits</p>
           </motion.div>
-          <motion.div whileHover={{ y: -5 }} className="bg-card border border-border p-8 rounded-[32px] shadow-xl text-center group">
-            <div className="w-14 h-14 bg-green-600/10 rounded-2xl flex items-center justify-center text-green-500 mx-auto mb-4 group-hover:scale-110 transition-transform"><Coins size={28} /></div>
-            <p className="text-4xl font-black mb-1">{stats.cashPrize.toLocaleString()}</p>
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Cash Prizes Versés</p>
+          <motion.div whileHover={{ y: -3 }} className="bg-card border border-border p-6 rounded-[24px] shadow-lg text-center group">
+            <div className="w-12 h-12 bg-green-600/10 rounded-xl flex items-center justify-center text-green-500 mx-auto mb-3 group-hover:scale-110 transition-transform"><Coins size={24} /></div>
+            <p className="text-3xl font-black mb-0.5">{stats.cashPrize.toLocaleString()}</p>
+            <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest">Cash Prizes Versés</p>
           </motion.div>
         </section>
 
-        {/* Section Champions (Derniers Gagnants) */}
-        <section className="space-y-12">
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl font-black tracking-tight">Derniers Champions</h2>
-            <p className="text-muted-foreground text-xs font-bold uppercase tracking-[0.2em]">Ceux qui dominent l'arène actuellement</p>
+        <section className="space-y-10">
+          <div className="text-center space-y-2">
+            <h2 className="text-3xl font-black tracking-tight">Derniers Champions</h2>
+            <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">Ceux qui dominent l'arène actuellement</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {loading ? (
-              Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-64 bg-muted animate-pulse rounded-[32px]" />)
+              Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-56 bg-muted animate-pulse rounded-[24px]" />)
             ) : lastWinners.length === 0 ? (
-              <div className="col-span-full py-12 text-center text-muted-foreground italic">En attente des prochains champions...</div>
+              <div className="col-span-full py-10 text-center text-muted-foreground text-xs italic">En attente des prochains champions...</div>
             ) : (
               lastWinners.map((w, i) => (
                 <motion.div 
                   key={i} 
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.1 }}
-                  className="bg-card border border-border p-8 rounded-[32px] shadow-sm flex flex-col items-center text-center relative overflow-hidden group"
+                  className="bg-card border border-border p-6 rounded-[24px] shadow-sm flex flex-col items-center text-center relative overflow-hidden group"
                 >
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-violet-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative mb-6">
-                    <div className="w-24 h-24 rounded-full border-4 border-violet-600/10 overflow-hidden bg-muted shadow-inner">
+                  <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-violet-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative mb-4">
+                    <div className="w-20 h-20 rounded-full border-2 border-violet-600/10 overflow-hidden bg-muted shadow-inner">
                       <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${w.winner_name}`} alt="" className="w-full h-full object-cover" />
                     </div>
-                    <div className="absolute -bottom-2 -right-2">
-                      <PlayerBadge tournamentCount={w.tournamentCount} size="md" />
+                    <div className="absolute -bottom-1 -right-1">
+                      <PlayerBadge tournamentCount={w.tournamentCount} size="sm" />
                     </div>
                   </div>
-                  <h3 className="text-xl font-black mb-1">{w.winner_name}</h3>
-                  <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest mb-6">{w.title}</p>
-                  <div className="bg-green-500/10 text-green-500 px-6 py-2 rounded-full font-black text-xs border border-green-500/20 shadow-sm">
+                  <h3 className="text-lg font-black mb-0.5">{w.winner_name}</h3>
+                  <p className="text-[8px] text-muted-foreground font-black uppercase tracking-widest mb-4">{w.title}</p>
+                  <div className="bg-green-500/10 text-green-500 px-4 py-1.5 rounded-full font-black text-[10px] border border-green-500/20 shadow-sm">
                     +{w.prize_pool}
                   </div>
                 </motion.div>
@@ -162,36 +159,36 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Section Features */}
-        <section className="bg-violet-600 rounded-[48px] p-12 md:p-20 text-white shadow-2xl shadow-violet-500/20 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 relative z-10">
-            <div className="space-y-4 text-center">
-              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg"><ShieldCheck size={32} /></div>
-              <h3 className="text-xl font-black">100% Sécurisé</h3>
-              <p className="text-violet-100 text-xs leading-relaxed">Paiements et retraits via Mobile Money certifiés par KKiaPay.</p>
+        <section className="bg-violet-600 rounded-[32px] p-10 md:p-16 text-white shadow-2xl shadow-violet-500/20 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative z-10">
+            <div className="space-y-3 text-center">
+              <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg"><ShieldCheck size={24} /></div>
+              <h3 className="text-lg font-black">100% Sécurisé</h3>
+              <p className="text-violet-100 text-[10px] leading-relaxed">Paiements et retraits via Mobile Money certifiés par KKiaPay.</p>
             </div>
-            <div className="space-y-4 text-center">
-              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg"><CreditCard size={32} /></div>
-              <h3 className="text-xl font-black">Retrait Rapide</h3>
-              <p className="text-violet-100 text-xs leading-relaxed">Tes gains sont envoyés sur ton numéro en moins de 24 heures.</p>
+            <div className="space-y-3 text-center">
+              <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg"><CreditCard size={24} /></div>
+              <h3 className="text-lg font-black">Retrait Rapide</h3>
+              <p className="text-violet-100 text-[10px] leading-relaxed">Tes gains sont envoyés sur ton numéro en moins de 24 heures.</p>
             </div>
-            <div className="space-y-4 text-center">
-              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg"><Zap size={32} /></div>
-              <h3 className="text-xl font-black">Compétition Élite</h3>
-              <p className="text-violet-100 text-xs leading-relaxed">Affronte les meilleurs joueurs du Bénin et grimpe au sommet.</p>
+            <div className="space-y-3 text-center">
+              <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg"><Zap size={24} /></div>
+              <h3 className="text-lg font-black">Compétition Élite</h3>
+              <p className="text-violet-100 text-[10px] leading-relaxed">Affronte les meilleurs joueurs du Bénin et grimpe au sommet.</p>
             </div>
           </div>
         </section>
 
-        <footer className="py-20 border-t border-border text-center space-y-10">
-          <div className="flex items-center justify-center gap-8">
-            <a href="https://wa.me/2290141790790" target="_blank" className="text-muted-foreground hover:text-green-500 transition-all hover:scale-110"><MessageSquare size={24} /></a>
-            <Trophy size={24} className="text-muted-foreground" />
+        <footer className="py-16 border-t border-border text-center space-y-8">
+          <div className="flex items-center justify-center gap-6">
+            <a href="https://wa.me/2290141790790" target="_blank" className="text-muted-foreground hover:text-green-500 transition-all hover:scale-110"><MessageSquare size={20} /></a>
+            <Link to="/privacy" className="text-muted-foreground hover:text-violet-500 transition-all hover:scale-110"><Shield size={20} /></Link>
+            <Trophy size={20} className="text-muted-foreground" />
           </div>
           <div className="space-y-2">
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em]">eGame Bénin • La Référence Gaming</p>
-            <p className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-widest">© 2026 • Tous droits réservés</p>
+            <p className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.2em]">eGame Bénin • La Référence Gaming</p>
+            <p className="text-[8px] text-muted-foreground/40 font-bold uppercase tracking-widest">© 2026 • Tous droits réservés</p>
           </div>
         </footer>
       </main>
