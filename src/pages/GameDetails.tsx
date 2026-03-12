@@ -27,7 +27,7 @@ const GameDetails = () => {
     'free-fire': { 
       name: 'Free Fire', 
       icon: '🔥', 
-      image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1200',
+      image: '/freefire.jpg',
       desc: "Le Battle Royale mobile le plus populaire au Bénin. Survis jusqu'au bout pour remporter le Booyah.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
@@ -41,21 +41,28 @@ const GameDetails = () => {
     'clash-royale': { 
       name: 'Clash Royale', 
       icon: '👑', 
-      image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=1200',
+      image: '/clash royal.webp',
       desc: "Un mélange de stratégie et de cartes. Détruis les tours adverses et grimpe dans le classement.",
+      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+    },
+    'clash-of-clans': { 
+      name: 'Clash of Clans', 
+      icon: '🏰', 
+      image: '/clash of clans.webp',
+      desc: "Construis ton village, forme tes troupes et mène ton clan à la victoire dans des guerres épiques.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'cod-mobile': { 
       name: 'COD Mobile', 
       icon: '📱', 
-      image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=1200',
+      image: '/COD.webp',
       desc: "L'expérience Call of Duty sur mobile. Précision et rapidité sont les clés de la victoire.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'pubg-mobile': { 
       name: 'PUBG Mobile', 
       icon: '🍗', 
-      image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&q=80&w=1200',
+      image: '/pubg-mobile.jpg',
       desc: "Le pionnier du Battle Royale. Atterris, équipe-toi et sois le dernier survivant.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
@@ -69,7 +76,7 @@ const GameDetails = () => {
     'cod-mw4': { 
       name: 'COD MW4', 
       icon: '🔫', 
-      image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&q=80&w=1200',
+      image: '/COD.webp',
       desc: "Le classique du FPS. Affrontements intenses en local ou en ligne.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
@@ -85,8 +92,6 @@ const GameDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      
-      // 1. Tournois actifs pour ce jeu
       const { data: activeTours } = await supabase
         .from('tournaments')
         .select('*')
@@ -99,7 +104,6 @@ const GameDetails = () => {
         setHasActiveTournament(activeTours.length > 0);
       }
 
-      // 2. Anciens gagnants (Hall of Fame)
       const { data: finished } = await supabase
         .from('tournaments')
         .select('winner_name, winner_avatar, title, prize_pool')
@@ -110,7 +114,6 @@ const GameDetails = () => {
       
       if (finished) setWinners(finished);
 
-      // 3. Counts de participants
       const { data: participants } = await supabase.from('payments').select('tournament_id').eq('status', 'Réussi');
       if (participants) {
         const counts: Record<string, number> = {};
@@ -128,24 +131,16 @@ const GameDetails = () => {
   return (
     <div className="min-h-screen bg-background text-foreground pb-32">
       <Navbar />
-      
-      {/* Hero Header */}
       <section className="relative h-[45vh] w-full overflow-hidden">
         <img src={gameInfo.image} className="w-full h-full object-cover opacity-40 scale-105" alt="" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
-        
         <div className="absolute top-6 left-6 z-20">
           <button onClick={() => navigate(-1)} className="p-2.5 bg-card/80 backdrop-blur-md rounded-full border border-border shadow-lg hover:scale-110 transition-transform">
             <ArrowLeft size={18} />
           </button>
         </div>
-
         <div className="absolute bottom-12 left-6 md:left-12 z-10">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-4 mb-2"
-          >
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-4 mb-2">
             <span className="text-5xl md:text-6xl drop-shadow-2xl">{gameInfo.icon}</span>
             <div>
               <div className="flex items-center gap-3">
@@ -165,44 +160,22 @@ const GameDetails = () => {
 
       <main className="max-w-6xl mx-auto px-6 -mt-8 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Colonne Gauche: Tournois & Description */}
           <div className="lg:col-span-2 space-y-12">
-            
-            {/* Description Card */}
-            <motion.section 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"
-            >
-              <h2 className="text-sm font-black mb-4 flex items-center gap-2.5 uppercase tracking-widest">
-                <Target className="text-violet-500" size={18} />
-                À propos de la discipline
-              </h2>
-              <p className="text-muted-foreground text-sm leading-relaxed font-medium">
-                {gameInfo.desc}
-              </p>
+            <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm">
+              <h2 className="text-sm font-black mb-4 flex items-center gap-2.5 uppercase tracking-widest"><Target className="text-violet-500" size={18} />À propos de la discipline</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed font-medium">{gameInfo.desc}</p>
             </motion.section>
-
-            {/* Active Tournaments */}
             <section className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
-                  <Zap className="text-yellow-500 fill-yellow-500" size={24} />
-                  Tournois Disponibles
-                </h2>
-                
+                <h2 className="text-2xl font-black tracking-tight flex items-center gap-3"><Zap className="text-yellow-500 fill-yellow-500" size={24} />Tournois Disponibles</h2>
                 <Select value={selectedCity} onValueChange={setSelectedCity}>
-                  <SelectTrigger className="bg-card border-border rounded-xl h-12 w-full sm:w-48 text-xs font-bold">
-                    <div className="flex items-center gap-2"><MapPin size={14} className="text-violet-500" /><SelectValue placeholder="Ville" /></div>
-                  </SelectTrigger>
+                  <SelectTrigger className="bg-card border-border rounded-xl h-12 w-full sm:w-48 text-xs font-bold"><div className="flex items-center gap-2"><MapPin size={14} className="text-violet-500" /><SelectValue placeholder="Ville" /></div></SelectTrigger>
                   <SelectContent className="bg-card border-border">
                     <SelectItem value="all">Toutes les villes</SelectItem>
                     {CITIES.map(city => <SelectItem key={city} value={city}>{city}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {loading ? (
                   Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-[24px]" />)
@@ -213,90 +186,38 @@ const GameDetails = () => {
                   </div>
                 ) : (
                   filteredTournaments.map((t) => (
-                    <TournamentCard 
-                      key={t.id} 
-                      id={t.id} 
-                      title={t.title} 
-                      game={t.game} 
-                      image={t.image_url} 
-                      date={new Date(t.start_date).toLocaleDateString('fr-FR')} 
-                      participants={`${participantCounts[t.id] || 0}/${t.max_participants}`} 
-                      entryFee={t.entry_fee.toString()} 
-                      type={t.type as any} 
-                      status="active"
-                    />
+                    <TournamentCard key={t.id} id={t.id} title={t.title} game={t.game} image={t.image_url} date={new Date(t.start_date).toLocaleDateString('fr-FR')} participants={`${participantCounts[t.id] || 0}/${t.max_participants}`} entryFee={t.entry_fee.toString()} type={t.type as any} status="active" />
                   ))
                 )}
               </div>
             </section>
           </div>
-
-          {/* Colonne Droite: Hall of Fame & Communauté */}
           <div className="space-y-8">
-            
-            {/* Hall of Fame */}
-            <motion.section 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"
-            >
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-yellow-500/10 rounded-xl flex items-center justify-center text-yellow-500">
-                  <Trophy size={20} />
-                </div>
-                <h2 className="text-xs font-black uppercase tracking-widest">Hall of Fame</h2>
-              </div>
-
+            <motion.section initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm">
+              <div className="flex items-center gap-3 mb-8"><div className="w-10 h-10 bg-yellow-500/10 rounded-xl flex items-center justify-center text-yellow-500"><Trophy size={20} /></div><h2 className="text-xs font-black uppercase tracking-widest">Hall of Fame</h2></div>
               <div className="space-y-4">
                 {loading ? (
                   Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-16 w-full rounded-2xl" />)
                 ) : winners.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Star size={24} className="mx-auto text-muted-foreground/20 mb-2" />
-                    <p className="text-[10px] text-muted-foreground font-bold italic">L'histoire reste à écrire...</p>
-                  </div>
+                  <div className="text-center py-8"><Star size={24} className="mx-auto text-muted-foreground/20 mb-2" /><p className="text-[10px] text-muted-foreground font-bold italic">L'histoire reste à écrire...</p></div>
                 ) : (
                   winners.map((w, i) => (
                     <div key={i} className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border/50 hover:border-violet-500/30 transition-all group">
                       <span className="text-2xl group-hover:scale-110 transition-transform">{w.winner_avatar || '🏆'}</span>
-                      <div className="flex-1">
-                        <p className="font-black text-xs">{w.winner_name}</p>
-                        <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest line-clamp-1">{w.title}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-[9px] font-black text-green-500">+{w.prize_pool}</p>
-                      </div>
+                      <div className="flex-1"><p className="font-black text-xs">{w.winner_name}</p><p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest line-clamp-1">{w.title}</p></div>
+                      <div className="text-right"><p className="text-[9px] font-black text-green-500">+{w.prize_pool}</p></div>
                     </div>
                   ))
                 )}
               </div>
             </motion.section>
-
-            {/* Communauté Card */}
-            <motion.section 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-violet-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-violet-500/20"
-            >
-              <h3 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2">
-                <MessageSquare size={16} />
-                Communauté
-              </h3>
+            <motion.section initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="bg-violet-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-violet-500/20">
+              <h3 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2"><MessageSquare size={16} />Communauté</h3>
               <div className="space-y-6">
-                <p className="text-xs leading-relaxed text-violet-100 font-medium">
-                  Rejoins la communauté <span className="font-black text-white">{gameInfo.name}</span> de eGame Bénin pour ne rater aucune info.
-                </p>
-                <a href={gameInfo.whatsapp} target="_blank" rel="noopener noreferrer">
-                  <Button className="w-full bg-white text-violet-600 hover:bg-violet-50 py-6 rounded-2xl font-black text-xs gap-2">
-                    Rejoindre le groupe
-                    <ChevronRight size={16} />
-                  </Button>
-                </a>
+                <p className="text-xs leading-relaxed text-violet-100 font-medium">Rejoins la communauté <span className="font-black text-white">{gameInfo.name}</span> de eGame Bénin pour ne rater aucune info.</p>
+                <a href={gameInfo.whatsapp} target="_blank" rel="noopener noreferrer"><Button className="w-full bg-white text-violet-600 hover:bg-violet-50 py-6 rounded-2xl font-black text-xs gap-2">Rejoindre le groupe<ChevronRight size={16} /></Button></a>
               </div>
             </motion.section>
-
           </div>
         </div>
       </main>

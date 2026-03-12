@@ -12,13 +12,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah"];
 
 const ALL_GAMES = [
-  { id: 'free-fire', name: 'Free Fire', icon: '🔥', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800' },
+  { id: 'free-fire', name: 'Free Fire', icon: '🔥', image: '/freefire.jpg' },
   { id: 'efootball', name: 'eFootball', icon: '⚽', image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=800' },
-  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=800' },
-  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=800' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗', image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&q=80&w=800' },
+  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: '/clash royal.webp' },
+  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰', image: '/clash of clans.webp' },
+  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: '/COD.webp' },
+  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗', image: '/pubg-mobile.jpg' },
   { id: 'blur', name: 'Blur', icon: '🏎️', image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=800' },
-  { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&q=80&w=800' },
+  { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', image: '/COD.webp' },
   { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=800' }
 ];
 
@@ -48,7 +49,6 @@ const Games = () => {
 
     fetchActiveTournaments();
 
-    // Écoute en temps réel des changements de tournois
     const channel = supabase
       .channel('games_active_status')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tournaments' }, () => {
@@ -70,8 +70,6 @@ const Games = () => {
     <div className="min-h-screen bg-background text-foreground pb-32 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-6xl mx-auto px-6 py-8 space-y-12">
-        
-        {/* Filtres en haut */}
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
@@ -85,7 +83,6 @@ const Games = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-              {/* Filtre par Ville */}
               <Select value={selectedCity} onValueChange={setSelectedCity}>
                 <SelectTrigger className="bg-card border-border rounded-2xl h-14 w-full md:w-56 text-xs font-bold shadow-sm">
                   <div className="flex items-center gap-2">
@@ -99,7 +96,6 @@ const Games = () => {
                 </SelectContent>
               </Select>
 
-              {/* Filtre par Jeu */}
               <Select value={selectedGame} onValueChange={setSelectedGame}>
                 <SelectTrigger className="bg-card border-border rounded-2xl h-14 w-full md:w-56 text-xs font-bold shadow-sm">
                   <div className="flex items-center gap-2">
@@ -127,7 +123,6 @@ const Games = () => {
           </div>
         </div>
 
-        {/* Grille de rectangles */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-48 w-full rounded-[32px]" />)
