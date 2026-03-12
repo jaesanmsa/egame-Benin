@@ -4,10 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
-import { ArrowLeft, Trophy, Star, Gamepad2, Zap, Users, Target } from 'lucide-react';
+import { ArrowLeft, Trophy, Star, Gamepad2, Zap, Users, Target, MessageSquare, MapPin, ChevronRight } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from '@/components/ui/button';
+
+const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah"];
 
 const GameDetails = () => {
   const { id } = useParams();
@@ -15,40 +19,68 @@ const GameDetails = () => {
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [winners, setWinners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCity, setSelectedCity] = useState<string>("all");
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
+  const [hasActiveTournament, setHasActiveTournament] = useState(false);
 
   const gameInfo = {
     'free-fire': { 
       name: 'Free Fire', 
       icon: '🔥', 
       image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1200',
-      desc: "Le Battle Royale mobile le plus populaire au Bénin. Survis jusqu'au bout pour remporter le Booyah et le cash prize."
+      desc: "Le Battle Royale mobile le plus populaire au Bénin. Survis jusqu'au bout pour remporter le Booyah.",
+      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'efootball': { 
       name: 'eFootball', 
       icon: '⚽', 
       image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=1200',
-      desc: "La simulation de football ultime. Maîtrise le terrain, marque des buts spectaculaires et deviens le roi du gazon virtuel."
+      desc: "La simulation de football ultime. Maîtrise le terrain et deviens le roi du gazon virtuel.",
+      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'clash-royale': { 
       name: 'Clash Royale', 
       icon: '👑', 
       image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=1200',
-      desc: "Un mélange de stratégie et de cartes. Détruis les tours adverses et grimpe dans le classement eGame Bénin."
+      desc: "Un mélange de stratégie et de cartes. Détruis les tours adverses et grimpe dans le classement.",
+      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'cod-mobile': { 
       name: 'COD Mobile', 
       icon: '📱', 
       image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=1200',
-      desc: "L'expérience Call of Duty sur mobile. Précision, rapidité et travail d'équipe sont les clés de la victoire."
+      desc: "L'expérience Call of Duty sur mobile. Précision et rapidité sont les clés de la victoire.",
+      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'pubg-mobile': { 
       name: 'PUBG Mobile', 
       icon: '🍗', 
       image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&q=80&w=1200',
-      desc: "Le pionnier du Battle Royale. Atterris, équipe-toi et sois le dernier survivant pour le Winner Winner Chicken Dinner."
+      desc: "Le pionnier du Battle Royale. Atterris, équipe-toi et sois le dernier survivant.",
+      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+    },
+    'blur': { 
+      name: 'Blur', 
+      icon: '🏎️', 
+      image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=1200',
+      desc: "Course arcade explosive. Utilise tes pouvoirs pour éjecter tes adversaires de la piste.",
+      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+    },
+    'cod-mw4': { 
+      name: 'COD MW4', 
+      icon: '🔫', 
+      image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&q=80&w=1200',
+      desc: "Le classique du FPS. Affrontements intenses en local ou en ligne.",
+      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+    },
+    'bombsquad': { 
+      name: 'BombSquad', 
+      icon: '💣', 
+      image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=1200',
+      desc: "Explose tes amis dans des mini-jeux délirants. Fun garanti.",
+      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     }
-  }[id as string] || { name: id, icon: '🎮', image: '', desc: "Rejoins la compétition sur eGame Bénin." };
+  }[id as string] || { name: id, icon: '🎮', image: '', desc: "Rejoins la compétition sur eGame Bénin.", whatsapp: "#" };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,7 +94,10 @@ const GameDetails = () => {
         .eq('status', 'active')
         .order('created_at', { ascending: false });
       
-      if (activeTours) setTournaments(activeTours);
+      if (activeTours) {
+        setTournaments(activeTours);
+        setHasActiveTournament(activeTours.length > 0);
+      }
 
       // 2. Anciens gagnants (Hall of Fame)
       const { data: finished } = await supabase
@@ -88,6 +123,8 @@ const GameDetails = () => {
     fetchData();
   }, [id, gameInfo.name]);
 
+  const filteredTournaments = tournaments.filter(t => selectedCity === "all" || t.city === selectedCity);
+
   return (
     <div className="min-h-screen bg-background text-foreground pb-32">
       <Navbar />
@@ -111,7 +148,15 @@ const GameDetails = () => {
           >
             <span className="text-5xl md:text-6xl drop-shadow-2xl">{gameInfo.icon}</span>
             <div>
-              <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-none">{gameInfo.name}</h1>
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-none uppercase">{gameInfo.name}</h1>
+                {hasActiveTournament && (
+                  <div className="bg-green-500/20 backdrop-blur-md border border-green-500/30 px-3 py-1 rounded-full flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    <span className="text-[10px] font-black text-green-400 uppercase tracking-widest">Live</span>
+                  </div>
+                )}
+              </div>
               <p className="text-violet-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Discipline Officielle eGame</p>
             </div>
           </motion.div>
@@ -141,27 +186,33 @@ const GameDetails = () => {
 
             {/* Active Tournaments */}
             <section className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
                   <Zap className="text-yellow-500 fill-yellow-500" size={24} />
-                  Tournois en cours
+                  Tournois Disponibles
                 </h2>
-                <span className="bg-green-500/10 text-green-500 text-[10px] font-black px-3 py-1 rounded-full border border-green-500/20 uppercase tracking-widest">
-                  {tournaments.length} Actifs
-                </span>
+                
+                <Select value={selectedCity} onValueChange={setSelectedCity}>
+                  <SelectTrigger className="bg-card border-border rounded-xl h-12 w-full sm:w-48 text-xs font-bold">
+                    <div className="flex items-center gap-2"><MapPin size={14} className="text-violet-500" /><SelectValue placeholder="Ville" /></div>
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    <SelectItem value="all">Toutes les villes</SelectItem>
+                    {CITIES.map(city => <SelectItem key={city} value={city}>{city}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {loading ? (
                   Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-[24px]" />)
-                ) : tournaments.length === 0 ? (
+                ) : filteredTournaments.length === 0 ? (
                   <div className="col-span-full py-12 text-center bg-muted/10 rounded-[32px] border border-dashed border-border">
                     <Gamepad2 size={40} className="mx-auto text-muted-foreground/20 mb-3" />
                     <p className="text-muted-foreground text-xs font-bold italic">Aucun tournoi actif pour le moment.</p>
-                    <Link to="/games" className="text-violet-500 text-[10px] font-black uppercase tracking-widest mt-4 inline-block hover:underline">Voir les autres jeux →</Link>
                   </div>
                 ) : (
-                  tournaments.map((t) => (
+                  filteredTournaments.map((t) => (
                     <TournamentCard 
                       key={t.id} 
                       id={t.id} 
@@ -180,7 +231,7 @@ const GameDetails = () => {
             </section>
           </div>
 
-          {/* Colonne Droite: Hall of Fame & Stats */}
+          {/* Colonne Droite: Hall of Fame & Communauté */}
           <div className="space-y-8">
             
             {/* Hall of Fame */}
@@ -222,7 +273,7 @@ const GameDetails = () => {
               </div>
             </motion.section>
 
-            {/* Stats Card */}
+            {/* Communauté Card */}
             <motion.section 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -230,26 +281,19 @@ const GameDetails = () => {
               className="bg-violet-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-violet-500/20"
             >
               <h3 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2">
-                <Users size={16} />
+                <MessageSquare size={16} />
                 Communauté
               </h3>
               <div className="space-y-6">
-                <div>
-                  <p className="text-[10px] font-bold text-violet-200 uppercase tracking-widest mb-1">Niveau de compétition</p>
-                  <div className="flex items-center gap-2">
-                    <div className="flex -space-x-2">
-                      {[1,2,3,4].map(i => (
-                        <div key={i} className="w-6 h-6 rounded-full border-2 border-violet-600 bg-violet-400 overflow-hidden">
-                          <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + gameInfo.name}`} alt="" />
-                        </div>
-                      ))}
-                    </div>
-                    <span className="text-xs font-black">Élite Bénin</span>
-                  </div>
-                </div>
-                <p className="text-[10px] leading-relaxed text-violet-100 font-medium">
-                  Rejoins les meilleurs joueurs de {gameInfo.name} du pays et prouve ta valeur.
+                <p className="text-xs leading-relaxed text-violet-100 font-medium">
+                  Rejoins la communauté <span className="font-black text-white">{gameInfo.name}</span> de eGame Bénin pour ne rater aucune info.
                 </p>
+                <a href={gameInfo.whatsapp} target="_blank" rel="noopener noreferrer">
+                  <Button className="w-full bg-white text-violet-600 hover:bg-violet-50 py-6 rounded-2xl font-black text-xs gap-2">
+                    Rejoindre le groupe
+                    <ChevronRight size={16} />
+                  </Button>
+                </a>
               </div>
             </motion.section>
 

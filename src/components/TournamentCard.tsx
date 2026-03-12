@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, Globe, MapPin, Share2, CheckCircle2 } from 'lucide-react';
+import { Users, Calendar, Globe, MapPin, Share2 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -82,24 +82,18 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
             {type === 'Online' ? <Globe size={10} className="text-cyan-400" /> : <MapPin size={10} className="text-orange-400" />}
             {type === 'Online' ? 'En ligne' : (tournamentCity || 'Local')}
           </Badge>
-          
-          {status === 'active' && (
-            <div className="flex items-center gap-1.5 bg-green-500/20 backdrop-blur-md border border-green-500/30 px-2 py-0.5 rounded-full w-fit">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
-              </span>
-              <span className="text-[7px] font-black text-green-400 uppercase tracking-widest">En cours</span>
-            </div>
-          )}
         </div>
 
-        <button 
-          onClick={handleShare}
-          className="absolute top-2.5 right-2.5 p-1.5 bg-black/60 backdrop-blur-md rounded-full border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-          <Share2 size={12} />
-        </button>
+        {/* Point vert clignotant pour les tournois actifs */}
+        {status === 'active' && (
+          <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-black/40 backdrop-blur-md border border-white/10 px-2 py-1 rounded-full">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <span className="text-[7px] font-black text-white uppercase tracking-widest">Live</span>
+          </div>
+        )}
 
         <div className="absolute bottom-2.5 right-2.5">
           <div className={`${status === 'finished' ? 'bg-zinc-700' : 'bg-violet-600'} text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-lg`}>
