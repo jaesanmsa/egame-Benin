@@ -3,23 +3,24 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Gamepad2, MapPin, Filter, SearchX, Zap, Trophy, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Gamepad2, MapPin, Filter, SearchX, Trophy } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah", "Autre"];
 
+// Free Fire en première position comme demandé
 const DISCIPLINES = [
-  { id: 'free-fire', name: 'Free Fire', icon: '🔥', color: 'from-orange-500 to-red-600' },
-  { id: 'efootball', name: 'eFootball', icon: '⚽', color: 'from-blue-500 to-indigo-600' },
-  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', color: 'from-yellow-500 to-amber-600' },
-  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', color: 'from-zinc-600 to-zinc-800' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗', color: 'from-emerald-500 to-teal-600' },
-  { id: 'blur', name: 'Blur', icon: '🏎️', color: 'from-violet-500 to-purple-600' },
-  { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', color: 'from-slate-600 to-slate-800' },
-  { id: 'bombsquad', name: 'BombSquad', icon: '💣', color: 'from-rose-500 to-pink-600' }
+  { id: 'free-fire', name: 'Free Fire', icon: '🔥' },
+  { id: 'efootball', name: 'eFootball', icon: '⚽' },
+  { id: 'clash-royale', name: 'Clash Royale', icon: '👑' },
+  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱' },
+  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗' },
+  { id: 'blur', name: 'Blur', icon: '🏎️' },
+  { id: 'cod-mw4', name: 'COD MW4', icon: '🔫' },
+  { id: 'bombsquad', name: 'BombSquad', icon: '💣' }
 ];
 
 const Games = () => {
@@ -36,23 +37,21 @@ const Games = () => {
 
   const fetchTournaments = async () => {
     setLoading(true);
-    // On récupère TOUS les tournois (actifs et finis)
+    // On ne récupère QUE les tournois actifs
     const { data: tours } = await supabase
       .from('tournaments')
       .select('*')
-      .order('status', { ascending: true }) // Actifs en premier
+      .eq('status', 'active')
       .order('created_at', { ascending: false });
     
     if (tours) {
       setTournaments(tours);
       
-      // Identifier les jeux qui ont des tournois actifs
+      // Identifier les jeux qui ont des tournois actifs pour le point vert
       const active = new Set<string>();
       tours.forEach(t => {
-        if (t.status === 'active') {
-          const gameId = DISCIPLINES.find(d => t.game.toLowerCase().includes(d.name.toLowerCase()))?.id;
-          if (gameId) active.add(gameId);
-        }
+        const gameId = DISCIPLINES.find(d => t.game.toLowerCase().includes(d.name.toLowerCase()))?.id;
+        if (gameId) active.add(gameId);
       });
       setActiveGames(active);
     }
@@ -84,44 +83,44 @@ const Games = () => {
           <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] mt-2">Choisis ta discipline et entre dans l'histoire</p>
         </div>
 
-        {/* Grille des Disciplines (Toujours visible) */}
-        <section className="mb-16">
+        {/* Filtre des Jeux - Défilement horizontal "jolie" */}
+        <section className="mb-12">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
               <Trophy size={14} className="text-violet-500" />
-              Disciplines Officielles
+              Disciplines
             </h2>
-            <button 
-              onClick={() => setSelectedGame("all")}
-              className={`text-[10px] font-black uppercase tracking-widest transition-colors ${selectedGame === "all" ? "text-violet-500" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              Tout voir
-            </button>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar -mx-6 px-6">
+            <button 
+              onClick={() => setSelectedGame("all")}
+              className={`flex-shrink-0 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border ${selectedGame === "all" ? 'bg-violet-600 border-violet-500 text-white shadow-lg shadow-violet-500/20' : 'bg-card border-border text-muted-foreground hover:border-violet-500/30'}`}
+            >
+              Tous les jeux
+            </button>
+            
             {DISCIPLINES.map((game) => {
               const isActive = activeGames.has(game.id);
               const isSelected = selectedGame.toLowerCase() === game.name.toLowerCase();
               
               return (
-                <motion.button
+                <button
                   key={game.id}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedGame(isSelected ? "all" : game.name)}
-                  className={`relative flex flex-col items-center p-4 rounded-2xl border transition-all ${isSelected ? 'bg-violet-600 border-violet-500 text-white shadow-lg shadow-violet-500/20' : 'bg-card border-border hover:border-violet-500/30'}`}
+                  className={`flex-shrink-0 flex items-center gap-3 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border relative ${isSelected ? 'bg-violet-600 border-violet-500 text-white shadow-lg shadow-violet-500/20' : 'bg-card border-border text-muted-foreground hover:border-violet-500/30'}`}
                 >
-                  <span className="text-2xl mb-2">{game.icon}</span>
-                  <span className="text-[9px] font-black uppercase tracking-tighter text-center line-clamp-1">{game.name}</span>
+                  <span className="text-lg">{game.icon}</span>
+                  {game.name}
                   
+                  {/* Point vert si tournoi en cours */}
                   {isActive && (
-                    <span className="absolute top-2 right-2 flex h-2 w-2">
+                    <span className="absolute -top-1 -right-1 flex h-3 w-3">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500 border-2 border-background"></span>
                     </span>
                   )}
-                </motion.button>
+                </button>
               );
             })}
           </div>
@@ -157,7 +156,7 @@ const Games = () => {
           </div>
         </div>
 
-        {/* Liste des tournois */}
+        {/* Liste des tournois actifs */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => (
@@ -173,8 +172,8 @@ const Games = () => {
             <div className="col-span-full py-20 text-center space-y-4 bg-muted/10 rounded-[32px] border border-dashed border-border">
               <SearchX size={48} className="mx-auto text-muted-foreground/20" />
               <div>
-                <h3 className="text-xl font-black">Aucun tournoi trouvé</h3>
-                <p className="text-xs text-muted-foreground">Essaie de modifier tes filtres pour voir plus de résultats.</p>
+                <h3 className="text-xl font-black">Aucun tournoi actif</h3>
+                <p className="text-xs text-muted-foreground">Reviens plus tard ou change tes filtres.</p>
               </div>
             </div>
           ) : (
