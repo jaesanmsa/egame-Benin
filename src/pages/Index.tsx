@@ -18,9 +18,18 @@ const Index = () => {
   
   const navigate = useNavigate();
 
+  const availableGames = [
+    { id: 'free-fire', name: 'Free Fire', icon: '🔥', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800' },
+    { id: 'efootball', name: 'eFootball', icon: '⚽', image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=800' },
+    { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=800' },
+    { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=800' },
+    { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗', image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&q=80&w=800' }
+  ];
+
   const fetchData = async () => {
     setLoading(true);
     
+    // Stats globales
     const { count: playerCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
     const { count: tourCount } = await supabase.from('tournaments').select('*', { count: 'exact', head: true });
     
@@ -37,6 +46,7 @@ const Index = () => {
       cashPrize: totalCash
     });
 
+    // Derniers gagnants
     const { data: winners } = await supabase
       .from('tournaments')
       .select('winner_name, winner_avatar, prize_pool, title')
@@ -45,6 +55,7 @@ const Index = () => {
       .limit(3);
     
     if (winners) {
+      // Pour chaque gagnant, on récupère son nombre de tournois pour le badge
       const winnersWithBadges = await Promise.all(winners.map(async (w) => {
         const { data: prof } = await supabase.from('profiles').select('id').eq('username', w.winner_name).maybeSingle();
         let tCount = 0;
@@ -69,7 +80,7 @@ const Index = () => {
       <SEO />
       <Navbar />
       
-      {/* Logo en haut à gauche de la page */}
+      {/* Logo en haut à gauche */}
       <div className="absolute top-6 left-6 z-50">
         <Logo size="sm" />
       </div>
@@ -91,20 +102,9 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <motion.h1 
-              animate={{ 
-                opacity: [1, 0.4, 1],
-                scale: [1, 1.05, 1]
-              }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="text-[26px] sm:text-4xl md:text-6xl font-black tracking-tighter mb-4 leading-tight whitespace-nowrap"
-            >
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter mb-4 leading-tight">
               Joue. Compétis. <span className="text-violet-500">Gagne.</span>
-            </motion.h1>
+            </h1>
             <p className="text-sm md:text-base text-muted-foreground mb-8 font-medium max-w-xl mx-auto leading-relaxed">
               Rejoins la communauté gaming #1 au Bénin. Participe aux tournois officiels et remporte des cash prizes réels.
             </p>
@@ -120,7 +120,7 @@ const Index = () => {
                 onClick={() => navigate('/games')}
                 className="w-full sm:w-auto py-6 px-8 rounded-xl border-border text-sm font-bold"
               >
-                Voir les jeux
+                Voir les tournois
               </Button>
             </div>
           </motion.div>
@@ -154,7 +154,35 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Winners Section */}
+        {/* Section Nos Jeux */}
+        <section className="space-y-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-3xl font-black tracking-tight">Nos Jeux</h2>
+            <Link to="/games" className="text-violet-500 font-black text-[10px] uppercase tracking-widest flex items-center gap-1.5 hover:underline">
+              Voir tout <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {availableGames.map((game) => (
+              <Link key={game.id} to={`/game/${game.id}`}>
+                <motion.div 
+                  whileHover={{ y: -5 }}
+                  className="group relative aspect-[4/5] rounded-[24px] overflow-hidden border border-border shadow-sm"
+                >
+                  <img src={game.image} alt={game.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute bottom-4 left-4">
+                    <span className="text-2xl mb-1 block">{game.icon}</span>
+                    <h3 className="text-white font-black text-sm uppercase tracking-tighter">{game.name}</h3>
+                  </div>
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Section Derniers Gagnants */}
         <section className="space-y-8">
           <div className="flex items-center justify-between">
             <h2 className="text-3xl font-black tracking-tight">Champions</h2>
