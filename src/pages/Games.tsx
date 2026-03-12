@@ -3,24 +3,24 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Gamepad2, MapPin, Filter, SearchX, ChevronRight } from 'lucide-react';
+import { Gamepad2, MapPin, Filter, SearchX, ChevronRight, Clock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Link } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah"];
 
 const ALL_GAMES = [
   { id: 'free-fire', name: 'Free Fire', icon: '🔥', image: '/freefire.jpg' },
-  { id: 'efootball', name: 'eFootball', icon: '⚽', image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=800' },
   { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: '/clash%20royal.webp' },
   { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰', image: '/clash%20of%20clans.webp' },
   { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: '/COD.webp' },
   { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗', image: '/pubg-mobile.jpg' },
-  { id: 'blur', name: 'Blur', icon: '🏎️', image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=800' },
-  { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', image: '/COD.webp' },
-  { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=800' }
+  { id: 'blur', name: 'Blur', icon: '🏎️', image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=800', isComingSoon: true },
+  { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', image: '/COD.webp', isComingSoon: true },
+  { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=800', isComingSoon: true }
 ];
 
 const Games = () => {
@@ -141,6 +141,15 @@ const Games = () => {
                   <img src={game.image} alt={game.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                   
+                  <div className="absolute top-4 left-4 flex flex-col gap-2">
+                    {game.isComingSoon && (
+                      <Badge className="bg-orange-500/80 backdrop-blur-md text-white border-none flex items-center gap-1 text-[8px] font-black uppercase tracking-widest py-1 px-2.5 w-fit">
+                        <Clock size={10} />
+                        À venir
+                      </Badge>
+                    )}
+                  </div>
+
                   <div className="absolute top-4 right-4">
                     {activeGames.has(game.id) && (
                       <div className="bg-green-500/20 backdrop-blur-md border border-green-500/30 px-3 py-1 rounded-full flex items-center gap-2">
