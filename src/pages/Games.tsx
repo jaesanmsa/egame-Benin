@@ -50,8 +50,6 @@ const Games = () => {
 
   const filteredGames = ALL_GAMES.filter(game => {
     const gameMatch = selectedGame === "all" || game.id === selectedGame;
-    // Note: Le filtrage par ville ici est conceptuel car on affiche les jeux, 
-    // mais on pourrait filtrer les jeux qui ont des tournois dans cette ville.
     return gameMatch;
   });
 
@@ -73,39 +71,44 @@ const Games = () => {
               </div>
             </div>
 
-            <div className="w-full md:w-auto">
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              {/* Filtre par Ville */}
               <Select value={selectedCity} onValueChange={setSelectedCity}>
-                <SelectTrigger className="bg-card border-border rounded-2xl h-14 w-full md:w-64 text-xs font-bold shadow-sm">
-                  <div className="flex items-center gap-2"><MapPin size={14} className="text-violet-500" /><SelectValue placeholder="Filtrer par ville" /></div>
+                <SelectTrigger className="bg-card border-border rounded-2xl h-14 w-full md:w-56 text-xs font-bold shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <MapPin size={14} className="text-violet-500" />
+                    <SelectValue placeholder="Filtrer par ville" />
+                  </div>
                 </SelectTrigger>
                 <SelectContent className="bg-card border-border">
                   <SelectItem value="all">Toutes les villes</SelectItem>
                   {CITIES.map(city => <SelectItem key={city} value={city}>{city}</SelectItem>)}
                 </SelectContent>
               </Select>
-            </div>
-          </div>
 
-          {/* Filtre par jeu (Boutons) */}
-          <div className="flex flex-wrap gap-2 pb-2 overflow-x-auto no-scrollbar">
-            <button 
-              onClick={() => setSelectedGame("all")}
-              className={`px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${selectedGame === "all" ? 'bg-violet-600 text-white border-violet-600 shadow-lg shadow-violet-500/20' : 'bg-card text-muted-foreground border-border hover:border-violet-500/50'}`}
-            >
-              Tous les jeux
-            </button>
-            {ALL_GAMES.map((game) => (
-              <button 
-                key={game.id}
-                onClick={() => setSelectedGame(game.id)}
-                className={`px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border flex items-center gap-2 ${selectedGame === game.id ? 'bg-violet-600 text-white border-violet-600 shadow-lg shadow-violet-500/20' : 'bg-card text-muted-foreground border-border hover:border-violet-500/50'}`}
-              >
-                {game.name}
-                {activeGames.has(game.id) && (
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                )}
-              </button>
-            ))}
+              {/* Filtre par Jeu */}
+              <Select value={selectedGame} onValueChange={setSelectedGame}>
+                <SelectTrigger className="bg-card border-border rounded-2xl h-14 w-full md:w-56 text-xs font-bold shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <Filter size={14} className="text-violet-500" />
+                    <SelectValue placeholder="Filtrer par jeu" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="all">Tous les jeux</SelectItem>
+                  {ALL_GAMES.map(game => (
+                    <SelectItem key={game.id} value={game.id}>
+                      <div className="flex items-center gap-2">
+                        {game.name}
+                        {activeGames.has(game.id) && (
+                          <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                        )}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
