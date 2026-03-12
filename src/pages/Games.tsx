@@ -14,8 +14,8 @@ const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah"];
 const ALL_GAMES = [
   { id: 'free-fire', name: 'Free Fire', icon: '🔥', image: '/freefire.jpg' },
   { id: 'efootball', name: 'eFootball', icon: '⚽', image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=800' },
-  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: '/clash royal.webp' },
-  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰', image: '/clash of clans.webp' },
+  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: '/clash%20royal.webp' },
+  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰', image: '/clash%20of%20clans.webp' },
   { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: '/COD.webp' },
   { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗', image: '/pubg-mobile.jpg' },
   { id: 'blur', name: 'Blur', icon: '🏎️', image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=800' },

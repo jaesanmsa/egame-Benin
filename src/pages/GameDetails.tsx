@@ -41,14 +41,14 @@ const GameDetails = () => {
     'clash-royale': { 
       name: 'Clash Royale', 
       icon: '👑', 
-      image: '/clash royal.webp',
+      image: '/clash%20royal.webp',
       desc: "Un mélange de stratégie et de cartes. Détruis les tours adverses et grimpe dans le classement.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'clash-of-clans': { 
       name: 'Clash of Clans', 
       icon: '🏰', 
-      image: '/clash of clans.webp',
+      image: '/clash%20of%20clans.webp',
       desc: "Construis ton village, forme tes troupes et mène ton clan à la victoire dans des guerres épiques.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
