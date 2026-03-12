@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, Globe, MapPin, Share2 } from 'lucide-react';
+import { Users, Calendar, Globe, MapPin, Share2, CheckCircle2 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -18,9 +18,10 @@ interface TournamentProps {
   entryFee: string;
   type: 'Online' | 'Presentiel';
   city?: string;
+  status?: 'active' | 'finished';
 }
 
-const TournamentCard = ({ id, title, game, image, date, participants, entryFee, type, city }: TournamentProps) => {
+const TournamentCard = ({ id, title, game, image, date, participants, entryFee, type, city, status = 'active' }: TournamentProps) => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [tournamentCity, setTournamentCity] = useState(city);
@@ -66,7 +67,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
     <motion.div 
       whileHover={{ y: -4 }}
       onClick={handleClick}
-      className="group relative bg-card rounded-[24px] overflow-hidden border border-border hover:border-violet-500/40 transition-all cursor-pointer shadow-sm"
+      className={`group relative bg-card rounded-[24px] overflow-hidden border transition-all cursor-pointer shadow-sm ${status === 'finished' ? 'opacity-75 grayscale-[0.5] border-border' : 'border-border hover:border-violet-500/40'}`}
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         <img 
@@ -76,11 +77,21 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         
-        <div className="absolute top-2.5 left-2.5 flex gap-1.5">
-          <Badge className="bg-black/60 backdrop-blur-md text-white border-white/10 flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter py-0.5 px-2">
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
+          <Badge className="bg-black/60 backdrop-blur-md text-white border-white/10 flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter py-0.5 px-2 w-fit">
             {type === 'Online' ? <Globe size={10} className="text-cyan-400" /> : <MapPin size={10} className="text-orange-400" />}
             {type === 'Online' ? 'En ligne' : (tournamentCity || 'Local')}
           </Badge>
+          
+          {status === 'active' && (
+            <div className="flex items-center gap-1.5 bg-green-500/20 backdrop-blur-md border border-green-500/30 px-2 py-0.5 rounded-full w-fit">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+              </span>
+              <span className="text-[7px] font-black text-green-400 uppercase tracking-widest">En cours</span>
+            </div>
+          )}
         </div>
 
         <button 
@@ -91,16 +102,16 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
         </button>
 
         <div className="absolute bottom-2.5 right-2.5">
-          <div className="bg-violet-600 text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-lg">
-            {entryFee} FCFA
+          <div className={`${status === 'finished' ? 'bg-zinc-700' : 'bg-violet-600'} text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-lg`}>
+            {status === 'finished' ? 'Terminé' : `${entryFee} FCFA`}
           </div>
         </div>
       </div>
       
       <div className="p-4">
         <div className="flex items-center gap-1.5 mb-1">
-          <span className="w-1 h-1 rounded-full bg-violet-500" />
-          <p className="text-violet-500 text-[8px] font-black uppercase tracking-widest">{game}</p>
+          <span className={`w-1 h-1 rounded-full ${status === 'finished' ? 'bg-muted-foreground' : 'bg-violet-500'}`} />
+          <p className={`${status === 'finished' ? 'text-muted-foreground' : 'text-violet-500'} text-[8px] font-black uppercase tracking-widest`}>{game}</p>
         </div>
         <h3 className="font-bold text-sm mb-3 line-clamp-1 group-hover:text-violet-500 transition-colors">{title}</h3>
         
