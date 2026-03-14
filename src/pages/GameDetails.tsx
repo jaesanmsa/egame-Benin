@@ -29,35 +29,35 @@ const GameDetails = () => {
       icon: '🔥', 
       image: '/freefire.jpg',
       desc: "Le Battle Royale mobile le plus populaire au Bénin. Survis jusqu'au bout pour remporter le Booyah.",
-      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+      whatsapp: "https://chat.whatsapp.com/L1iNwy7r959GMfYwfmno1U"
     },
     'clash-royale': { 
       name: 'Clash Royale', 
       icon: '👑', 
       image: '/clash royal.jpg',
       desc: "Un mélange de stratégie et de cartes. Détruis les tours adverses et grimpe dans le classement.",
-      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+      whatsapp: "https://chat.whatsapp.com/EJciBNI3Yt5Lv9Uz0w0ddt"
     },
     'clash-of-clans': { 
       name: 'Clash of Clans', 
       icon: '🏰', 
       image: '/clash of clans.jpeg',
       desc: "Construis ton village, forme tes troupes et mène ton clan à la victoire dans des guerres épiques.",
-      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+      whatsapp: "https://chat.whatsapp.com/Dpuq4TptwKZ3oSNUl0pQp9"
     },
     'cod-mobile': { 
       name: 'COD Mobile', 
       icon: '📱', 
       image: '/cod mobile.jpg',
       desc: "L'expérience Call of Duty sur mobile. Précision et rapidité sont les clés de la victoire.",
-      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+      whatsapp: "https://chat.whatsapp.com/DE51gMgh4Nq2aXq9POaIFR"
     },
     'pubg-mobile': { 
       name: 'PUBG Mobile', 
       icon: '🔫', 
       image: '/pubg-mobile.jpg',
       desc: "Le pionnier du Battle Royale. Atterris, équipe-toi et sois le dernier survivant.",
-      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+      whatsapp: "https://chat.whatsapp.com/LVFOtpIvLXaEKeokKvR8qe"
     },
     'blur': { 
       name: 'Blur', 
