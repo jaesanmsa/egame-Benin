@@ -3,30 +3,27 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Gamepad2, MapPin, Filter, SearchX, ChevronRight, Clock } from 'lucide-react';
+import { Gamepad2, Filter, SearchX, ChevronRight, Clock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Link } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 
-const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah"];
-
 const ALL_GAMES = [
   { id: 'free-fire', name: 'Free Fire', icon: '🔥', image: '/freefire.jpg' },
   { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: '/clash royal.jpg' },
   { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰', image: '/clash of clans.jpeg' },
   { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: '/cod mobile.jpg' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗', image: '/pubg-mobile.jpg' },
+  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🔫', image: '/pubg-mobile.jpg' },
   { id: 'blur', name: 'Blur', icon: '🏎️', image: '/blur.jpg', isComingSoon: true },
   { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', image: '/cod mw4.jpg', isComingSoon: true },
-  { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: '/bombsquad.jpg', isComingSoon: true }
+  { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: '/bombsquad.png', isComingSoon: true }
 ];
 
 const Games = () => {
   const [activeGames, setActiveGames] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
-  const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<string>("all");
 
   useEffect(() => {
@@ -83,19 +80,6 @@ const Games = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-              <Select value={selectedCity} onValueChange={setSelectedCity}>
-                <SelectTrigger className="bg-card border-border rounded-2xl h-14 w-full md:w-56 text-xs font-bold shadow-sm">
-                  <div className="flex items-center gap-2">
-                    <MapPin size={14} className="text-violet-500" />
-                    <SelectValue placeholder="Filtrer par ville" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent className="bg-card border-border">
-                  <SelectItem value="all">Toutes les villes</SelectItem>
-                  {CITIES.map(city => <SelectItem key={city} value={city}>{city}</SelectItem>)}
-                </SelectContent>
-              </Select>
-
               <Select value={selectedGame} onValueChange={setSelectedGame}>
                 <SelectTrigger className="bg-card border-border rounded-2xl h-14 w-full md:w-56 text-xs font-bold shadow-sm">
                   <div className="flex items-center gap-2">

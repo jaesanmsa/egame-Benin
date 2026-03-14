@@ -54,7 +54,7 @@ const GameDetails = () => {
     },
     'pubg-mobile': { 
       name: 'PUBG Mobile', 
-      icon: '🍗', 
+      icon: '🔫', 
       image: '/pubg-mobile.jpg',
       desc: "Le pionnier du Battle Royale. Atterris, équipe-toi et sois le dernier survivant.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
@@ -76,7 +76,7 @@ const GameDetails = () => {
     'bombsquad': { 
       name: 'BombSquad', 
       icon: '💣', 
-      image: '/bombsquad.jpg',
+      image: '/bombsquad.png',
       desc: "Explose tes amis dans des mini-jeux délirants. Fun garanti.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     }

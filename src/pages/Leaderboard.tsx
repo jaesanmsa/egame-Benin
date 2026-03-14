@@ -13,7 +13,7 @@ const DEFAULT_GAMES = [
   { id: 'clash-royale', name: 'Clash Royale', icon: '👑' },
   { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰' },
   { id: 'cod-mobile', name: 'COD Mobile', icon: '📱' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗' },
+  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🔫' },
   { id: 'blur', name: 'Blur', icon: '🏎️' },
   { id: 'cod-mw4', name: 'COD MW4', icon: '🔫' },
   { id: 'bombsquad', name: 'BombSquad', icon: '💣' }
