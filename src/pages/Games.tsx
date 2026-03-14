@@ -18,7 +18,7 @@ const ALL_GAMES = [
   { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🔫', image: '/pubg-mobile.jpg' },
   { id: 'blur', name: 'Blur', icon: '🏎️', image: '/blur.jpg', isComingSoon: true },
   { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', image: '/cod mw4.jpg', isComingSoon: true },
-  { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: '/bombsquad.jng', isComingSoon: true }
+  { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: '/bombsquad.jpg', isComingSoon: true }
 ];
 
 const Games = () => {
