@@ -30,14 +30,14 @@ const LeaderboardTab = ({ newLeader, setNewLeader, onSubmit }: LeaderboardTabPro
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-card border-border">
-              <SelectItem value="blur" className="font-bold">Blur</SelectItem>
-              <SelectItem value="cod-mw4" className="font-bold">COD MW4</SelectItem>
-              <SelectItem value="cod-mobile" className="font-bold">COD Mobile</SelectItem>
-              <SelectItem value="bombsquad" className="font-bold">BombSquad</SelectItem>
+              <SelectItem value="free-fire" className="font-bold">Free Fire</SelectItem>
               <SelectItem value="clash-royale" className="font-bold">Clash Royale</SelectItem>
               <SelectItem value="clash-of-clans" className="font-bold">Clash of Clans</SelectItem>
-              <SelectItem value="free-fire" className="font-bold">Free Fire</SelectItem>
+              <SelectItem value="cod-mobile" className="font-bold">COD Mobile</SelectItem>
               <SelectItem value="pubg-mobile" className="font-bold">PUBG Mobile</SelectItem>
+              <SelectItem value="blur" className="font-bold">Blur</SelectItem>
+              <SelectItem value="cod-mw4" className="font-bold">COD MW4</SelectItem>
+              <SelectItem value="bombsquad" className="font-bold">BombSquad</SelectItem>
             </SelectContent>
           </Select>
         </div>

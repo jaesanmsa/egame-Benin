@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
-const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Clash of Clans", "Free Fire", "PUBG Mobile", "Autre"];
+const GAMES = ["Free Fire", "Clash Royale", "Clash of Clans", "COD Mobile", "PUBG Mobile", "Blur", "COD MW4", "BombSquad", "Autre"];
 
 interface NewTournamentTabProps {
   newTournament: any;
@@ -48,7 +48,7 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTour
 
         <div className="space-y-2">
           <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Jeu</Label>
-          <Select onValueChange={(v) => setNewTournament({...newTournament, game: v})} defaultValue="Blur">
+          <Select onValueChange={(v) => setNewTournament({...newTournament, game: v})} defaultValue="Free Fire">
             <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
               <SelectValue placeholder="Jeu" />
             </SelectTrigger>

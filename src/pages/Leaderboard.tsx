@@ -10,8 +10,8 @@ import { supabase } from '@/lib/supabase';
 
 const DEFAULT_GAMES = [
   { id: 'free-fire', name: 'Free Fire', icon: '🔥' },
-  { id: 'efootball', name: 'eFootball', icon: '⚽' },
   { id: 'clash-royale', name: 'Clash Royale', icon: '👑' },
+  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰' },
   { id: 'cod-mobile', name: 'COD Mobile', icon: '📱' },
   { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗' },
   { id: 'blur', name: 'Blur', icon: '🏎️' },

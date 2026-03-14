@@ -31,24 +31,17 @@ const GameDetails = () => {
       desc: "Le Battle Royale mobile le plus populaire au Bénin. Survis jusqu'au bout pour remporter le Booyah.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
-    'efootball': { 
-      name: 'eFootball', 
-      icon: '⚽', 
-      image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=1200',
-      desc: "La simulation de football ultime. Maîtrise le terrain et deviens le roi du gazon virtuel.",
-      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
-    },
     'clash-royale': { 
       name: 'Clash Royale', 
       icon: '👑', 
-      image: '/clash%20royal.webp',
+      image: '/clash%20royal.jpg',
       desc: "Un mélange de stratégie et de cartes. Détruis les tours adverses et grimpe dans le classement.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'clash-of-clans': { 
       name: 'Clash of Clans', 
       icon: '🏰', 
-      image: '/clash%20of%20clans.webp',
+      image: '/clash%20of%20clans.jpeg',
       desc: "Construis ton village, forme tes troupes et mène ton clan à la victoire dans des guerres épiques.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
