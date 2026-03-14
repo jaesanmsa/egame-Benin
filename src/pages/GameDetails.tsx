@@ -76,7 +76,7 @@ const GameDetails = () => {
     'bombsquad': { 
       name: 'BombSquad', 
       icon: '💣', 
-      image: '/bombsquad.png',
+      image: '/bombsquad.jpg',
       desc: "Explose tes amis dans des mini-jeux délirants. Fun garanti.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     }
