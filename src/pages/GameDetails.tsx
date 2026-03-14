@@ -34,21 +34,21 @@ const GameDetails = () => {
     'clash-royale': { 
       name: 'Clash Royale', 
       icon: '👑', 
-      image: '/clash%20royal.jpg',
+      image: '/clash royal.jpg',
       desc: "Un mélange de stratégie et de cartes. Détruis les tours adverses et grimpe dans le classement.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'clash-of-clans': { 
       name: 'Clash of Clans', 
       icon: '🏰', 
-      image: '/clash%20of%20clans.jpeg',
+      image: '/clash of clans.jpeg',
       desc: "Construis ton village, forme tes troupes et mène ton clan à la victoire dans des guerres épiques.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'cod-mobile': { 
       name: 'COD Mobile', 
       icon: '📱', 
-      image: '/COD.webp',
+      image: '/cod mobile.jpg',
       desc: "L'expérience Call of Duty sur mobile. Précision et rapidité sont les clés de la victoire.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
@@ -62,21 +62,21 @@ const GameDetails = () => {
     'blur': { 
       name: 'Blur', 
       icon: '🏎️', 
-      image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=1200',
+      image: '/blur.jpg',
       desc: "Course arcade explosive. Utilise tes pouvoirs pour éjecter tes adversaires de la piste.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'cod-mw4': { 
       name: 'COD MW4', 
       icon: '🔫', 
-      image: '/COD.webp',
+      image: '/cod mw4.jpg',
       desc: "Le classique du FPS. Affrontements intenses en local ou en ligne.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'bombsquad': { 
       name: 'BombSquad', 
       icon: '💣', 
-      image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=1200',
+      image: '/bombsquad.png',
       desc: "Explose tes amis dans des mini-jeux délirants. Fun garanti.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     }

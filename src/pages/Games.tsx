@@ -14,13 +14,13 @@ const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah"];
 
 const ALL_GAMES = [
   { id: 'free-fire', name: 'Free Fire', icon: '🔥', image: '/freefire.jpg' },
-  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: '/clash%20royal.jpg' },
-  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰', image: '/clash%20of%20clans.jpeg' },
-  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: '/COD.webp' },
+  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: '/clash royal.jpg' },
+  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰', image: '/clash of clans.jpeg' },
+  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: '/cod mobile.jpg' },
   { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🍗', image: '/pubg-mobile.jpg' },
-  { id: 'blur', name: 'Blur', icon: '🏎️', image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=800', isComingSoon: true },
-  { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', image: '/COD.webp', isComingSoon: true },
-  { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=800', isComingSoon: true }
+  { id: 'blur', name: 'Blur', icon: '🏎️', image: '/blur.jpg', isComingSoon: true },
+  { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', image: '/cod mw4.jpg', isComingSoon: true },
+  { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: '/bombsquad.png', isComingSoon: true }
 ];
 
 const Games = () => {
