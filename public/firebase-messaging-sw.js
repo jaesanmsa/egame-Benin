@@ -2,7 +2,7 @@ importScripts('https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js'
 importScripts('https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js');
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD2XGohWwMcPedeXTfcgHPK2RZvWLTDYcE",
+  apiKey: "AIzaSyApEBdsAlebt0znnUEYzEN6JYDEpW4mLTM",
   authDomain: "egame-benin-be9af.firebaseapp.com",
   projectId: "egame-benin-be9af",
   storageBucket: "egame-benin-be9af.firebasestorage.app",

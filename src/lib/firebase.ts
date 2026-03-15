@@ -3,7 +3,7 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { supabase } from "./supabase";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD2XGohWwMcPedeXTfcgHPK2RZvWLTDYcE",
+  apiKey: "AIzaSyApEBdsAlebt0znnUEYzEN6JYDEpW4mLTM",
   authDomain: "egame-benin-be9af.firebaseapp.com",
   projectId: "egame-benin-be9af",
   storageBucket: "egame-benin-be9af.firebasestorage.app",
@@ -20,7 +20,7 @@ export const requestNotificationPermission = async (userId: string) => {
   }
 
   try {
-    // 1. Nettoyage des anciens Service Workers pour éviter les conflits d'authentification
+    // 1. Nettoyage des anciens Service Workers pour forcer la nouvelle config
     const registrations = await navigator.serviceWorker.getRegistrations();
     for (const reg of registrations) {
       await reg.unregister();
@@ -36,7 +36,7 @@ export const requestNotificationPermission = async (userId: string) => {
     const permission = await Notification.requestPermission();
     
     if (permission === 'granted') {
-      // 4. Récupération du token avec la clé VAPID publique fournie
+      // 4. Récupération du token avec la clé VAPID publique
       const token = await getToken(messaging, {
         vapidKey: 'BNk49YPeSwHRBHif2ElexCX4ehO5-_OOUKASf9A4TP1GBwbHzZV4PtAbQ08HzXJHDKCbwzidA9HhBAfM6xrH7MU',
         serviceWorkerRegistration: registration
@@ -58,12 +58,6 @@ export const requestNotificationPermission = async (userId: string) => {
     }
   } catch (error: any) {
     console.error("[Firebase] Erreur lors de l'abonnement:", error);
-    
-    // Message d'aide spécifique pour l'erreur d'authentification
-    if (error.message?.includes('authentication credential')) {
-      throw new Error("Erreur d'authentification Firebase. Vérifiez que l'API 'Firebase Cloud Messaging' est activée dans votre console Google Cloud.");
-    }
-    
     throw error;
   }
 };
