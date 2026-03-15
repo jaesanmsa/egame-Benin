@@ -63,8 +63,6 @@ const Profile = () => {
         if (token) {
           setProfile({ ...profile, notifications_enabled: true, fcm_token: token });
           showSuccess("Notifications activées !");
-        } else {
-          showError("Veuillez autoriser les notifications dans votre navigateur.");
         }
       } else {
         const { error } = await supabase
@@ -79,7 +77,8 @@ const Profile = () => {
       }
     } catch (error: any) {
       console.error("Erreur toggle notifications:", error);
-      showError("Erreur lors de la configuration des notifications.");
+      // On affiche l'erreur réelle pour débugger
+      showError(error.message || "Erreur lors de la configuration.");
     }
   };
 

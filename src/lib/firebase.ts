@@ -13,23 +13,27 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const messaging = typeof window !== 'undefined' && 'serviceWorker' in navigator ? getMessaging(app) : null;
 
 export const requestNotificationPermission = async (userId: string) => {
-  if (!messaging) {
-    console.error("[Firebase] Messaging non supporté ou Service Worker manquant.");
-    return null;
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+    throw new Error("Les Service Workers ne sont pas supportés par ce navigateur.");
   }
 
   try {
+    // On s'assure que le service worker est bien enregistré avant de demander le token
+    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+    console.log("[Firebase] Service Worker enregistré avec succès:", registration);
+
+    const messaging = getMessaging(app);
     const permission = await Notification.requestPermission();
+    
     if (permission === 'granted') {
       const token = await getToken(messaging, {
-        vapidKey: 'BNk49YPeSwHRBHif2ElexCX4ehO5-_OOUKASf9A4TP1GBwbHzZV4PtAbQ08HzXJHDKCbwzidA9HhBAfM6xrH7MU' 
+        vapidKey: 'BNk49YPeSwHRBHif2ElexCX4ehO5-_OOUKASf9A4TP1GBwbHzZV4PtAbQ08HzXJHDKCbwzidA9HhBAfM6xrH7MU',
+        serviceWorkerRegistration: registration
       });
 
       if (token) {
-        console.log("[Firebase] Token récupéré:", token);
         const { error } = await supabase
           .from('profiles')
           .update({ fcm_token: token, notifications_enabled: true })
@@ -37,18 +41,22 @@ export const requestNotificationPermission = async (userId: string) => {
         
         if (error) throw error;
         return token;
+      } else {
+        throw new Error("Aucun jeton d'enregistrement (FCM token) n'a été généré.");
       }
+    } else {
+      throw new Error("La permission de notification a été refusée.");
     }
-  } catch (error) {
-    console.error("[Firebase] Erreur permission/token:", error);
+  } catch (error: any) {
+    console.error("[Firebase] Erreur détaillée:", error);
     throw error;
   }
-  return null;
 };
 
 export const onMessageListener = () =>
   new Promise((resolve) => {
-    if (!messaging) return;
+    if (typeof window === 'undefined') return;
+    const messaging = getMessaging(app);
     onMessage(messaging, (payload) => {
       console.log("[Firebase] Message reçu en premier plan:", payload);
       resolve(payload);
