@@ -57,24 +57,28 @@ const Profile = () => {
   };
 
   const toggleNotifications = async () => {
-    if (!profile?.notifications_enabled) {
-      const token = await requestNotificationPermission(user.id);
-      if (token) {
-        setProfile({ ...profile, notifications_enabled: true });
-        showSuccess("Notifications activées !");
+    try {
+      if (!profile?.notifications_enabled) {
+        const token = await requestNotificationPermission(user.id);
+        if (token) {
+          setProfile({ ...profile, notifications_enabled: true });
+          showSuccess("Notifications activées !");
+        } else {
+          showError("Veuillez autoriser les notifications dans votre navigateur.");
+        }
       } else {
-        showError("Permission refusée ou erreur.");
+        const { error } = await supabase
+          .from('profiles')
+          .update({ notifications_enabled: false })
+          .eq('id', user.id);
+        
+        if (!error) {
+          setProfile({ ...profile, notifications_enabled: false });
+          showSuccess("Notifications désactivées.");
+        }
       }
-    } else {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ notifications_enabled: false })
-        .eq('id', user.id);
-      
-      if (!error) {
-        setProfile({ ...profile, notifications_enabled: false });
-        showSuccess("Notifications désactivées.");
-      }
+    } catch (error: any) {
+      showError("Erreur de configuration. Vérifiez vos clés Firebase.");
     }
   };
 
