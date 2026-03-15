@@ -61,7 +61,7 @@ const Profile = () => {
       if (!profile?.notifications_enabled) {
         const token = await requestNotificationPermission(user.id);
         if (token) {
-          setProfile({ ...profile, notifications_enabled: true });
+          setProfile({ ...profile, notifications_enabled: true, fcm_token: token });
           showSuccess("Notifications activées !");
         } else {
           showError("Veuillez autoriser les notifications dans votre navigateur.");
@@ -78,7 +78,8 @@ const Profile = () => {
         }
       }
     } catch (error: any) {
-      showError("Erreur de configuration. Vérifiez vos clés Firebase.");
+      console.error("Erreur toggle notifications:", error);
+      showError("Erreur lors de la configuration des notifications.");
     }
   };
 

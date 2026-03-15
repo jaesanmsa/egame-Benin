@@ -2,14 +2,14 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { supabase } from "./supabase";
 
-// IMPORTANT : Remplacez ces valeurs par celles de votre projet Firebase (Console Firebase > Paramètres du projet)
 const firebaseConfig = {
-  apiKey: "AIzaSyB-v-v-v-v-v-v-v-v-v-v-v-v-v-v", 
-  authDomain: "egame-benin.firebaseapp.com",
-  projectId: "egame-benin",
-  storageBucket: "egame-benin.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef"
+  apiKey: "AIzaSyD2XGohWwMcPedeXTfcgHPK2RZvWLTDYcE",
+  authDomain: "egame-benin-be9af.firebaseapp.com",
+  projectId: "egame-benin-be9af",
+  storageBucket: "egame-benin-be9af.firebasestorage.app",
+  messagingSenderId: "986273563315",
+  appId: "1:986273563315:web:635e87ddb8c0b5b79526c6",
+  measurementId: "G-X2YXK4V044"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -17,30 +17,30 @@ const messaging = typeof window !== 'undefined' && 'serviceWorker' in navigator 
 
 export const requestNotificationPermission = async (userId: string) => {
   if (!messaging) {
-    console.error("Le navigateur ne supporte pas les notifications ou le Service Worker est manquant.");
+    console.error("[Firebase] Messaging non supporté ou Service Worker manquant.");
     return null;
   }
 
   try {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
-      // REMPLACEZ 'VAPID_KEY_HERE' par votre clé VAPID (Console Firebase > Cloud Messaging > Web configuration)
       const token = await getToken(messaging, {
-        vapidKey: 'VAPID_KEY_HERE' 
+        vapidKey: 'BNk49YPeSwHRBHif2ElexCX4ehO5-_OOUKASf9A4TP1GBwbHzZV4PtAbQ08HzXJHDKCbwzidA9HhBAfM6xrH7MU' 
       });
 
       if (token) {
-        await supabase
+        console.log("[Firebase] Token récupéré:", token);
+        const { error } = await supabase
           .from('profiles')
           .update({ fcm_token: token, notifications_enabled: true })
           .eq('id', userId);
+        
+        if (error) throw error;
         return token;
       }
-    } else {
-      console.warn("Permission de notification refusée par l'utilisateur.");
     }
   } catch (error) {
-    console.error("Erreur lors de la récupération du token FCM:", error);
+    console.error("[Firebase] Erreur permission/token:", error);
     throw error;
   }
   return null;
@@ -50,6 +50,7 @@ export const onMessageListener = () =>
   new Promise((resolve) => {
     if (!messaging) return;
     onMessage(messaging, (payload) => {
+      console.log("[Firebase] Message reçu en premier plan:", payload);
       resolve(payload);
     });
   });
