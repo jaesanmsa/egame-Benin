@@ -16,18 +16,24 @@ const app = initializeApp(firebaseConfig);
 
 export const requestNotificationPermission = async (userId: string) => {
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
-    throw new Error("Les Service Workers ne sont pas supportés par ce navigateur.");
+    throw new Error("Les Service Workers ne sont pas supportés.");
   }
 
   try {
-    // On s'assure que le service worker est bien enregistré avant de demander le token
+    // 1. Enregistrement et attente que le SW soit prêt
     const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-    console.log("[Firebase] Service Worker enregistré avec succès:", registration);
+    
+    // Attendre que le service worker soit actif
+    await navigator.serviceWorker.ready;
 
     const messaging = getMessaging(app);
+    
+    // 2. Demande de permission
     const permission = await Notification.requestPermission();
     
     if (permission === 'granted') {
+      // 3. Récupération du token
+      // IMPORTANT: Remplacez 'VOTRE_CLE_VAPID_PUBLIQUE' par la clé de votre console Firebase
       const token = await getToken(messaging, {
         vapidKey: 'BNk49YPeSwHRBHif2ElexCX4ehO5-_OOUKASf9A4TP1GBwbHzZV4PtAbQ08HzXJHDKCbwzidA9HhBAfM6xrH7MU',
         serviceWorkerRegistration: registration
@@ -42,13 +48,16 @@ export const requestNotificationPermission = async (userId: string) => {
         if (error) throw error;
         return token;
       } else {
-        throw new Error("Aucun jeton d'enregistrement (FCM token) n'a été généré.");
+        throw new Error("Impossible de générer le jeton FCM.");
       }
     } else {
-      throw new Error("La permission de notification a été refusée.");
+      throw new Error("Permission de notification refusée.");
     }
   } catch (error: any) {
     console.error("[Firebase] Erreur détaillée:", error);
+    if (error.code === 'messaging/token-subscribe-failed') {
+      throw new Error("Erreur d'authentification FCM. Vérifiez votre clé VAPID et les restrictions de votre clé API dans Google Cloud.");
+    }
     throw error;
   }
 };
@@ -58,7 +67,7 @@ export const onMessageListener = () =>
     if (typeof window === 'undefined') return;
     const messaging = getMessaging(app);
     onMessage(messaging, (payload) => {
-      console.log("[Firebase] Message reçu en premier plan:", payload);
+      console.log("[Firebase] Message reçu:", payload);
       resolve(payload);
     });
   });
