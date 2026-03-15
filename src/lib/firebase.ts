@@ -20,20 +20,23 @@ export const requestNotificationPermission = async (userId: string) => {
   }
 
   try {
-    // 1. Enregistrement et attente que le SW soit prêt
+    // 1. Nettoyage des anciens Service Workers pour éviter les conflits d'authentification
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (const reg of registrations) {
+      await reg.unregister();
+    }
+
+    // 2. Nouvel enregistrement
     const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-    
-    // Attendre que le service worker soit actif
     await navigator.serviceWorker.ready;
 
     const messaging = getMessaging(app);
     
-    // 2. Demande de permission
+    // 3. Demande de permission
     const permission = await Notification.requestPermission();
     
     if (permission === 'granted') {
-      // 3. Récupération du token
-      // IMPORTANT: Remplacez 'VOTRE_CLE_VAPID_PUBLIQUE' par la clé de votre console Firebase
+      // 4. Récupération du token avec la clé VAPID publique fournie
       const token = await getToken(messaging, {
         vapidKey: 'BNk49YPeSwHRBHif2ElexCX4ehO5-_OOUKASf9A4TP1GBwbHzZV4PtAbQ08HzXJHDKCbwzidA9HhBAfM6xrH7MU',
         serviceWorkerRegistration: registration
@@ -48,16 +51,19 @@ export const requestNotificationPermission = async (userId: string) => {
         if (error) throw error;
         return token;
       } else {
-        throw new Error("Impossible de générer le jeton FCM.");
+        throw new Error("Le jeton FCM n'a pas pu être généré.");
       }
     } else {
       throw new Error("Permission de notification refusée.");
     }
   } catch (error: any) {
-    console.error("[Firebase] Erreur détaillée:", error);
-    if (error.code === 'messaging/token-subscribe-failed') {
-      throw new Error("Erreur d'authentification FCM. Vérifiez votre clé VAPID et les restrictions de votre clé API dans Google Cloud.");
+    console.error("[Firebase] Erreur lors de l'abonnement:", error);
+    
+    // Message d'aide spécifique pour l'erreur d'authentification
+    if (error.message?.includes('authentication credential')) {
+      throw new Error("Erreur d'authentification Firebase. Vérifiez que l'API 'Firebase Cloud Messaging' est activée dans votre console Google Cloud.");
     }
+    
     throw error;
   }
 };
