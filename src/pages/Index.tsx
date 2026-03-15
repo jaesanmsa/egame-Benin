@@ -81,7 +81,7 @@ const Index = () => {
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
-              className="text-3xl md:text-6xl font-black tracking-tighter mb-6 leading-tight"
+              className="text-[22px] xs:text-3xl sm:text-4xl md:text-6xl font-black tracking-tighter mb-6 leading-tight whitespace-nowrap"
             >
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-foreground/50">JOUE. </span>
               <span className="text-violet-500">COMPÉTIS. </span>
