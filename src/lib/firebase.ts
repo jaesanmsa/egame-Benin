@@ -38,7 +38,7 @@ export const requestNotificationPermission = async (userId: string) => {
     if (permission === 'granted') {
       // 4. Récupération du token avec la clé VAPID publique
       const token = await getToken(messaging, {
-        vapidKey: 'BNk49YPeSwHRBHif2ElexCX4ehO5-_OOUKASf9A4TP1GBwbHzZV4PtAbQ08HzXJHDKCbwzidA9HhBAfM6xrH7MU',
+        vapidKey: 'BNk49YPeSwHRBHif2ElexCX4ehO5-_O0UKASf9A4TP1GBwbHzZV4PtAbQ08HzXJHDKCbwzidA9HhBAfM6xrH7MU',
         serviceWorkerRegistration: registration
       });
 
