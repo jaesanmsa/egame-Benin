@@ -36,7 +36,7 @@ const GameDetails = () => {
       icon: '👑', 
       image: '/clash royal.jpg',
       desc: "Un mélange de stratégie et de cartes. Détruis les tours adverses et grimpe dans le classement.",
-      whatsapp: "https://chat.whatsapp.com/EJciBNI3Yt5Lv9Uz0w0ddt"
+      whatsapp: "https://chat.whatsapp.com/EMQDtGz5pLyJF6wxfXpBD4?mode=hq1tcla"
     },
     'clash-of-clans': { 
       name: 'Clash of Clans', 
@@ -50,14 +50,14 @@ const GameDetails = () => {
       icon: '📱', 
       image: '/cod mobile.jpg',
       desc: "L'expérience Call of Duty sur mobile. Précision et rapidité sont les clés de la victoire.",
-      whatsapp: "https://chat.whatsapp.com/DE51gMgh4Nq2aXq9POaIFR"
+      whatsapp: "https://chat.whatsapp.com/CyrUEEFw6Lr2di9GbCIVv4?mode=gi_t"
     },
     'pubg-mobile': { 
       name: 'PUBG Mobile', 
       icon: '🔫', 
       image: '/pubg-mobile.jpg',
       desc: "Le pionnier du Battle Royale. Atterris, équipe-toi et sois le dernier survivant.",
-      whatsapp: "https://chat.whatsapp.com/LVFOtpIvLXaEKeokKvR8qe"
+      whatsapp: "https://chat.whatsapp.com/LGCchL76cYlIdCUb6ErzvP?mode=gi_t"
     },
     'blur': { 
       name: 'Blur', 
