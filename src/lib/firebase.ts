@@ -3,7 +3,7 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { supabase } from "./supabase";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyApEBdsAlebt0znnUEYzEN6JYDEpW4mLTM",
+  apiKey: "AIzaSyD2XGohWwMcPedeXTfcgHPK2RZvWLTDYcE",
   authDomain: "egame-benin-be9af.firebaseapp.com",
   projectId: "egame-benin-be9af",
   storageBucket: "egame-benin-be9af.firebasestorage.app",
