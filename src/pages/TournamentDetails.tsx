@@ -44,7 +44,6 @@ const TournamentDetails = () => {
       setParticipantCount(count || 0);
       
       if (data) {
-        // Pour chaque participant, on récupère son nombre de tournois pour le badge
         const participantsWithStats = await Promise.all(data.map(async (p: any) => {
           const { count: tCount } = await supabase
             .from('payments')
@@ -116,7 +115,7 @@ const TournamentDetails = () => {
         // @ts-ignore
         openKkiapayWidget({
           amount: tournament.entry_fee,
-          api_key: "55aabcdf1c8398c899fa55d79f1c33beb8ace5df",
+          api_key: import.meta.env.VITE_KKIAPAY_PUBLIC_KEY,
           sandbox: false,
           email: user.email,
           phone: userProfile?.phone || "",

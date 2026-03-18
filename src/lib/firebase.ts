@@ -3,12 +3,12 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { supabase } from "./supabase";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD2XGohWwMcPedeXTfcgHPK2RZvWLTDYcE",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "egame-benin-be9af.firebaseapp.com",
   projectId: "egame-benin-be9af",
   storageBucket: "egame-benin-be9af.firebasestorage.app",
-  messagingSenderId: "986273563315",
-  appId: "1:986273563315:web:635e87ddb8c0b5b79526c6",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
   measurementId: "G-X2YXK4V044"
 };
 
@@ -20,23 +20,18 @@ export const requestNotificationPermission = async (userId: string) => {
   }
 
   try {
-    // 1. Nettoyage des anciens Service Workers pour forcer la nouvelle config
     const registrations = await navigator.serviceWorker.getRegistrations();
     for (const reg of registrations) {
       await reg.unregister();
     }
 
-    // 2. Nouvel enregistrement
     const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
     await navigator.serviceWorker.ready;
 
     const messaging = getMessaging(app);
-    
-    // 3. Demande de permission
     const permission = await Notification.requestPermission();
     
     if (permission === 'granted') {
-      // 4. Récupération du token avec la clé VAPID publique
       const token = await getToken(messaging, {
         vapidKey: 'BNk49YPeSwHRBHif2ElexCX4ehO5-_O0UKASf9A4TP1GBwbHzZV4PtAbQ08HzXJHDKCbwzidA9HhBAfM6xrH7MU',
         serviceWorkerRegistration: registration
