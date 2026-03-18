@@ -11,14 +11,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 
 const ALL_GAMES = [
-  { id: 'free-fire', name: 'Free Fire', icon: '🔥', image: '/freefire.jpg' },
-  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: '/clash royal.jpg' },
+  // Jeux Actifs (Triés A-Z)
   { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰', image: '/clash of clans.jpeg' },
+  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: '/clash royal.jpg' },
   { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: '/cod mobile.jpg' },
+  { id: 'free-fire', name: 'Free Fire', icon: '🔥', image: '/freefire.jpg' },
+  { id: 'mobile-legends', name: 'Mobile Legends', icon: '⚔️', image: '/mobile legend.jpg' },
   { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🔫', image: '/pubg-mobile.jpg' },
+  
+  // Jeux à venir (Triés A-Z)
   { id: 'blur', name: 'Blur', icon: '🏎️', image: '/blur.jpg', isComingSoon: true },
-  { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', image: '/cod mw4.jpg', isComingSoon: true },
-  { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: '/bombsquad.jpg', isComingSoon: true }
+  { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: '/bombsquad.jpg', isComingSoon: true },
+  { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', image: '/cod mw4.jpg', isComingSoon: true }
 ];
 
 const Games = () => {

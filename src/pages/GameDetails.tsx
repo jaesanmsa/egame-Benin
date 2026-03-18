@@ -59,6 +59,13 @@ const GameDetails = () => {
       desc: "Le pionnier du Battle Royale. Atterris, équipe-toi et sois le dernier survivant.",
       whatsapp: "https://chat.whatsapp.com/LGCchL76cYlIdCUb6ErzvP?mode=gi_t"
     },
+    'mobile-legends': { 
+      name: 'Mobile Legends', 
+      icon: '⚔️', 
+      image: '/mobile legend.jpg',
+      desc: "Le MOBA mobile de référence. Choisis ton héros, forme ton équipe et détruis la base ennemie.",
+      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+    },
     'blur': { 
       name: 'Blur', 
       icon: '🏎️', 
