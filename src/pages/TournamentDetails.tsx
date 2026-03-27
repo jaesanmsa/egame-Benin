@@ -27,44 +27,34 @@ const TournamentDetails = () => {
   const [userProfile, setUserProfile] = useState<any>(null);
 
   const fetchParticipants = useCallback(async () => {
-    // 1. Compter TOUS les paiements réussis
-    const { count, error: countError } = await supabase
-      .from('payments')
-      .select('*', { count: 'exact', head: true })
-      .eq('tournament_id', id)
-      .eq('status', 'Réussi');
-    
-    if (!countError) {
+    try {
+      // 1. Compter TOUS les paiements réussis
+      const { count } = await supabase
+        .from('payments')
+        .select('*', { count: 'exact', head: true })
+        .eq('tournament_id', id)
+        .eq('status', 'Réussi');
+      
       setParticipantCount(count || 0);
-    }
-    
-    // 2. Récupérer les données des participants
-    const { data, error: dataError } = await supabase
-      .from('payments')
-      .select('*, profiles(username, avatar_url, id)')
-      .eq('tournament_id', id)
-      .eq('status', 'Réussi');
-    
-    if (!dataError && data) {
-      const participantsWithStats = await Promise.all(data.map(async (p: any) => {
-        // Si le profil n'existe pas encore, on crée un objet par défaut
-        const baseProfile = p.profiles || { 
-          username: "Joueur", 
-          avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.id}`,
-          id: p.user_id 
-        };
-        
-        const { count: tCount } = await supabase
-          .from('payments')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', baseProfile.id)
-          .eq('status', 'Réussi');
-          
-        return { ...baseProfile, tournamentCount: tCount || 0 };
-      }));
-      setParticipants(participantsWithStats.slice(0, 12));
-    } else {
-      setParticipants([]);
+      
+      // 2. Récupérer les données brutes des participants
+      const { data } = await supabase
+        .from('payments')
+        .select('id, user_id, profiles(username, avatar_url)')
+        .eq('tournament_id', id)
+        .eq('status', 'Réussi')
+        .limit(12);
+      
+      if (data) {
+        const list = data.map(p => ({
+          username: p.profiles?.username || "Joueur",
+          avatar_url: p.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.user_id}`,
+          tournamentCount: 1 // Valeur par défaut pour éviter les requêtes lourdes
+        }));
+        setParticipants(list);
+      }
+    } catch (err) {
+      console.error("Erreur participants:", err);
     }
   }, [id]);
 
@@ -307,22 +297,30 @@ const TournamentDetails = () => {
         >
           <h2 className="text-sm font-black mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Users className="text-violet-500" size={18} /> Participants ({participantCount})</h2>
           <div className="flex flex-wrap gap-3">
-            {participantCount > 0 ? (
+            {participants.length > 0 ? (
               participants.map((p, i) => (
                 <div key={i} className="group relative">
                   <div className="w-10 h-10 rounded-full border-2 border-border overflow-hidden bg-muted group-hover:border-violet-500 transition-colors">
-                    <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username || i}`} alt="" className="w-full h-full object-cover" />
+                    <img src={p.avatar_url} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="absolute -top-2 -right-2 z-10">
                     <PlayerBadge tournamentCount={p.tournamentCount} size="sm" />
                   </div>
                   <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 text-white text-[8px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
-                    {p.username || "Joueur"}
+                    {p.username}
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-[10px] text-muted-foreground font-bold italic">Soyez le premier à rejoindre l'arène !</p>
+              participantCount > 0 ? (
+                <div className="flex gap-2">
+                  {Array.from({ length: participantCount }).map((_, i) => (
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-border bg-muted animate-pulse" />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-[10px] text-muted-foreground font-bold italic">Soyez le premier à rejoindre l'arène !</p>
+              )
             )}
             {participantCount > 12 && (
               <div className="w-10 h-10 rounded-full border-2 border-dashed border-border flex items-center justify-center text-[10px] font-black text-muted-foreground">
