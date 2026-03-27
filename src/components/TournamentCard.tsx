@@ -84,7 +84,6 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
           </Badge>
         </div>
 
-        {/* Point vert clignotant pour les tournois actifs */}
         {status === 'active' && (
           <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-black/40 backdrop-blur-md border border-white/10 px-2 py-1 rounded-full">
             <span className="relative flex h-2 w-2">

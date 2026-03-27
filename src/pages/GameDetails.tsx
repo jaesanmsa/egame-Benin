@@ -126,7 +126,8 @@ const GameDetails = () => {
     fetchData();
   }, [id, gameInfo.name]);
 
-  const filteredTournaments = tournaments.filter(t => selectedCity === "all" || t.city === selectedCity);
+  // On ne filtre que si une ville est sélectionnée. Si "all", on retourne un tableau vide.
+  const filteredTournaments = selectedCity === "all" ? [] : tournaments.filter(t => t.city === selectedCity);
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-32">
@@ -179,10 +180,15 @@ const GameDetails = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {loading ? (
                   Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-[24px]" />)
+                ) : selectedCity === "all" ? (
+                  <div className="col-span-full py-12 text-center bg-muted/10 rounded-[32px] border border-dashed border-border">
+                    <MapPin size={40} className="mx-auto text-muted-foreground/20 mb-3" />
+                    <p className="text-muted-foreground text-xs font-bold italic">Veuillez sélectionner une ville pour voir les tournois disponibles.</p>
+                  </div>
                 ) : filteredTournaments.length === 0 ? (
                   <div className="col-span-full py-12 text-center bg-muted/10 rounded-[32px] border border-dashed border-border">
                     <Gamepad2 size={40} className="mx-auto text-muted-foreground/20 mb-3" />
-                    <p className="text-muted-foreground text-xs font-bold italic">Aucun tournoi actif pour le moment.</p>
+                    <p className="text-muted-foreground text-xs font-bold italic">Aucun tournoi actif à {selectedCity} pour le moment.</p>
                   </div>
                 ) : (
                   filteredTournaments.map((t) => (
