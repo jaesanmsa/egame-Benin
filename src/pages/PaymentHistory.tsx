@@ -62,10 +62,10 @@ const PaymentHistory = () => {
   useEffect(() => {
     fetchData();
     
-    // Écoute en temps réel des changements dans la table payments
+    // Écoute en temps réel des changements (INSERT et UPDATE)
     const channel = supabase
       .channel('payment_updates')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'payments' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'payments' }, () => {
         fetchData(true);
       })
       .subscribe();
@@ -138,8 +138,8 @@ const PaymentHistory = () => {
                     <div className="space-y-4">
                       <div className="p-4 bg-muted/50 rounded-2xl border border-border">
                         <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-2">Code de validation (Preuve de paiement)</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-foreground font-mono font-bold text-xl">{payment.validation_code}</span>
+                        <div className="flex items-center justify-center gap-4">
+                          <span className="text-foreground font-mono font-black text-xl tracking-wider">{payment.validation_code}</span>
                           <button onClick={() => copyToClipboard(payment.validation_code)} className="text-muted-foreground hover:text-foreground"><Copy size={18} /></button>
                         </div>
                       </div>

@@ -26,34 +26,33 @@ const TournamentDetails = () => {
   const [userRegistration, setUserRegistration] = useState<any>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
 
+  const fetchParticipants = async () => {
+    const { data, count } = await supabase
+      .from('payments')
+      .select('*, profiles(username, avatar_url, id)', { count: 'exact' })
+      .eq('tournament_id', id)
+      .eq('status', 'Réussi');
+    
+    setParticipantCount(count || 0);
+    
+    if (data) {
+      const participantsWithStats = await Promise.all(data.map(async (p: any) => {
+        const { count: tCount } = await supabase
+          .from('payments')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', p.profiles.id)
+          .eq('status', 'Réussi');
+        return { ...p.profiles, tournamentCount: tCount || 0 };
+      }));
+      setParticipants(participantsWithStats.slice(0, 12));
+    }
+  };
+
   useEffect(() => {
     const fetchTournament = async () => {
       const { data, error } = await supabase.from('tournaments').select('*').eq('id', id).single();
       if (!error && data) setTournament(data);
       setLoading(false);
-    };
-
-    const fetchParticipants = async () => {
-      const { data, count } = await supabase
-        .from('payments')
-        .select('*, profiles(username, avatar_url, id)', { count: 'exact' })
-        .eq('tournament_id', id)
-        .eq('status', 'Réussi')
-        .limit(12);
-      
-      setParticipantCount(count || 0);
-      
-      if (data) {
-        const participantsWithStats = await Promise.all(data.map(async (p: any) => {
-          const { count: tCount } = await supabase
-            .from('payments')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', p.profiles.id)
-            .eq('status', 'Réussi');
-          return { ...p.profiles, tournamentCount: tCount || 0 };
-        }));
-        setParticipants(participantsWithStats);
-      }
     };
 
     const checkUserRegistration = async (userId: string) => {
@@ -81,6 +80,23 @@ const TournamentDetails = () => {
 
     fetchTournament();
     fetchParticipants();
+
+    // Écoute en temps réel pour mettre à jour le remplissage de l'arène
+    const channel = supabase
+      .channel('tournament_participants')
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'payments',
+        filter: `tournament_id=eq.${id}`
+      }, () => {
+        fetchParticipants();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [id]);
 
   const handleShare = async () => {
@@ -108,8 +124,6 @@ const TournamentDetails = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Veuillez vous connecter");
 
-      const validationCode = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-      
       // @ts-ignore
       if (typeof openKkiapayWidget === 'function') {
         // @ts-ignore
@@ -120,42 +134,9 @@ const TournamentDetails = () => {
           email: user.email,
           phone: userProfile?.phone || "",
           name: userProfile?.full_name || userProfile?.username || "Joueur",
-          callback: `${window.location.origin}/payment-success`
+          // On passe les infos nécessaires dans l'URL de retour
+          callback: `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`
         });
-
-        const handlePaymentSuccess = async (response: any) => {
-          await supabase.from('payments').insert({
-            user_id: user.id,
-            tournament_id: id,
-            tournament_name: tournament.title,
-            amount: String(tournament.entry_fee),
-            status: 'Réussi',
-            validation_code: validationCode,
-            fedapay_transaction_id: response.transactionId
-          });
-
-          await supabase.functions.invoke('notify-payment', {
-            body: {
-              joueur_nom: userProfile?.full_name || userProfile?.username || "Joueur",
-              joueur_telephone: userProfile?.phone || "N/A",
-              tournoi_nom: tournament.title,
-              montant: tournament.entry_fee,
-              transactionId: response.transactionId
-            }
-          });
-
-          showSuccess("Paiement validé !");
-          // On passe le code et le nom du tournoi à la page de succès
-          navigate('/payment-success', { 
-            state: { 
-              code: validationCode, 
-              tournamentName: tournament.title 
-            } 
-          });
-          window.removeEventListener('kkiapay_success', handlePaymentSuccess);
-        };
-
-        window.addEventListener('kkiapay_success', handlePaymentSuccess);
       } else {
         showError("Le service de paiement est indisponible. Réessayez.");
       }
