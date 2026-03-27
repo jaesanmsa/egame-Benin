@@ -16,9 +16,14 @@ const ForgotPassword = () => {
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+    
+    // On s'assure que l'URL est propre
+    const redirectUrl = `${window.location.origin}/reset-password`;
+    
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: redirectUrl,
     });
+    
     if (error) {
       showError(error.message);
     } else {
@@ -52,6 +57,8 @@ const ForgotPassword = () => {
                 className="pl-10 bg-muted border-border rounded-xl"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoCapitalize="none"
+                autoCorrect="off"
                 required
               />
             </div>

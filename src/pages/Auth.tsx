@@ -23,11 +23,16 @@ const Auth = () => {
   const [isEmailSent, setIsEmailSent] = useState(false);
   const navigate = useNavigate();
 
+  // On s'assure que l'URL de redirection est propre et sans slash final inutile
+  const getRedirectUrl = () => {
+    return window.location.origin;
+  };
+
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { 
-        redirectTo: window.location.origin,
+        redirectTo: getRedirectUrl(),
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -41,7 +46,6 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     
-    // Normalisation de l'email pour éviter les erreurs de saisie mobile
     const cleanEmail = email.trim().toLowerCase();
     
     if (isLogin) {
@@ -74,7 +78,7 @@ const Auth = () => {
         email: cleanEmail, 
         password,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: getRedirectUrl(),
           data: {
             username: cleanUsername,
             city: city,
