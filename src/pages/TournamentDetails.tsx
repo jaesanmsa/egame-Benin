@@ -27,7 +27,7 @@ const TournamentDetails = () => {
   const [userProfile, setUserProfile] = useState<any>(null);
 
   const fetchParticipants = useCallback(async () => {
-    // 1. Compter TOUS les paiements réussis pour ce tournoi (indépendamment des profils)
+    // 1. Compter TOUS les paiements réussis
     const { count, error: countError } = await supabase
       .from('payments')
       .select('*', { count: 'exact', head: true })
@@ -38,7 +38,7 @@ const TournamentDetails = () => {
       setParticipantCount(count || 0);
     }
     
-    // 2. Récupérer la liste des profils pour l'affichage des avatars
+    // 2. Récupérer les données des participants
     const { data, error: dataError } = await supabase
       .from('payments')
       .select('*, profiles(username, avatar_url, id)')
@@ -47,17 +47,24 @@ const TournamentDetails = () => {
     
     if (!dataError && data) {
       const participantsWithStats = await Promise.all(data.map(async (p: any) => {
-        // On gère le cas où le profil n'existe pas encore
-        if (!p.profiles) return { username: "Joueur", avatar_url: null, tournamentCount: 0 };
+        // Si le profil n'existe pas encore, on crée un objet par défaut
+        const baseProfile = p.profiles || { 
+          username: "Joueur", 
+          avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.id}`,
+          id: p.user_id 
+        };
         
         const { count: tCount } = await supabase
           .from('payments')
           .select('*', { count: 'exact', head: true })
-          .eq('user_id', p.profiles.id)
+          .eq('user_id', baseProfile.id)
           .eq('status', 'Réussi');
-        return { ...p.profiles, tournamentCount: tCount || 0 };
+          
+        return { ...baseProfile, tournamentCount: tCount || 0 };
       }));
       setParticipants(participantsWithStats.slice(0, 12));
+    } else {
+      setParticipants([]);
     }
   }, [id]);
 
@@ -300,7 +307,7 @@ const TournamentDetails = () => {
         >
           <h2 className="text-sm font-black mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Users className="text-violet-500" size={18} /> Participants ({participantCount})</h2>
           <div className="flex flex-wrap gap-3">
-            {participants.length > 0 ? (
+            {participantCount > 0 ? (
               participants.map((p, i) => (
                 <div key={i} className="group relative">
                   <div className="w-10 h-10 rounded-full border-2 border-border overflow-hidden bg-muted group-hover:border-violet-500 transition-colors">
