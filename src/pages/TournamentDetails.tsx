@@ -116,7 +116,7 @@ const TournamentDetails = () => {
         openKkiapayWidget({
           amount: tournament.entry_fee,
           api_key: import.meta.env.VITE_KKIAPAY_PUBLIC_KEY,
-          sandbox: false, // Mode Production activé
+          sandbox: false,
           email: user.email,
           phone: userProfile?.phone || "",
           name: userProfile?.full_name || userProfile?.username || "Joueur",
@@ -131,7 +131,7 @@ const TournamentDetails = () => {
             amount: String(tournament.entry_fee),
             status: 'Réussi',
             validation_code: validationCode,
-            fedapay_transaction_id: response.transactionId // On utilise ce champ pour stocker l'ID KKiaPay
+            fedapay_transaction_id: response.transactionId
           });
 
           await supabase.functions.invoke('notify-payment', {
@@ -151,8 +151,7 @@ const TournamentDetails = () => {
 
         window.addEventListener('kkiapay_success', handlePaymentSuccess);
       } else {
-        // Si le widget ne charge pas, on propose le lien direct
-        window.open(`https://direct.kkiapay.me/42082/egame-benin-rmm-ekoae?a=${tournament.entry_fee}`, '_blank');
+        showError("Le service de paiement est indisponible. Réessayez.");
       }
 
       setPaymentStep('select');
@@ -163,10 +162,6 @@ const TournamentDetails = () => {
       setPaymentStep('select');
       setShowPayment(false);
     }
-  };
-
-  const handleDirectPay = () => {
-    window.open(`https://direct.kkiapay.me/42082/egame-benin-rmm-ekoae?a=${tournament.entry_fee}`, '_blank');
   };
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
@@ -352,39 +347,20 @@ const TournamentDetails = () => {
                 <div className="space-y-6 text-center">
                   <div className="w-16 h-16 bg-violet-600/10 rounded-2xl flex items-center justify-center text-violet-500 mx-auto"><Smartphone size={32} /></div>
                   <div>
-                    <h2 className="text-xl font-black mb-1">Mode de Paiement</h2>
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Sécurisé par KKiaPay</p>
+                    <h2 className="text-xl font-black mb-1">Paiement Sécurisé</h2>
+                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">KKiaPay (MTN / Moov / Celtiis)</p>
                   </div>
                   
-                  <div className="space-y-3">
-                    <button onClick={handleKKiaPay} className="w-full flex items-center justify-between p-4 bg-muted/50 rounded-2xl border border-border hover:border-violet-500/50 transition-all group">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-500 group-hover:bg-violet-500 group-hover:text-white transition-colors"><Smartphone size={18} /></div>
-                        <div className="text-left"><p className="font-bold text-xs">KKiaPay (Bénin)</p><p className="text-[8px] text-muted-foreground font-black uppercase tracking-tighter">MTN / Moov / Celtiis</p></div>
-                      </div>
-                      <ChevronRight size={16} className="text-muted-foreground group-hover:text-violet-500 transition-colors" />
-                    </button>
-
-                    <div className="relative py-2">
-                      <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border"></span></div>
-                      <div className="relative flex justify-center text-[8px] uppercase"><span className="bg-card px-2 text-muted-foreground">Ou si le bouton ne marche pas</span></div>
-                    </div>
-
-                    <button onClick={handleDirectPay} className="w-full flex items-center justify-between p-4 bg-card rounded-2xl border border-dashed border-border hover:border-violet-500/50 transition-all group">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center text-muted-foreground group-hover:text-violet-500 transition-colors"><ExternalLink size={18} /></div>
-                        <div className="text-left"><p className="font-bold text-xs">Lien Direct</p><p className="text-[8px] text-muted-foreground font-black uppercase tracking-tighter">Ouvrir dans le navigateur</p></div>
-                      </div>
-                      <ChevronRight size={16} className="text-muted-foreground group-hover:text-violet-500 transition-colors" />
-                    </button>
-                  </div>
+                  <Button onClick={handleKKiaPay} className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 font-black text-white shadow-xl shadow-violet-500/20">
+                    Payer {tournament.entry_fee} FCFA
+                  </Button>
                 </div>
               ) : (
                 <div className="py-12 text-center space-y-6">
                   <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
                   <div>
                     <h2 className="text-xl font-black mb-1">Initialisation...</h2>
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Préparation du widget KKiaPay</p>
+                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Préparation du paiement</p>
                   </div>
                 </div>
               )}
