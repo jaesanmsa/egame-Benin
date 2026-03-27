@@ -145,7 +145,13 @@ const TournamentDetails = () => {
           });
 
           showSuccess("Paiement validé !");
-          navigate('/payment-success');
+          // On passe le code et le nom du tournoi à la page de succès
+          navigate('/payment-success', { 
+            state: { 
+              code: validationCode, 
+              tournamentName: tournament.title 
+            } 
+          });
           window.removeEventListener('kkiapay_success', handlePaymentSuccess);
         };
 
