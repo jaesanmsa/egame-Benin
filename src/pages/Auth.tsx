@@ -42,19 +42,25 @@ const Auth = () => {
     setLoading(true);
     
     if (isLogin) {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ 
+        email: email.trim(), 
+        password 
+      });
+      
       if (error) {
+        // Affichage de l'erreur précise pour aider l'utilisateur
         if (error.message.includes("Email not confirmed")) {
-          showError("Veuillez confirmer votre email avant de vous connecter.");
+          showError("Veuillez confirmer votre email. Vérifiez vos spams.");
+        } else if (error.message.includes("Invalid login credentials")) {
+          showError("Email ou mot de passe incorrect.");
         } else {
-          showError("Erreur de connexion. Vérifiez vos identifiants.");
+          showError(error.message);
         }
       } else {
-        showSuccess("Bienvenue sur eGame Bénin !");
+        showSuccess("Connexion réussie !");
         navigate('/');
       }
     } else {
-      // Validation du pseudo
       const cleanUsername = username.trim();
       if (cleanUsername.length < 3) {
         showError("Le pseudo doit faire au moins 3 caractères.");
@@ -63,24 +69,20 @@ const Auth = () => {
       }
 
       const { error, data } = await supabase.auth.signUp({ 
-        email, 
+        email: email.trim(), 
         password,
         options: {
           emailRedirectTo: window.location.origin,
           data: {
             username: cleanUsername,
             city: city,
-            full_name: cleanUsername // Par défaut le pseudo sert de nom complet
+            full_name: cleanUsername
           }
         }
       });
       
       if (error) {
-        if (error.message.includes("unique constraint") || error.message.includes("already exists")) {
-          showError("Ce pseudo est déjà utilisé par un autre joueur.");
-        } else {
-          showError(error.message);
-        }
+        showError(error.message);
       } else {
         if (data.user && data.session === null) {
           setIsEmailSent(true);
