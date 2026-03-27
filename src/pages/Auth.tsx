@@ -41,14 +41,16 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     
+    // Normalisation de l'email pour éviter les erreurs de saisie mobile
+    const cleanEmail = email.trim().toLowerCase();
+    
     if (isLogin) {
       const { error } = await supabase.auth.signInWithPassword({ 
-        email: email.trim(), 
+        email: cleanEmail, 
         password 
       });
       
       if (error) {
-        // Affichage de l'erreur précise pour aider l'utilisateur
         if (error.message.includes("Email not confirmed")) {
           showError("Veuillez confirmer votre email. Vérifiez vos spams.");
         } else if (error.message.includes("Invalid login credentials")) {
@@ -69,7 +71,7 @@ const Auth = () => {
       }
 
       const { error, data } = await supabase.auth.signUp({ 
-        email: email.trim(), 
+        email: cleanEmail, 
         password,
         options: {
           emailRedirectTo: window.location.origin,
@@ -161,6 +163,8 @@ const Auth = () => {
                       className="pl-10 bg-muted border-border rounded-xl"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
+                      autoCapitalize="none"
+                      autoCorrect="off"
                       required
                     />
                   </div>
@@ -195,6 +199,9 @@ const Auth = () => {
                   className="pl-10 bg-muted border-border rounded-xl"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
                   required
                 />
               </div>
@@ -213,6 +220,8 @@ const Auth = () => {
                   className="pl-10 bg-muted border-border rounded-xl"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  autoCapitalize="none"
+                  autoCorrect="off"
                   required
                 />
               </div>
