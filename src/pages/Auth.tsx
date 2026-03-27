@@ -23,9 +23,11 @@ const Auth = () => {
   const [isEmailSent, setIsEmailSent] = useState(false);
   const navigate = useNavigate();
 
-  // On s'assure que l'URL de redirection est propre et sans slash final inutile
+  // Nettoyage strict de l'URL pour éviter les erreurs de formatage Supabase
   const getRedirectUrl = () => {
-    return window.location.origin;
+    let url = window.location.origin;
+    // On s'assure que l'URL ne finit JAMAIS par un slash
+    return url.endsWith('/') ? url.slice(0, -1) : url;
   };
 
   const handleGoogleLogin = async () => {
