@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
@@ -26,17 +26,30 @@ const TournamentDetails = () => {
   const [userRegistration, setUserRegistration] = useState<any>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
 
-  const fetchParticipants = async () => {
-    const { data, count } = await supabase
+  const fetchParticipants = useCallback(async () => {
+    // 1. Compter TOUS les paiements réussis pour ce tournoi (indépendamment des profils)
+    const { count, error: countError } = await supabase
       .from('payments')
-      .select('*, profiles(username, avatar_url, id)', { count: 'exact' })
+      .select('*', { count: 'exact', head: true })
       .eq('tournament_id', id)
       .eq('status', 'Réussi');
     
-    setParticipantCount(count || 0);
+    if (!countError) {
+      setParticipantCount(count || 0);
+    }
     
-    if (data) {
+    // 2. Récupérer la liste des profils pour l'affichage des avatars
+    const { data, error: dataError } = await supabase
+      .from('payments')
+      .select('*, profiles(username, avatar_url, id)')
+      .eq('tournament_id', id)
+      .eq('status', 'Réussi');
+    
+    if (!dataError && data) {
       const participantsWithStats = await Promise.all(data.map(async (p: any) => {
+        // On gère le cas où le profil n'existe pas encore
+        if (!p.profiles) return { username: "Joueur", avatar_url: null, tournamentCount: 0 };
+        
         const { count: tCount } = await supabase
           .from('payments')
           .select('*', { count: 'exact', head: true })
@@ -46,7 +59,7 @@ const TournamentDetails = () => {
       }));
       setParticipants(participantsWithStats.slice(0, 12));
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     const fetchTournament = async () => {
@@ -56,7 +69,15 @@ const TournamentDetails = () => {
     };
 
     const checkUserRegistration = async (userId: string) => {
-      const { data } = await supabase.from('payments').select('*').eq('tournament_id', id).eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle();
+      const { data } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('tournament_id', id)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+        
       if (data) {
         const diffMinutes = (new Date().getTime() - new Date(data.created_at).getTime()) / (1000 * 60);
         if (data.status === 'Réussi' || (data.status === 'En attente' && diffMinutes < 5)) {
@@ -81,9 +102,8 @@ const TournamentDetails = () => {
     fetchTournament();
     fetchParticipants();
 
-    // Écoute en temps réel pour mettre à jour le remplissage de l'arène
     const channel = supabase
-      .channel('tournament_participants')
+      .channel(`tournament_${id}`)
       .on('postgres_changes', { 
         event: '*', 
         schema: 'public', 
@@ -97,7 +117,7 @@ const TournamentDetails = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [id]);
+  }, [id, fetchParticipants]);
 
   const handleShare = async () => {
     const shareData = {
@@ -134,7 +154,6 @@ const TournamentDetails = () => {
           email: user.email,
           phone: userProfile?.phone || "",
           name: userProfile?.full_name || userProfile?.username || "Joueur",
-          // On passe les infos nécessaires dans l'URL de retour
           callback: `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`
         });
       } else {
@@ -285,13 +304,13 @@ const TournamentDetails = () => {
               participants.map((p, i) => (
                 <div key={i} className="group relative">
                   <div className="w-10 h-10 rounded-full border-2 border-border overflow-hidden bg-muted group-hover:border-violet-500 transition-colors">
-                    <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username}`} alt="" className="w-full h-full object-cover" />
+                    <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username || i}`} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="absolute -top-2 -right-2 z-10">
                     <PlayerBadge tournamentCount={p.tournamentCount} size="sm" />
                   </div>
                   <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 text-white text-[8px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
-                    {p.username}
+                    {p.username || "Joueur"}
                   </div>
                 </div>
               ))
