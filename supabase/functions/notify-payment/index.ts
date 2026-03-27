@@ -1,69 +1,61 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-// Récupération des secrets depuis l'environnement Supabase
-const TWILIO_ACCOUNT_SID = Deno.env.get('TWILIO_ACCOUNT_SID');
-const TWILIO_AUTH_TOKEN = Deno.env.get('TWILIO_AUTH_TOKEN');
-const TWILIO_WHATSAPP_NUMBER = "whatsapp:+14155238886";
-const MON_WHATSAPP = "whatsapp:+2290141790790";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+}
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
 
   try {
+    const TWILIO_ACCOUNT_SID = Deno.env.get('TWILIO_ACCOUNT_SID')
+    const TWILIO_AUTH_TOKEN = Deno.env.get('TWILIO_AUTH_TOKEN')
+    const MON_WHATSAPP = "whatsapp:+2290141790790"
+    const TWILIO_NUMBER = "whatsapp:+14155238886"
+
     if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
-      throw new Error("Les identifiants Twilio ne sont pas configurés dans les secrets Supabase.");
+      throw new Error("Secrets Twilio manquants")
     }
 
-    const body = await req.json();
-    console.log("[notify-payment] Payload reçu:", body);
+    const { joueur_nom, joueur_telephone, tournoi_nom, montant, transactionId } = await req.json()
 
-    const { joueur_nom, joueur_telephone, tournoi_nom, montant, transactionId } = body;
+    const message = `🎮 *NOUVELLE INSCRIPTION*\n\n` +
+                    `👤 Joueur: ${joueur_nom}\n` +
+                    `📱 Tel: ${joueur_telephone}\n` +
+                    `🏆 Tournoi: ${tournoi_nom}\n` +
+                    `💰 Montant: ${montant} FCFA\n` +
+                    `🆔 ID: ${transactionId}`
 
-    // Message WhatsApp formaté
-    const message =
-      `✅ *Nouveau paiement confirmé !*\n\n` +
-      `🎮 *Tournoi :* ${tournoi_nom}\n` +
-      `👤 *Joueur :* ${joueur_nom}\n` +
-      `📱 *WhatsApp :* ${joueur_telephone}\n` +
-      `💰 *Montant :* ${montant} FCFA\n` +
-      `🆔 *Transaction :* ${transactionId}\n` +
-      `🕐 *Date :* ${new Date().toLocaleString("fr-FR", { timeZone: "Africa/Porto-Novo" })}`;
+    const response = await fetch(
+      `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`)}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          From: TWILIO_NUMBER,
+          To: MON_WHATSAPP,
+          Body: message,
+        }),
+      }
+    )
 
-    // Appel API Twilio
-    const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
-    const formData = new URLSearchParams();
-    formData.append("From", TWILIO_WHATSAPP_NUMBER);
-    formData.append("To", MON_WHATSAPP);
-    formData.append("Body", message);
+    const data = await response.json()
+    console.log("[notify-payment] Twilio response:", data)
 
-    const credentials = btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`);
-
-    const response = await fetch(twilioUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${credentials}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: formData.toString(),
-    });
-
-    const result = await response.json();
-
-    return new Response(
-      JSON.stringify({ success: true, message_sid: result.sid }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
-    );
+    return new Response(JSON.stringify({ success: true }), { 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200 
+    })
 
   } catch (error) {
-    console.error("[notify-payment] Erreur:", error.message);
-    return new Response(
-      JSON.stringify({ success: false, error: error.message }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
-    );
+    console.error("[notify-payment] Error:", error.message)
+    return new Response(JSON.stringify({ error: error.message }), { 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 400 
+    })
   }
-});
+})

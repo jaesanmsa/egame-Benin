@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, ArrowRight, History, MessageSquare, Copy, Loader2 } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { CheckCircle2, ArrowRight, History, MessageSquare, Copy, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
 import { showSuccess, showError } from '@/utils/toast';
@@ -11,6 +11,7 @@ import { supabase } from '@/lib/supabase';
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const [isProcessing, setIsProcessing] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [validationCode, setValidationCode] = useState<string | null>(null);
   const [tournamentName, setTournamentName] = useState<string | null>(null);
   const hasProcessed = useRef(false);
@@ -19,16 +20,19 @@ const PaymentSuccess = () => {
 
   useEffect(() => {
     const processPayment = async () => {
-      // On évite de traiter deux fois (React StrictMode)
       if (hasProcessed.current) return;
       hasProcessed.current = true;
 
-      const transactionId = searchParams.get('transaction_id');
+      const transactionId = searchParams.get('transaction_id') || searchParams.get('kkiapay_transaction_id');
       const tournamentId = searchParams.get('tournamentId');
       const tName = searchParams.get('tournamentName');
       const amount = searchParams.get('amount');
 
+      console.log("[PaymentSuccess] Paramètres reçus:", { transactionId, tournamentId, tName, amount });
+
       if (!transactionId || !tournamentId) {
+        console.error("[PaymentSuccess] Paramètres manquants");
+        setError("Informations de transaction manquantes.");
         setIsProcessing(false);
         return;
       }
@@ -37,9 +41,9 @@ const PaymentSuccess = () => {
 
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error("Utilisateur non connecté");
+        if (!user) throw new Error("Session utilisateur introuvable. Veuillez vous reconnecter.");
 
-        // On vérifie si ce paiement n'a pas déjà été enregistré
+        // 1. Vérifier si déjà enregistré
         const { data: existing } = await supabase
           .from('payments')
           .select('*')
@@ -47,15 +51,16 @@ const PaymentSuccess = () => {
           .maybeSingle();
 
         if (existing) {
+          console.log("[PaymentSuccess] Paiement déjà enregistré");
           setValidationCode(existing.validation_code);
           setIsProcessing(false);
           return;
         }
 
+        // 2. Créer le code et insérer (Priorité Haute)
         const code = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
         
-        // Enregistrement dans la base de données
-        const { error } = await supabase.from('payments').insert({
+        const { error: insertError } = await supabase.from('payments').insert({
           user_id: user.id,
           tournament_id: tournamentId,
           tournament_name: tName || "Tournoi",
@@ -65,27 +70,32 @@ const PaymentSuccess = () => {
           fedapay_transaction_id: transactionId
         });
 
-        if (error) throw error;
+        if (insertError) throw insertError;
 
         setValidationCode(code);
+        showSuccess("Inscription confirmée !");
+        console.log("[PaymentSuccess] Inscription réussie dans la DB");
 
-        // Notification WhatsApp Admin
-        const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-        
-        await supabase.functions.invoke('notify-payment', {
-          body: {
-            joueur_nom: profile?.full_name || profile?.username || "Joueur",
-            joueur_telephone: profile?.phone || "N/A",
-            tournoi_nom: tName || "Tournoi",
-            montant: amount || "0",
-            transactionId: transactionId
-          }
-        });
+        // 3. Notification (Optionnel, ne doit pas bloquer le reste)
+        try {
+          const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+          await supabase.functions.invoke('notify-payment', {
+            body: {
+              joueur_nom: profile?.full_name || profile?.username || "Joueur",
+              joueur_telephone: profile?.phone || "N/A",
+              tournoi_nom: tName || "Tournoi",
+              montant: amount || "0",
+              transactionId: transactionId
+            }
+          });
+        } catch (notifyErr) {
+          console.warn("[PaymentSuccess] Erreur notification Twilio (non bloquant):", notifyErr);
+        }
 
-        showSuccess("Inscription enregistrée !");
       } catch (err: any) {
-        console.error("Erreur enregistrement paiement:", err);
-        showError("Erreur lors de l'enregistrement. Contactez le support.");
+        console.error("[PaymentSuccess] Erreur critique:", err);
+        setError(err.message || "Une erreur est survenue lors de la validation.");
+        showError("Erreur d'enregistrement. Contactez le support avec votre ID de transaction.");
       } finally {
         setIsProcessing(false);
       }
@@ -95,15 +105,8 @@ const PaymentSuccess = () => {
   }, [searchParams]);
 
   const handleWhatsAppSend = () => {
-    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation de paiement : ${validationCode} pour le tournoi ${tournamentName}.`);
+    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation : ${validationCode} pour le tournoi ${tournamentName}. (ID: ${searchParams.get('transaction_id')})`);
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
-  };
-
-  const copyToClipboard = () => {
-    if (validationCode) {
-      navigator.clipboard.writeText(validationCode);
-      showSuccess("Code copié !");
-    }
   };
 
   return (
@@ -114,10 +117,18 @@ const PaymentSuccess = () => {
           {isProcessing ? (
             <div className="py-12 space-y-6">
               <Loader2 className="w-12 h-12 text-violet-500 animate-spin mx-auto" />
-              <div>
-                <h1 className="text-2xl font-black mb-2">Finalisation...</h1>
-                <p className="text-muted-foreground text-sm">Nous enregistrons votre inscription dans l'arène.</p>
+              <h1 className="text-2xl font-black">Validation en cours...</h1>
+            </div>
+          ) : error ? (
+            <div className="py-8 space-y-6">
+              <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto">
+                <AlertCircle size={48} className="text-red-500" />
               </div>
+              <h1 className="text-2xl font-black text-red-500">Oups !</h1>
+              <p className="text-muted-foreground text-sm">{error}</p>
+              <Link to="/contact" className="block">
+                <Button className="w-full py-6 rounded-2xl bg-violet-600 text-white font-bold">Contacter le support</Button>
+              </Link>
             </div>
           ) : (
             <>
@@ -125,56 +136,35 @@ const PaymentSuccess = () => {
                 <CheckCircle2 size={48} className="text-green-500" />
               </div>
 
-              <h1 className="text-3xl font-black mb-4">Paiement Reçu !</h1>
-              <p className="text-muted-foreground mb-8">
-                Votre inscription a été enregistrée. Voici votre code de validation unique :
+              <h1 className="text-3xl font-black mb-4">C'est validé !</h1>
+              <p className="text-muted-foreground mb-8 text-sm">
+                Ton inscription est enregistrée. Note bien ton code de validation :
               </p>
 
-              {validationCode ? (
-                <div className="space-y-6 mb-10">
-                  <div className="p-6 bg-muted/50 rounded-[2rem] border border-border relative group">
-                    <p className="text-muted-foreground text-[10px] font-black uppercase tracking-widest mb-2">Code de validation</p>
-                    <div className="flex items-center justify-center gap-4">
-                      <span className="text-foreground font-mono font-black text-2xl tracking-wider">{validationCode}</span>
-                      <button onClick={copyToClipboard} className="text-muted-foreground hover:text-violet-500 transition-colors">
-                        <Copy size={20} />
-                      </button>
-                    </div>
+              <div className="space-y-6 mb-10">
+                <div className="p-6 bg-muted/50 rounded-[2rem] border border-border">
+                  <p className="text-muted-foreground text-[10px] font-black uppercase tracking-widest mb-2">Code de validation</p>
+                  <div className="flex items-center justify-center gap-4">
+                    <span className="text-foreground font-mono font-black text-2xl tracking-wider">{validationCode}</span>
+                    <button onClick={() => { navigator.clipboard.writeText(validationCode!); showSuccess("Copié !"); }} className="text-muted-foreground hover:text-violet-500"><Copy size={20} /></button>
                   </div>
-
-                  <Button 
-                    onClick={handleWhatsAppSend}
-                    className="w-full py-8 rounded-2xl bg-green-600 hover:bg-green-700 font-black text-lg gap-3 text-white shadow-xl shadow-green-500/20"
-                  >
-                    <MessageSquare size={24} />
-                    Envoyer sur WhatsApp
-                  </Button>
                 </div>
-              ) : (
-                <div className="mb-10">
-                  <Link to="/payments">
-                    <Button className="w-full py-7 rounded-2xl bg-violet-600 hover:bg-violet-700 font-bold text-lg gap-3 text-white">
-                      <History size={20} />
-                      Voir mon historique
-                    </Button>
-                  </Link>
-                </div>
-              )}
 
-              <div className="space-y-4">
-                <Link to="/">
-                  <Button variant="outline" className="w-full py-7 rounded-2xl border-border bg-muted/50 hover:bg-muted font-bold gap-3">
-                    Retour à l'accueil
-                    <ArrowRight size={20} />
-                  </Button>
-                </Link>
+                <Button onClick={handleWhatsAppSend} className="w-full py-8 rounded-2xl bg-green-600 hover:bg-green-700 font-black text-lg gap-3 text-white shadow-xl shadow-green-500/20">
+                  <MessageSquare size={24} />
+                  Envoyer sur WhatsApp
+                </Button>
               </div>
 
-              <div className="mt-10 pt-8 border-t border-border">
-                <p className="text-[10px] text-muted-foreground mb-4 uppercase font-black tracking-widest">Besoin d'aide ?</p>
-                <Link to="/contact" className="inline-flex items-center gap-2 text-green-500 font-bold hover:underline">
-                  <MessageSquare size={16} />
-                  Contacter le support
+              <div className="space-y-4">
+                <Link to="/payments">
+                  <Button variant="outline" className="w-full py-7 rounded-2xl border-border font-bold gap-3">
+                    <History size={20} />
+                    Voir mon historique
+                  </Button>
+                </Link>
+                <Link to="/">
+                  <Button variant="ghost" className="w-full py-4 rounded-2xl font-bold text-muted-foreground">Retour à l'accueil</Button>
                 </Link>
               </div>
             </>
