@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Edit3, Settings } from 'lucide-react';
+import { Edit3, Settings, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -83,6 +83,19 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="md:col-span-2 space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Lien de paiement (KKiaPay Direct)</Label>
+              <div className="relative">
+                <LinkIcon className="absolute left-3 top-3.5 text-muted-foreground" size={18} />
+                <Input 
+                  placeholder="https://direct.kkiapay.me/..." 
+                  value={editingTournament.payment_url || ''} 
+                  onChange={e => setEditingTournament({...editingTournament, payment_url: e.target.value})} 
+                  className="pl-10 py-6 bg-muted/50 border-border rounded-xl" 
+                />
+              </div>
             </div>
 
             <div className="md:col-span-2 space-y-2">
