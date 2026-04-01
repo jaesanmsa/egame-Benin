@@ -12,17 +12,17 @@ import { Badge } from "@/components/ui/badge";
 
 const ALL_GAMES = [
   // Jeux Actifs (Triés A-Z)
-  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰', image: '/clash of clans.jpeg' },
-  { id: 'clash-royale', name: 'Clash Royale', icon: '👑', image: '/clash royal.jpg' },
-  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱', image: '/cod mobile.jpg' },
-  { id: 'free-fire', name: 'Free Fire', icon: '🔥', image: '/freefire.jpg' },
-  { id: 'mobile-legends', name: 'Mobile Legends', icon: '⚔️', image: '/mobile legend.jpg' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🔫', image: '/pubg-mobile.jpg' },
+  { id: 'clash-of-clans', name: 'Clash of Clans', image: '/clash of clans.jpeg' },
+  { id: 'clash-royale', name: 'Clash Royale', image: '/clash royal.jpg' },
+  { id: 'cod-mobile', name: 'COD Mobile', image: '/cod mobile.jpg' },
+  { id: 'free-fire', name: 'Free Fire', image: '/freefire.jpg' },
+  { id: 'mobile-legends', name: 'Mobile Legends', image: '/mobile legend.jpg' },
+  { id: 'pubg-mobile', name: 'PUBG Mobile', image: '/pubg-mobile.jpg' },
   
   // Jeux à venir (Triés A-Z)
-  { id: 'blur', name: 'Blur', icon: '🏎️', image: '/blur.jpg', isComingSoon: true },
-  { id: 'bombsquad', name: 'BombSquad', icon: '💣', image: '/bombsquad.jpg', isComingSoon: true },
-  { id: 'cod-mw4', name: 'COD MW4', icon: '🔫', image: '/cod mw4.jpg', isComingSoon: true }
+  { id: 'blur', name: 'Blur', image: '/blur.jpg', isComingSoon: true },
+  { id: 'bombsquad', name: 'BombSquad', image: '/bombsquad.jpg', isComingSoon: true },
+  { id: 'cod-mw4', name: 'COD MW4', image: '/cod mw4.jpg', isComingSoon: true }
 ];
 
 const Games = () => {
@@ -149,10 +149,8 @@ const Games = () => {
 
                   <div className="absolute bottom-6 left-6 flex items-center justify-between right-6">
                     <div className="flex items-center gap-4">
-                      <span className="text-4xl drop-shadow-lg">{game.icon}</span>
                       <div>
                         <h3 className="text-white font-black text-xl tracking-tighter uppercase">{game.name}</h3>
-                        <p className="text-violet-400 text-[9px] font-black uppercase tracking-widest">Voir la discipline</p>
                       </div>
                     </div>
                     <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
