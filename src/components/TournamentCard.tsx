@@ -21,10 +21,9 @@ interface TournamentProps {
   status?: 'active' | 'finished';
 }
 
-const TournamentCard = ({ id, title, game, image, date, participants, entryFee, type, city, status = 'active' }: TournamentProps) => {
+const TournamentCard = ({ id, title, game, image, date, participants, entryFee, type, status = 'active' }: TournamentProps) => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [tournamentCity, setTournamentCity] = useState(city);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -35,14 +34,8 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
       setIsLoggedIn(!!session);
     });
 
-    if (!city) {
-      supabase.from('tournaments').select('city').eq('id', id).single().then(({ data }) => {
-        if (data) setTournamentCity(data.city);
-      });
-    }
-
     return () => subscription.unsubscribe();
-  }, [id, city]);
+  }, []);
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -80,7 +73,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
           <Badge className="bg-black/60 backdrop-blur-md text-white border-white/10 flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter py-0.5 px-2 w-fit">
             {type === 'Online' ? <Globe size={10} className="text-cyan-400" /> : <MapPin size={10} className="text-orange-400" />}
-            {type === 'Online' ? 'En ligne' : (tournamentCity || 'Local')}
+            {type === 'Online' ? 'En ligne' : 'Présentiel'}
           </Badge>
         </div>
 

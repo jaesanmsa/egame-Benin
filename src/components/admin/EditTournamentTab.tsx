@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
 const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Clash of Clans", "Free Fire", "PUBG Mobile", "Autre"];
 
 interface EditTournamentTabProps {
@@ -35,7 +34,7 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
                 <p className="font-black text-sm">
                   {t.title}
                 </p>
-                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{t.game} • {t.prize_pool} • {t.city}</p>
+                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{t.game} • {t.prize_pool}</p>
               </div>
               <Button 
                 variant="outline" 
@@ -57,20 +56,6 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Ville</Label>
-              <Select onValueChange={(v) => setEditingTournament({...editingTournament, city: v})} defaultValue={editingTournament.city}>
-                <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
-                  <SelectValue placeholder="Ville" />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-border">
-                  {CITIES.map(city => (
-                    <SelectItem key={city} value={city} className="font-bold">{city}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Jeu</Label>
               <Select onValueChange={(v) => setEditingTournament({...editingTournament, game: v})} defaultValue={editingTournament.game}>

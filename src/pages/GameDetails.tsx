@@ -8,10 +8,7 @@ import { ArrowLeft, Trophy, Star, Gamepad2, Zap, Users, Target, MessageSquare, M
 import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
 import { Skeleton } from "@/components/ui/skeleton";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
-
-const CITIES = ["Cotonou", "Abomey-Calavi", "Porto-Novo", "Parakou", "Ouidah"];
 
 const GameDetails = () => {
   const { id } = useParams();
@@ -19,7 +16,6 @@ const GameDetails = () => {
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [winners, setWinners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCity, setSelectedCity] = useState<string>("all");
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   const [hasActiveTournament, setHasActiveTournament] = useState(false);
 
@@ -126,9 +122,6 @@ const GameDetails = () => {
     fetchData();
   }, [id, gameInfo.name]);
 
-  // On ne filtre que si une ville est sélectionnée. Si "all", on retourne un tableau vide.
-  const filteredTournaments = selectedCity === "all" ? [] : tournaments.filter(t => t.city === selectedCity);
-
   return (
     <div className="min-h-screen bg-background text-foreground pb-32">
       <Navbar />
@@ -167,31 +160,17 @@ const GameDetails = () => {
               <p className="text-muted-foreground text-sm leading-relaxed font-medium">{gameInfo.desc}</p>
             </motion.section>
             <section className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h2 className="text-2xl font-black tracking-tight flex items-center gap-3"><Zap className="text-yellow-500 fill-yellow-500" size={24} />Tournois Disponibles</h2>
-                <Select value={selectedCity} onValueChange={setSelectedCity}>
-                  <SelectTrigger className="bg-card border-border rounded-xl h-12 w-full sm:w-48 text-xs font-bold"><div className="flex items-center gap-2"><MapPin size={14} className="text-violet-500" /><SelectValue placeholder="Ville" /></div></SelectTrigger>
-                  <SelectContent className="bg-card border-border">
-                    <SelectItem value="all">Toutes les villes</SelectItem>
-                    {CITIES.map(city => <SelectItem key={city} value={city}>{city}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
+              <h2 className="text-2xl font-black tracking-tight flex items-center gap-3"><Zap className="text-yellow-500 fill-yellow-500" size={24} />Tournois Disponibles</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {loading ? (
                   Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-[24px]" />)
-                ) : selectedCity === "all" ? (
-                  <div className="col-span-full py-12 text-center bg-muted/10 rounded-[32px] border border-dashed border-border">
-                    <MapPin size={40} className="mx-auto text-muted-foreground/20 mb-3" />
-                    <p className="text-muted-foreground text-xs font-bold italic">Veuillez sélectionner une ville pour voir les tournois disponibles.</p>
-                  </div>
-                ) : filteredTournaments.length === 0 ? (
+                ) : tournaments.length === 0 ? (
                   <div className="col-span-full py-12 text-center bg-muted/10 rounded-[32px] border border-dashed border-border">
                     <Gamepad2 size={40} className="mx-auto text-muted-foreground/20 mb-3" />
-                    <p className="text-muted-foreground text-xs font-bold italic">Aucun tournoi actif à {selectedCity} pour le moment.</p>
+                    <p className="text-muted-foreground text-xs font-bold italic">Aucun tournoi actif pour le moment.</p>
                   </div>
                 ) : (
-                  filteredTournaments.map((t) => (
+                  tournaments.map((t) => (
                     <TournamentCard key={t.id} id={t.id} title={t.title} game={t.game} image={t.image_url} date={new Date(t.start_date).toLocaleDateString('fr-FR')} participants={`${participantCounts[t.id] || 0}/${t.max_participants}`} entryFee={t.entry_fee.toString()} type={t.type as any} status="active" />
                   ))
                 )}

@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
 const GAMES = ["Free Fire", "Clash Royale", "Clash of Clans", "COD Mobile", "PUBG Mobile", "Blur", "COD MW4", "BombSquad", "Autre"];
 
 interface NewTournamentTabProps {
@@ -32,20 +31,6 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTour
           <Input placeholder="Nom du tournoi" value={newTournament.title} onChange={e => setNewTournament({...newTournament, title: e.target.value})} className="py-6 bg-muted/50 border-border rounded-xl" required />
         </div>
         
-        <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Ville</Label>
-          <Select onValueChange={(v) => setNewTournament({...newTournament, city: v})} defaultValue="Cotonou">
-            <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
-              <SelectValue placeholder="Ville" />
-            </SelectTrigger>
-            <SelectContent className="bg-card border-border">
-              {CITIES.map(city => (
-                <SelectItem key={city} value={city} className="font-bold">{city}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         <div className="space-y-2">
           <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Jeu</Label>
           <Select onValueChange={(v) => setNewTournament({...newTournament, game: v})} defaultValue="Free Fire">

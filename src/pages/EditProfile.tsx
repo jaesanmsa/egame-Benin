@@ -7,11 +7,8 @@ import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, User, Phone, Save, AtSign, MapPin } from 'lucide-react';
+import { ArrowLeft, User, Phone, Save, AtSign } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
-
-const CITIES = ["Cotonou", "Porto-Novo", "Parakou", "Ouidah", "Abomey-Calavi", "Autre"];
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -21,7 +18,6 @@ const EditProfile = () => {
     full_name: '',
     username: '',
     phone: '',
-    city: 'Autre',
     avatar_url: ''
   });
 
@@ -35,7 +31,7 @@ const EditProfile = () => {
       if (user) {
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('full_name, username, phone, city, avatar_url')
+          .select('full_name, username, phone, avatar_url')
           .eq('id', user.id)
           .maybeSingle();
 
@@ -43,7 +39,6 @@ const EditProfile = () => {
           full_name: profileData?.full_name || user.user_metadata?.full_name || '',
           username: profileData?.username || user.user_metadata?.username || '',
           phone: profileData?.phone || user.user_metadata?.phone || '',
-          city: profileData?.city || user.user_metadata?.city || 'Autre',
           avatar_url: profileData?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`
         });
       }
@@ -72,7 +67,6 @@ const EditProfile = () => {
           full_name: profile.full_name,
           username: username,
           phone: profile.phone,
-          city: profile.city,
           avatar_url: profile.avatar_url,
           updated_at: new Date().toISOString()
         });
@@ -124,23 +118,6 @@ const EditProfile = () => {
                   placeholder="Ex: ProGamer229"
                   required
                 />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="city">Ville</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 text-muted-foreground z-10" size={18} />
-                <Select value={profile.city} onValueChange={(v) => setProfile({...profile, city: v})}>
-                  <SelectTrigger className="pl-10 bg-muted border-border rounded-xl">
-                    <SelectValue placeholder="Choisir une ville" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border">
-                    {CITIES.map(city => (
-                      <SelectItem key={city} value={city}>{city}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
             </div>
 
