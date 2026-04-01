@@ -28,7 +28,7 @@ const AdminDashboard = () => {
   const [participantsList, setParticipantsList] = useState<any[]>([]);
   
   const [newTournament, setNewTournament] = useState({
-    id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '', city: 'Cotonou'
+    id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: ''
   });
 
   const [editingTournament, setEditingTournament] = useState<any>(null);
@@ -38,7 +38,7 @@ const AdminDashboard = () => {
   });
 
   const [finishData, setFinishData] = useState({
-    tournamentId: '', winnerName: '', winnerAvatar: ''
+    tournamentId: '', winnerName: '', winnerAvatar: '', luckyWinnerName: '', luckyWinnerAvatar: ''
   });
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const AdminDashboard = () => {
     setSelectedTournamentId(tournamentId);
     const { data } = await supabase
       .from('payments')
-      .select('*, profiles(username, full_name, phone, city)')
+      .select('*, profiles(username, full_name, phone)')
       .eq('tournament_id', tournamentId)
       .eq('status', 'Réussi');
     if (data) setParticipantsList(data);
@@ -88,7 +88,7 @@ const AdminDashboard = () => {
     if (error) showError(error.message);
     else {
       showSuccess("Tournoi ajouté !");
-      setNewTournament({ id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '', city: 'Cotonou' });
+      setNewTournament({ id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '' });
       fetchData();
     }
   };
@@ -102,7 +102,6 @@ const AdminDashboard = () => {
         description: editingTournament.description,
         prize_pool: editingTournament.prize_pool,
         payment_url: editingTournament.payment_url,
-        city: editingTournament.city,
         game: editingTournament.game
       })
       .eq('id', editingTournament.id);
@@ -117,21 +116,44 @@ const AdminDashboard = () => {
 
   const handleFinishTournament = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // 1. Mettre à jour le tournoi
     const { error } = await supabase
       .from('tournaments')
       .update({ 
         status: 'finished',
         winner_name: finishData.winnerName,
-        winner_avatar: finishData.winnerAvatar
+        winner_avatar: finishData.winnerAvatar,
+        lucky_winner_name: finishData.luckyWinnerName,
+        lucky_winner_avatar: finishData.luckyWinnerAvatar
       })
       .eq('id', finishData.tournamentId);
     
-    if (error) showError(error.message);
-    else {
-      showSuccess("Tournoi clôturé !");
-      setFinishData({ tournamentId: '', winnerName: '', winnerAvatar: '' });
-      fetchData();
+    if (error) {
+      showError(error.message);
+      return;
     }
+
+    // 2. Créditer les points au vainqueur (+50 points)
+    const { data: winnerProfile } = await supabase
+      .from('profiles')
+      .select('id, points, champion_count')
+      .eq('username', finishData.winnerName)
+      .maybeSingle();
+
+    if (winnerProfile) {
+      await supabase
+        .from('profiles')
+        .update({ 
+          points: (winnerProfile.points || 0) + 50,
+          champion_count: (winnerProfile.champion_count || 0) + 1
+        })
+        .eq('id', winnerProfile.id);
+    }
+
+    showSuccess("Tournoi clôturé et points attribués !");
+    setFinishData({ tournamentId: '', winnerName: '', winnerAvatar: '', luckyWinnerName: '', luckyWinnerAvatar: '' });
+    fetchData();
   };
 
   const handleUpdateLeader = async (e: React.FormEvent) => {

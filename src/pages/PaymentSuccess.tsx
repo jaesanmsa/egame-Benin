@@ -28,10 +28,7 @@ const PaymentSuccess = () => {
       const tName = searchParams.get('tournamentName');
       const amount = searchParams.get('amount');
 
-      console.log("[PaymentSuccess] Paramètres reçus:", { transactionId, tournamentId, tName, amount });
-
       if (!transactionId || !tournamentId) {
-        console.error("[PaymentSuccess] Paramètres manquants");
         setError("Informations de transaction manquantes.");
         setIsProcessing(false);
         return;
@@ -41,7 +38,7 @@ const PaymentSuccess = () => {
 
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error("Session utilisateur introuvable. Veuillez vous reconnecter.");
+        if (!user) throw new Error("Session utilisateur introuvable.");
 
         // 1. Vérifier si déjà enregistré
         const { data: existing } = await supabase
@@ -51,13 +48,12 @@ const PaymentSuccess = () => {
           .maybeSingle();
 
         if (existing) {
-          console.log("[PaymentSuccess] Paiement déjà enregistré");
           setValidationCode(existing.validation_code);
           setIsProcessing(false);
           return;
         }
 
-        // 2. Créer le code et insérer (Priorité Haute)
+        // 2. Créer le code et insérer le paiement
         const code = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
         
         const { error: insertError } = await supabase.from('payments').insert({
@@ -72,30 +68,37 @@ const PaymentSuccess = () => {
 
         if (insertError) throw insertError;
 
-        setValidationCode(code);
-        showSuccess("Inscription confirmée !");
-        console.log("[PaymentSuccess] Inscription réussie dans la DB");
+        // 3. CRÉDITER LES POINTS DE FIDÉLITÉ (+10 points)
+        const { data: profile } = await supabase.from('profiles').select('points').eq('id', user.id).single();
+        const currentPoints = profile?.points || 0;
+        
+        await supabase
+          .from('profiles')
+          .update({ points: currentPoints + 10 })
+          .eq('id', user.id);
 
-        // 3. Notification (Optionnel, ne doit pas bloquer le reste)
+        setValidationCode(code);
+        showSuccess("Inscription confirmée ! +10 points gagnés.");
+
+        // 4. Notification Twilio
         try {
-          const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+          const { data: prof } = await supabase.from('profiles').select('*').eq('id', user.id).single();
           await supabase.functions.invoke('notify-payment', {
             body: {
-              joueur_nom: profile?.full_name || profile?.username || "Joueur",
-              joueur_telephone: profile?.phone || "N/A",
+              joueur_nom: prof?.full_name || prof?.username || "Joueur",
+              joueur_telephone: prof?.phone || "N/A",
               tournoi_nom: tName || "Tournoi",
               montant: amount || "0",
               transactionId: transactionId
             }
           });
         } catch (notifyErr) {
-          console.warn("[PaymentSuccess] Erreur notification Twilio (non bloquant):", notifyErr);
+          console.warn("Erreur notification Twilio:", notifyErr);
         }
 
       } catch (err: any) {
-        console.error("[PaymentSuccess] Erreur critique:", err);
-        setError(err.message || "Une erreur est survenue lors de la validation.");
-        showError("Erreur d'enregistrement. Contactez le support avec votre ID de transaction.");
+        setError(err.message || "Une erreur est survenue.");
+        showError("Erreur d'enregistrement.");
       } finally {
         setIsProcessing(false);
       }
@@ -105,7 +108,7 @@ const PaymentSuccess = () => {
   }, [searchParams]);
 
   const handleWhatsAppSend = () => {
-    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation : ${validationCode} pour le tournoi ${tournamentName}. (ID: ${searchParams.get('transaction_id')})`);
+    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation : ${validationCode} pour le tournoi ${tournamentName}.`);
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
