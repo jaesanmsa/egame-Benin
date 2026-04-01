@@ -1,51 +1,77 @@
 "use client";
 
 import React from 'react';
-import { Trophy, Award, Medal, Crown } from 'lucide-react';
+import { Trophy, Award, Medal, Crown, Star, Zap } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface PlayerBadgeProps {
   tournamentCount: number;
+  mvpCount?: number;
+  championCount?: number;
   size?: 'sm' | 'md' | 'lg';
-  showLabel?: boolean;
 }
 
-const PlayerBadge = ({ tournamentCount, size = 'md', showLabel = false }: PlayerBadgeProps) => {
-  let badge = { icon: <Award />, label: "Rookie", color: "text-orange-400", bg: "bg-orange-400/10", border: "border-orange-400/20" };
-
-  if (tournamentCount >= 20) {
-    badge = { icon: <Crown />, label: "Légende", color: "text-yellow-400", bg: "bg-yellow-400/10", border: "border-yellow-400/20" };
-  } else if (tournamentCount >= 10) {
-    badge = { icon: <Trophy />, label: "Vétéran", color: "text-violet-400", bg: "bg-violet-400/10", border: "border-violet-400/20" };
-  } else if (tournamentCount >= 5) {
-    badge = { icon: <Medal />, label: "Compétiteur", color: "text-zinc-400", bg: "bg-zinc-400/10", border: "border-zinc-400/20" };
-  } else if (tournamentCount < 1) {
-    return null; // Pas de badge si 0 tournoi
-  }
-
-  const sizes = {
-    sm: "w-5 h-5 p-0.5",
-    md: "w-8 h-8 p-1.5",
-    lg: "w-12 h-12 p-2.5"
-  };
-
+const PlayerBadge = ({ tournamentCount, mvpCount = 0, championCount = 0, size = 'md' }: PlayerBadgeProps) => {
   const iconSize = size === 'sm' ? 12 : size === 'md' ? 16 : 24;
+  const containerClass = size === 'sm' ? 'gap-1' : 'gap-2';
+
+  // Badges de Progression
+  let progressionBadge = null;
+  if (tournamentCount >= 20) {
+    progressionBadge = { icon: <Crown size={iconSize} />, label: "Légende", color: "text-yellow-400", bg: "bg-yellow-400/10" };
+  } else if (tournamentCount >= 10) {
+    progressionBadge = { icon: <Trophy size={iconSize} />, label: "Vétéran", color: "text-violet-400", bg: "bg-violet-400/10" };
+  } else if (tournamentCount >= 5) {
+    progressionBadge = { icon: <Medal size={iconSize} />, label: "Compétiteur", color: "text-zinc-400", bg: "bg-zinc-400/10" };
+  } else if (tournamentCount >= 1) {
+    progressionBadge = { icon: <Award size={iconSize} />, label: "Rookie", color: "text-orange-400", bg: "bg-orange-400/10" };
+  }
 
   return (
     <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className={`inline-flex items-center gap-2 ${showLabel ? 'bg-muted/50 px-3 py-1.5 rounded-full border border-border' : ''}`}>
-            <div className={`${sizes[size]} ${badge.bg} ${badge.color} rounded-full border ${badge.border} flex items-center justify-center shadow-sm`}>
-              {React.cloneElement(badge.icon as React.ReactElement, { size: iconSize })}
-            </div>
-            {showLabel && <span className={`text-[10px] font-black uppercase tracking-widest ${badge.color}`}>{badge.label}</span>}
-          </div>
-        </TooltipTrigger>
-        <TooltipContent className="bg-zinc-900 text-white border-zinc-800">
-          <p className="text-[10px] font-bold">{badge.label} ({tournamentCount} tournois)</p>
-        </TooltipContent>
-      </Tooltip>
+      <div className={`flex items-center ${containerClass}`}>
+        {/* Badge de Progression */}
+        {progressionBadge && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className={`p-1.5 rounded-full border border-current/20 ${progressionBadge.bg} ${progressionBadge.color} shadow-sm cursor-help`}>
+                {progressionBadge.icon}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="bg-zinc-900 text-white border-zinc-800">
+              <p className="text-[10px] font-bold">{progressionBadge.label} ({tournamentCount} tournois)</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
+
+        {/* Badge Champion */}
+        {championCount > 0 && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="p-1.5 rounded-full border border-yellow-500/20 bg-yellow-500/10 text-yellow-500 shadow-sm cursor-help">
+                <Zap size={iconSize} className="fill-yellow-500" />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="bg-zinc-900 text-white border-zinc-800">
+              <p className="text-[10px] font-bold">Champion ({championCount} victoires)</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
+
+        {/* Badge MVP */}
+        {mvpCount > 0 && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="p-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/10 text-cyan-500 shadow-sm cursor-help">
+                <Star size={iconSize} className="fill-cyan-500" />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="bg-zinc-900 text-white border-zinc-800">
+              <p className="text-[10px] font-bold">MVP ({mvpCount} fois)</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
+      </div>
     </TooltipProvider>
   );
 };

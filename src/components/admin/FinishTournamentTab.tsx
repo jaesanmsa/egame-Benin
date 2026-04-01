@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { History } from 'lucide-react';
+import { History, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -33,16 +33,34 @@ const FinishTournamentTab = ({ activeTournaments, finishData, setFinishData, onS
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Pseudo du gagnant</Label>
-          <Input placeholder="Nom du champion" value={finishData.winnerName} onChange={e => setFinishData({...finishData, winnerName: e.target.value})} className="py-6 bg-muted/50 border-border rounded-xl" required />
-        </div>
-        <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Lien Avatar du gagnant (Emoji)</Label>
-          <Input placeholder="ex: 🏆" value={finishData.winnerAvatar} onChange={e => setFinishData({...finishData, winnerAvatar: e.target.value})} className="py-6 bg-muted/50 border-border rounded-xl" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-violet-500">Vainqueur Officiel</h3>
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Pseudo du gagnant</Label>
+              <Input placeholder="Nom du champion" value={finishData.winnerName} onChange={e => setFinishData({...finishData, winnerName: e.target.value})} className="py-6 bg-muted/50 border-border rounded-xl" required />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Avatar Emoji</Label>
+              <Input placeholder="ex: 🏆" value={finishData.winnerAvatar} onChange={e => setFinishData({...finishData, winnerAvatar: e.target.value})} className="py-6 bg-muted/50 border-border rounded-xl" />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-cyan-500 flex items-center gap-2"><Gift size={14} /> Tirage au sort</h3>
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Gagnant du lot surprise</Label>
+              <Input placeholder="Pseudo tiré au sort" value={finishData.luckyWinnerName} onChange={e => setFinishData({...finishData, luckyWinnerName: e.target.value})} className="py-6 bg-muted/50 border-border rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Avatar Emoji</Label>
+              <Input placeholder="ex: 🎁" value={finishData.luckyWinnerAvatar} onChange={e => setFinishData({...finishData, luckyWinnerAvatar: e.target.value})} className="py-6 bg-muted/50 border-border rounded-xl" />
+            </div>
+          </div>
         </div>
       </div>
-      <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700 py-8 rounded-2xl font-black text-base shadow-xl shadow-orange-500/20 text-white">Clôturer et afficher le gagnant</Button>
+      <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700 py-8 rounded-2xl font-black text-base shadow-xl shadow-orange-500/20 text-white">Clôturer et publier les résultats</Button>
     </motion.form>
   );
 };
