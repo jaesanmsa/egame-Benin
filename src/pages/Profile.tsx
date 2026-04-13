@@ -68,15 +68,24 @@ const Profile = () => {
   };
 
   const handleToggleNotifications = async () => {
-    if (profile?.notifications_enabled) {
-      showError("Désactivation manuelle non disponible pour le moment.");
-      return;
-    }
-
     setNotifLoading(true);
     try {
-      await requestNotificationPermission(user.id);
-      showSuccess("Notifications activées !");
+      if (profile?.notifications_enabled) {
+        // Désactivation
+        const { error } = await supabase
+          .from('profiles')
+          .update({ notifications_enabled: false })
+          .eq('id', user.id);
+        
+        if (error) throw error;
+        showSuccess("Notifications désactivées");
+      } else {
+        // Activation
+        await requestNotificationPermission(user.id);
+        showSuccess("Notifications activées !");
+      }
+      
+      // Rafraîchir les données locales
       const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
       setProfile(data);
     } catch (err: any) {
@@ -92,7 +101,6 @@ const Profile = () => {
   const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
   const username = profile?.username || user.user_metadata?.username || user.email?.split('@')[0];
   
-  // On affiche soit les points de la DB, soit le calcul basé sur les tournois si la DB est à 0
   const displayPoints = profile?.points || (tournamentCount * 10);
 
   return (
@@ -166,7 +174,7 @@ const Profile = () => {
         <div className="space-y-4">
           <button 
             onClick={handleToggleNotifications} 
-            disabled={notifLoading || profile?.notifications_enabled}
+            disabled={notifLoading}
             className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm"
           >
             <div className="flex items-center gap-4">
