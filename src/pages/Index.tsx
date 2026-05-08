@@ -6,7 +6,7 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
 import { motion } from 'framer-motion';
-import { Award, Users, Activity, Shield, CreditCard, Zap, ArrowRight, MessageSquare } from 'lucide-react';
+import { Trophy, Users, Activity, Shield, CreditCard, Zap, ArrowRight, MessageSquare } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -127,7 +127,7 @@ const Index = () => {
       <main className="max-w-7xl mx-auto px-6 space-y-40">
         <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-card border border-border p-10 rounded-[2.5rem] text-center space-y-4 shadow-sm">
-            <Award className="text-violet-500 mx-auto" size={32} strokeWidth={2} />
+            <Trophy className="text-violet-500 mx-auto" size={32} strokeWidth={2} />
             <p className="text-4xl font-black tracking-tighter">{stats.tournaments}</p>
             <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-60">Tournois Actifs</p>
           </div>
@@ -165,10 +165,10 @@ const Index = () => {
           <div className="flex items-center justify-center gap-12">
             <a href="https://wa.me/2290141790790" target="_blank" className="text-muted-foreground hover:text-violet-500 transition-colors"><MessageSquare size={24} strokeWidth={2} /></a>
             <Link to="/privacy" className="text-muted-foreground hover:text-violet-500 transition-colors"><Shield size={24} strokeWidth={2} /></Link>
-            <Award size={24} strokeWidth={2} className="text-muted-foreground" />
+            <Trophy size={24} strokeWidth={2} className="text-muted-foreground" />
           </div>
           <div className="space-y-3">
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em]">eGame Bénin • Plateforme de Compétition</p>
+            <p className="text-[10px] text-muted-foreground font-black tracking-[0.3em]">eGame Bénin • Plateforme de Compétition</p>
             <p className="text-[9px] text-muted-foreground/40 font-black uppercase tracking-[0.2em]">© 2026 • Tous droits réservés</p>
           </div>
         </footer>
