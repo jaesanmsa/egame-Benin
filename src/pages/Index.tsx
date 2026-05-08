@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
+import VSBackground from '@/components/VSBackground';
 import PlayerBadge from '@/components/PlayerBadge';
 import { motion } from 'framer-motion';
 import { Trophy, Users, Activity, Shield, CreditCard, Zap, ArrowRight, MessageSquare } from 'lucide-react';
@@ -56,6 +57,9 @@ const Index = () => {
       <Navbar />
       
       <section className="relative pt-12 pb-32 overflow-hidden">
+        {/* Élément VS en arrière-plan */}
+        <VSBackground />
+
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 opacity-10 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-violet-600/20 rounded-full blur-[120px]" />
         </div>
@@ -79,7 +83,7 @@ const Index = () => {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tighter leading-tight uppercase"
+              className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tighter leading-tight uppercase relative"
             >
               Domine le jeu. <br />
               <span className="text-violet-600">Encaisse la victoire.</span>
@@ -102,7 +106,6 @@ const Index = () => {
               className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto"
             >
               <div className="relative p-[1px] overflow-hidden rounded-2xl group w-full sm:w-auto">
-                {/* Animation de bordure VIOLETTE uniquement */}
                 <div className="absolute inset-[-1000%] animate-border-rotate bg-[conic-gradient(from_90deg_at_50%_50%,#8A2BE2_0%,#4B0082_50%,#8A2BE2_100%)]" />
                 <Button 
                   onClick={() => navigate('/games')} 
