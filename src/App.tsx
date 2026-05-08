@@ -29,7 +29,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <HelmetProvider>
-      <ThemeProvider defaultTheme="light" storageKey="egame-theme" attribute="class">
+      <ThemeProvider defaultTheme="dark" storageKey="egame-theme" attribute="class">
         <TooltipProvider>
           <Toaster />
           <Sonner />
