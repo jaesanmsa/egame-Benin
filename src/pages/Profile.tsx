@@ -4,11 +4,10 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import PlayerBadge from '@/components/PlayerBadge';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Palette, HelpCircle, Sun, Moon, Shield, Activity, Zap, TrendingUp, Award, Bell, BellOff } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Palette, HelpCircle, Shield, Activity, Zap, TrendingUp, Award, Bell, BellOff } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showSuccess, showError } from '@/utils/toast';
-import { useTheme } from "next-themes";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer } from 'recharts';
 import { requestNotificationPermission } from '@/lib/firebase';
 
@@ -20,7 +19,6 @@ const Profile = () => {
   const [progressionData, setProgressionData] = useState<any[]>([]);
   const [notifLoading, setNotifLoading] = useState(false);
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const getUserData = async () => {
@@ -71,7 +69,6 @@ const Profile = () => {
     setNotifLoading(true);
     try {
       if (profile?.notifications_enabled) {
-        // Désactivation
         const { error } = await supabase
           .from('profiles')
           .update({ notifications_enabled: false })
@@ -80,12 +77,10 @@ const Profile = () => {
         if (error) throw error;
         showSuccess("Notifications désactivées");
       } else {
-        // Activation
         await requestNotificationPermission(user.id);
         showSuccess("Notifications activées !");
       }
       
-      // Rafraîchir les données locales
       const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
       setProfile(data);
     } catch (err: any) {
@@ -182,11 +177,6 @@ const Profile = () => {
               {profile?.notifications_enabled ? "Notifications Activées" : "Activer les Notifications Push"}
             </div>
             {notifLoading && <div className="w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />}
-          </button>
-
-          <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm">
-            <div className="flex items-center gap-4">{theme === 'dark' ? <Sun size={20} className="text-yellow-500" /> : <Moon size={20} className="text-indigo-500" />} Mode {theme === 'dark' ? 'Clair' : 'Sombre'}</div>
-            <div className={`w-10 h-5 rounded-full relative transition-colors ${theme === 'dark' ? 'bg-violet-600' : 'bg-muted'}`}><div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${theme === 'dark' ? 'right-1' : 'left-1'}`} /></div>
           </button>
           
           <Link to="/contact" className="block"><button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><HelpCircle size={20} className="text-violet-500" /> Contact & Aide</div></button></Link>

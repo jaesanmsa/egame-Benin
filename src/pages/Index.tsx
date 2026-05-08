@@ -83,10 +83,9 @@ const Index = () => {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tighter leading-tight uppercase relative"
+              className="text-lg sm:text-2xl md:text-4xl font-black tracking-tighter leading-tight uppercase whitespace-nowrap"
             >
-              Domine le jeu. <br />
-              <span className="text-violet-600">Encaisse la victoire.</span>
+              Domine le jeu. <span className="text-violet-600">Encaisse la victoire.</span>
             </motion.h1>
 
             <motion.p 
