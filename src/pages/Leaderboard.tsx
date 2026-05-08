@@ -9,12 +9,12 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
 const DEFAULT_GAMES = [
-  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '/icon clash of clans.jpg' },
-  { id: 'clash-royale', name: 'Clash Royale', icon: '/icon clash royal.jpg' },
-  { id: 'cod-mobile', name: 'COD Mobile', icon: '/icon cod mobile.png' },
-  { id: 'free-fire', name: 'Free Fire', icon: '/icon free fire.png' },
-  { id: 'mobile-legends', name: 'Mobile Legends', icon: '/icon mobile legend.jpg' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '/icon pubg.png' }
+  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '/icon%20clash%20of%20clans.jpg' },
+  { id: 'clash-royale', name: 'Clash Royale', icon: '/icon%20clash%20royal.jpg' },
+  { id: 'cod-mobile', name: 'COD Mobile', icon: '/icon%20cod%20mobile.png' },
+  { id: 'free-fire', name: 'Free Fire', icon: '/icon%20free%20fire.png' },
+  { id: 'mobile-legends', name: 'Mobile Legends', icon: '/icon%20mobile%20legend.jpg' },
+  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '/icon%20pubg.png' }
 ];
 
 const Leaderboard = () => {
@@ -111,8 +111,15 @@ const Leaderboard = () => {
                   className="flex items-center justify-between p-5 bg-card border border-border rounded-2xl hover:border-violet-500/50 transition-all shadow-sm group"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-muted flex items-center justify-center rounded-xl overflow-hidden group-hover:scale-110 transition-transform border border-border">
-                      <img src={game.icon} alt={game.name} className="w-full h-full object-cover" />
+                    <div className="w-10 h-10 bg-muted flex items-center justify-center rounded-xl overflow-hidden group-hover:scale-110 transition-transform border border-border/50">
+                      <img 
+                        src={game.icon} 
+                        alt={game.name} 
+                        className="w-full h-full object-contain"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.border = '1px solid #8b5cf6';
+                        }}
+                      />
                     </div> 
                     <div className="text-left">
                       <p className="font-black text-sm">{game.name}</p>
