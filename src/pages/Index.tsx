@@ -73,7 +73,7 @@ const Index = () => {
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-violet-600/10 text-violet-500 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-violet-500/20"
+              className="bg-violet-600/10 text-violet-500 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-violet-500/20"
             >
               L'élite du gaming au Bénin
             </motion.div>
@@ -81,7 +81,7 @@ const Index = () => {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-3xl md:text-5xl font-black tracking-tighter leading-tight"
+              className="text-xl sm:text-2xl md:text-4xl font-black tracking-tighter leading-tight whitespace-nowrap"
             >
               Domine le jeu. <span className="text-violet-600">Encaisse la victoire.</span>
             </motion.h1>
@@ -104,14 +104,14 @@ const Index = () => {
             >
               <Button 
                 onClick={() => navigate('/games')} 
-                className="w-full sm:w-auto py-7 px-10 rounded-2xl bg-violet-600 hover:bg-violet-700 font-black text-base shadow-xl shadow-violet-500/20 gap-2 text-white"
+                className="w-full sm:w-auto py-7 px-10 rounded-2xl bg-violet-600 hover:bg-violet-700 font-bold text-base shadow-xl shadow-violet-500/20 gap-2 text-white"
               >
                 Voir les tournois <ArrowRight size={20} />
               </Button>
               <Button 
                 variant="outline" 
                 onClick={() => navigate('/leaderboard')} 
-                className="w-full sm:w-auto py-7 px-10 rounded-2xl border-border font-black text-base hover:bg-muted transition-all"
+                className="w-full sm:w-auto py-7 px-10 rounded-2xl border-border font-bold text-base hover:bg-muted transition-all"
               >
                 Classement
               </Button>
@@ -126,17 +126,17 @@ const Index = () => {
           <div className="bg-card border border-border p-8 rounded-[2.5rem] shadow-sm text-center space-y-2">
             <Trophy className="text-violet-500 mx-auto mb-4" size={32} />
             <p className="text-4xl font-black">{stats.tournaments}</p>
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Tournois</p>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Tournois</p>
           </div>
           <div className="bg-card border border-border p-8 rounded-[2.5rem] shadow-sm text-center space-y-2">
             <Users className="text-violet-500 mx-auto mb-4" size={32} />
             <p className="text-4xl font-black">{stats.players}</p>
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Joueurs</p>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Joueurs</p>
           </div>
           <div className="bg-card border border-border p-8 rounded-[2.5rem] shadow-sm text-center space-y-2">
             <Coins className="text-violet-500 mx-auto mb-4" size={32} />
             <p className="text-4xl font-black">{stats.cashPrize.toLocaleString()}</p>
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">CFA Gagnés</p>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">CFA Gagnés</p>
           </div>
         </section>
 
@@ -144,7 +144,7 @@ const Index = () => {
         <section className="space-y-12">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-black tracking-tight">Derniers Vainqueurs</h2>
-            <Link to="/leaderboard" className="text-xs font-black text-violet-500 uppercase tracking-widest hover:underline">Voir tout →</Link>
+            <Link to="/leaderboard" className="text-xs font-bold text-violet-500 uppercase tracking-widest hover:underline">Voir tout →</Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -166,9 +166,9 @@ const Index = () => {
                       <PlayerBadge tournamentCount={w.tournamentCount} size="md" />
                     </div>
                   </div>
-                  <h3 className="text-xl font-black mb-1">{w.winner_name}</h3>
-                  <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mb-4">{w.title}</p>
-                  <div className="bg-green-500/10 text-green-500 px-4 py-1.5 rounded-full font-black text-xs">
+                  <h3 className="text-xl font-bold mb-1">{w.winner_name}</h3>
+                  <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest mb-4">{w.title}</p>
+                  <div className="bg-green-500/10 text-green-500 px-4 py-1.5 rounded-full font-bold text-xs">
                     +{w.prize_pool}
                   </div>
                 </motion.div>
@@ -181,17 +181,17 @@ const Index = () => {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-12 py-12">
           <div className="space-y-4 text-center md:text-left">
             <ShieldCheck className="text-violet-500 mx-auto md:mx-0" size={40} />
-            <h3 className="text-xl font-black">Sécurisé</h3>
+            <h3 className="text-xl font-bold">Sécurisé</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">Paiements via KKiaPay (MTN, Moov, Celtiis). Vos transactions sont 100% protégées.</p>
           </div>
           <div className="space-y-4 text-center md:text-left">
             <CreditCard className="text-violet-500 mx-auto md:mx-0" size={40} />
-            <h3 className="text-xl font-black">Retraits Rapides</h3>
+            <h3 className="text-xl font-bold">Retraits Rapides</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">Gagnez et recevez vos prix directement sur votre compte Mobile Money sous 24h.</p>
           </div>
           <div className="space-y-4 text-center md:text-left">
             <Zap className="text-violet-500 mx-auto md:mx-0" size={40} />
-            <h3 className="text-xl font-black">Compétitif</h3>
+            <h3 className="text-xl font-bold">Compétitif</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">Affrontez les meilleurs joueurs du Bénin et grimpez dans le Hall of Fame.</p>
           </div>
         </section>
@@ -204,8 +204,8 @@ const Index = () => {
             <Trophy size={24} className="text-muted-foreground" />
           </div>
           <div className="space-y-2">
-            <p className="text-xs text-muted-foreground font-black uppercase tracking-widest">eGame Bénin • Domine le jeu</p>
-            <p className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest">© 2026 • Tous droits réservés</p>
+            <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">eGame Bénin • Domine le jeu</p>
+            <p className="text-[10px] text-muted-foreground/50 font-semibold uppercase tracking-widest">© 2026 • Tous droits réservés</p>
           </div>
         </footer>
       </main>

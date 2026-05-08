@@ -118,11 +118,11 @@ const TournamentDetails = () => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-border rounded-[2.5rem] p-6 md:p-8 shadow-2xl mb-6">
           <div className="flex justify-between items-start gap-4 mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-1"><Zap size={12} className="text-violet-500 fill-violet-500" /><p className="text-violet-500 font-black uppercase tracking-[0.2em] text-[9px]">{tournament.game}</p></div>
+              <div className="flex items-center gap-2 mb-1"><Zap size={12} className="text-violet-500 fill-violet-500" /><p className="text-violet-500 font-bold uppercase tracking-[0.2em] text-[9px]">{tournament.game}</p></div>
               <h1 className="text-2xl md:text-3xl font-black tracking-tight">{tournament.title}</h1>
             </div>
             <div className="bg-violet-600 px-4 py-2.5 rounded-2xl text-center text-white shadow-lg shadow-violet-500/20">
-              <p className="text-[8px] uppercase font-black tracking-widest opacity-80">Cash Prize</p>
+              <p className="text-[8px] uppercase font-bold tracking-widest opacity-80">Cash Prize</p>
               <p className="text-lg font-black">{tournament.prize_pool}</p>
             </div>
           </div>
@@ -131,14 +131,14 @@ const TournamentDetails = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
               <div className="bg-yellow-500/10 border border-yellow-500/20 p-6 rounded-[2rem] text-center">
                 <Trophy className="text-yellow-500 mx-auto mb-3" size={32} />
-                <p className="text-[10px] font-black uppercase tracking-widest text-yellow-600 mb-1">Vainqueur</p>
-                <h3 className="text-xl font-black">{tournament.winner_name}</h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-yellow-600 mb-1">Vainqueur</p>
+                <h3 className="text-xl font-bold">{tournament.winner_name}</h3>
               </div>
               {tournament.lucky_winner_name && (
                 <div className="bg-cyan-500/10 border border-cyan-500/20 p-6 rounded-[2rem] text-center">
                   <Gift className="text-cyan-500 mx-auto mb-3" size={32} />
-                  <p className="text-[10px] font-black uppercase tracking-widest text-cyan-600 mb-1">Tirage au sort</p>
-                  <h3 className="text-xl font-black">{tournament.lucky_winner_name}</h3>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-1">Tirage au sort</p>
+                  <h3 className="text-xl font-bold">{tournament.lucky_winner_name}</h3>
                 </div>
               )}
             </div>
@@ -150,26 +150,26 @@ const TournamentDetails = () => {
                 <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center"><Globe className="text-violet-500 mx-auto mb-1.5" size={16} /><p className="font-bold text-[10px] uppercase tracking-wider">{tournament.type}</p></div>
                 <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center"><Shield className="text-violet-500 mx-auto mb-1.5" size={16} /><p className="font-bold text-[10px] uppercase tracking-wider">Anti-Cheat</p></div>
               </div>
-              <div className="mb-8 space-y-2.5"><div className="flex justify-between text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground"><span>Remplissage</span><span className="text-violet-500">{Math.round(progress)}%</span></div><Progress value={progress} className="h-1.5 bg-muted" /></div>
+              <div className="mb-8 space-y-2.5"><div className="flex justify-between text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground"><span>Remplissage</span><span className="text-violet-500">{Math.round(progress)}%</span></div><Progress value={progress} className="h-1.5 bg-muted" /></div>
               {userRegistration ? (
                 <div className="bg-green-500/5 border border-green-500/20 p-6 rounded-[2rem] text-center">
-                  <div className="flex items-center justify-center gap-3 mb-4 text-green-500">{userRegistration.status === 'Réussi' ? <CheckCircle2 size={20} /> : <Clock size={20} className="animate-pulse" />}<h3 className="font-black text-base">Inscription Validée</h3></div>
+                  <div className="flex items-center justify-center gap-3 mb-4 text-green-500">{userRegistration.status === 'Réussi' ? <CheckCircle2 size={20} /> : <Clock size={20} className="animate-pulse" />}<h3 className="font-bold text-base">Inscription Validée</h3></div>
                   <Link to="/payments"><Button className="w-full bg-green-600 hover:bg-green-700 font-bold text-white py-6 rounded-2xl">Voir mes inscriptions</Button></Link>
                 </div>
               ) : (
-                <Button onClick={() => setShowConfirmation(true)} className="w-full py-7 rounded-2xl font-black text-base bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/20">S'inscrire • {tournament.entry_fee} FCFA</Button>
+                <Button onClick={() => setShowConfirmation(true)} className="w-full py-7 rounded-2xl font-bold text-base bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/20">S'inscrire • {tournament.entry_fee} FCFA</Button>
               )}
             </>
           )}
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"><h2 className="text-sm font-black mb-6 flex items-center gap-2.5 uppercase tracking-widest"><FileText className="text-violet-500" size={18} /> Déroulement</h2><div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium">{tournament.description}</div></div>
-          <div className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"><h2 className="text-sm font-black mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Info className="text-violet-500" size={18} /> Règlement</h2><div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium">{tournament.rules}</div></div>
+          <div className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"><h2 className="text-sm font-bold mb-6 flex items-center gap-2.5 uppercase tracking-widest"><FileText className="text-violet-500" size={18} /> Déroulement</h2><div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium">{tournament.description}</div></div>
+          <div className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"><h2 className="text-sm font-bold mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Info className="text-violet-500" size={18} /> Règlement</h2><div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium">{tournament.rules}</div></div>
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm">
-          <h2 className="text-sm font-black mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Users className="text-violet-500" size={18} /> Participants ({participantCount})</h2>
+          <h2 className="text-sm font-bold mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Users className="text-violet-500" size={18} /> Participants ({participantCount})</h2>
           <div className="flex flex-wrap gap-3">
             {participants.map((p, i) => (
               <div key={i} className="group relative">
@@ -188,9 +188,9 @@ const TournamentDetails = () => {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowConfirmation(false)} />
             <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }} className="relative bg-card border border-border w-full max-w-[400px] rounded-[2.5rem] p-8 shadow-2xl z-[10000] text-center">
               <div className="w-16 h-16 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500 mx-auto mb-6"><AlertTriangle size={32} /></div>
-              <h2 className="text-xl font-black mb-4">Attention Champion !</h2>
+              <h2 className="text-xl font-bold mb-4">Attention Champion !</h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-8">Veuillez lire attentivement la <span className="text-foreground font-bold">description</span> et le <span className="text-foreground font-bold">règlement</span> avant de payer.</p>
-              <div className="space-y-3"><Button onClick={() => { setShowConfirmation(false); setShowPayment(true); }} className="w-full py-6 rounded-2xl bg-violet-600 hover:bg-violet-700 font-black text-white">J'ai lu, je continue</Button><Button variant="ghost" onClick={() => setShowConfirmation(false)} className="w-full py-6 rounded-2xl font-bold text-muted-foreground">Retourner lire</Button></div>
+              <div className="space-y-3"><Button onClick={() => { setShowConfirmation(false); setShowPayment(true); }} className="w-full py-6 rounded-2xl bg-violet-600 hover:bg-violet-700 font-bold text-white">J'ai lu, je continue</Button><Button variant="ghost" onClick={() => setShowConfirmation(false)} className="w-full py-6 rounded-2xl font-bold text-muted-foreground">Retourner lire</Button></div>
             </motion.div>
           </div>
         )}
