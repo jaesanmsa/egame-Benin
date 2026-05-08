@@ -22,42 +22,42 @@ const GameDetails = () => {
   const gameInfo = {
     'free-fire': { 
       name: 'Free Fire', 
-      icon: '🔥', 
+      icon: '/icon free fire.png', 
       image: '/freefire.jpg',
       desc: "Le Battle Royale mobile le plus populaire au Bénin. Survis jusqu'au bout pour remporter le Booyah.",
       whatsapp: "https://chat.whatsapp.com/L1iNwy7r959GMfYwfmno1U"
     },
     'clash-royale': { 
       name: 'Clash Royale', 
-      icon: '👑', 
+      icon: '/icon clash royal.jpg', 
       image: '/clash royal.jpg',
       desc: "Un mélange de stratégie et de cartes. Détruis les tours adverses et grimpe dans le classement.",
       whatsapp: "https://chat.whatsapp.com/EMQDtGz5pLyJF6wxfXpBD4?mode=hq1tcla"
     },
     'clash-of-clans': { 
       name: 'Clash of Clans', 
-      icon: '🏰', 
+      icon: '/icon clash of clans.jpg', 
       image: '/clash of clans.jpeg',
       desc: "Construis ton village, forme tes troupes et mène ton clan à la victoire dans des guerres épiques.",
       whatsapp: "https://chat.whatsapp.com/Dpuq4TptwKZ3oSNUl0pQp9"
     },
     'cod-mobile': { 
       name: 'COD Mobile', 
-      icon: '📱', 
+      icon: '/icon cod mobile.png', 
       image: '/cod mobile.jpg',
       desc: "L'expérience Call of Duty sur mobile. Précision et rapidité sont les clés de la victoire.",
       whatsapp: "https://chat.whatsapp.com/CyrUEEFw6Lr2di9GbCIVv4?mode=gi_t"
     },
     'pubg-mobile': { 
       name: 'PUBG Mobile', 
-      icon: '🔫', 
+      icon: '/icon pubg.png', 
       image: '/pubg-mobile.jpg',
       desc: "Le pionnier du Battle Royale. Atterris, équipe-toi et sois le dernier survivant.",
       whatsapp: "https://chat.whatsapp.com/LGCchL76cYlIdCUb6ErzvP?mode=gi_t"
     },
     'mobile-legends': { 
       name: 'Mobile Legends', 
-      icon: '⚔️', 
+      icon: '/icon mobile legend.jpg', 
       image: '/mobile legend.jpg',
       desc: "Le MOBA mobile de référence. Choisis ton héros, forme ton équipe et détruis la base ennemie.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
@@ -135,7 +135,13 @@ const GameDetails = () => {
         </div>
         <div className="absolute bottom-12 left-6 md:left-12 z-10">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-4 mb-2">
-            <span className="text-5xl md:text-6xl drop-shadow-2xl">{gameInfo.icon}</span>
+            <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl">
+              {gameInfo.icon.startsWith('/') ? (
+                <img src={gameInfo.icon} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-5xl md:text-6xl flex items-center justify-center h-full bg-muted">{gameInfo.icon}</span>
+              )}
+            </div>
             <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-none uppercase">{gameInfo.name}</h1>

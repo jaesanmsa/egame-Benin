@@ -9,12 +9,12 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
 const DEFAULT_GAMES = [
-  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '🏰' },
-  { id: 'clash-royale', name: 'Clash Royale', icon: '👑' },
-  { id: 'cod-mobile', name: 'COD Mobile', icon: '📱' },
-  { id: 'free-fire', name: 'Free Fire', icon: '🔥' },
-  { id: 'mobile-legends', name: 'Mobile Legends', icon: '⚔️' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '🔫' }
+  { id: 'clash-of-clans', name: 'Clash of Clans', icon: '/icon clash of clans.jpg' },
+  { id: 'clash-royale', name: 'Clash Royale', icon: '/icon clash royal.jpg' },
+  { id: 'cod-mobile', name: 'COD Mobile', icon: '/icon cod mobile.png' },
+  { id: 'free-fire', name: 'Free Fire', icon: '/icon free fire.png' },
+  { id: 'mobile-legends', name: 'Mobile Legends', icon: '/icon mobile legend.jpg' },
+  { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '/icon pubg.png' }
 ];
 
 const Leaderboard = () => {
@@ -111,7 +111,9 @@ const Leaderboard = () => {
                   className="flex items-center justify-between p-5 bg-card border border-border rounded-2xl hover:border-violet-500/50 transition-all shadow-sm group"
                 >
                   <div className="flex items-center gap-4">
-                    <span className="text-2xl bg-muted w-12 h-12 flex items-center justify-center rounded-xl group-hover:scale-110 transition-transform">{game.icon}</span> 
+                    <div className="w-12 h-12 bg-muted flex items-center justify-center rounded-xl overflow-hidden group-hover:scale-110 transition-transform border border-border">
+                      <img src={game.icon} alt={game.name} className="w-full h-full object-cover" />
+                    </div> 
                     <div className="text-left">
                       <p className="font-black text-sm">{game.name}</p>
                       <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">Voir le classement</p>

@@ -87,10 +87,15 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 relative">
-      {/* Bouton Retour Accueil */}
-      <Link to="/" className="absolute top-8 left-8 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-bold text-sm">
-        <ArrowLeft size={20} />
-        Retour à l'accueil
+      {/* Bouton Retour Accueil - Discret en haut à gauche */}
+      <Link 
+        to="/" 
+        className="absolute top-6 left-6 md:top-10 md:left-10 flex items-center gap-2 text-muted-foreground hover:text-violet-500 transition-all group"
+      >
+        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-violet-500/10 transition-colors">
+          <ArrowLeft size={16} />
+        </div>
+        <span className="text-[10px] font-bold uppercase tracking-widest">Accueil</span>
       </Link>
 
       <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-[2.5rem] border border-border shadow-2xl">
