@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Trophy } from 'lucide-react';
+import { Award } from 'lucide-react';
 
 interface LogoProps {
   className?: string;
@@ -20,13 +20,13 @@ const Logo = ({ className = "", size = 'md', showText = true }: LogoProps) => {
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <div className={`${currentSize.box} bg-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/20`}>
-        <Trophy className="text-white" size={currentSize.icon} />
+      <div className={`${currentSize.box} bg-zinc-900 border border-[#00F0FF]/30 rounded-xl flex items-center justify-center shadow-lg shadow-[#00F0FF]/10`}>
+        <Award className="text-[#00F0FF]" size={currentSize.icon} strokeWidth={2} />
       </div>
       
       {showText && (
         <span className={`font-black tracking-tighter text-foreground uppercase ${currentSize.text}`}>
-          eGame <span className="text-violet-600">Bénin</span>
+          eGame <span className="text-[#00F0FF]">Bénin</span>
         </span>
       )}
     </div>
