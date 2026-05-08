@@ -61,15 +61,17 @@ const Index = () => {
         </div>
         
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="flex flex-col items-center text-center space-y-10">
+          {/* Logo aligné à gauche */}
+          <div className="flex justify-start mb-12">
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-4"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
             >
               <Logo size="md" />
             </motion.div>
+          </div>
 
+          <div className="flex flex-col items-center text-center space-y-10">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -102,12 +104,17 @@ const Index = () => {
               transition={{ delay: 0.2 }}
               className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto"
             >
-              <Button 
-                onClick={() => navigate('/games')} 
-                className="w-full sm:w-auto py-7 px-10 rounded-2xl bg-violet-600 hover:bg-violet-700 font-bold text-base shadow-xl shadow-violet-500/20 gap-2 text-white"
-              >
-                Voir les tournois <ArrowRight size={20} />
-              </Button>
+              {/* Bouton avec bordure lumineuse tournante */}
+              <div className="relative p-[2px] overflow-hidden rounded-2xl group w-full sm:w-auto">
+                <div className="absolute inset-[-1000%] animate-border-rotate bg-[conic-gradient(from_90deg_at_50%_50%,#00F0FF_0%,#0000FF_50%,#00F0FF_100%)]" />
+                <Button 
+                  onClick={() => navigate('/games')} 
+                  className="relative w-full sm:w-auto py-7 px-10 rounded-2xl bg-violet-600 hover:bg-violet-700 font-bold text-base shadow-xl gap-2 text-white"
+                >
+                  Voir les tournois <ArrowRight size={20} />
+                </Button>
+              </div>
+
               <Button 
                 variant="outline" 
                 onClick={() => navigate('/leaderboard')} 

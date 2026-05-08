@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, Chrome, UserPlus, LogIn, AtSign, Shield } from 'lucide-react';
+import { Mail, Lock, Chrome, UserPlus, LogIn, AtSign, ArrowLeft } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Logo from '@/components/Logo';
 
@@ -86,7 +86,13 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 relative">
+      {/* Bouton Retour Accueil */}
+      <Link to="/" className="absolute top-8 left-8 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-bold text-sm">
+        <ArrowLeft size={20} />
+        Retour à l'accueil
+      </Link>
+
       <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-[2.5rem] border border-border shadow-2xl">
         <div className="text-center">
           <Link to="/" className="inline-block mb-4"><Logo size="lg" showText={false} /></Link>
