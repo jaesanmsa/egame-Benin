@@ -20,14 +20,13 @@ const Logo = ({ className = "", size = 'md', showText = true }: LogoProps) => {
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <div className={`${currentSize.box} bg-primary rounded-none flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.4)] relative overflow-hidden group`}>
-        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-        <Trophy className="text-background relative z-10" size={currentSize.icon} />
+      <div className={`${currentSize.box} bg-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/20`}>
+        <Trophy className="text-white" size={currentSize.icon} />
       </div>
       
       {showText && (
-        <span className={`font-black tracking-tighter text-foreground uppercase italic ${currentSize.text}`}>
-          eGame <span className="text-primary">Bénin</span>
+        <span className={`font-black tracking-tighter text-foreground uppercase ${currentSize.text}`}>
+          eGame <span className="text-violet-600">Bénin</span>
         </span>
       )}
     </div>
