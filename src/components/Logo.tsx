@@ -20,13 +20,13 @@ const Logo = ({ className = "", size = 'md', showText = true }: LogoProps) => {
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <div className={`${currentSize.box} bg-zinc-900 border border-[#00F0FF]/30 rounded-xl flex items-center justify-center shadow-lg shadow-[#00F0FF]/10`}>
-        <Award className="text-[#00F0FF]" size={currentSize.icon} strokeWidth={2} />
+      <div className={`${currentSize.box} bg-violet-600/10 border border-violet-500/30 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/10`}>
+        <Award className="text-violet-500" size={currentSize.icon} strokeWidth={2} />
       </div>
       
       {showText && (
         <span className={`font-black tracking-tighter text-foreground uppercase ${currentSize.text}`}>
-          eGame <span className="text-[#00F0FF]">Bénin</span>
+          eGame <span className="text-violet-500">Bénin</span>
         </span>
       )}
     </div>

@@ -57,7 +57,7 @@ const Index = () => {
       
       <section className="relative pt-12 pb-32 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 opacity-10 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#00F0FF]/20 rounded-full blur-[120px]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-violet-600/20 rounded-full blur-[120px]" />
         </div>
         
         <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -71,9 +71,9 @@ const Index = () => {
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-[#00F0FF]/5 text-[#00F0FF] px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-[#00F0FF]/20"
+              className="bg-violet-600/10 text-violet-500 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-violet-500/20"
             >
-              Elite Gaming Infrastructure
+              L'Arène des Champions du Bénin
             </motion.div>
 
             <motion.h1 
@@ -82,7 +82,7 @@ const Index = () => {
               className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tighter leading-tight uppercase"
             >
               Domine le jeu. <br />
-              <span className="text-[#00F0FF]">Encaisse la victoire.</span>
+              <span className="text-violet-600">Encaisse la victoire.</span>
             </motion.h1>
 
             <motion.p 
@@ -91,8 +91,8 @@ const Index = () => {
               transition={{ delay: 0.1 }}
               className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto font-medium opacity-80"
             >
-              La plateforme de compétition eSport de référence au Bénin. 
-              Infrastructures de tournois automatisées et cash prizes garantis.
+              Rejoins la communauté gaming #1 au Bénin. Inscris-toi aux tournois, 
+              affronte les meilleurs et gagne des cash prizes réels.
             </motion.p>
 
             <motion.div 
@@ -102,12 +102,13 @@ const Index = () => {
               className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto"
             >
               <div className="relative p-[1px] overflow-hidden rounded-2xl group w-full sm:w-auto">
-                <div className="absolute inset-[-1000%] animate-border-rotate bg-[conic-gradient(from_90deg_at_50%_50%,#00F0FF_0%,#0000FF_50%,#00F0FF_100%)]" />
+                {/* Animation de bordure VIOLETTE uniquement */}
+                <div className="absolute inset-[-1000%] animate-border-rotate bg-[conic-gradient(from_90deg_at_50%_50%,#8A2BE2_0%,#4B0082_50%,#8A2BE2_100%)]" />
                 <Button 
                   onClick={() => navigate('/games')} 
                   className="relative w-full sm:w-auto py-8 px-12 rounded-2xl bg-zinc-900 hover:bg-zinc-800 font-black text-xs uppercase tracking-widest shadow-2xl gap-3 text-white border border-white/5"
                 >
-                  Explorer les tournois <ArrowRight size={18} strokeWidth={2} className="text-[#00F0FF]" />
+                  Explorer les tournois <ArrowRight size={18} strokeWidth={2} className="text-violet-500" />
                 </Button>
               </div>
 
@@ -125,18 +126,18 @@ const Index = () => {
 
       <main className="max-w-7xl mx-auto px-6 space-y-40">
         <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-zinc-900/50 border border-border p-10 rounded-[2.5rem] text-center space-y-4">
-            <Award className="text-[#00F0FF] mx-auto" size={32} strokeWidth={2} />
+          <div className="bg-card border border-border p-10 rounded-[2.5rem] text-center space-y-4 shadow-sm">
+            <Award className="text-violet-500 mx-auto" size={32} strokeWidth={2} />
             <p className="text-4xl font-black tracking-tighter">{stats.tournaments}</p>
             <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-60">Tournois Actifs</p>
           </div>
-          <div className="bg-zinc-900/50 border border-border p-10 rounded-[2.5rem] text-center space-y-4">
-            <Users className="text-[#00F0FF] mx-auto" size={32} strokeWidth={2} />
+          <div className="bg-card border border-border p-10 rounded-[2.5rem] text-center space-y-4 shadow-sm">
+            <Users className="text-violet-500 mx-auto" size={32} strokeWidth={2} />
             <p className="text-4xl font-black tracking-tighter">{stats.players}</p>
             <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-60">Joueurs Vérifiés</p>
           </div>
-          <div className="bg-zinc-900/50 border border-border p-10 rounded-[2.5rem] text-center space-y-4">
-            <Activity className="text-[#00F0FF] mx-auto" size={32} strokeWidth={2} />
+          <div className="bg-card border border-border p-10 rounded-[2.5rem] text-center space-y-4 shadow-sm">
+            <Activity className="text-violet-500 mx-auto" size={32} strokeWidth={2} />
             <p className="text-4xl font-black tracking-tighter">{stats.cashPrize.toLocaleString()}</p>
             <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-60">CFA Distribués</p>
           </div>
@@ -144,31 +145,31 @@ const Index = () => {
 
         <section className="grid grid-cols-1 md:grid-cols-3 gap-16">
           <div className="space-y-6 text-center md:text-left">
-            <Shield className="text-[#00F0FF] mx-auto md:mx-0" size={40} strokeWidth={2} />
-            <h3 className="text-xl font-black uppercase tracking-tight">Infrastructure Sécurisée</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed opacity-70">Protocoles de paiement KKiaPay certifiés. Protection intégrale des données et des transactions.</p>
+            <Shield className="text-violet-500 mx-auto md:mx-0" size={40} strokeWidth={2} />
+            <h3 className="text-xl font-black uppercase tracking-tight">Sécurité Totale</h3>
+            <p className="text-muted-foreground text-sm leading-relaxed opacity-70">Paiements sécurisés via KKiaPay. Vos données et vos gains sont protégés par nos protocoles.</p>
           </div>
           <div className="space-y-6 text-center md:text-left">
-            <CreditCard className="text-[#00F0FF] mx-auto md:mx-0" size={40} strokeWidth={2} />
-            <h3 className="text-xl font-black uppercase tracking-tight">Liquidation Instantanée</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed opacity-70">Système de retrait automatisé vers Mobile Money. Réception des gains sous 24h ouvrées.</p>
+            <CreditCard className="text-violet-500 mx-auto md:mx-0" size={40} strokeWidth={2} />
+            <h3 className="text-xl font-black uppercase tracking-tight">Paiements Rapides</h3>
+            <p className="text-muted-foreground text-sm leading-relaxed opacity-70">Recevez vos gains directement sur votre compte Mobile Money (MTN, Moov, Celtiis) sous 24h.</p>
           </div>
           <div className="space-y-6 text-center md:text-left">
-            <Zap className="text-[#00F0FF] mx-auto md:mx-0" size={40} strokeWidth={2} />
-            <h3 className="text-xl font-black uppercase tracking-tight">Performance Elite</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed opacity-70">Classements en temps réel et matchmaking basé sur le niveau de compétence.</p>
+            <Zap className="text-violet-500 mx-auto md:mx-0" size={40} strokeWidth={2} />
+            <h3 className="text-xl font-black uppercase tracking-tight">Expérience Elite</h3>
+            <p className="text-muted-foreground text-sm leading-relaxed opacity-70">Une plateforme fluide, des classements en temps réel et un support réactif pour les joueurs.</p>
           </div>
         </section>
 
         <footer className="py-24 border-t border-border text-center space-y-10">
           <div className="flex items-center justify-center gap-12">
-            <a href="https://wa.me/2290141790790" target="_blank" className="text-muted-foreground hover:text-[#00F0FF] transition-colors"><MessageSquare size={24} strokeWidth={2} /></a>
-            <Link to="/privacy" className="text-muted-foreground hover:text-[#00F0FF] transition-colors"><Shield size={24} strokeWidth={2} /></Link>
+            <a href="https://wa.me/2290141790790" target="_blank" className="text-muted-foreground hover:text-violet-500 transition-colors"><MessageSquare size={24} strokeWidth={2} /></a>
+            <Link to="/privacy" className="text-muted-foreground hover:text-violet-500 transition-colors"><Shield size={24} strokeWidth={2} /></Link>
             <Award size={24} strokeWidth={2} className="text-muted-foreground" />
           </div>
           <div className="space-y-3">
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em]">eGame Bénin • Competitive Gaming Platform</p>
-            <p className="text-[9px] text-muted-foreground/40 font-black uppercase tracking-[0.2em]">© 2026 • All Rights Reserved</p>
+            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em]">eGame Bénin • Plateforme de Compétition</p>
+            <p className="text-[9px] text-muted-foreground/40 font-black uppercase tracking-[0.2em]">© 2026 • Tous droits réservés</p>
           </div>
         </footer>
       </main>

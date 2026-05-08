@@ -30,7 +30,7 @@ const Navbar = () => {
   const iconProps = (path: string) => ({
     size: 22,
     strokeWidth: 2,
-    className: isActive(path) ? "text-[#00F0FF]" : "text-muted-foreground hover:text-[#00F0FF] transition-colors"
+    className: isActive(path) ? "text-violet-500" : "text-muted-foreground hover:text-violet-500 transition-colors"
   });
 
   return (
@@ -38,29 +38,29 @@ const Navbar = () => {
       <div className="flex items-center justify-center gap-10 md:gap-14">
         <Link to="/" className="flex flex-col items-center gap-1">
           <Home {...iconProps('/')} />
-          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/') ? 'text-[#00F0FF]' : 'text-muted-foreground'}`}>Accueil</span>
+          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/') ? 'text-violet-500' : 'text-muted-foreground'}`}>Accueil</span>
         </Link>
 
         <Link to="/games" className="flex flex-col items-center gap-1">
           <Gamepad2 {...iconProps('/games')} />
-          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/games') ? 'text-[#00F0FF]' : 'text-muted-foreground'}`}>Jeux</span>
+          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/games') ? 'text-violet-500' : 'text-muted-foreground'}`}>Jeux</span>
         </Link>
 
         <Link to="/leaderboard" className="flex flex-col items-center gap-1">
           <Trophy {...iconProps('/leaderboard')} />
-          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/leaderboard') ? 'text-[#00F0FF]' : 'text-muted-foreground'}`}>Elite</span>
+          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/leaderboard') ? 'text-violet-500' : 'text-muted-foreground'}`}>Elite</span>
         </Link>
         
         {isLoggedIn && (
           <Link to="/payments" className="flex flex-col items-center gap-1">
             <History {...iconProps('/payments')} />
-            <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/payments') ? 'text-[#00F0FF]' : 'text-muted-foreground'}`}>Flux</span>
+            <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/payments') ? 'text-violet-500' : 'text-muted-foreground'}`}>Flux</span>
           </Link>
         )}
 
         <Link to="/profile" className="flex flex-col items-center gap-1">
           <User {...iconProps('/profile')} />
-          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/profile') ? 'text-[#00F0FF]' : 'text-muted-foreground'}`}>Profil</span>
+          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/profile') ? 'text-violet-500' : 'text-muted-foreground'}`}>Profil</span>
         </Link>
       </div>
     </nav>
