@@ -55,13 +55,21 @@ const Index = () => {
       <SEO />
       <Navbar />
       
-      <section className="relative pt-20 pb-32 overflow-hidden">
+      <section className="relative pt-12 pb-32 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 opacity-20 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-violet-600/30 rounded-full blur-[120px]" />
         </div>
         
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="flex flex-col items-center text-center space-y-8">
+          <div className="flex flex-col items-center text-center space-y-10">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4"
+            >
+              <Logo size="md" />
+            </motion.div>
+
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -73,10 +81,9 @@ const Index = () => {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.95]"
+              className="text-3xl md:text-5xl font-black tracking-tighter leading-tight"
             >
-              Domine le jeu.<br />
-              <span className="text-violet-600">Encaisse la victoire.</span>
+              Domine le jeu. <span className="text-violet-600">Encaisse la victoire.</span>
             </motion.h1>
 
             <motion.p 
