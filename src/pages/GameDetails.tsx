@@ -23,63 +23,63 @@ const GameDetails = () => {
     'free-fire': { 
       name: 'Free Fire', 
       icon: '/icon free fire.png', 
-      image: '/freefire.jpg',
+      image: '/freefire.webp',
       desc: "Le Battle Royale mobile le plus populaire au Bénin. Survis jusqu'au bout pour remporter le Booyah.",
       whatsapp: "https://chat.whatsapp.com/L1iNwy7r959GMfYwfmno1U"
     },
     'clash-royale': { 
       name: 'Clash Royale', 
       icon: '/icon clash royal.jpg', 
-      image: '/clash royal.jpg',
+      image: '/clash royal.webp',
       desc: "Un mélange de stratégie et de cartes. Détruis les tours adverses et grimpe dans le classement.",
       whatsapp: "https://chat.whatsapp.com/EMQDtGz5pLyJF6wxfXpBD4?mode=hq1tcla"
     },
     'clash-of-clans': { 
       name: 'Clash of Clans', 
       icon: '/icon clash of clans.jpg', 
-      image: '/clash of clans.jpeg',
+      image: '/clash of clans.webp',
       desc: "Construis ton village, forme tes troupes et mène ton clan à la victoire dans des guerres épiques.",
       whatsapp: "https://chat.whatsapp.com/Dpuq4TptwKZ3oSNUl0pQp9"
     },
     'cod-mobile': { 
       name: 'COD Mobile', 
       icon: '/icon cod mobile.png', 
-      image: '/cod mobile.jpg',
+      image: '/cod mobile.webp',
       desc: "L'expérience Call of Duty sur mobile. Précision et rapidité sont les clés de la victoire.",
       whatsapp: "https://chat.whatsapp.com/CyrUEEFw6Lr2di9GbCIVv4?mode=gi_t"
     },
     'pubg-mobile': { 
       name: 'PUBG Mobile', 
       icon: '/icon pubg.png', 
-      image: '/pubg-mobile.jpg',
+      image: '/pubg-mobile.webp',
       desc: "Le pionnier du Battle Royale. Atterris, équipe-toi et sois le dernier survivant.",
       whatsapp: "https://chat.whatsapp.com/LGCchL76cYlIdCUb6ErzvP?mode=gi_t"
     },
     'mobile-legends': { 
       name: 'Mobile Legends', 
       icon: '/icon mobile legend.jpg', 
-      image: '/mobile legend.jpg',
+      image: '/mobile legend.webp',
       desc: "Le MOBA mobile de référence. Choisis ton héros, forme ton équipe et détruis la base ennemie.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'blur': { 
       name: 'Blur', 
       icon: '🏎️', 
-      image: '/blur.jpg',
+      image: '/blur.webp',
       desc: "Course arcade explosive. Utilise tes pouvoirs pour éjecter tes adversaires de la piste.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'cod-mw4': { 
       name: 'COD MW4', 
       icon: '🔫', 
-      image: '/cod mw4.jpg',
+      image: '/cod mw4.webp',
       desc: "Le classique du FPS. Affrontements intenses en local ou en ligne.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'bombsquad': { 
       name: 'BombSquad', 
       icon: '💣', 
-      image: '/bombsquad.jpg',
+      image: '/bombsquad.webp',
       desc: "Explose tes amis dans des mini-jeux délirants. Fun garanti.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     }
