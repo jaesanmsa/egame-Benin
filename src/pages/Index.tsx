@@ -56,7 +56,7 @@ const Index = () => {
       <SEO />
       <Navbar />
       
-      <section className="relative pt-12 pb-32 overflow-hidden min-h-[80vh] flex flex-col justify-center">
+      <section className="relative pt-8 pb-32 overflow-hidden min-h-[85vh] flex flex-col">
         {/* Vidéo d'arrière-plan - Couche la plus basse */}
         <video 
           autoPlay 
@@ -76,57 +76,60 @@ const Index = () => {
           <VSBackground />
         </div>
 
-        {/* Contenu - Couche supérieure */}
-        <div className="max-w-7xl mx-auto px-6 relative z-30">
-          <div className="flex justify-start mb-16">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <Logo size="md" />
-            </motion.div>
-          </div>
+        {/* Barre de Logo (Haut de page) */}
+        <div className="max-w-7xl mx-auto px-6 w-full relative z-30 pt-4 md:pt-8">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }} 
+            animate={{ opacity: 1, x: 0 }}
+            className="inline-block"
+          >
+            <Logo size="md" />
+          </motion.div>
+        </div>
 
-          <div className="flex flex-col items-center text-center space-y-12">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-violet-600/20 backdrop-blur-md text-violet-400 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-violet-500/30"
-            >
-              L'Arène des Champions du Bénin
-            </motion.div>
+        {/* Contenu Héro (Centré dans l'espace restant) */}
+        <div className="max-w-7xl mx-auto px-6 relative z-30 flex-1 flex flex-col items-center justify-center text-center space-y-12">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-violet-600/20 backdrop-blur-md text-violet-400 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-violet-500/30"
+          >
+            L'Arène des Champions du Bénin
+          </motion.div>
 
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              style={{ textShadow: '2px 2px 12px rgba(0,0,0,0.9)' }}
-              className="text-lg sm:text-2xl md:text-4xl font-black tracking-tighter leading-tight uppercase whitespace-nowrap text-white"
-            >
-              Domine le jeu. <span className="text-violet-500">Encaisse la victoire.</span>
-            </motion.h1>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ textShadow: '2px 2px 12px rgba(0,0,0,0.9)' }}
+            className="text-lg sm:text-2xl md:text-4xl font-black tracking-tighter leading-tight uppercase whitespace-nowrap text-white"
+          >
+            Domine le jeu. <span className="text-violet-500">Encaisse la victoire.</span>
+          </motion.h1>
 
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto"
-            >
-              <div className="relative p-[1px] overflow-hidden rounded-2xl group w-full sm:w-auto">
-                <div className="absolute inset-[-1000%] animate-border-rotate bg-[conic-gradient(from_90deg_at_50%_50%,#8A2BE2_0%,#4B0082_50%,#8A2BE2_100%)]" />
-                <Button 
-                  onClick={() => navigate('/games')} 
-                  className="relative w-full sm:w-auto py-8 px-12 rounded-2xl bg-zinc-900 hover:bg-zinc-800 font-black text-xs uppercase tracking-widest shadow-2xl gap-3 text-white border border-white/5"
-                >
-                  Explorer les tournois <ArrowRight size={18} strokeWidth={2} className="text-violet-500" />
-                </Button>
-              </div>
-
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto"
+          >
+            <div className="relative p-[1px] overflow-hidden rounded-2xl group w-full sm:w-auto">
+              <div className="absolute inset-[-1000%] animate-border-rotate bg-[conic-gradient(from_90deg_at_50%_50%,#8A2BE2_0%,#4B0082_50%,#8A2BE2_100%)]" />
               <Button 
-                variant="outline" 
-                onClick={() => navigate('/leaderboard')} 
-                className="w-full sm:w-auto py-8 px-12 rounded-2xl border-white/20 bg-white/5 backdrop-blur-sm text-white font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all"
+                onClick={() => navigate('/games')} 
+                className="relative w-full sm:w-auto py-8 px-12 rounded-2xl bg-zinc-900 hover:bg-zinc-800 font-black text-xs uppercase tracking-widest shadow-2xl gap-3 text-white border border-white/5"
               >
-                Classement Elite
+                Explorer les tournois <ArrowRight size={18} strokeWidth={2} className="text-violet-500" />
               </Button>
-            </motion.div>
-          </div>
+            </div>
+
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/leaderboard')} 
+              className="w-full sm:w-auto py-8 px-12 rounded-2xl border-white/20 bg-white/5 backdrop-blur-sm text-white font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all"
+            >
+              Classement Elite
+            </Button>
+          </motion.div>
         </div>
       </section>
 
