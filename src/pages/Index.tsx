@@ -56,14 +56,24 @@ const Index = () => {
       <SEO />
       <Navbar />
       
-      <section className="relative pt-12 pb-32 overflow-hidden">
-        {/* Élément VS en arrière-plan */}
+      <section className="relative pt-12 pb-32 overflow-hidden min-h-[80vh] flex flex-col justify-center">
+        {/* Vidéo d'arrière-plan */}
+        <video 
+          autoPlay 
+          muted 
+          loop 
+          playsInline 
+          className="absolute top-0 left-0 w-full h-full object-cover z-[-2]"
+        >
+          <source src="/hero-video.webm" type="video/webm" />
+        </video>
+
+        {/* Overlay sombre pour la lisibilité */}
+        <div className="absolute inset-0 bg-black/60 z-[-1]" />
+
+        {/* Élément VS en arrière-plan (optionnel, conservé pour le style) */}
         <VSBackground />
 
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 opacity-10 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-violet-600/20 rounded-full blur-[120px]" />
-        </div>
-        
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="flex justify-start mb-16">
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
@@ -75,7 +85,7 @@ const Index = () => {
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-violet-600/10 text-violet-500 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-violet-500/20"
+              className="bg-violet-600/20 backdrop-blur-md text-violet-400 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-violet-500/30"
             >
               L'Arène des Champions du Bénin
             </motion.div>
@@ -83,16 +93,17 @@ const Index = () => {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-lg sm:text-2xl md:text-4xl font-black tracking-tighter leading-tight uppercase whitespace-nowrap"
+              style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.8)' }}
+              className="text-lg sm:text-2xl md:text-4xl font-black tracking-tighter leading-tight uppercase whitespace-nowrap text-white"
             >
-              Domine le jeu. <span className="text-violet-600">Encaisse la victoire.</span>
+              Domine le jeu. <span className="text-violet-500">Encaisse la victoire.</span>
             </motion.h1>
 
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto font-medium opacity-80"
+              className="text-gray-200 text-sm md:text-lg max-w-2xl mx-auto font-medium opacity-90"
             >
               Rejoins la communauté gaming #1 au Bénin. Inscris-toi aux tournois, 
               affronte les meilleurs et gagne des cash prizes réels.
@@ -117,7 +128,7 @@ const Index = () => {
               <Button 
                 variant="outline" 
                 onClick={() => navigate('/leaderboard')} 
-                className="w-full sm:w-auto py-8 px-12 rounded-2xl border-border font-black text-xs uppercase tracking-widest hover:bg-muted transition-all"
+                className="w-full sm:w-auto py-8 px-12 rounded-2xl border-white/20 bg-white/5 backdrop-blur-sm text-white font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all"
               >
                 Classement Elite
               </Button>
