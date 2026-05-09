@@ -87,8 +87,8 @@ const Index = () => {
           </motion.div>
         </div>
 
-        {/* Contenu Héro (Centré dans l'espace restant) */}
-        <div className="max-w-7xl mx-auto px-6 relative z-30 flex-1 flex flex-col items-center justify-center text-center space-y-12">
+        {/* Contenu Héro (Positionné plus bas) */}
+        <div className="max-w-7xl mx-auto px-6 relative z-30 flex-1 flex flex-col items-center justify-start pt-24 md:pt-32 text-center space-y-12">
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
