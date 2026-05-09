@@ -57,24 +57,27 @@ const Index = () => {
       <Navbar />
       
       <section className="relative pt-12 pb-32 overflow-hidden min-h-[80vh] flex flex-col justify-center">
-        {/* Vidéo d'arrière-plan */}
+        {/* Vidéo d'arrière-plan - Couche la plus basse */}
         <video 
           autoPlay 
           muted 
           loop 
           playsInline 
-          className="absolute top-0 left-0 w-full h-full object-cover z-[-2]"
+          className="absolute inset-0 w-full h-full object-cover z-0"
         >
           <source src="/hero-video.webm" type="video/webm" />
         </video>
 
-        {/* Overlay sombre pour la lisibilité */}
-        <div className="absolute inset-0 bg-black/60 z-[-1]" />
+        {/* Overlay sombre - Couche intermédiaire */}
+        <div className="absolute inset-0 bg-black/70 z-10" />
 
-        {/* Élément VS en arrière-plan (optionnel, conservé pour le style) */}
-        <VSBackground />
+        {/* VSBackground - Couche décorative */}
+        <div className="absolute inset-0 z-20 opacity-30">
+          <VSBackground />
+        </div>
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
+        {/* Contenu - Couche supérieure */}
+        <div className="max-w-7xl mx-auto px-6 relative z-30">
           <div className="flex justify-start mb-16">
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
               <Logo size="md" />
@@ -93,7 +96,7 @@ const Index = () => {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.8)' }}
+              style={{ textShadow: '2px 2px 12px rgba(0,0,0,0.9)' }}
               className="text-lg sm:text-2xl md:text-4xl font-black tracking-tighter leading-tight uppercase whitespace-nowrap text-white"
             >
               Domine le jeu. <span className="text-violet-500">Encaisse la victoire.</span>
