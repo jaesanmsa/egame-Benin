@@ -102,16 +102,6 @@ const Index = () => {
               Domine le jeu. <span className="text-violet-500">Encaisse la victoire.</span>
             </motion.h1>
 
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-gray-200 text-sm md:text-lg max-w-2xl mx-auto font-medium opacity-90"
-            >
-              Rejoins la communauté gaming #1 au Bénin. Inscris-toi aux tournois, 
-              affronte les meilleurs et gagne des cash prizes réels.
-            </motion.p>
-
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
