@@ -24,6 +24,7 @@ import GameDetails from "./pages/GameDetails";
 import NotFound from "./pages/NotFound";
 import FloatingSupport from "./components/FloatingSupport";
 import PasswordGate from "./components/PasswordGate";
+import CookieConsent from "./components/CookieConsent";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <FloatingSupport />
+              <CookieConsent />
             </BrowserRouter>
           </PasswordGate>
         </TooltipProvider>
