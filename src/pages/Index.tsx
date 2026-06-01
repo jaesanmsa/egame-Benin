@@ -7,10 +7,11 @@ import SEO from '@/components/SEO';
 import VSBackground from '@/components/VSBackground';
 import TournamentCard from '@/components/TournamentCard';
 import { motion } from 'framer-motion';
-import { Trophy, Users, Activity, Shield, CreditCard, Zap, ArrowRight, MessageSquare } from 'lucide-react';
+import { Trophy, Users, Activity, Shield, CreditCard, Zap, ArrowRight, MessageSquare, Newspaper, Calendar } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
+import { MOCK_NEWS } from './News';
 
 const Index = () => {
   const [stats, setStats] = useState({ players: 0, tournaments: 0, cashPrize: 0 });
@@ -123,7 +124,7 @@ const Index = () => {
       </section>
 
       <main className="max-w-7xl mx-auto px-6 space-y-24 -mt-12 relative z-40">
-        {/* SECTION TOURNOIS - PREMIER ÉLÉMENT */}
+        {/* SECTION TOURNOIS */}
         <section className="space-y-8">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-black tracking-tight uppercase italic">
@@ -162,7 +163,41 @@ const Index = () => {
           </div>
         </section>
 
-        {/* SECTION STATISTIQUES - ALLÉGÉE ET HORIZONTALE */}
+        {/* SECTION À LA UNE (NEWS) */}
+        <section className="space-y-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-black tracking-tight uppercase italic">
+              À la <span className="text-violet-500">Une</span>
+            </h2>
+            <Link to="/news" className="text-[10px] font-black uppercase tracking-widest text-violet-500 hover:underline">
+              Toutes les actus →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {MOCK_NEWS.slice(0, 3).map((article) => (
+              <Link key={article.id} to={`/news/${article.id}`}>
+                <motion.div 
+                  whileHover={{ y: -5 }}
+                  className="bg-[#1a0b2e] border border-violet-500/20 rounded-[2rem] overflow-hidden shadow-xl group"
+                >
+                  <div className="aspect-video overflow-hidden">
+                    <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  </div>
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 text-[8px] font-black text-violet-400 uppercase tracking-widest mb-3">
+                      <Calendar size={10} /> {article.date}
+                    </div>
+                    <h3 className="text-white font-bold text-sm mb-3 line-clamp-2 group-hover:text-violet-400 transition-colors">{article.title}</h3>
+                    <p className="text-violet-200/60 text-[10px] leading-relaxed line-clamp-2">{article.excerpt}</p>
+                  </div>
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* SECTION STATISTIQUES */}
         <section className="py-10 border-y border-border/50 bg-violet-600/5 rounded-[2.5rem]">
           <div className="max-w-4xl mx-auto flex flex-row justify-around items-center gap-4">
             <div className="text-center">
@@ -202,10 +237,11 @@ const Index = () => {
         </section>
 
         <footer className="py-20 border-t border-border text-center space-y-10">
-          <div className="flex items-center justify-center gap-12">
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+            <Link to="/about" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-violet-500 transition-colors">À propos</Link>
+            <Link to="/contact" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-violet-500 transition-colors">Contact</Link>
+            <Link to="/privacy" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-violet-500 transition-colors">Confidentialité</Link>
             <a href="https://wa.me/2290141790790" target="_blank" className="text-muted-foreground hover:text-violet-500 transition-colors"><MessageSquare size={20} strokeWidth={2} /></a>
-            <Link to="/privacy" className="text-muted-foreground hover:text-violet-500 transition-colors"><Shield size={20} strokeWidth={2} /></Link>
-            <Trophy size={20} strokeWidth={2} className="text-muted-foreground" />
           </div>
           <div className="space-y-3">
             <p className="text-[9px] text-muted-foreground font-black tracking-[0.3em]">eGame Bénin • Plateforme de Compétition</p>

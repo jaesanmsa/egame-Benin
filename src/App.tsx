@@ -21,6 +21,9 @@ import Leaderboard from "./pages/Leaderboard";
 import Privacy from "./pages/Privacy";
 import Games from "./pages/Games";
 import GameDetails from "./pages/GameDetails";
+import News from "./pages/News";
+import NewsDetail from "./pages/NewsDetail";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import FloatingSupport from "./components/FloatingSupport";
 import CookieConsent from "./components/CookieConsent";
@@ -50,6 +53,9 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/games" element={<Games />} />
               <Route path="/game/:id" element={<GameDetails />} />
               <Route path="*" element={<NotFound />} />
