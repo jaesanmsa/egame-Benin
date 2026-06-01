@@ -23,7 +23,6 @@ import Games from "./pages/Games";
 import GameDetails from "./pages/GameDetails";
 import NotFound from "./pages/NotFound";
 import FloatingSupport from "./components/FloatingSupport";
-import PasswordGate from "./components/PasswordGate";
 import CookieConsent from "./components/CookieConsent";
 
 const queryClient = new QueryClient();
@@ -35,31 +34,29 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <PasswordGate>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/tournament/:id" element={<TournamentDetails />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/edit-profile" element={<EditProfile />} />
-                <Route path="/avatar-maker" element={<AvatarMaker />} />
-                <Route path="/payments" element={<PaymentHistory />} />
-                <Route path="/payment-success" element={<PaymentSuccess />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/leaderboard" element={<Leaderboard />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/games" element={<Games />} />
-                <Route path="/game/:id" element={<GameDetails />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-              <FloatingSupport />
-              <CookieConsent />
-            </BrowserRouter>
-          </PasswordGate>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/tournament/:id" element={<TournamentDetails />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/edit-profile" element={<EditProfile />} />
+              <Route path="/avatar-maker" element={<AvatarMaker />} />
+              <Route path="/payments" element={<PaymentHistory />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/games" element={<Games />} />
+              <Route path="/game/:id" element={<GameDetails />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <FloatingSupport />
+            <CookieConsent />
+          </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>
     </HelmetProvider>
