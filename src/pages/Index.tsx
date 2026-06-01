@@ -6,7 +6,6 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import VSBackground from '@/components/VSBackground';
 import TournamentCard from '@/components/TournamentCard';
-import AdBanner from '@/components/AdBanner';
 import { motion } from 'framer-motion';
 import { Trophy, Users, Activity, Shield, CreditCard, Zap, ArrowRight, MessageSquare } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -124,9 +123,6 @@ const Index = () => {
       </section>
 
       <main className="max-w-7xl mx-auto px-6 space-y-24 -mt-12 relative z-40">
-        {/* Ad Banner */}
-        <AdBanner />
-
         {/* SECTION TOURNOIS - PREMIER ÉLÉMENT */}
         <section className="space-y-8">
           <div className="flex items-center justify-between">

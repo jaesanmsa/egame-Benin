@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import AdBanner from '@/components/AdBanner';
 import { motion } from 'framer-motion';
 import { Gamepad2, Filter, SearchX, ChevronRight, Clock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -72,9 +71,6 @@ const Games = () => {
     <div className="min-h-screen bg-background text-foreground pb-32 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-6xl mx-auto px-6 py-8 space-y-12">
-        {/* Ad Banner */}
-        <AdBanner />
-
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
