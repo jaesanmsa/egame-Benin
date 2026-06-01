@@ -7,7 +7,7 @@ import SEO from '@/components/SEO';
 import VSBackground from '@/components/VSBackground';
 import TournamentCard from '@/components/TournamentCard';
 import { motion } from 'framer-motion';
-import { Trophy, Users, Activity, Shield, CreditCard, Zap, ArrowRight, MessageSquare, Newspaper, Calendar } from 'lucide-react';
+import { Trophy, Users, Activity, Shield, CreditCard, Zap, ArrowRight, MessageSquare, Newspaper, Clock } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,6 @@ const Index = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // On garde la logique de récupération pour les tournois actifs
       const { data: tours } = await supabase
         .from('tournaments')
         .select('*')
@@ -30,10 +29,7 @@ const Index = () => {
         .limit(6);
       
       if (tours) setActiveTournaments(tours);
-      
-      // Les statistiques sont maintenant fixées selon votre demande
       setStats({ players: 30, tournaments: 5, cashPrize: 150000 });
-      
       setLoading(false);
     };
     fetchData();
@@ -45,7 +41,6 @@ const Index = () => {
       <Navbar />
       
       <section className="relative pt-8 pb-24 overflow-hidden min-h-[80vh] flex flex-col">
-        {/* Vidéo d'arrière-plan */}
         <video 
           autoPlay 
           muted 
@@ -119,7 +114,6 @@ const Index = () => {
       </section>
 
       <main className="max-w-7xl mx-auto px-6 space-y-24 -mt-12 relative z-40">
-        {/* SECTION TOURNOIS */}
         <section className="space-y-8">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-black tracking-tight uppercase italic">
@@ -158,7 +152,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* SECTION À LA UNE (NEWS) */}
         <section className="space-y-8">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-black tracking-tight uppercase italic">
@@ -181,7 +174,7 @@ const Index = () => {
                   </div>
                   <div className="p-6">
                     <div className="flex items-center gap-2 text-[8px] font-black text-violet-400 uppercase tracking-widest mb-3">
-                      <Calendar size={10} /> {article.date}
+                      <Clock size={10} /> {article.readTime}
                     </div>
                     <h3 className="text-white font-bold text-sm mb-3 line-clamp-2 group-hover:text-violet-400 transition-colors">{article.title}</h3>
                     <p className="text-violet-200/60 text-[10px] leading-relaxed line-clamp-2">{article.excerpt}</p>
@@ -192,7 +185,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* SECTION STATISTIQUES */}
         <section className="py-10 border-y border-border/50 bg-violet-600/5 rounded-[2.5rem]">
           <div className="max-w-4xl mx-auto flex flex-row justify-around items-center gap-4">
             <div className="text-center">
@@ -212,7 +204,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* SECTION FEATURES */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-16 pt-12">
           <div className="space-y-4 text-center md:text-left">
             <Shield className="text-violet-500 mx-auto md:mx-0" size={32} strokeWidth={1.5} />

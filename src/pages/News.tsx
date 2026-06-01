@@ -3,35 +3,32 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Newspaper, ArrowRight, Calendar, Clock } from 'lucide-react';
+import { Newspaper, ArrowRight, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const MOCK_NEWS = [
   {
     id: '1',
-    title: "L'essor de l'eSport au Bénin : Une nouvelle ère pour les gamers",
-    excerpt: "Découvrez comment la scène compétitive béninoise se structure et quelles sont les opportunités pour les jeunes talents locaux.",
-    content: "L'eSport n'est plus seulement un passe-temps au Bénin, c'est devenu une véritable discipline compétitive. Avec l'arrivée de plateformes comme eGame Bénin, les joueurs ont désormais un cadre pour s'affronter et gagner des prix réels. Cette professionnalisation attire de plus en plus de sponsors et de spectateurs, créant un écosystème dynamique à Cotonou et dans tout le pays.",
+    title: "eGame Bénin est né : La révolution eSport commence au Bénin.",
+    excerpt: "Découvrez notre mission pour professionnaliser le gaming au Bénin avec des cash prizes via Mobile Money.",
+    content: "eGame Bénin est officiellement lancé avec une mission claire : transformer la passion du jeu vidéo en une véritable opportunité professionnelle. Notre équipe s'engage à structurer le secteur de l'eSport local en organisant des tournois réguliers et sécurisés. L'innovation majeure réside dans notre système de récompenses : les gagnants reçoivent leurs Cash Prizes directement via MTN ou Moov Money, garantissant une rapidité et une transparence totale. Notre ambition est de faire du Bénin un hub majeur du gaming en Afrique de l'Ouest.",
     image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800",
-    date: "15 Mars 2024",
     readTime: "5 min"
   },
   {
     id: '2',
-    title: "Top 5 des jeux mobiles les plus joués au Bénin en 2024",
-    excerpt: "De Free Fire à Clash Royale, voici les titres qui dominent les smartphones des joueurs béninois cette année.",
-    content: "Le gaming mobile est roi au Bénin. En tête de liste, on retrouve inévitablement Free Fire, apprécié pour sa fluidité sur tous types de smartphones. Clash Royale suit de près avec sa dimension stratégique. COD Mobile, PUBG et Mobile Legends complètent ce top 5, portés par des communautés de plus en plus actives et organisées.",
+    title: "3 conseils pour dominer ton premier tournoi sur eGame Bénin.",
+    excerpt: "Préparez-vous comme un pro avec nos conseils techniques essentiels pour votre première compétition.",
+    content: "Participer à son premier tournoi eSport peut être stressant. Voici trois conseils pour maximiser vos chances : 1. La Connexion : Assurez-vous d'être sur une connexion 4G stable ou fibre optique pour éviter tout lag fatal. 2. L'Énergie : Vérifiez que votre batterie est à 100% et gardez votre chargeur à proximité. Un téléphone qui s'éteint en pleine finale est votre pire ennemi. 3. La Concentration : Isolez-vous dans un endroit calme. Le mental fait souvent la différence entre un bon joueur et un champion.",
     image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=800",
-    date: "12 Mars 2024",
     readTime: "4 min"
   },
   {
     id: '3',
-    title: "Comment optimiser votre connexion pour les tournois en ligne",
-    excerpt: "Nos conseils pratiques pour réduire votre ping et éviter les lags pendant vos matchs cruciaux.",
-    content: "Le lag est l'ennemi numéro 1 du gamer. Pour performer lors des tournois eGame Bénin, assurez-vous d'utiliser une connexion stable. Privilégiez la 4G/5G ou le Wi-Fi fibre si possible. Fermez les applications en arrière-plan et désactivez les mises à jour automatiques pendant vos sessions de jeu pour garantir une latence minimale.",
+    title: "Quels sont les jeux disponibles pour gagner des Cash Prizes ?",
+    excerpt: "Découvrez la liste des disciplines compétitives disponibles sur notre plateforme.",
+    content: "eGame Bénin propose une sélection variée de jeux pour tous les profils de joueurs. Free Fire et PUBG Mobile dominent la scène Battle Royale par leur intensité. Pour les amateurs de stratégie, Clash Royale offre des duels rapides et tactiques. Les fans de FPS peuvent s'illustrer sur COD Mobile, tandis que les amateurs de sport et de course trouveront leur bonheur avec nos tournois Blur et FIFA. Chaque jeu a été choisi pour son potentiel compétitif et sa popularité au sein de la communauté béninoise.",
     image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800",
-    date: "10 Mars 2024",
     readTime: "6 min"
   }
 ];
@@ -63,7 +60,6 @@ const News = () => {
                 </div>
                 <div className="p-8 flex flex-col flex-1">
                   <div className="flex items-center gap-4 text-[10px] font-bold text-violet-500 uppercase tracking-widest mb-4">
-                    <span className="flex items-center gap-1"><Calendar size={12} /> {article.date}</span>
                     <span className="flex items-center gap-1"><Clock size={12} /> {article.readTime}</span>
                   </div>
                   <h2 className="text-xl font-black mb-4 leading-tight group-hover:text-violet-500 transition-colors">{article.title}</h2>

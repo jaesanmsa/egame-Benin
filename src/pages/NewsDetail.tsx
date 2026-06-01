@@ -4,7 +4,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Clock, Share2 } from 'lucide-react';
+import { ArrowLeft, Clock, Share2 } from 'lucide-react';
 import { MOCK_NEWS } from './News';
 import { showSuccess } from '@/utils/toast';
 
@@ -43,7 +43,6 @@ const NewsDetail = () => {
           <header className="mb-10">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-6 text-[10px] font-black text-violet-500 uppercase tracking-[0.2em]">
-                <span className="flex items-center gap-2"><Calendar size={14} /> {article.date}</span>
                 <span className="flex items-center gap-2"><Clock size={14} /> {article.readTime} de lecture</span>
               </div>
               <button onClick={handleShare} className="text-muted-foreground hover:text-violet-500 transition-colors">
