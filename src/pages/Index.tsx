@@ -14,22 +14,14 @@ import { Button } from '@/components/ui/button';
 import { MOCK_NEWS } from './News';
 
 const Index = () => {
-  const [stats, setStats] = useState({ players: 0, tournaments: 0, cashPrize: 0 });
+  const [stats, setStats] = useState({ players: 30, tournaments: 5, cashPrize: 150000 });
   const [activeTournaments, setActiveTournaments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      // Stats
-      const { count: playerCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-      const { count: tourCount } = await supabase.from('tournaments').select('*', { count: 'exact', head: true });
-      const { data: finishedTours } = await supabase.from('tournaments').select('prize_pool').eq('status', 'finished');
-      const totalCash = finishedTours?.reduce((acc, t) => acc + (parseInt(t.prize_pool?.replace(/\D/g, '') || '0')), 0) || 0;
-
-      setStats({ players: playerCount || 0, tournaments: tourCount || 0, cashPrize: totalCash });
-
-      // Tournois actifs
+      // On garde la logique de récupération pour les tournois actifs
       const { data: tours } = await supabase
         .from('tournaments')
         .select('*')
@@ -38,6 +30,9 @@ const Index = () => {
         .limit(6);
       
       if (tours) setActiveTournaments(tours);
+      
+      // Les statistiques sont maintenant fixées selon votre demande
+      setStats({ players: 30, tournaments: 5, cashPrize: 150000 });
       
       setLoading(false);
     };
