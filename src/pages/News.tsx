@@ -12,7 +12,7 @@ export const MOCK_NEWS = [
     title: "eGame Bénin est né : La révolution eSport commence au Bénin.",
     excerpt: "Découvrez notre mission pour professionnaliser le gaming au Bénin avec des cash prizes via Mobile Money.",
     content: "eGame Bénin est officiellement lancé avec une mission claire : transformer la passion du jeu vidéo en une véritable opportunité professionnelle. Notre équipe s'engage à structurer le secteur de l'eSport local en organisant des tournois réguliers et sécurisés. L'innovation majeure réside dans notre système de récompenses : les gagnants reçoivent leurs Cash Prizes directement via MTN ou Moov Money, garantissant une rapidité et une transparence totale. Notre ambition est de faire du Bénin un hub majeur du gaming en Afrique de l'Ouest.",
-    image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800",
+    image: "https://ajbpdaxtynkazdrzyopd.supabase.co/storage/v1/object/public/assets/logo-email.png",
     readTime: "5 min"
   },
   {
@@ -28,7 +28,7 @@ export const MOCK_NEWS = [
     title: "Quels sont les jeux disponibles pour gagner des Cash Prizes ?",
     excerpt: "Découvrez la liste des disciplines compétitives disponibles sur notre plateforme.",
     content: "eGame Bénin propose une sélection variée de jeux pour tous les profils de joueurs. Free Fire et PUBG Mobile dominent la scène Battle Royale par leur intensité. Pour les amateurs de stratégie, Clash Royale offre des duels rapides et tactiques. Les fans de FPS peuvent s'illustrer sur COD Mobile, tandis que les amateurs de sport et de course trouveront leur bonheur avec nos tournois Blur et FIFA. Chaque jeu a été choisi pour son potentiel compétitif et sa popularité au sein de la communauté béninoise.",
-    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?auto=format&fit=crop&q=80&w=800",
     readTime: "6 min"
   }
 ];
@@ -55,7 +55,7 @@ const News = () => {
                 whileHover={{ y: -8 }}
                 className="bg-card border border-border rounded-[2.5rem] overflow-hidden shadow-sm h-full flex flex-col"
               >
-                <div className="aspect-video overflow-hidden">
+                <div className="aspect-video overflow-hidden bg-zinc-900 flex items-center justify-center">
                   <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-8 flex flex-col flex-1">
