@@ -12,7 +12,7 @@ export const MOCK_NEWS = [
     title: "eGame Bénin est né : La révolution eSport commence au Bénin.",
     excerpt: "Découvrez notre mission pour professionnaliser le gaming au Bénin avec des cash prizes via Mobile Money.",
     content: "eGame Bénin est officiellement lancé avec une mission claire : transformer la passion du jeu vidéo en une véritable opportunité professionnelle. Notre équipe s'engage à structurer le secteur de l'eSport local en organisant des tournois réguliers et sécurisés. L'innovation majeure réside dans notre système de récompenses : les gagnants reçoivent leurs Cash Prizes directement via MTN ou Moov Money, garantissant une rapidité et une transparence totale. Notre ambition est de faire du Bénin un hub majeur du gaming en Afrique de l'Ouest.",
-    image: "https://ajbpdaxtynkazdrzyopd.supabase.co/storage/v1/object/public/assets/logo-email.png",
+    image: "/news-hero.png",
     readTime: "5 min"
   },
   {

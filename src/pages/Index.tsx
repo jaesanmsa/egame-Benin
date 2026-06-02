@@ -39,7 +39,20 @@ const Index = () => {
       <Navbar />
       
       <section className="relative pt-8 pb-24 overflow-hidden min-h-[70vh] flex flex-col">
-        <div className="absolute inset-0 bg-[#0a0a0a] z-0" />
+        {/* Arrière-plan Vidéo */}
+        <div className="absolute inset-0 z-0">
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className="w-full h-full object-cover opacity-40"
+          >
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-gaming-setup-with-neon-lights-40054-large.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background" />
+        </div>
+
         <div className="absolute inset-0 z-10 opacity-20">
           <VSBackground />
         </div>
