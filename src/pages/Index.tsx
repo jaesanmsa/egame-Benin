@@ -38,36 +38,38 @@ const Index = () => {
       <SEO />
       <Navbar />
       
-      <section className="relative pt-8 pb-24 overflow-hidden min-h-[70vh] flex flex-col">
-        {/* Arrière-plan Vidéo */}
+      <section className="relative pt-8 pb-24 overflow-hidden min-h-[85vh] flex flex-col">
+        {/* Arrière-plan Vidéo Dynamique */}
         <div className="absolute inset-0 z-0">
           <video 
             autoPlay 
             loop 
             muted 
             playsInline 
-            className="w-full h-full object-cover opacity-40"
+            className="w-full h-full object-cover opacity-50"
           >
             <source src="https://assets.mixkit.co/videos/preview/mixkit-gaming-setup-with-neon-lights-40054-large.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-background" />
         </div>
 
         <div className="absolute inset-0 z-10 opacity-20">
           <VSBackground />
         </div>
 
+        {/* Header / Logo */}
         <div className="max-w-7xl mx-auto px-6 w-full relative z-30 pt-4">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
             <Logo size="md" />
           </motion.div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 relative z-30 flex-1 flex flex-col items-center justify-center text-center space-y-8">
+        {/* Hero Content avec espacement généreux */}
+        <div className="max-w-7xl mx-auto px-6 relative z-30 flex-1 flex flex-col items-center justify-center text-center mt-12 md:mt-20 space-y-10">
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-violet-600/20 backdrop-blur-md text-violet-400 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-violet-500/30"
+            className="bg-violet-600/20 backdrop-blur-md text-violet-400 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.25em] border border-violet-500/30"
           >
             L'Arène des Champions
           </motion.div>
@@ -75,7 +77,7 @@ const Index = () => {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-6xl font-black tracking-tighter leading-tight uppercase text-white"
+            className="text-4xl md:text-7xl font-black tracking-tighter leading-tight uppercase text-white"
           >
             Domine le jeu. <br />
             <span className="text-violet-500">Encaisse la victoire.</span>
@@ -85,18 +87,18 @@ const Index = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto px-4"
+            className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto px-4"
           >
             <Button 
               onClick={() => navigate('/games')} 
-              className="w-full sm:w-auto py-7 px-10 rounded-2xl bg-violet-600 hover:bg-violet-700 font-black text-xs uppercase tracking-widest shadow-xl shadow-violet-500/20 text-white gap-2"
+              className="w-full sm:w-auto py-8 px-12 rounded-2xl bg-violet-600 hover:bg-violet-700 font-black text-xs uppercase tracking-widest shadow-2xl shadow-violet-500/40 text-white gap-3"
             >
-              Tournois <ArrowRight size={16} />
+              Tournois <ArrowRight size={18} />
             </Button>
             <Button 
               variant="outline" 
               onClick={() => navigate('/leaderboard')} 
-              className="w-full sm:w-auto py-7 px-10 rounded-2xl border-white/10 bg-white/5 backdrop-blur-sm text-white font-black text-xs uppercase tracking-widest hover:bg-white/10"
+              className="w-full sm:w-auto py-8 px-12 rounded-2xl border-white/20 bg-white/5 backdrop-blur-md text-white font-black text-xs uppercase tracking-widest hover:bg-white/10"
             >
               Classement
             </Button>
@@ -104,26 +106,26 @@ const Index = () => {
         </div>
       </section>
 
-      <main className="max-w-7xl mx-auto px-6 space-y-20 -mt-12 relative z-40">
-        <section className="space-y-6">
+      <main className="max-w-7xl mx-auto px-6 space-y-24 -mt-16 relative z-40">
+        <section className="space-y-8">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-black tracking-tight uppercase italic">
+            <h2 className="text-xl font-black tracking-tight uppercase italic">
               Tournois <span className="text-violet-500">Live</span>
             </h2>
-            <Link to="/games" className="text-[9px] font-black uppercase tracking-widest text-violet-500">
+            <Link to="/games" className="text-[10px] font-black uppercase tracking-widest text-violet-500 hover:underline">
               Tout voir →
             </Link>
           </div>
 
           {/* Défilement horizontal pour les tournois actifs */}
-          <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4 pb-4 -mx-6 px-6">
+          <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-5 pb-6 -mx-6 px-6">
             {loading ? (
               Array.from({ length: 2 }).map((_, i) => (
-                <div key={i} className="min-w-[85%] sm:min-w-[45%] aspect-[4/3] bg-card/50 animate-pulse rounded-[24px] border border-border" />
+                <div key={i} className="min-w-[85%] sm:min-w-[45%] aspect-[4/3] bg-card/50 animate-pulse rounded-[32px] border border-border" />
               ))
             ) : activeTournaments.length === 0 ? (
-              <div className="w-full py-16 text-center bg-card/30 rounded-[32px] border border-dashed border-border">
-                <p className="text-muted-foreground text-xs font-bold italic">Aucun tournoi actif.</p>
+              <div className="w-full py-20 text-center bg-card/30 rounded-[40px] border border-dashed border-border">
+                <p className="text-muted-foreground text-sm font-bold italic">Aucun tournoi actif pour le moment.</p>
               </div>
             ) : (
               activeTournaments.map((t) => (
@@ -145,32 +147,32 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="space-y-6">
+        <section className="space-y-8">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-black tracking-tight uppercase italic">
+            <h2 className="text-xl font-black tracking-tight uppercase italic">
               Actualités <span className="text-violet-500">Gaming</span>
             </h2>
-            <Link to="/news" className="text-[9px] font-black uppercase tracking-widest text-violet-500">
+            <Link to="/news" className="text-[10px] font-black uppercase tracking-widest text-violet-500 hover:underline">
               Le Mag →
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {MOCK_NEWS.slice(0, 3).map((article) => (
               <Link key={article.id} to={`/news/${article.id}`}>
                 <motion.div 
-                  whileHover={{ y: -5 }}
-                  className="bg-[#1a0b2e] border border-violet-500/20 rounded-[2rem] overflow-hidden shadow-xl group"
+                  whileHover={{ y: -8 }}
+                  className="bg-[#1a0b2e] border border-violet-500/20 rounded-[2.5rem] overflow-hidden shadow-2xl group"
                 >
                   <div className="aspect-video overflow-hidden">
-                    <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 text-[8px] font-black text-violet-400 uppercase tracking-widest mb-2">
-                      <Clock size={10} /> {article.readTime}
+                  <div className="p-8">
+                    <div className="flex items-center gap-2 text-[9px] font-black text-violet-400 uppercase tracking-widest mb-3">
+                      <Clock size={12} /> {article.readTime}
                     </div>
-                    <h3 className="text-white font-bold text-xs mb-2 line-clamp-2 group-hover:text-violet-400 transition-colors">{article.title}</h3>
-                    <p className="text-violet-200/60 text-[9px] leading-relaxed line-clamp-2">{article.excerpt}</p>
+                    <h3 className="text-white font-bold text-sm mb-3 line-clamp-2 group-hover:text-violet-400 transition-colors">{article.title}</h3>
+                    <p className="text-violet-200/60 text-[10px] leading-relaxed line-clamp-2">{article.excerpt}</p>
                   </div>
                 </motion.div>
               </Link>
@@ -178,32 +180,32 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="py-8 border-y border-border/50 bg-violet-600/5 rounded-[2rem]">
+        <section className="py-12 border-y border-border/50 bg-violet-600/5 rounded-[3rem]">
           <div className="max-w-4xl mx-auto flex justify-around items-center">
             <div className="text-center">
-              <p className="text-lg font-black text-violet-500">{stats.tournaments}</p>
-              <p className="text-[7px] font-black uppercase tracking-widest opacity-60">Tournois</p>
+              <p className="text-2xl font-black text-violet-500">{stats.tournaments}</p>
+              <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Tournois</p>
             </div>
             <div className="text-center">
-              <p className="text-lg font-black text-violet-500">{stats.players}</p>
-              <p className="text-[7px] font-black uppercase tracking-widest opacity-60">Joueurs</p>
+              <p className="text-2xl font-black text-violet-500">{stats.players}</p>
+              <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Joueurs</p>
             </div>
             <div className="text-center">
-              <p className="text-lg font-black text-violet-500">{stats.cashPrize.toLocaleString()}</p>
-              <p className="text-[7px] font-black uppercase tracking-widest opacity-60">CFA Gagnés</p>
+              <p className="text-2xl font-black text-violet-500">{stats.cashPrize.toLocaleString()}</p>
+              <p className="text-[8px] font-black uppercase tracking-widest opacity-60">CFA Gagnés</p>
             </div>
           </div>
         </section>
 
-        <footer className="py-16 border-t border-border text-center space-y-8">
-          <div className="flex flex-wrap items-center justify-center gap-8">
-            <Link to="/about" className="text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-violet-500">À propos</Link>
-            <Link to="/contact" className="text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-violet-500">Contact</Link>
-            <Link to="/privacy" className="text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-violet-500">Confidentialité</Link>
+        <footer className="py-20 border-t border-border text-center space-y-10">
+          <div className="flex flex-wrap items-center justify-center gap-10">
+            <Link to="/about" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-violet-500 transition-colors">À propos</Link>
+            <Link to="/contact" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-violet-500 transition-colors">Contact</Link>
+            <Link to="/privacy" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-violet-500 transition-colors">Confidentialité</Link>
           </div>
-          <div className="space-y-2">
-            <p className="text-[8px] text-muted-foreground font-black tracking-[0.3em] uppercase">eGame Bénin • L'Arène des Champions</p>
-            <p className="text-[7px] text-muted-foreground/40 font-black uppercase tracking-widest">© 2026 • Tous droits réservés</p>
+          <div className="space-y-3">
+            <p className="text-[9px] text-muted-foreground font-black tracking-[0.4em] uppercase">eGame Bénin • L'Arène des Champions</p>
+            <p className="text-[8px] text-muted-foreground/40 font-black uppercase tracking-widest">© 2026 • Tous droits réservés</p>
           </div>
         </footer>
       </main>
