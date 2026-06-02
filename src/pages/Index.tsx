@@ -64,7 +64,7 @@ const Index = () => {
           </motion.div>
         </div>
 
-        {/* Hero Content avec espacement généreux et typographie massive */}
+        {/* Hero Content avec espacement généreux et typographie réduite */}
         <div className="max-w-7xl mx-auto px-6 relative z-30 flex-1 flex flex-col items-center justify-center text-center mt-12 md:mt-20 space-y-10">
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
@@ -77,7 +77,7 @@ const Index = () => {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-7xl font-black tracking-tighter leading-tight uppercase text-white"
+            className="text-xl md:text-3xl font-black tracking-tighter leading-tight uppercase text-white"
           >
             Domine le jeu. <br />
             <span className="text-violet-500">Encaisse la victoire.</span>
