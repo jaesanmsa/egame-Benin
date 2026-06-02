@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { HelmetProvider } from 'react-helmet-async';
+import { Analytics } from "@vercel/analytics/react";
 import Index from "./pages/Index";
 import TournamentDetails from "./pages/TournamentDetails";
 import Profile from "./pages/Profile";
@@ -63,6 +64,7 @@ const App = () => (
             <FloatingSupport />
             <CookieConsent />
           </BrowserRouter>
+          <Analytics />
         </TooltipProvider>
       </ThemeProvider>
     </HelmetProvider>
