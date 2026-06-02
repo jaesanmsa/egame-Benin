@@ -39,7 +39,7 @@ const Index = () => {
       <Navbar />
       
       <section className="relative pt-8 pb-24 overflow-hidden min-h-[85vh] flex flex-col">
-        {/* Arrière-plan Vidéo Dynamique */}
+        {/* Arrière-plan Vidéo Locale */}
         <div className="absolute inset-0 z-0">
           <video 
             autoPlay 
@@ -48,7 +48,7 @@ const Index = () => {
             playsInline 
             className="w-full h-full object-cover opacity-50"
           >
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-gaming-setup-with-neon-lights-40054-large.mp4" type="video/mp4" />
+            <source src="/hero-video.webm" type="video/webm" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-background" />
         </div>
@@ -64,7 +64,7 @@ const Index = () => {
           </motion.div>
         </div>
 
-        {/* Hero Content avec espacement généreux */}
+        {/* Hero Content avec espacement généreux et typographie massive */}
         <div className="max-w-7xl mx-auto px-6 relative z-30 flex-1 flex flex-col items-center justify-center text-center mt-12 md:mt-20 space-y-10">
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
