@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { User, Home, History, Trophy, Gamepad2, Newspaper } from 'lucide-react';
+import { User, Home, Trophy, Gamepad2, Newspaper } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
@@ -55,13 +55,6 @@ const Navbar = () => {
           <Trophy {...iconProps('/leaderboard')} />
           <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/leaderboard') ? 'text-violet-500' : 'text-muted-foreground'}`}>Elite</span>
         </Link>
-        
-        {isLoggedIn && (
-          <Link to="/payments" className="flex flex-col items-center gap-1">
-            <History {...iconProps('/payments')} />
-            <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/payments') ? 'text-violet-500' : 'text-muted-foreground'}`}>Flux</span>
-          </Link>
-        )}
 
         <Link to="/profile" className="flex flex-col items-center gap-1">
           <User {...iconProps('/profile')} />

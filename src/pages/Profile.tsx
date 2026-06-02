@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import PlayerBadge from '@/components/PlayerBadge';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Palette, HelpCircle, Shield, Activity, Zap, TrendingUp, Award, Bell, BellOff } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Palette, HelpCircle, Shield, Activity, Zap, TrendingUp, Award, Bell, BellOff, History } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showSuccess, showError } from '@/utils/toast';
@@ -178,6 +178,15 @@ const Profile = () => {
             </div>
             {notifLoading && <div className="w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />}
           </button>
+
+          <Link to="/payments" className="block">
+            <button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm">
+              <div className="flex items-center gap-4">
+                <History size={20} className="text-violet-500" /> 
+                Flux (Mes Inscriptions)
+              </div>
+            </button>
+          </Link>
           
           <Link to="/contact" className="block"><button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><HelpCircle size={20} className="text-violet-500" /> Contact & Aide</div></button></Link>
           <Link to="/privacy" className="block"><button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><Shield size={20} className="text-cyan-500" /> Politique de Confidentialité</div></button></Link>
