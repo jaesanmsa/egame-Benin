@@ -11,10 +11,37 @@ export const MOCK_NEWS = [
   {
     id: 'coc-rules',
     title: "RÈGLEMENT OFFICIEL : Tournoi Inter-Clan Clash of Clans - \"L'Arène Africaine\"",
-    excerpt: "Bienvenue dans la première compétition eSport structurée pour les clans de Clash of Clans en Afrique. Skill, stratégie et cohésion.",
-    content: "Bienvenue dans la première compétition eSport structurée pour les clans de Clash of Clans en Afrique. Ici, le skill, la stratégie et la cohésion d'équipe sont les seules armes. Vous ne jouez pas pour une simple victoire, vous jouez pour le titre de Champion Africain...",
+    excerpt: "Découvrez le format, le code de conduite et les procédures officielles pour le plus grand tournoi de clans au Bénin.",
+    content: `Format de la Compétition
+Format : Guerre amicale (Friendly War).
+Taille d'équipe : 5 contre 5.
+Préparation : 24 heures.
+Guerre : 24 heures.
+Niveaux (Hôtels de Ville) : Les clans seront répartis par tranches de niveaux (TH) pour garantir une équité totale.
+Logiciel de jeu : Seule la dernière version officielle de Clash of Clans est autorisée.
+
+Code de Conduite et Fair-Play
+Zéro Triche (Modding) : L'utilisation de logiciels tiers, d'outils de triche (bots, modding), ou de techniques de "match fixing" (trucage de guerre) entraînera une disqualification immédiate et un bannissement à vie de la plateforme eGame Bénin.
+Enregistrement des preuves : Pour chaque guerre, les meilleures attaques de chaque clan doivent être enregistrées en vidéo (capture d'écran vidéo mobile). En cas de suspicion de triche, ces preuves seront demandées par l'organisation.
+Respect : Le respect envers les adversaires est obligatoire. Toute insulte dans le chat du jeu ou dans les groupes de communication entraînera des sanctions.
+
+Responsabilités du Capitaine de Clan
+Le Chef (ou le Co-chef désigné) est l'unique interlocuteur officiel. Il s'engage à :
+- Être présent sur le groupe WhatsApp officiel des Capitaines.
+- Assurer la présence de ses 5 membres à l'heure du lancement du défi.
+- Signaler tout retard ou problème technique au moins 2 heures avant le début de la guerre.
+Forfait : Un retard de plus de 15 minutes sur l'horaire de lancement du défi est considéré comme un forfait pour le clan en retard.
+
+Procédure de Litige
+En cas de désaccord, le Capitaine doit soumettre une réclamation officielle par e-mail à egamebenin@gmail.com avec les preuves vidéos (replay du jeu). L'équipe d'arbitrage d'eGame Bénin tranchera sous 12 heures. La décision est sans appel.
+
+Inscription et Cash Prize
+L'inscription se fait exclusivement via le formulaire sur egamebenin.com. Le paiement du Cash Prize sera effectué uniquement par Mobile Money (MTN, Moov, Celtis) sur le numéro du Chef de Clan enregistré lors de l'inscription.
+Garantie : Les gains sont garantis et versés automatiquement dans les 24h suivant la finale du tournoi.
+
+"L'Afrique prend sa couronne." Le tournoi est ouvert. Montrez au monde que les meilleurs stratèges du monde sont ici, en Afrique.`,
     image: "/coc-tournament.webp",
-    readTime: "8 min",
+    readTime: "10 min",
     featured: true
   },
   {
@@ -65,28 +92,28 @@ const News = () => {
           </div>
         </div>
 
-        {/* Article à la Une */}
+        {/* Article à la Une - AGRANDI */}
         {featuredArticle && (
           <Link to={`/news/${featuredArticle.id}`} className="block mb-16">
             <motion.div 
               whileHover={{ y: -8 }}
-              className="relative aspect-[16/9] md:aspect-[21/9] rounded-[3rem] overflow-hidden border border-violet-500/30 shadow-2xl group"
+              className="relative aspect-[16/10] md:aspect-[16/7] min-h-[450px] rounded-[3rem] overflow-hidden border border-violet-500/30 shadow-2xl group"
             >
               <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-violet-600 text-white px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest flex items-center gap-1">
-                    <Zap size={10} fill="white" /> Important
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="bg-violet-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                    <Zap size={12} fill="white" /> Règlement Officiel
                   </div>
-                  <span className="text-white/60 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
-                    <Clock size={12} /> {featuredArticle.readTime}
+                  <span className="text-white/80 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
+                    <Clock size={14} /> {featuredArticle.readTime}
                   </span>
                 </div>
-                <h2 className="text-2xl md:text-4xl font-black text-white mb-4 leading-tight max-w-3xl">{featuredArticle.title}</h2>
-                <p className="text-white/70 text-sm md:text-base max-w-2xl line-clamp-2 mb-6">{featuredArticle.excerpt}</p>
-                <div className="flex items-center gap-2 text-violet-400 font-black text-xs uppercase tracking-widest">
-                  Lire l'article complet <ArrowRight size={16} />
+                <h2 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight max-w-4xl">{featuredArticle.title}</h2>
+                <p className="text-white/80 text-base md:text-lg max-w-3xl line-clamp-3 mb-8 font-medium">{featuredArticle.excerpt}</p>
+                <div className="flex items-center gap-3 text-violet-400 font-black text-sm uppercase tracking-widest group-hover:gap-5 transition-all">
+                  Lire le règlement complet <ArrowRight size={20} />
                 </div>
               </div>
             </motion.div>
