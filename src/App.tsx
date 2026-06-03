@@ -46,18 +46,18 @@ const App = () => (
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/tournament/:id" element={<TournamentDetails />} />
-              <Route path="/profile" element={<Profile />} />
+              <Route path="/profil" element={<Profile />} />
               <Route path="/edit-profile" element={<EditProfile />} />
               <Route path="/avatar-maker" element={<AvatarMaker />} />
               <Route path="/payments" element={<PaymentHistory />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/classement" element={<Leaderboard />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/about" element={<About />} />
               <Route path="/news" element={<News />} />
               <Route path="/news/:id" element={<NewsDetail />} />
-              <Route path="/games" element={<Games />} />
+              <Route path="/jeux" element={<Games />} />
               <Route path="/game/:id" element={<GameDetails />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

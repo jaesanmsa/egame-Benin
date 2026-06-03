@@ -49,7 +49,19 @@
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Contenu statique pour le SEO (visible sans JS) -->
+      <div style="display:none">
+        <h1>eGame Bénin</h1>
+        <p>La plateforme eSport numéro 1 au Bénin. Participez à des tournois de jeux vidéo et gagnez des cash prizes via Mobile Money.</p>
+        <nav>
+          <a href="/jeux">Jeux</a>
+          <a href="/classement">Classement</a>
+          <a href="/news">Actualités</a>
+          <a href="/profil">Profil</a>
+        </nav>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
     <!-- SDK KKiaPay -->
     <script src="https://cdn.kkiapay.me/k.js"></script>

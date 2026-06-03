@@ -3,6 +3,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
+import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, Share2 } from 'lucide-react';
 import { MOCK_NEWS } from './News';
@@ -22,6 +23,11 @@ const NewsDetail = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-32">
+      <SEO 
+        title={article.title} 
+        description={article.excerpt} 
+        image={article.image}
+      />
       <Navbar />
       
       <div className="relative h-[50vh] w-full overflow-hidden">

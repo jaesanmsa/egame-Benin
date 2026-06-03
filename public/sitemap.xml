@@ -7,13 +7,13 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.egamebenin.com/games</loc>
+    <loc>https://www.egamebenin.com/jeux</loc>
     <lastmod>2026-03-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.egamebenin.com/leaderboard</loc>
+    <loc>https://www.egamebenin.com/classement</loc>
     <lastmod>2026-03-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -49,9 +49,27 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.egamebenin.com/profile</loc>
+    <loc>https://www.egamebenin.com/profil</loc>
     <lastmod>2026-03-04</lastmod>
     <changefreq>always</changefreq>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.egamebenin.com/about</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.egamebenin.com/contact</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.egamebenin.com/privacy</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

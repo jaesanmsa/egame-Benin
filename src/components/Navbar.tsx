@@ -41,9 +41,9 @@ const Navbar = () => {
           <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/') && location.pathname === '/' ? 'text-violet-500' : 'text-muted-foreground'}`}>Accueil</span>
         </Link>
 
-        <Link to="/games" className="flex flex-col items-center gap-1">
-          <Gamepad2 {...iconProps('/games')} />
-          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/games') ? 'text-violet-500' : 'text-muted-foreground'}`}>Jeux</span>
+        <Link to="/jeux" className="flex flex-col items-center gap-1">
+          <Gamepad2 {...iconProps('/jeux')} />
+          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/jeux') ? 'text-violet-500' : 'text-muted-foreground'}`}>Jeux</span>
         </Link>
 
         <Link to="/news" className="flex flex-col items-center gap-1">
@@ -51,14 +51,14 @@ const Navbar = () => {
           <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/news') ? 'text-violet-500' : 'text-muted-foreground'}`}>Actus</span>
         </Link>
 
-        <Link to="/leaderboard" className="flex flex-col items-center gap-1">
-          <Trophy {...iconProps('/leaderboard')} />
-          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/leaderboard') ? 'text-violet-500' : 'text-muted-foreground'}`}>Elite</span>
+        <Link to="/classement" className="flex flex-col items-center gap-1">
+          <Trophy {...iconProps('/classement')} />
+          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/classement') ? 'text-violet-500' : 'text-muted-foreground'}`}>Elite</span>
         </Link>
 
-        <Link to="/profile" className="flex flex-col items-center gap-1">
-          <User {...iconProps('/profile')} />
-          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/profile') ? 'text-violet-500' : 'text-muted-foreground'}`}>Profil</span>
+        <Link to="/profil" className="flex flex-col items-center gap-1">
+          <User {...iconProps('/profil')} />
+          <span className={`text-[8px] font-black uppercase tracking-widest ${isActive('/profil') ? 'text-violet-500' : 'text-muted-foreground'}`}>Profil</span>
         </Link>
       </div>
     </nav>

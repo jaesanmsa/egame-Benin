@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Navbar from '@/components/Navbar';
+import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { Newspaper, ArrowRight, Clock, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -48,6 +49,10 @@ const News = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-32 pt-12 md:pt-24">
+      <SEO 
+        title="Actualités Gaming Bénin" 
+        description="Suivez toute l'actualité de l'eSport au Bénin. Règlements de tournois, conseils de pros et news sur vos jeux préférés."
+      />
       <Navbar />
       <main className="max-w-6xl mx-auto px-6 py-8">
         <div className="flex items-center gap-4 mb-12">
