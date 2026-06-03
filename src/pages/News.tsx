@@ -22,8 +22,7 @@ Logiciel de jeu : Seule la dernière version officielle de Clash of Clans est au
 
 Code de Conduite et Fair-Play
 Zéro Triche (Modding) : L'utilisation de logiciels tiers, d'outils de triche (bots, modding), ou de techniques de "match fixing" (trucage de guerre) entraînera une disqualification immédiate et un bannissement à vie de la plateforme eGame Bénin.
-Enregistrement des preuves : Pour chaque guerre, les meilleures attaques de chaque clan doivent être enregistrées en vidéo (capture d'écran vidéo mobile). En cas de suspicion de triche, ces preuves seront demandées par l'organisation.
-Respect : Le respect envers les adversaires est obligatoire. Toute insulte dans le chat du jeu ou dans les groupes de communication entraînera des sanctions.
+Enregistrement des preuves : Pour chaque guerre, les meilleures attaques de chaque clan doivent être enregistrées en vidéo (capture d'écran vidéo mobile). En cas de suspicion de triche, ces preuves seront demandées par l'organisation. Respect : Le respect envers les adversaires est obligatoire. Toute insulte dans le chat du jeu ou dans les groupes de communication entraînera des sanctions.
 
 Responsabilités du Capitaine de Clan
 Le Chef (ou le Co-chef désigné) est l'unique interlocuteur officiel. Il s'engage à :
@@ -92,12 +91,12 @@ const News = () => {
           </div>
         </div>
 
-        {/* Article à la Une - AGRANDI */}
+        {/* Article à la Une - AGRANDI EN HAUTEUR UNIQUEMENT */}
         {featuredArticle && (
           <Link to={`/news/${featuredArticle.id}`} className="block mb-16">
             <motion.div 
               whileHover={{ y: -8 }}
-              className="relative aspect-[16/10] md:aspect-[16/7] min-h-[450px] rounded-[3rem] overflow-hidden border border-violet-500/30 shadow-2xl group"
+              className="relative aspect-[16/14] md:aspect-[16/10] min-h-[600px] rounded-[3rem] overflow-hidden border border-violet-500/30 shadow-2xl group"
             >
               <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
@@ -111,7 +110,7 @@ const News = () => {
                   </span>
                 </div>
                 <h2 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight max-w-4xl">{featuredArticle.title}</h2>
-                <p className="text-white/80 text-base md:text-lg max-w-3xl line-clamp-3 mb-8 font-medium">{featuredArticle.excerpt}</p>
+                <p className="text-white/80 text-base md:text-lg max-w-3xl line-clamp-4 mb-8 font-medium">{featuredArticle.excerpt}</p>
                 <div className="flex items-center gap-3 text-violet-400 font-black text-sm uppercase tracking-widest group-hover:gap-5 transition-all">
                   Lire le règlement complet <ArrowRight size={20} />
                 </div>
