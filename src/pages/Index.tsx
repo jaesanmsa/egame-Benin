@@ -81,14 +81,14 @@ const Index = () => {
             className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto px-4"
           >
             <Button 
-              onClick={() => navigate('/jeux')} 
+              onClick={() => navigate('/games')} 
               className="w-full sm:w-auto py-8 px-12 rounded-2xl bg-violet-600 hover:bg-violet-700 font-black text-xs uppercase tracking-widest shadow-2xl shadow-violet-500/40 text-white gap-3"
             >
               Tournois <ArrowRight size={18} />
             </Button>
             <Button 
               variant="outline" 
-              onClick={() => navigate('/classement')} 
+              onClick={() => navigate('/leaderboard')} 
               className="w-full sm:w-auto py-8 px-12 rounded-2xl border-white/20 bg-white/5 backdrop-blur-md text-white font-black text-xs uppercase tracking-widest hover:bg-white/10"
             >
               Classement
@@ -103,7 +103,7 @@ const Index = () => {
             <h2 className="text-xl font-black tracking-tight uppercase italic">
               Tournois <span className="text-violet-500">Live</span>
             </h2>
-            <Link to="/jeux" className="text-[10px] font-black uppercase tracking-widest text-violet-500 hover:underline">
+            <Link to="/games" className="text-[10px] font-black uppercase tracking-widest text-violet-500 hover:underline">
               Tout voir →
             </Link>
           </div>
@@ -150,33 +150,20 @@ const Index = () => {
           {/* Défilement horizontal pour les actualités */}
           <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-5 pb-6 -mx-6 px-6">
             {MOCK_NEWS.map((article) => (
-              <Link 
-                key={article.id} 
-                to={`/news/${article.id}`} 
-                className={`${article.id === 'coc-rules' ? 'min-w-[90%] sm:min-w-[50%]' : 'min-w-[80%] sm:min-w-[30%]'} snap-center`}
-              >
+              <Link key={article.id} to={`/news/${article.id}`} className="min-w-[80%] sm:min-w-[30%] snap-center">
                 <motion.div 
                   whileHover={{ y: -8 }}
-                  className={`bg-[#1a0b2e] border border-violet-500/20 rounded-[2.5rem] overflow-hidden shadow-2xl group h-full flex flex-col`}
+                  className="bg-[#1a0b2e] border border-violet-500/20 rounded-[2.5rem] overflow-hidden shadow-2xl group h-full"
                 >
-                  <div className={`${article.id === 'coc-rules' ? 'aspect-[16/10]' : 'aspect-video'} overflow-hidden`}>
+                  <div className="aspect-video overflow-hidden">
                     <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   </div>
-                  <div className="p-6 flex-1 flex flex-col">
+                  <div className="p-6">
                     <div className="flex items-center gap-2 text-[8px] font-black text-violet-400 uppercase tracking-widest mb-3">
                       <Clock size={10} /> {article.readTime}
                     </div>
-                    <h3 className={`${article.id === 'coc-rules' ? 'text-sm md:text-base' : 'text-xs'} text-white font-bold mb-3 line-clamp-2 group-hover:text-violet-400 transition-colors`}>
-                      {article.title}
-                    </h3>
-                    <p className={`${article.id === 'coc-rules' ? 'text-[10px] md:text-xs' : 'text-[9px]'} text-violet-200/60 leading-relaxed line-clamp-3`}>
-                      {article.excerpt}
-                    </p>
-                    {article.id === 'coc-rules' && (
-                      <div className="mt-auto pt-4 flex items-center gap-2 text-violet-400 font-black text-[10px] uppercase tracking-widest">
-                        Lire le règlement <ArrowRight size={14} />
-                      </div>
-                    )}
+                    <h3 className="text-white font-bold text-xs mb-3 line-clamp-2 group-hover:text-violet-400 transition-colors">{article.title}</h3>
+                    <p className="text-violet-200/60 text-[9px] leading-relaxed line-clamp-2">{article.excerpt}</p>
                   </div>
                 </motion.div>
               </Link>
