@@ -96,7 +96,7 @@ const News = () => {
           <Link to={`/news/${featuredArticle.id}`} className="block mb-16">
             <motion.div 
               whileHover={{ y: -4 }}
-              className="relative aspect-[16/14] md:aspect-[16/10] min-h-[300px] rounded-[3rem] overflow-hidden border border-violet-250/15 shadow-2xl group"
+              className="relative aspect-[16/14] md:aspect-[16/10] min-h-[300px] rounded-[3rem] overflow-hidden border border-violet-500/15 shadow-2xl group"
             >
               <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-10 transition-transform duration-250" />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
