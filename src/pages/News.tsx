@@ -112,7 +112,7 @@ const News = () => {
                 <h2 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight max-w-4xl">{featuredArticle.title}</h2>
                 <p className="text-white/80 text-base md:text-lg max-w-3xl line-clamp-4 mb-8 font-medium">{featuredArticle.excerpt}</p>
                 <div className="flex items-center gap-3 text-violet-400 font-black text-sm uppercase tracking-widest group-hover:gap-5 transition-all">
-                  Lire le règlement complet <ArrowRight size={20} />
+                  Lire le règlement complet <ArrowRight size={10} />
                 </div>
               </div>
             </motion.div>
