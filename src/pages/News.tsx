@@ -102,11 +102,11 @@ const News = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="bg-violet-100 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                  <div className="bg-violet-300 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
                     <Zap size={12} fill="white" /> Règlement Officiel
                   </div>
                   <span className="text-white/80 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
-                    <Clock size={14} /> {featuredArticle.readTime}
+                    <Clock size={6} /> {featuredArticle.readTime}
                   </span>
                 </div>
                 <h2 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight max-w-4xl">{featuredArticle.title}</h2>
