@@ -91,32 +91,28 @@ const News = () => {
           </div>
         </div>
 
-        {/* Article à la Une - Textes réduits et mieux disposés */}
+        {/* Article à la Une - Style identique à la page d'accueil */}
         {featuredArticle && (
-          <Link to={`/news/${featuredArticle.id}`} className="block mb-16">
-            <motion.div 
-              whileHover={{ y: -4 }}
-              className="relative aspect-[16/14] md:aspect-[16/10] min-h-[300px] rounded-[3rem] overflow-hidden border border-violet-500/15 shadow-2xl group"
-            >
-              <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-10 transition-transform duration-250" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="bg-violet-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                    <Zap size={12} fill="white" /> Règlement Officiel
+          <div className="mb-16">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-violet-500 mb-6">À la une</h2>
+            <Link to={`/news/${featuredArticle.id}`} className="block max-w-md">
+              <motion.div 
+                whileHover={{ y: -8 }}
+                className="bg-[#1a0b2e] border border-violet-500/20 rounded-[2.5rem] overflow-hidden shadow-2xl group"
+              >
+                <div className="aspect-video overflow-hidden">
+                  <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-2 text-[8px] font-black text-violet-400 uppercase tracking-widest mb-3">
+                    <Clock size={10} /> {featuredArticle.readTime}
                   </div>
-                  <span className="text-white/80 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
-                    <Clock size={14} /> {featuredArticle.readTime}
-                  </span>
+                  <h3 className="text-white font-bold text-xs mb-3 line-clamp-2 group-hover:text-violet-400 transition-colors">{featuredArticle.title}</h3>
+                  <p className="text-violet-200/60 text-[9px] leading-relaxed line-clamp-2">{featuredArticle.excerpt}</p>
                 </div>
-                <h2 className="text-2xl md:text-4xl font-black text-white mb-6 leading-tight max-w-4xl">{featuredArticle.title}</h2>
-                <p className="text-white/80 text-sm md:text-base max-w-3xl line-clamp-4 mb-8 font-medium">{featuredArticle.excerpt}</p>
-                <div className="flex items-center gap-3 text-violet-400 font-black text-sm uppercase tracking-widest group-hover:gap-5 transition-all">
-                  Lire le règlement complet <ArrowRight size={20} />
-                </div>
-              </div>
-            </motion.div>
-          </Link>
+              </motion.div>
+            </Link>
+          </div>
         )}
 
         {/* Grille des autres articles */}
