@@ -39,15 +39,8 @@ const Index = () => {
       <Navbar />
       
       <section className="relative pt-8 pb-24 overflow-hidden min-h-[85vh] flex flex-col">
-        {/* Arrière-plan Vidéo Locale */}
         <div className="absolute inset-0 z-0">
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline 
-            className="w-full h-full object-cover opacity-50"
-          >
+          <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-50">
             <source src="/hero-video.webm" type="video/webm" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-background" />
@@ -57,14 +50,12 @@ const Index = () => {
           <VSBackground />
         </div>
 
-        {/* Header / Logo */}
         <div className="max-w-7xl mx-auto px-6 w-full relative z-30 pt-4">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
             <Logo size="md" />
           </motion.div>
         </div>
 
-        {/* Hero Content avec espacement généreux et typographie réduite */}
         <div className="max-w-7xl mx-auto px-6 relative z-30 flex-1 flex flex-col items-center justify-center text-center mt-12 md:mt-20 space-y-10">
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
@@ -117,7 +108,6 @@ const Index = () => {
             </Link>
           </div>
 
-          {/* Défilement horizontal pour les tournois actifs */}
           <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-5 pb-6 -mx-6 px-6">
             {loading ? (
               Array.from({ length: 2 }).map((_, i) => (
@@ -157,22 +147,23 @@ const Index = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {MOCK_NEWS.slice(0, 3).map((article) => (
-              <Link key={article.id} to={`/news/${article.id}`}>
+          {/* Défilement horizontal pour les actualités */}
+          <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-5 pb-6 -mx-6 px-6">
+            {MOCK_NEWS.map((article) => (
+              <Link key={article.id} to={`/news/${article.id}`} className="min-w-[80%] sm:min-w-[30%] snap-center">
                 <motion.div 
                   whileHover={{ y: -8 }}
-                  className="bg-[#1a0b2e] border border-violet-500/20 rounded-[2.5rem] overflow-hidden shadow-2xl group"
+                  className="bg-[#1a0b2e] border border-violet-500/20 rounded-[2.5rem] overflow-hidden shadow-2xl group h-full"
                 >
                   <div className="aspect-video overflow-hidden">
                     <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   </div>
-                  <div className="p-8">
-                    <div className="flex items-center gap-2 text-[9px] font-black text-violet-400 uppercase tracking-widest mb-3">
-                      <Clock size={12} /> {article.readTime}
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 text-[8px] font-black text-violet-400 uppercase tracking-widest mb-3">
+                      <Clock size={10} /> {article.readTime}
                     </div>
-                    <h3 className="text-white font-bold text-sm mb-3 line-clamp-2 group-hover:text-violet-400 transition-colors">{article.title}</h3>
-                    <p className="text-violet-200/60 text-[10px] leading-relaxed line-clamp-2">{article.excerpt}</p>
+                    <h3 className="text-white font-bold text-xs mb-3 line-clamp-2 group-hover:text-violet-400 transition-colors">{article.title}</h3>
+                    <p className="text-violet-200/60 text-[9px] leading-relaxed line-clamp-2">{article.excerpt}</p>
                   </div>
                 </motion.div>
               </Link>

@@ -2,20 +2,56 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.egamebenin.com/</loc>
-    <lastmod>2024-05-22</lastmod>
+    <lastmod>2026-03-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://www.egamebenin.com/games</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://www.egamebenin.com/leaderboard</loc>
-    <lastmod>2024-05-22</lastmod>
+    <lastmod>2026-03-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.egamebenin.com/contact</loc>
-    <lastmod>2024-05-22</lastmod>
+    <loc>https://www.egamebenin.com/news</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.egamebenin.com/news/coc-rules</loc>
+    <lastmod>2026-03-04</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.egamebenin.com/news/1</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.egamebenin.com/news/2</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.egamebenin.com/news/3</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.egamebenin.com/profile</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>always</changefreq>
     <priority>0.5</priority>
   </url>
 </urlset>
