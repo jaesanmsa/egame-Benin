@@ -98,7 +98,7 @@ const News = () => {
               whileHover={{ y: -4 }}
               className="relative aspect-[16/14] md:aspect-[16/10] min-h-[600px] rounded-[3rem] overflow-hidden border border-violet-500/15 shadow-2xl group"
             >
-              <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-50 transition-transform duration-350" />
+              <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-50 transition-transform duration-150" />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
                 <div className="flex items-center gap-2 mb-3">
