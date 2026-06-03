@@ -47,12 +47,15 @@ const AdminDashboard = () => {
   }, []);
 
   const checkAdmin = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user?.email === 'egamebenin@gmail.com') {
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
+    
+    // Vérification stricte de l'email administrateur (insensible à la casse)
+    if (user?.email?.toLowerCase() === 'egamebenin@gmail.com') {
       setIsAdmin(true);
     } else {
       navigate('/');
-      showError("Accès refusé");
+      showError("Accès refusé : Réservé à l'administration.");
     }
     setLoading(false);
   };
@@ -117,7 +120,6 @@ const AdminDashboard = () => {
   const handleFinishTournament = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // 1. Mettre à jour le tournoi
     const { error } = await supabase
       .from('tournaments')
       .update({ 
@@ -134,7 +136,6 @@ const AdminDashboard = () => {
       return;
     }
 
-    // 2. Créditer les points au vainqueur (+50 points)
     const { data: winnerProfile } = await supabase
       .from('profiles')
       .select('id, points, champion_count')
