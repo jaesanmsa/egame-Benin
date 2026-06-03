@@ -93,16 +93,16 @@ const News = () => {
 
         {/* Article à la Une - AGRANDI EN HAUTEUR UNIQUEMENT */}
         {featuredArticle && (
-          <Link to={`/news/${featuredArticle.id}`} className="block mb-16">
+          <Link to={`/news/${featuredArticle.id}`} className="block mb-8">
             <motion.div 
-              whileHover={{ y: -8 }}
-              className="relative aspect-[16/14] md:aspect-[16/10] min-h-[600px] rounded-[3rem] overflow-hidden border border-violet-500/30 shadow-2xl group"
+              whileHover={{ y: -4 }}
+              className="relative aspect-[16/14] md:aspect-[16/10] min-h-[300px] rounded-[3rem] overflow-hidden border border-violet-250/15 shadow-2xl group"
             >
-              <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-350" />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="bg-violet-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="bg-violet-300 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
                     <Zap size={12} fill="white" /> Règlement Officiel
                   </div>
                   <span className="text-white/80 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
