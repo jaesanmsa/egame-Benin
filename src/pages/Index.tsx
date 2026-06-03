@@ -81,14 +81,14 @@ const Index = () => {
             className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto px-4"
           >
             <Button 
-              onClick={() => navigate('/games')} 
+              onClick={() => navigate('/jeux')} 
               className="w-full sm:w-auto py-8 px-12 rounded-2xl bg-violet-600 hover:bg-violet-700 font-black text-xs uppercase tracking-widest shadow-2xl shadow-violet-500/40 text-white gap-3"
             >
               Tournois <ArrowRight size={18} />
             </Button>
             <Button 
               variant="outline" 
-              onClick={() => navigate('/leaderboard')} 
+              onClick={() => navigate('/classement')} 
               className="w-full sm:w-auto py-8 px-12 rounded-2xl border-white/20 bg-white/5 backdrop-blur-md text-white font-black text-xs uppercase tracking-widest hover:bg-white/10"
             >
               Classement
@@ -103,7 +103,7 @@ const Index = () => {
             <h2 className="text-xl font-black tracking-tight uppercase italic">
               Tournois <span className="text-violet-500">Live</span>
             </h2>
-            <Link to="/games" className="text-[10px] font-black uppercase tracking-widest text-violet-500 hover:underline">
+            <Link to="/jeux" className="text-[10px] font-black uppercase tracking-widest text-violet-500 hover:underline">
               Tout voir →
             </Link>
           </div>
