@@ -91,28 +91,28 @@ const News = () => {
           </div>
         </div>
 
-        {/* Article à la Une - AGRANDI EN HAUTEUR UNIQUEMENT */}
+        {/* Article à la Une - Textes réduits et mieux disposés */}
         {featuredArticle && (
-          <Link to={`/news/${featuredArticle.id}`} className="block mb-8">
+          <Link to={`/news/${featuredArticle.id}`} className="block mb-16">
             <motion.div 
               whileHover={{ y: -4 }}
-              className="relative aspect-[16/14] md:aspect-[16/10] min-h-[300px] rounded-[3rem] overflow-hidden border border-violet-250/15 shadow-2xl group"
+              className="relative aspect-[16/14] md:aspect-[16/10] min-h-[600px] rounded-[3rem] overflow-hidden border border-violet-500/15 shadow-2xl group"
             >
-              <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-350" />
+              <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
+              <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="bg-violet-300 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                    <Zap size={5} fill="white" /> Règlement Officiel
+                  <div className="bg-violet-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                    <Zap size={12} fill="white" /> Règlement Officiel
                   </div>
                   <span className="text-white/80 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
-                    <Clock size={6} /> {featuredArticle.readTime}
+                    <Clock size={14} /> {featuredArticle.readTime}
                   </span>
                 </div>
-                <h2 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight max-w-4xl">{featuredArticle.title}</h2>
-                <p className="text-white/80 text-base md:text-lg max-w-3xl line-clamp-4 mb-8 font-medium">{featuredArticle.excerpt}</p>
+                <h2 className="text-2xl md:text-4xl font-black text-white mb-6 leading-tight max-w-4xl">{featuredArticle.title}</h2>
+                <p className="text-white/80 text-sm md:text-base max-w-3xl line-clamp-4 mb-8 font-medium">{featuredArticle.excerpt}</p>
                 <div className="flex items-center gap-3 text-violet-400 font-black text-sm uppercase tracking-widest group-hover:gap-5 transition-all">
-                  Lire le règlement complet <ArrowRight size={10} />
+                  Lire le règlement complet <ArrowRight size={20} />
                 </div>
               </div>
             </motion.div>
