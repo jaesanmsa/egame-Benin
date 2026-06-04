@@ -17,9 +17,7 @@ const TournamentDetails = () => {
   const navigate = useNavigate();
   const [tournament, setTournament] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [showPayment, setShowPayment] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [paymentStep, setPaymentStep] = useState<'select' | 'processing'>('select');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
   const [participants, setParticipants] = useState<any[]>([]);
@@ -76,7 +74,11 @@ const TournamentDetails = () => {
   };
 
   const handleKKiaPay = async () => {
-    setPaymentStep('processing');
+    if (!isLoggedIn) {
+      navigate('/auth');
+      return;
+    }
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
       // @ts-ignore
@@ -89,9 +91,18 @@ const TournamentDetails = () => {
         name: userProfile?.username || "Joueur",
         callback: `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`
       });
-      setShowPayment(false);
-    } catch (err: any) { showError(err.message); }
-    setPaymentStep('select');
+    } catch (err: any) { 
+      showError("Erreur lors du lancement du paiement.");
+      console.error(err);
+    }
+  };
+
+  const handleStartRegistration = () => {
+    if (!isLoggedIn) {
+      navigate('/auth');
+      return;
+    }
+    setShowConfirmation(true);
   };
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
@@ -100,7 +111,6 @@ const TournamentDetails = () => {
   const isFinished = tournament.status === 'finished';
   const progress = (participantCount / (tournament.max_participants || 40)) * 100;
 
-  // Formatage de la date et l'heure en UTC+1 (Bénin)
   const formattedDateTime = new Date(tournament.start_date).toLocaleString('fr-FR', {
     day: 'numeric',
     month: 'short',
@@ -169,7 +179,7 @@ const TournamentDetails = () => {
                   <Link to="/payments"><Button className="w-full bg-green-600 hover:bg-green-700 font-bold text-white py-6 rounded-2xl">Voir mes inscriptions</Button></Link>
                 </div>
               ) : (
-                <Button onClick={() => setShowConfirmation(true)} className="w-full py-7 rounded-2xl font-bold text-base bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/20">S'inscrire • {tournament.entry_fee} FCFA</Button>
+                <Button onClick={handleStartRegistration} className="w-full py-7 rounded-2xl font-bold text-base bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/20">S'inscrire • {tournament.entry_fee} FCFA</Button>
               )}
             </>
           )}
@@ -202,7 +212,18 @@ const TournamentDetails = () => {
               <div className="w-16 h-16 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500 mx-auto mb-6"><AlertTriangle size={32} /></div>
               <h2 className="text-xl font-bold mb-4">Attention Champion !</h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-8">Veuillez lire attentivement la <span className="text-foreground font-bold">description</span> et le <span className="text-foreground font-bold">règlement</span> avant de payer.</p>
-              <div className="space-y-3"><Button onClick={() => { setShowConfirmation(false); setShowPayment(true); }} className="w-full py-6 rounded-2xl bg-violet-600 hover:bg-violet-700 font-bold text-white">J'ai lu, je continue</Button><Button variant="ghost" onClick={() => setShowConfirmation(false)} className="w-full py-6 rounded-2xl font-bold text-muted-foreground">Retourner lire</Button></div>
+              <div className="space-y-3">
+                <Button 
+                  onClick={() => { 
+                    setShowConfirmation(false); 
+                    handleKKiaPay(); 
+                  }} 
+                  className="w-full py-6 rounded-2xl bg-violet-600 hover:bg-violet-700 font-bold text-white"
+                >
+                  J'ai lu, je continue
+                </Button>
+                <Button variant="ghost" onClick={() => setShowConfirmation(false)} className="w-full py-6 rounded-2xl font-bold text-muted-foreground">Retourner lire</Button>
+              </div>
             </motion.div>
           </div>
         )}
