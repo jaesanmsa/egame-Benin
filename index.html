@@ -8,8 +8,6 @@
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      
-      // Configuration par défaut du consentement (requis pour AdSense/Google)
       gtag('consent', 'default', {
         'ad_storage': 'denied',
         'ad_user_data': 'denied',
@@ -34,6 +32,73 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
+    <!-- Styles critiques pour le Loading Screen -->
+    <style>
+      #loading-screen {
+        position: fixed;
+        inset: 0;
+        background-color: #0A0A0A;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out, visibility 0.5s;
+      }
+
+      .loading-logo {
+        width: 80px;
+        height: 80px;
+        background-color: rgba(138, 43, 226, 0.1);
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+        animation: pulse 2s infinite ease-in-out;
+      }
+
+      .loading-logo svg {
+        width: 40px;
+        height: 40px;
+        fill: #8A2BE2;
+      }
+
+      .loading-bar-container {
+        width: 140px;
+        height: 3px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .loading-bar {
+        position: absolute;
+        height: 100%;
+        width: 50%;
+        background-color: #8A2BE2;
+        border-radius: 10px;
+        animation: loading 1.5s infinite ease-in-out;
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 30px rgba(138, 43, 226, 0.2); }
+      }
+
+      @keyframes loading {
+        0% { left: -50%; }
+        100% { left: 100%; }
+      }
+
+      /* Masquer le contenu SEO pour les humains */
+      .seo-content {
+        display: none;
+      }
+    </style>
+
     <!-- Open Graph / Facebook -->
     <meta property="og:title" content="eGame Bénin | La communauté gaming #1 au Bénin">
     <meta property="og:description" content="Rejoins la communauté gaming #1 au Bénin. Inscris-toi aux tournois, paye via Mobile Money et gagne des cash prizes.">
@@ -49,9 +114,21 @@
   </head>
 
   <body>
+    <!-- Écran de chargement -->
+    <div id="loading-screen">
+      <div class="loading-logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+        </svg>
+      </div>
+      <div class="loading-bar-container">
+        <div class="loading-bar"></div>
+      </div>
+    </div>
+
     <div id="root">
-      <!-- Contenu statique pour le SEO (visible sans JS par les robots) -->
-      <div style="padding: 20px; max-width: 800px; margin: 0 auto;">
+      <!-- Contenu statique pour le SEO (masqué par CSS pour les utilisateurs) -->
+      <div class="seo-content">
         <h1>eGame Bénin - L'Arène des Champions</h1>
         <p>Bienvenue sur la plateforme eSport numéro 1 au Bénin. Nous organisons des tournois de jeux vidéo professionnels avec des cash prizes payés par Mobile Money (MTN, Moov, Celtiis).</p>
         
@@ -68,7 +145,8 @@
         <h2>Actualités Gaming</h2>
         <p>Retrouvez les règlements officiels de nos tournois, des conseils pour progresser et toute l'actualité de la communauté gaming béninoise.</p>
         
-        <nav>          <a href="/jeux">Catalogue des Jeux</a> | 
+        <nav>
+          <a href="/jeux">Catalogue des Jeux</a> | 
           <a href="/classement">Hall of Fame</a> | 
           <a href="/news">Le Mag Actualités</a> | 
           <a href="/about">À propos de nous</a>

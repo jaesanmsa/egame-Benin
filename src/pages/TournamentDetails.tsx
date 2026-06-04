@@ -114,6 +114,7 @@ const TournamentDetails = () => {
   const formattedDateTime = new Date(tournament.start_date).toLocaleString('fr-FR', {
     day: 'numeric',
     month: 'short',
+    year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
     timeZone: 'Africa/Porto-Novo'

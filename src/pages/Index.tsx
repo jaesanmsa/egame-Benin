@@ -125,7 +125,7 @@ const Index = () => {
                     title={t.title} 
                     game={t.game} 
                     image={t.image_url} 
-                    date={new Date(t.start_date).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Porto-Novo' })} 
+                    date={new Date(t.start_date).toLocaleString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Porto-Novo' })} 
                     participants={`${t.max_participants} places`} 
                     entryFee={t.entry_fee.toString()} 
                     type={t.type as any} 
