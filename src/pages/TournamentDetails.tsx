@@ -100,6 +100,15 @@ const TournamentDetails = () => {
   const isFinished = tournament.status === 'finished';
   const progress = (participantCount / (tournament.max_participants || 40)) * 100;
 
+  // Formatage de la date et l'heure en UTC+1 (Bénin)
+  const formattedDateTime = new Date(tournament.start_date).toLocaleString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Africa/Porto-Novo'
+  }) + " (UTC+1)";
+
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
       <SEO title={tournament.title} />
@@ -145,7 +154,10 @@ const TournamentDetails = () => {
           ) : (
             <>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-                <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center"><Calendar className="text-violet-500 mx-auto mb-1.5" size={16} /><p className="font-bold text-[10px] uppercase tracking-wider">{new Date(tournament.start_date).toLocaleDateString('fr-FR')}</p></div>
+                <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center col-span-2 md:col-span-1">
+                  <Calendar className="text-violet-500 mx-auto mb-1.5" size={16} />
+                  <p className="font-bold text-[10px] uppercase tracking-wider">{formattedDateTime}</p>
+                </div>
                 <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center"><Users className="text-violet-500 mx-auto mb-1.5" size={16} /><p className="font-bold text-[10px] uppercase tracking-wider">{participantCount} / {tournament.max_participants}</p></div>
                 <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center"><Globe className="text-violet-500 mx-auto mb-1.5" size={16} /><p className="font-bold text-[10px] uppercase tracking-wider">{tournament.type}</p></div>
                 <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center"><Shield className="text-violet-500 mx-auto mb-1.5" size={16} /><p className="font-bold text-[10px] uppercase tracking-wider">Anti-Cheat</p></div>

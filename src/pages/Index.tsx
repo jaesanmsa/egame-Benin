@@ -125,7 +125,7 @@ const Index = () => {
                     title={t.title} 
                     game={t.game} 
                     image={t.image_url} 
-                    date={new Date(t.start_date).toLocaleDateString('fr-FR')} 
+                    date={new Date(t.start_date).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Porto-Novo' })} 
                     participants={`${t.max_participants} places`} 
                     entryFee={t.entry_fee.toString()} 
                     type={t.type as any} 
@@ -147,7 +147,6 @@ const Index = () => {
             </Link>
           </div>
 
-          {/* Défilement horizontal pour les actualités */}
           <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-5 pb-6 -mx-6 px-6">
             {MOCK_NEWS.map((article) => (
               <Link key={article.id} to={`/news/${article.id}`} className="min-w-[80%] sm:min-w-[30%] snap-center">
