@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Edit3, Settings, Image as ImageIcon } from 'lucide-react';
+import { Edit3, Settings, Image as ImageIcon, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,6 +19,13 @@ interface EditTournamentTabProps {
 }
 
 const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTournament, onSubmit }: EditTournamentTabProps) => {
+  // Formater la date pour l'input datetime-local
+  const formatDateForInput = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 16);
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm">
       <h2 className="text-xl font-black mb-8 flex items-center gap-3"><Edit3 className="text-cyan-500" /> Modifier les infos</h2>
@@ -77,6 +84,20 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Date et Heure de début</Label>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-3 text-muted-foreground" size={18} />
+                <Input 
+                  type="datetime-local" 
+                  value={formatDateForInput(editingTournament.start_date)} 
+                  onChange={e => setEditingTournament({...editingTournament, start_date: e.target.value})} 
+                  className="pl-10 py-6 bg-muted/50 border-border rounded-xl" 
+                  required 
+                />
+              </div>
             </div>
 
             <div className="space-y-2">

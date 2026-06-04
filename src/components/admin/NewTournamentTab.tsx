@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Image as ImageIcon } from 'lucide-react';
+import { Plus, Image as ImageIcon, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -66,6 +66,20 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTour
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Date et Heure de début</Label>
+          <div className="relative">
+            <Calendar className="absolute left-3 top-3 text-muted-foreground" size={18} />
+            <Input 
+              type="datetime-local" 
+              value={newTournament.start_date} 
+              onChange={e => setNewTournament({...newTournament, start_date: e.target.value})} 
+              className="pl-10 py-6 bg-muted/50 border-border rounded-xl" 
+              required 
+            />
+          </div>
         </div>
 
         <div className="space-y-2">
