@@ -41,7 +41,11 @@ const SEO = ({
       <meta name="twitter:image" content={image} />
 
       {/* Mots-clés spécifiques pour le Bénin */}
-      <meta name="keywords" content="egame benin, gaming benin, tournoi jeux video benin, blur benin, call of duty benin, clash royale benin, esport benin, tournoi cotonou, jeux video 229" />
+      <meta name="keywords" content="egame benin, gaming benin, tournoi jeux video benin, blur benin, call of duty benin, clash royale benin, esport benin, tournoi cotonou, jeux video 229, kkiapay benin" />
+      
+      {/* Balises pour les robots */}
+      <meta name="robots" content="index, follow" />
+      <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     </Helmet>
   );
 };
