@@ -101,11 +101,16 @@ const AdminDashboard = () => {
     const { error } = await supabase
       .from('tournaments')
       .update({ 
-        rules: editingTournament.rules,
-        description: editingTournament.description,
+        title: editingTournament.title,
+        game: editingTournament.game,
+        image_url: editingTournament.image_url,
+        entry_fee: editingTournament.entry_fee,
+        max_participants: editingTournament.max_participants,
+        type: editingTournament.type,
         prize_pool: editingTournament.prize_pool,
-        payment_url: editingTournament.payment_url,
-        game: editingTournament.game
+        description: editingTournament.description,
+        rules: editingTournament.rules,
+        payment_url: editingTournament.payment_url
       })
       .eq('id', editingTournament.id);
     

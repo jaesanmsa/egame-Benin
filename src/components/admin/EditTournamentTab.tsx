@@ -2,14 +2,14 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Edit3, Settings } from 'lucide-react';
+import { Edit3, Settings, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Clash of Clans", "Free Fire", "PUBG Mobile", "Autre"];
+const GAMES = ["Blur", "COD Modern Warfare 4", "COD Mobile", "BombSquad", "Clash Royale", "Clash of Clans", "Free Fire", "PUBG Mobile", "Mobile Legends", "Autre"];
 
 interface EditTournamentTabProps {
   activeTournaments: any[];
@@ -57,6 +57,15 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Titre du tournoi</Label>
+              <Input 
+                value={editingTournament.title || ''} 
+                onChange={e => setEditingTournament({...editingTournament, title: e.target.value})}
+                className="py-6 bg-muted/50 border-border rounded-xl"
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Jeu</Label>
               <Select onValueChange={(v) => setEditingTournament({...editingTournament, game: v})} defaultValue={editingTournament.game}>
                 <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
@@ -70,7 +79,40 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
               </Select>
             </div>
 
-            <div className="md:col-span-2 space-y-2">
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Type</Label>
+              <Select onValueChange={(v) => setEditingTournament({...editingTournament, type: v})} defaultValue={editingTournament.type}>
+                <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="Online" className="font-bold">En ligne</SelectItem>
+                  <SelectItem value="Presentiel" className="font-bold">Présentiel</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Max participants</Label>
+              <Input 
+                type="number"
+                value={editingTournament.max_participants || 0} 
+                onChange={e => setEditingTournament({...editingTournament, max_participants: parseInt(e.target.value)})}
+                className="py-6 bg-muted/50 border-border rounded-xl"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Frais d'entrée (FCFA)</Label>
+              <Input 
+                type="number"
+                value={editingTournament.entry_fee || 0} 
+                onChange={e => setEditingTournament({...editingTournament, entry_fee: parseInt(e.target.value)})}
+                className="py-6 bg-muted/50 border-border rounded-xl"
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Cash Prize</Label>
               <Input 
                 value={editingTournament.prize_pool || ''} 
@@ -78,6 +120,24 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
                 className="py-6 bg-muted/50 border-border rounded-xl"
               />
             </div>
+
+            <div className="md:col-span-2 space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Lien de l'image</Label>
+              <div className="relative">
+                <ImageIcon className="absolute left-3 top-3 text-muted-foreground" size={18} />
+                <Input 
+                  value={editingTournament.image_url || ''} 
+                  onChange={e => setEditingTournament({...editingTournament, image_url: e.target.value})}
+                  className="pl-10 py-6 bg-muted/50 border-border rounded-xl"
+                />
+              </div>
+              {editingTournament.image_url && (
+                <div className="mt-2 aspect-video rounded-xl overflow-hidden border border-border bg-muted max-w-xs">
+                  <img src={editingTournament.image_url} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
+
             <div className="md:col-span-2 space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Description (Déroulement)</Label>
               <Textarea 
