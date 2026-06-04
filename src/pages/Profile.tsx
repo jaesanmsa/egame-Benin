@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import PlayerBadge from '@/components/PlayerBadge';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Palette, HelpCircle, Shield, Activity, Zap, TrendingUp, Award, Bell, BellOff, History } from 'lucide-react';
+import { Trophy, Settings, LogOut, Star, Palette, HelpCircle, Shield, Activity, Zap, TrendingUp, Award, Bell, BellOff, History, LayoutDashboard } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showSuccess, showError } from '@/utils/toast';
@@ -95,6 +95,7 @@ const Profile = () => {
 
   const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
   const username = profile?.username || user.user_metadata?.username || user.email?.split('@')[0];
+  const isAdmin = user.email?.toLowerCase() === 'egamebenin@gmail.com';
   
   const displayPoints = profile?.points || (tournamentCount * 10);
 
@@ -167,6 +168,17 @@ const Profile = () => {
         </section>
 
         <div className="space-y-4">
+          {isAdmin && (
+            <Link to="/admin" className="block">
+              <button className="w-full flex items-center justify-between p-6 bg-violet-600 rounded-2xl border border-violet-500 font-black text-white shadow-xl shadow-violet-500/20 hover:bg-violet-700 transition-all">
+                <div className="flex items-center gap-4">
+                  <LayoutDashboard size={24} /> 
+                  TABLEAU DE BORD ADMIN
+                </div>
+              </button>
+            </Link>
+          )}
+
           <button 
             onClick={handleToggleNotifications} 
             disabled={notifLoading}
