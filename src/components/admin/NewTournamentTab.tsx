@@ -2,14 +2,27 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Plus } from 'lucide-react';
+import { Plus, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const GAMES = ["Free Fire", "Clash Royale", "Clash of Clans", "COD Mobile", "PUBG Mobile", "Blur", "COD MW4", "BombSquad", "Autre"];
+const GAMES_CONFIG: Record<string, string> = {
+  "Free Fire": "/freefire.webp",
+  "Clash Royale": "/clash royal.webp",
+  "Clash of Clans": "/clash of clans.webp",
+  "COD Mobile": "/cod mobile.webp",
+  "PUBG Mobile": "/pubg-mobile.webp",
+  "Blur": "/blur.webp",
+  "COD MW4": "/cod mw4.webp",
+  "BombSquad": "/bombsquad.webp",
+  "Mobile Legends": "/mobile legend.webp",
+  "Autre": ""
+};
+
+const GAMES = Object.keys(GAMES_CONFIG);
 
 interface NewTournamentTabProps {
   newTournament: any;
@@ -18,9 +31,19 @@ interface NewTournamentTabProps {
 }
 
 const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTournamentTabProps) => {
+  const handleGameChange = (game: string) => {
+    const defaultImage = GAMES_CONFIG[game] || "";
+    setNewTournament({
+      ...newTournament,
+      game: game,
+      image_url: defaultImage
+    });
+  };
+
   return (
     <motion.form initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} onSubmit={onSubmit} className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm space-y-8">
       <h2 className="text-xl font-black flex items-center gap-3"><Plus className="text-violet-500" /> Nouveau Tournoi</h2>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label className="text-[10px] font-black uppercase tracking-widest ml-1">ID Unique</Label>
@@ -33,7 +56,7 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTour
         
         <div className="space-y-2">
           <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Jeu</Label>
-          <Select onValueChange={(v) => setNewTournament({...newTournament, game: v})} defaultValue="Free Fire">
+          <Select onValueChange={handleGameChange} defaultValue={newTournament.game || "Free Fire"}>
             <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
               <SelectValue placeholder="Jeu" />
             </SelectTrigger>
@@ -64,8 +87,21 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTour
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Image URL</Label>
-          <Input placeholder="Lien de l'image" value={newTournament.image_url} onChange={e => setNewTournament({...newTournament, image_url: e.target.value})} className="py-6 bg-muted/50 border-border rounded-xl" />
+          <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Image URL (Auto-rempli)</Label>
+          <div className="relative">
+            <ImageIcon className="absolute left-3 top-3 text-muted-foreground" size={18} />
+            <Input 
+              placeholder="Lien de l'image" 
+              value={newTournament.image_url} 
+              onChange={e => setNewTournament({...newTournament, image_url: e.target.value})} 
+              className="pl-10 py-6 bg-muted/50 border-border rounded-xl" 
+            />
+          </div>
+          {newTournament.image_url && (
+            <div className="mt-2 aspect-video rounded-xl overflow-hidden border border-border bg-muted">
+              <img src={newTournament.image_url} alt="Preview" className="w-full h-full object-cover" />
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
