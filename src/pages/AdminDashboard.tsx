@@ -28,7 +28,18 @@ const AdminDashboard = () => {
   const [participantsList, setParticipantsList] = useState<any[]>([]);
   
   const [newTournament, setNewTournament] = useState({
-    id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: ''
+    id: '', 
+    title: '', 
+    game: 'Free Fire', 
+    image_url: '', 
+    entry_fee: 0, 
+    prize_pool: '', 
+    type: 'Online', 
+    max_participants: 40, 
+    rules: '', 
+    description: '', 
+    payment_url: '',
+    start_date: new Date().toISOString().slice(0, 16) // Format pour datetime-local
   });
 
   const [editingTournament, setEditingTournament] = useState<any>(null);
@@ -50,7 +61,6 @@ const AdminDashboard = () => {
     const { data: { session } } = await supabase.auth.getSession();
     const user = session?.user;
     
-    // Vérification stricte de l'email administrateur (insensible à la casse)
     if (user?.email?.toLowerCase() === 'egamebenin@gmail.com') {
       setIsAdmin(true);
     } else {
@@ -91,7 +101,10 @@ const AdminDashboard = () => {
     if (error) showError(error.message);
     else {
       showSuccess("Tournoi ajouté !");
-      setNewTournament({ id: '', title: '', game: 'Blur', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '' });
+      setNewTournament({ 
+        id: '', title: '', game: 'Free Fire', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '',
+        start_date: new Date().toISOString().slice(0, 16)
+      });
       fetchData();
     }
   };
@@ -110,7 +123,8 @@ const AdminDashboard = () => {
         prize_pool: editingTournament.prize_pool,
         description: editingTournament.description,
         rules: editingTournament.rules,
-        payment_url: editingTournament.payment_url
+        payment_url: editingTournament.payment_url,
+        start_date: editingTournament.start_date
       })
       .eq('id', editingTournament.id);
     
