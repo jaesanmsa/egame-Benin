@@ -111,6 +111,9 @@ const TournamentDetails = () => {
   const isFinished = tournament.status === 'finished';
   const progress = (participantCount / (tournament.max_participants || 40)) * 100;
 
+  // Vérification si les inscriptions sont fermées
+  const isRegistrationClosed = tournament.registration_end_date && new Date() > new Date(tournament.registration_end_date);
+
   const formattedDateTime = new Date(tournament.start_date).toLocaleString('fr-FR', {
     day: 'numeric',
     month: 'short',
@@ -119,6 +122,15 @@ const TournamentDetails = () => {
     minute: '2-digit',
     timeZone: 'Africa/Porto-Novo'
   }) + " (UTC+1)";
+
+  const formattedEndRegistration = tournament.registration_end_date ? new Date(tournament.registration_end_date).toLocaleString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Africa/Porto-Novo'
+  }) : null;
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
@@ -173,14 +185,26 @@ const TournamentDetails = () => {
                 <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center"><Globe className="text-violet-500 mx-auto mb-1.5" size={16} /><p className="font-bold text-[10px] uppercase tracking-wider">{tournament.type}</p></div>
                 <div className="bg-muted/30 p-3.5 rounded-2xl border border-border/50 text-center"><Shield className="text-violet-500 mx-auto mb-1.5" size={16} /><p className="font-bold text-[10px] uppercase tracking-wider">Anti-Cheat</p></div>
               </div>
+              
               <div className="mb-8 space-y-2.5"><div className="flex justify-between text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground"><span>Remplissage</span><span className="text-violet-500">{Math.round(progress)}%</span></div><Progress value={progress} className="h-1.5 bg-muted" /></div>
+              
               {userRegistration ? (
                 <div className="bg-green-500/5 border border-green-500/20 p-6 rounded-[2rem] text-center">
                   <div className="flex items-center justify-center gap-3 mb-4 text-green-500">{userRegistration.status === 'Réussi' ? <CheckCircle2 size={20} /> : <Clock size={20} className="animate-pulse" />}<h3 className="font-bold text-base">Inscription Validée</h3></div>
                   <Link to="/payments"><Button className="w-full bg-green-600 hover:bg-green-700 font-bold text-white py-6 rounded-2xl">Voir mes inscriptions</Button></Link>
                 </div>
+              ) : isRegistrationClosed ? (
+                <div className="bg-orange-500/5 border border-orange-500/20 p-6 rounded-[2rem] text-center">
+                  <div className="flex items-center justify-center gap-3 mb-2 text-orange-500"><Clock size={20} /><h3 className="font-bold text-base uppercase tracking-widest">Inscriptions Closes</h3></div>
+                  <p className="text-[10px] text-muted-foreground font-bold">Fermées le {formattedEndRegistration}</p>
+                </div>
               ) : (
-                <Button onClick={handleStartRegistration} className="w-full py-7 rounded-2xl font-bold text-base bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/20">S'inscrire • {tournament.entry_fee} FCFA</Button>
+                <div className="space-y-4">
+                  <Button onClick={handleStartRegistration} className="w-full py-7 rounded-2xl font-bold text-base bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/20">S'inscrire • {tournament.entry_fee} FCFA</Button>
+                  {formattedEndRegistration && (
+                    <p className="text-center text-[9px] font-black uppercase tracking-widest text-muted-foreground">Fin des inscriptions : {formattedEndRegistration}</p>
+                  )}
+                </div>
               )}
             </>
           )}

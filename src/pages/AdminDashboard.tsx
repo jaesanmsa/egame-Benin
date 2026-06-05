@@ -39,7 +39,8 @@ const AdminDashboard = () => {
     rules: '', 
     description: '', 
     payment_url: '',
-    start_date: new Date().toISOString().slice(0, 16) // Format pour datetime-local
+    start_date: new Date().toISOString().slice(0, 16),
+    registration_end_date: new Date().toISOString().slice(0, 16)
   });
 
   const [editingTournament, setEditingTournament] = useState<any>(null);
@@ -103,7 +104,8 @@ const AdminDashboard = () => {
       showSuccess("Tournoi ajouté !");
       setNewTournament({ 
         id: '', title: '', game: 'Free Fire', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '',
-        start_date: new Date().toISOString().slice(0, 16)
+        start_date: new Date().toISOString().slice(0, 16),
+        registration_end_date: new Date().toISOString().slice(0, 16)
       });
       fetchData();
     }
@@ -124,7 +126,8 @@ const AdminDashboard = () => {
         description: editingTournament.description,
         rules: editingTournament.rules,
         payment_url: editingTournament.payment_url,
-        start_date: editingTournament.start_date
+        start_date: editingTournament.start_date,
+        registration_end_date: editingTournament.registration_end_date
       })
       .eq('id', editingTournament.id);
     

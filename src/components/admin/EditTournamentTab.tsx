@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Edit3, Settings, Image as ImageIcon, Calendar } from 'lucide-react';
+import { Edit3, Settings, Image as ImageIcon, Calendar, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,7 +19,6 @@ interface EditTournamentTabProps {
 }
 
 const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTournament, onSubmit }: EditTournamentTabProps) => {
-  // Formater la date pour l'input datetime-local
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -101,6 +100,20 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
             </div>
 
             <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-orange-500">Fin des inscriptions</Label>
+              <div className="relative">
+                <Clock className="absolute left-3 top-3 text-orange-500/60" size={18} />
+                <Input 
+                  type="datetime-local" 
+                  value={formatDateForInput(editingTournament.registration_end_date)} 
+                  onChange={e => setEditingTournament({...editingTournament, registration_end_date: e.target.value})} 
+                  className="pl-10 py-6 bg-muted/50 border-orange-500/20 rounded-xl focus:border-orange-500" 
+                  required 
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Type</Label>
               <Select onValueChange={(v) => setEditingTournament({...editingTournament, type: v})} defaultValue={editingTournament.type}>
                 <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
@@ -152,11 +165,6 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
                   className="pl-10 py-6 bg-muted/50 border-border rounded-xl"
                 />
               </div>
-              {editingTournament.image_url && (
-                <div className="mt-2 aspect-video rounded-xl overflow-hidden border border-border bg-muted max-w-xs">
-                  <img src={editingTournament.image_url} alt="Preview" className="w-full h-full object-cover" />
-                </div>
-              )}
             </div>
 
             <div className="md:col-span-2 space-y-2">
