@@ -1,75 +1,33 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
-import { Newspaper, ArrowRight, Clock, Zap } from 'lucide-react';
+import { Newspaper, ArrowRight, Clock, SearchX } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-export const MOCK_NEWS = [
-  {
-    id: 'coc-rules',
-    title: "RÈGLEMENT OFFICIEL : Tournoi Inter-Clan Clash of Clans - \"L'Arène Africaine\"",
-    excerpt: "Découvrez le format, le code de conduite et les procédures officielles pour le plus grand tournoi de clans au Bénin.",
-    content: `Format de la Compétition
-Format : Guerre amicale (Friendly War).
-Taille d'équipe : 5 contre 5.
-Niveaux (Hôtels de Ville) : Les clans seront répartis par tranches de niveaux (TH) pour garantir une équité totale.
-Logiciel de jeu : Seule la dernière version officielle de Clash of Clans est autorisée.
-
-Code de Conduite et Fair-Play
-Zéro Triche (Modding) : L'utilisation de logiciels tiers, d'outils de triche (bots, modding), ou de techniques de "match fixing" (trucage de guerre) entraînera une disqualification immédiate et un bannissement à vie de la plateforme eGame Bénin.
- Respect : Le respect envers les adversaires est obligatoire. Toute insulte dans le chat du jeu ou dans les groupes de communication entraînera des sanctions.
-
-Responsabilités du Capitaine de Clan
-Le Chef (ou le Co-chef désigné) est l'unique interlocuteur officiel. Il s'engage à :
-- Être présent sur le groupe WhatsApp officiel des Capitaines.
-- Assurer la présence de ses 5 membres à l'heure du lancement du défi.
-- Signaler tout retard ou problème technique au moins 2 heures avant le début de la guerre.
-Forfait : Un retard de plus de 15 minutes sur l'horaire de lancement du défi est considéré comme un forfait pour le clan en retard.
-
-Procédure de Litige
-En cas de désaccord, le Capitaine doit soumettre une réclamation officielle par e-mail à egamebenin@gmail.com avec les preuves vidéos (replay du jeu). L'équipe d'arbitrage d'eGame Bénin tranchera sous 12 heures. La décision est sans appel.
-
-Inscription et Cash Prize
-L'inscription se fait exclusivement via le formulaire sur egamebenin.com. Le paiement du Cash Prize sera effectué uniquement par Mobile Money (MTN, Moov, Celtis) sur le numéro du Chef de Clan enregistré lors de l'inscription.
-Garantie : Les gains sont garantis et versés automatiquement dans les 24h suivant la finale du tournoi.
-
-"L'Afrique prend sa couronne." Le tournoi est ouvert. Montrez au monde que les meilleurs stratèges du monde sont ici, en Afrique.`,
-    image: "/coc-tournament.webp",
-    readTime: "10 min",
-    featured: true
-  },
-  {
-    id: '3',
-    title: "Quels sont les jeux disponibles pour gagner des Cash Prizes ?",
-    excerpt: "Découvrez la liste des disciplines compétitives disponibles sur notre plateforme.",
-    content: "eGame Bénin propose une sélection variée de jeux pour tous les profils de joueurs...",
-    image: "/games-news.webp",
-    readTime: "6 min"
-  },
-  {
-    id: '1',
-    title: "eGame Bénin est né : La révolution eSport commence au Bénin.",
-    excerpt: "Découvrez notre mission pour professionnaliser le gaming au Bénin avec des cash prizes via Mobile Money.",
-    content: "eGame Bénin est officiellement lancé avec une mission claire...",
-    image: "/news-hero.png",
-    readTime: "5 min"
-  },
-  {
-    id: '2',
-    title: "3 conseils pour dominer ton premier tournoi sur eGame Bénin.",
-    excerpt: "Préparez-vous comme un pro avec nos conseils techniques essentiels pour votre première compétition.",
-    content: "Participer à son premier tournoi eSport peut être stressant...",
-    image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=800",
-    readTime: "4 min"
-  }
-];
+import { supabase } from '@/lib/supabase';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const News = () => {
-  const featuredArticle = MOCK_NEWS.find(a => a.featured);
-  const otherArticles = MOCK_NEWS.filter(a => !a.featured);
+  const [news, setNews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      const { data } = await supabase
+        .from('news')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (data) setNews(data);
+      setLoading(false);
+    };
+    fetchNews();
+  }, []);
+
+  const featuredArticle = news.find(a => a.is_featured);
+  const otherArticles = news.filter(a => a.id !== featuredArticle?.id);
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-32 pt-12 md:pt-24">
@@ -89,55 +47,71 @@ const News = () => {
           </div>
         </div>
 
-        {/* Article à la Une - Style identique à la page d'accueil */}
-        {featuredArticle && (
-          <div className="mb-16">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-violet-500 mb-6">À la une</h2>
-            <Link to={`/news/${featuredArticle.id}`} className="block max-w-md">
-              <motion.div 
-                whileHover={{ y: -8 }}
-                className="bg-[#1a0b2e] border border-violet-500/20 rounded-[2.5rem] overflow-hidden shadow-2xl group"
-              >
-                <div className="aspect-video overflow-hidden">
-                  <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-2 text-[8px] font-black text-violet-400 uppercase tracking-widest mb-3">
-                    <Clock size={10} /> {featuredArticle.readTime}
-                  </div>
-                  <h3 className="text-white font-bold text-xs mb-3 line-clamp-2 group-hover:text-violet-400 transition-colors">{featuredArticle.title}</h3>
-                  <p className="text-violet-200/60 text-[9px] leading-relaxed line-clamp-2">{featuredArticle.excerpt}</p>
-                </div>
-              </motion.div>
-            </Link>
+        {loading ? (
+          <div className="space-y-12">
+            <Skeleton className="h-64 w-full rounded-[2.5rem]" />
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+              <Skeleton className="h-48 rounded-[2.5rem]" />
+              <Skeleton className="h-48 rounded-[2.5rem]" />
+              <Skeleton className="h-48 rounded-[2.5rem]" />
+            </div>
           </div>
-        )}
+        ) : news.length === 0 ? (
+          <div className="py-20 text-center bg-card/30 rounded-[40px] border border-dashed border-border">
+            <SearchX size={48} className="mx-auto text-muted-foreground/20 mb-4" />
+            <p className="text-muted-foreground text-sm font-bold italic">Aucun article publié pour le moment.</p>
+          </div>
+        ) : (
+          <>
+            {featuredArticle && (
+              <div className="mb-16">
+                <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-violet-500 mb-6">À la une</h2>
+                <Link to={`/news/${featuredArticle.id}`} className="block max-w-md">
+                  <motion.div 
+                    whileHover={{ y: -8 }}
+                    className="bg-[#1a0b2e] border border-violet-500/20 rounded-[2.5rem] overflow-hidden shadow-2xl group"
+                  >
+                    <div className="aspect-video overflow-hidden">
+                      <img src={featuredArticle.image_url} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 text-[8px] font-black text-violet-400 uppercase tracking-widest mb-3">
+                        <Clock size={10} /> {featuredArticle.read_time}
+                      </div>
+                      <h3 className="text-white font-bold text-xs mb-3 line-clamp-2 group-hover:text-violet-400 transition-colors">{featuredArticle.title}</h3>
+                      <p className="text-violet-200/60 text-[9px] leading-relaxed line-clamp-2">{featuredArticle.excerpt}</p>
+                    </div>
+                  </motion.div>
+                </Link>
+              </div>
+            )}
 
-        {/* Grille des autres articles */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
-          {otherArticles.map((article) => (
-            <Link key={article.id} to={`/news/${article.id}`}>
-              <motion.article 
-                whileHover={{ y: -8 }}
-                className="bg-card border border-border rounded-[2.5rem] overflow-hidden shadow-sm h-full flex flex-col group"
-              >
-                <div className="aspect-square overflow-hidden bg-zinc-900">
-                  <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                </div>
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="flex items-center gap-2 text-[8px] font-bold text-violet-500 uppercase tracking-widest mb-3">
-                    <Clock size={10} /> {article.readTime}
-                  </div>
-                  <h2 className="text-sm font-black mb-3 leading-tight group-hover:text-violet-500 transition-colors line-clamp-2">{article.title}</h2>
-                  <p className="text-muted-foreground text-[10px] leading-relaxed mb-4 line-clamp-2">{article.excerpt}</p>
-                  <div className="mt-auto flex items-center gap-1 text-violet-500 font-black text-[8px] uppercase tracking-widest">
-                    Lire <ArrowRight size={12} />
-                  </div>
-                </div>
-              </motion.article>
-            </Link>
-          ))}
-        </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+              {otherArticles.map((article) => (
+                <Link key={article.id} to={`/news/${article.id}`}>
+                  <motion.article 
+                    whileHover={{ y: -8 }}
+                    className="bg-card border border-border rounded-[2.5rem] overflow-hidden shadow-sm h-full flex flex-col group"
+                  >
+                    <div className="aspect-square overflow-hidden bg-zinc-900">
+                      <img src={article.image_url} alt={article.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                    <div className="p-6 flex flex-col flex-1">
+                      <div className="flex items-center gap-2 text-[8px] font-bold text-violet-500 uppercase tracking-widest mb-3">
+                        <Clock size={10} /> {article.read_time}
+                      </div>
+                      <h2 className="text-sm font-black mb-3 leading-tight group-hover:text-violet-500 transition-colors line-clamp-2">{article.title}</h2>
+                      <p className="text-muted-foreground text-[10px] leading-relaxed mb-4 line-clamp-2">{article.excerpt}</p>
+                      <div className="mt-auto flex items-center gap-1 text-violet-500 font-black text-[8px] uppercase tracking-widest">
+                        Lire <ArrowRight size={12} />
+                      </div>
+                    </div>
+                  </motion.article>
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
       </main>
     </div>
   );

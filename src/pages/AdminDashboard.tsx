@@ -15,6 +15,7 @@ import NewTournamentTab from '@/components/admin/NewTournamentTab';
 import EditTournamentTab from '@/components/admin/EditTournamentTab';
 import FinishTournamentTab from '@/components/admin/FinishTournamentTab';
 import LeaderboardTab from '@/components/admin/LeaderboardTab';
+import NewsTab from '@/components/admin/NewsTab';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -217,6 +218,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="participants" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Joueurs</TabsTrigger>
               <TabsTrigger value="tournaments" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Nouveau</TabsTrigger>
               <TabsTrigger value="edit" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Modifier</TabsTrigger>
+              <TabsTrigger value="news" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Actualités</TabsTrigger>
               <TabsTrigger value="finish" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Clôturer</TabsTrigger>
               <TabsTrigger value="leaderboard" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Top 5</TabsTrigger>
             </TabsList>
@@ -250,6 +252,10 @@ const AdminDashboard = () => {
               setEditingTournament={setEditingTournament} 
               onSubmit={handleUpdateTournament} 
             />
+          </TabsContent>
+
+          <TabsContent value="news">
+            <NewsTab />
           </TabsContent>
 
           <TabsContent value="finish">

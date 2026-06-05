@@ -11,11 +11,11 @@ import { Trophy, Users, Activity, Shield, CreditCard, Zap, ArrowRight, MessageSq
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
-import { MOCK_NEWS } from './News';
 
 const Index = () => {
   const [stats, setStats] = useState({ players: 30, tournaments: 5, cashPrize: 150000 });
   const [activeTournaments, setActiveTournaments] = useState<any[]>([]);
+  const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -28,6 +28,15 @@ const Index = () => {
         .order('created_at', { ascending: false });
       
       if (tours) setActiveTournaments(tours);
+
+      const { data: newsData } = await supabase
+        .from('news')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+      
+      if (newsData) setNews(newsData);
+
       setLoading(false);
     };
     fetchData();
@@ -148,18 +157,18 @@ const Index = () => {
           </div>
 
           <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-5 pb-6 -mx-6 px-6">
-            {MOCK_NEWS.map((article) => (
+            {news.map((article) => (
               <Link key={article.id} to={`/news/${article.id}`} className="min-w-[80%] sm:min-w-[30%] snap-center">
                 <motion.div 
                   whileHover={{ y: -8 }}
                   className="bg-[#1a0b2e] border border-violet-500/20 rounded-[2.5rem] overflow-hidden shadow-2xl group h-full"
                 >
                   <div className="aspect-video overflow-hidden">
-                    <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <img src={article.image_url} alt={article.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   </div>
                   <div className="p-6">
                     <div className="flex items-center gap-2 text-[8px] font-black text-violet-400 uppercase tracking-widest mb-3">
-                      <Clock size={10} /> {article.readTime}
+                      <Clock size={10} /> {article.read_time}
                     </div>
                     <h3 className="text-white font-bold text-xs mb-3 line-clamp-2 group-hover:text-violet-400 transition-colors">{article.title}</h3>
                     <p className="text-violet-200/60 text-[9px] leading-relaxed line-clamp-2">{article.excerpt}</p>

@@ -1,19 +1,35 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, Share2 } from 'lucide-react';
-import { MOCK_NEWS } from './News';
+import { supabase } from '@/lib/supabase';
 import { showSuccess } from '@/utils/toast';
 
 const NewsDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const article = MOCK_NEWS.find(a => a.id === id);
+  const [article, setArticle] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchArticle = async () => {
+      const { data } = await supabase
+        .from('news')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (data) setArticle(data);
+      setLoading(false);
+    };
+    fetchArticle();
+  }, [id]);
+
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
   if (!article) return null;
 
   const handleShare = () => {
@@ -26,12 +42,12 @@ const NewsDetail = () => {
       <SEO 
         title={article.title} 
         description={article.excerpt} 
-        image={article.image}
+        image={article.image_url}
       />
       <Navbar />
       
       <div className="relative h-[50vh] w-full overflow-hidden">
-        <img src={article.image} className="w-full h-full object-cover" alt="" />
+        <img src={article.image_url} className="w-full h-full object-cover" alt="" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
         <div className="absolute top-6 left-6 z-20">
           <button onClick={() => navigate(-1)} className="p-2.5 bg-card/80 backdrop-blur-md rounded-full border border-border shadow-lg">
@@ -49,7 +65,7 @@ const NewsDetail = () => {
           <header className="mb-10">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-6 text-[10px] font-black text-violet-500 uppercase tracking-[0.2em]">
-                <span className="flex items-center gap-2"><Clock size={14} /> {article.readTime} de lecture</span>
+                <span className="flex items-center gap-2"><Clock size={14} /> {article.read_time} de lecture</span>
               </div>
               <button onClick={handleShare} className="text-muted-foreground hover:text-violet-500 transition-colors">
                 <Share2 size={20} />
@@ -64,15 +80,8 @@ const NewsDetail = () => {
             <p className="text-lg md:text-xl text-foreground/90 leading-relaxed mb-8 font-medium">
               {article.excerpt}
             </p>
-            <div className="text-muted-foreground text-base md:text-lg leading-loose space-y-6">
-              <p>{article.content}</p>
-              <p>
-                L'engagement de la communauté est au cœur de cette évolution. Les tournois réguliers permettent non seulement de gagner des prix, mais aussi de se faire un nom dans le milieu. eGame Bénin s'engage à fournir la meilleure expérience possible pour tous les compétiteurs, quel que soit leur niveau.
-              </p>
-              <h2 className="text-2xl font-black text-white pt-6">Pourquoi c'est important pour vous ?</h2>
-              <p>
-                Participer à ces événements vous permet de développer vos compétences stratégiques, votre esprit d'équipe et votre réactivité. C'est aussi une excellente occasion de rencontrer d'autres passionnés et de partager votre expérience de jeu.
-              </p>
+            <div className="text-muted-foreground text-base md:text-lg leading-loose space-y-6 whitespace-pre-wrap">
+              {article.content}
             </div>
           </div>
         </motion.article>

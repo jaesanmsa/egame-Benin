@@ -10,14 +10,27 @@ const CookieConsent = () => {
 
   useEffect(() => {
     const consent = localStorage.getItem('egame-cookie-consent');
+    const consentTimestamp = localStorage.getItem('egame-cookie-timestamp');
+    
     if (!consent) {
       const timer = setTimeout(() => setIsVisible(true), 2000);
       return () => clearTimeout(timer);
+    }
+
+    // Si refusé, on vérifie si 24h sont passées
+    if (consent === 'denied' && consentTimestamp) {
+      const now = new Date().getTime();
+      const oneDay = 24 * 60 * 60 * 1000;
+      if (now - parseInt(consentTimestamp) > oneDay) {
+        const timer = setTimeout(() => setIsVisible(true), 2000);
+        return () => clearTimeout(timer);
+      }
     }
   }, []);
 
   const handleConsent = (granted: boolean) => {
     const status = granted ? 'granted' : 'denied';
+    const now = new Date().getTime();
     
     // Update Google Consent Mode
     if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -30,6 +43,7 @@ const CookieConsent = () => {
     }
 
     localStorage.setItem('egame-cookie-consent', status);
+    localStorage.setItem('egame-cookie-timestamp', now.toString());
     setIsVisible(false);
   };
 
