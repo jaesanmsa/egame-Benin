@@ -17,7 +17,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     setLoading(true);
     
-    // On s'assure que l'URL est propre
+    // On s'assure que l'URL est propre et absolue
     const redirectUrl = `${window.location.origin}/reset-password`;
     
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
