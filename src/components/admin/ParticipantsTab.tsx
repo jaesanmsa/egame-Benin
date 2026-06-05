@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, User } from 'lucide-react';
+import { Users, User, MessageSquare } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,15 @@ interface ParticipantsTabProps {
 }
 
 const ParticipantsTab = ({ activeTournaments, fetchParticipants, selectedTournamentId, participants }: ParticipantsTabProps) => {
+  
+  const handleContact = (phone: string, username: string) => {
+    if (!phone) return;
+    // Nettoyage du numéro (garde uniquement les chiffres)
+    const cleanPhone = phone.replace(/\D/g, '');
+    const message = encodeURIComponent(`Bonjour ${username}, je suis l'admin de eGame Bénin. Je te contacte concernant ton inscription au tournoi.`);
+    window.open(`https://wa.me/${cleanPhone.startsWith('229') ? cleanPhone : '229' + cleanPhone}?text=${message}`, '_blank');
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm">
       <h2 className="text-xl font-black mb-8 flex items-center gap-3"><Users className="text-cyan-500" /> Liste des Champions</h2>
@@ -37,7 +46,6 @@ const ParticipantsTab = ({ activeTournaments, fetchParticipants, selectedTournam
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{participants.length} Joueurs confirmés</p>
-            <Button variant="outline" size="sm" className="text-[9px] font-black uppercase tracking-widest rounded-xl h-8">Exporter CSV</Button>
           </div>
           {participants.length === 0 ? (
             <div className="text-center py-12 bg-muted/20 rounded-3xl border border-dashed border-border">
@@ -54,12 +62,22 @@ const ParticipantsTab = ({ activeTournaments, fetchParticipants, selectedTournam
                     </div>
                     <div>
                       <p className="font-black text-sm">{p.profiles?.username || "Sans pseudo"}</p>
-                      <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{p.profiles?.full_name} • {p.profiles?.city}</p>
+                      <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{p.profiles?.full_name || 'Joueur'}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs font-black text-violet-500">{p.profiles?.phone || "Pas de numéro"}</p>
-                    <p className="text-[9px] text-muted-foreground font-mono mt-1">{p.validation_code}</p>
+                  <div className="flex items-center gap-3">
+                    <div className="text-right hidden md:block">
+                      <p className="text-xs font-black text-violet-500">{p.profiles?.phone || "Pas de numéro"}</p>
+                      <p className="text-[9px] text-muted-foreground font-mono mt-1">{p.validation_code}</p>
+                    </div>
+                    <Button 
+                      size="icon" 
+                      onClick={() => handleContact(p.profiles?.phone, p.profiles?.username)}
+                      className="bg-green-600 hover:bg-green-700 text-white rounded-xl"
+                      disabled={!p.profiles?.phone}
+                    >
+                      <MessageSquare size={18} />
+                    </Button>
                   </div>
                 </div>
               ))}

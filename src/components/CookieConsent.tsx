@@ -17,11 +17,11 @@ const CookieConsent = () => {
       return () => clearTimeout(timer);
     }
 
-    // Si refusé, on vérifie si 24h sont passées
+    // Si refusé, on vérifie si 30 jours sont passés
     if (consent === 'denied' && consentTimestamp) {
       const now = new Date().getTime();
-      const oneDay = 24 * 60 * 60 * 1000;
-      if (now - parseInt(consentTimestamp) > oneDay) {
+      const thirtyDays = 30 * 24 * 60 * 60 * 1000; // 30 jours
+      if (now - parseInt(consentTimestamp) > thirtyDays) {
         const timer = setTimeout(() => setIsVisible(true), 2000);
         return () => clearTimeout(timer);
       }
@@ -32,7 +32,6 @@ const CookieConsent = () => {
     const status = granted ? 'granted' : 'denied';
     const now = new Date().getTime();
     
-    // Update Google Consent Mode
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('consent', 'update', {
         'ad_storage': status,
