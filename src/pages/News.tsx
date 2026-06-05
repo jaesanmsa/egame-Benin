@@ -15,8 +15,6 @@ export const MOCK_NEWS = [
     content: `Format de la Compétition
 Format : Guerre amicale (Friendly War).
 Taille d'équipe : 5 contre 5.
-Préparation : 24 heures.
-Guerre : 24 heures.
 Niveaux (Hôtels de Ville) : Les clans seront répartis par tranches de niveaux (TH) pour garantir une équité totale.
 Logiciel de jeu : Seule la dernière version officielle de Clash of Clans est autorisée.
 
