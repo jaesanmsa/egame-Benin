@@ -20,7 +20,7 @@ Logiciel de jeu : Seule la dernière version officielle de Clash of Clans est au
 
 Code de Conduite et Fair-Play
 Zéro Triche (Modding) : L'utilisation de logiciels tiers, d'outils de triche (bots, modding), ou de techniques de "match fixing" (trucage de guerre) entraînera une disqualification immédiate et un bannissement à vie de la plateforme eGame Bénin.
-Enregistrement des preuves : Pour chaque guerre, les meilleures attaques de chaque clan doivent être enregistrées en vidéo (capture d'écran vidéo mobile). En cas de suspicion de triche, ces preuves seront demandées par l'organisation. Respect : Le respect envers les adversaires est obligatoire. Toute insulte dans le chat du jeu ou dans les groupes de communication entraînera des sanctions.
+ Respect : Le respect envers les adversaires est obligatoire. Toute insulte dans le chat du jeu ou dans les groupes de communication entraînera des sanctions.
 
 Responsabilités du Capitaine de Clan
 Le Chef (ou le Co-chef désigné) est l'unique interlocuteur officiel. Il s'engage à :
