@@ -78,13 +78,17 @@ const TournamentDetails = () => {
       const { data: { user } } = await supabase.auth.getUser();
       const redirectUrl = `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}&gateway=maketou`;
       
-      // @ts-ignore
-      Maketou.init({
+      // Vérification si le SDK est chargé
+      const MaketouSDK = (window as any).Maketou;
+      if (!MaketouSDK) {
+        throw new Error("Le service Maketou n'est pas encore prêt. Réessayez dans 2 secondes.");
+      }
+
+      MaketouSDK.init({
         public_key: 'msk_714b9919faaccc120d399a4958a228982af874a691de05d73970a0d41aa9a650'
       });
 
-      // @ts-ignore
-      Maketou.open({
+      MaketouSDK.open({
         amount: tournament.entry_fee,
         description: `Inscription: ${tournament.title}`,
         callback_url: redirectUrl,
@@ -94,9 +98,9 @@ const TournamentDetails = () => {
           phone: userProfile?.phone || ""
         }
       });
-    } catch (err) {
-      showError("Erreur lors du lancement de Maketou.");
-      console.error(err);
+    } catch (err: any) {
+      showError(err.message || "Erreur lors du lancement de Maketou.");
+      console.error("[Maketou Error]", err);
     }
   };
 
@@ -105,8 +109,10 @@ const TournamentDetails = () => {
       const { data: { user } } = await supabase.auth.getUser();
       const redirectUrl = `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
       
-      // @ts-ignore
-      FedaPay.init({
+      const FedaPaySDK = (window as any).FedaPay;
+      if (!FedaPaySDK) throw new Error("FedaPay n'est pas prêt.");
+
+      FedaPaySDK.init({
         public_key: 'pk_live_u7rqiI-D3oGsFCrTHNFi9Xxh',
         transaction: {
           amount: tournament.entry_fee,
@@ -122,8 +128,8 @@ const TournamentDetails = () => {
           }
         }
       }).open();
-    } catch (err) {
-      showError("Erreur lors du lancement de FedaPay.");
+    } catch (err: any) {
+      showError(err.message || "Erreur lors du lancement de FedaPay.");
       console.error(err);
     }
   };
@@ -131,6 +137,8 @@ const TournamentDetails = () => {
   const handleKKiaPay = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      if (!(window as any).openKkiapayWidget) throw new Error("KKiaPay n'est pas prêt.");
+
       // @ts-ignore
       openKkiapayWidget({
         amount: tournament.entry_fee,
@@ -142,7 +150,7 @@ const TournamentDetails = () => {
         callback: `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`
       });
     } catch (err: any) { 
-      showError("Erreur lors du lancement de KKiaPay.");
+      showError(err.message || "Erreur lors du lancement de KKiaPay.");
       console.error(err);
     }
   };
