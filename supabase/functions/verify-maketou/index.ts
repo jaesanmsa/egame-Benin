@@ -19,8 +19,8 @@ serve(async (req) => {
 
     console.log(`[verify-maketou] Vérification de la transaction: ${transaction_id}`)
 
-    // 1. Appeler l'API Maketou pour vérifier le statut
-    const response = await fetch(`https://api.maketou.com/v1/transactions/verify/${transaction_id}`, {
+    // 1. Appeler l'API Maketou pour vérifier le statut (URL mise à jour vers .net)
+    const response = await fetch(`https://api.maketou.net/v1/transactions/verify/${transaction_id}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${MAKETOU_SECRET_KEY}`,
@@ -30,7 +30,7 @@ serve(async (req) => {
 
     const maketouData = await response.json()
     
-    // Vérification du statut (selon la doc Maketou, souvent 'SUCCESS' ou 'COMPLETED')
+    // Vérification du statut
     if (maketouData.status !== 'SUCCESS' && maketouData.status !== 'COMPLETED') {
       throw new Error(`Paiement non validé. Statut: ${maketouData.status}`)
     }
@@ -54,7 +54,7 @@ serve(async (req) => {
     const { data: existing } = await supabase
       .from('payments')
       .select('*')
-      .eq('fedapay_transaction_id', transaction_id) // On réutilise ce champ pour stocker l'ID Maketou
+      .eq('fedapay_transaction_id', transaction_id)
       .maybeSingle()
 
     if (existing) {
