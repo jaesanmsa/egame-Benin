@@ -23,12 +23,15 @@ const PaymentSuccess = () => {
       if (hasProcessed.current) return;
       hasProcessed.current = true;
 
-      const transactionId = searchParams.get('transaction_id') || searchParams.get('kkiapay_transaction_id');
+      const transactionId = searchParams.get('transaction_id') || searchParams.get('id');
       const tournamentId = searchParams.get('tournamentId');
       const tName = searchParams.get('tournamentName');
       const amount = searchParams.get('amount');
 
-      if (!transactionId || !tournamentId) {
+      // Si c'est KKiaPay (qui renvoie kkiapay_transaction_id)
+      const kkiapayId = searchParams.get('kkiapay_transaction_id');
+
+      if (!transactionId && !kkiapayId) {
         setError("Informations de transaction manquantes.");
         setIsProcessing(false);
         return;
@@ -40,62 +43,46 @@ const PaymentSuccess = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error("Session utilisateur introuvable.");
 
-        // 1. Vérifier si déjà enregistré
-        const { data: existing } = await supabase
-          .from('payments')
-          .select('*')
-          .eq('fedapay_transaction_id', transactionId)
-          .maybeSingle();
-
-        if (existing) {
-          setValidationCode(existing.validation_code);
-          setIsProcessing(false);
-          return;
-        }
-
-        // 2. Créer le code et insérer le paiement
-        const code = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-        
-        const { error: insertError } = await supabase.from('payments').insert({
-          user_id: user.id,
-          tournament_id: tournamentId,
-          tournament_name: tName || "Tournoi",
-          amount: amount || "0",
-          status: 'Réussi',
-          validation_code: code,
-          fedapay_transaction_id: transactionId
-        });
-
-        if (insertError) throw insertError;
-
-        // 3. CRÉDITER LES POINTS DE FIDÉLITÉ (+10 points)
-        const { data: profile } = await supabase.from('profiles').select('points').eq('id', user.id).single();
-        const currentPoints = profile?.points || 0;
-        
-        await supabase
-          .from('profiles')
-          .update({ points: currentPoints + 10 })
-          .eq('id', user.id);
-
-        setValidationCode(code);
-        showSuccess("Inscription confirmée ! +10 points gagnés.");
-
-        // 4. Notification Twilio
-        try {
-          const { data: prof } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-          await supabase.functions.invoke('notify-payment', {
-            body: {
-              joueur_nom: prof?.full_name || prof?.username || "Joueur",
-              joueur_telephone: prof?.phone || "N/A",
-              tournoi_nom: tName || "Tournoi",
-              montant: amount || "0",
-              transactionId: transactionId
+        if (transactionId) {
+          // LOGIQUE FEDAPAY : Appel de l'Edge Function pour vérification serveur
+          const { data, error: funcError } = await supabase.functions.invoke('verify-fedapay', {
+            body: { 
+              transaction_id: transactionId,
+              tournamentId,
+              tournamentName: tName,
+              amount
             }
           });
-        } catch (notifyErr) {
-          console.warn("Erreur notification Twilio:", notifyErr);
-        }
 
+          if (funcError || data.error) throw new Error(data?.error || "Erreur de vérification FedaPay");
+          
+          setValidationCode(data.validation_code);
+          showSuccess("Paiement FedaPay vérifié !");
+        } else {
+          // LOGIQUE KKIAPAY (Existante)
+          const { data: existing } = await supabase
+            .from('payments')
+            .select('*')
+            .eq('fedapay_transaction_id', kkiapayId)
+            .maybeSingle();
+
+          if (existing) {
+            setValidationCode(existing.validation_code);
+          } else {
+            const code = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+            await supabase.from('payments').insert({
+              user_id: user.id,
+              tournament_id: tournamentId,
+              tournament_name: tName || "Tournoi",
+              amount: amount || "0",
+              status: 'Réussi',
+              validation_code: code,
+              fedapay_transaction_id: kkiapayId
+            });
+            setValidationCode(code);
+            showSuccess("Inscription KKiaPay confirmée !");
+          }
+        }
       } catch (err: any) {
         setError(err.message || "Une erreur est survenue.");
         showError("Erreur d'enregistrement.");
@@ -120,14 +107,15 @@ const PaymentSuccess = () => {
           {isProcessing ? (
             <div className="py-12 space-y-6">
               <Loader2 className="w-12 h-12 text-violet-500 animate-spin mx-auto" />
-              <h1 className="text-2xl font-black">Validation en cours...</h1>
+              <h1 className="text-2xl font-black">Vérification du paiement...</h1>
+              <p className="text-xs text-muted-foreground">Nous sécurisons votre transaction auprès de FedaPay</p>
             </div>
           ) : error ? (
             <div className="py-8 space-y-6">
               <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto">
                 <AlertCircle size={48} className="text-red-500" />
               </div>
-              <h1 className="text-2xl font-black text-red-500">Oups !</h1>
+              <h1 className="text-2xl font-black text-red-500">Échec de vérification</h1>
               <p className="text-muted-foreground text-sm">{error}</p>
               <Link to="/contact" className="block">
                 <Button className="w-full py-6 rounded-2xl bg-violet-600 text-white font-bold">Contacter le support</Button>
