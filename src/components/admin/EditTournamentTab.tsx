@@ -73,7 +73,7 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
 
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Jeu</Label>
-              <Select onValueChange={(v) => setEditingTournament({...editingTournament, game: v})} defaultValue={editingTournament.game}>
+              <Select onValueChange={(v) => setEditingTournament({...editingTournament, game: v})} value={editingTournament.game}>
                 <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
                   <SelectValue placeholder="Jeu" />
                 </SelectTrigger>
@@ -87,7 +87,7 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
 
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Passerelle de Paiement</Label>
-              <Select onValueChange={(v) => setEditingTournament({...editingTournament, payment_gateway: v})} defaultValue={editingTournament.payment_gateway || "kkiapay"}>
+              <Select onValueChange={(v) => setEditingTournament({...editingTournament, payment_gateway: v})} value={editingTournament.payment_gateway || "kkiapay"}>
                 <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
                   <div className="flex items-center gap-2">
                     <CreditCard size={16} className="text-violet-500" />
@@ -131,7 +131,7 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
 
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Type</Label>
-              <Select onValueChange={(v) => setEditingTournament({...editingTournament, type: v})} defaultValue={editingTournament.type}>
+              <Select onValueChange={(v) => setEditingTournament({...editingTournament, type: v})} value={editingTournament.type}>
                 <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>

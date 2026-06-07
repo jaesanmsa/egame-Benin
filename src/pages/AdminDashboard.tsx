@@ -40,6 +40,7 @@ const AdminDashboard = () => {
     rules: '', 
     description: '', 
     payment_url: '',
+    payment_gateway: 'kkiapay',
     start_date: new Date().toISOString().slice(0, 16),
     registration_end_date: new Date().toISOString().slice(0, 16)
   });
@@ -104,7 +105,7 @@ const AdminDashboard = () => {
     else {
       showSuccess("Tournoi ajouté !");
       setNewTournament({ 
-        id: '', title: '', game: 'Free Fire', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '',
+        id: '', title: '', game: 'Free Fire', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '', payment_gateway: 'kkiapay',
         start_date: new Date().toISOString().slice(0, 16),
         registration_end_date: new Date().toISOString().slice(0, 16)
       });
@@ -127,6 +128,7 @@ const AdminDashboard = () => {
         description: editingTournament.description,
         rules: editingTournament.rules,
         payment_url: editingTournament.payment_url,
+        payment_gateway: editingTournament.payment_gateway,
         start_date: editingTournament.start_date,
         registration_end_date: editingTournament.registration_end_date
       })
