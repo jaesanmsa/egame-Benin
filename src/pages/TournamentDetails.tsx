@@ -73,12 +73,35 @@ const TournamentDetails = () => {
     try { await navigator.share({ title: tournament.title, url: window.location.href }); } catch { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }
   };
 
-  const handleKKiaPay = async () => {
-    if (!isLoggedIn) {
-      navigate('/auth');
-      return;
+  const handleFedaPay = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const redirectUrl = `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
+      
+      // @ts-ignore
+      FedaPay.init({
+        public_key: 'pk_live_u7rqiI-D3oGsFCrTHNFi9Xxh',
+        transaction: {
+          amount: tournament.entry_fee,
+          description: `Inscription: ${tournament.title}`,
+          callback_url: redirectUrl
+        },
+        customer: {
+          firstname: userProfile?.full_name || userProfile?.username || "Joueur",
+          email: user?.email,
+          phone_number: {
+            number: userProfile?.phone || "",
+            country: 'bj'
+          }
+        }
+      }).open();
+    } catch (err) {
+      showError("Erreur lors du lancement de FedaPay.");
+      console.error(err);
     }
+  };
 
+  const handleKKiaPay = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       // @ts-ignore
@@ -92,8 +115,21 @@ const TournamentDetails = () => {
         callback: `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`
       });
     } catch (err: any) { 
-      showError("Erreur lors du lancement du paiement.");
+      showError("Erreur lors du lancement de KKiaPay.");
       console.error(err);
+    }
+  };
+
+  const handlePayment = () => {
+    if (!isLoggedIn) {
+      navigate('/auth');
+      return;
+    }
+
+    if (tournament.payment_gateway === 'fedapay') {
+      handleFedaPay();
+    } else {
+      handleKKiaPay();
     }
   };
 
@@ -111,7 +147,6 @@ const TournamentDetails = () => {
   const isFinished = tournament.status === 'finished';
   const progress = (participantCount / (tournament.max_participants || 40)) * 100;
 
-  // Vérification si les inscriptions sont fermées
   const isRegistrationClosed = tournament.registration_end_date && new Date() > new Date(tournament.registration_end_date);
 
   const formattedDateTime = new Date(tournament.start_date).toLocaleString('fr-FR', {
@@ -241,7 +276,7 @@ const TournamentDetails = () => {
                 <Button 
                   onClick={() => { 
                     setShowConfirmation(false); 
-                    handleKKiaPay(); 
+                    handlePayment(); 
                   }} 
                   className="w-full py-6 rounded-2xl bg-violet-600 hover:bg-violet-700 font-bold text-white"
                 >

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Image as ImageIcon, Calendar, Clock } from 'lucide-react';
+import { Plus, Image as ImageIcon, Calendar, Clock, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -65,6 +65,22 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTour
                 <SelectItem key={game} value={game} className="font-bold">{game}</SelectItem>
               ))}
             </SelectContent></Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Passerelle de Paiement</Label>
+          <Select onValueChange={(v) => setNewTournament({...newTournament, payment_gateway: v})} defaultValue={newTournament.payment_gateway || "kkiapay"}>
+            <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
+              <div className="flex items-center gap-2">
+                <CreditCard size={16} className="text-violet-500" />
+                <SelectValue placeholder="Choisir la passerelle" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="bg-card border-border">
+              <SelectItem value="kkiapay" className="font-bold">KKiaPay (MTN, Moov, Celtiis)</SelectItem>
+              <SelectItem value="fedapay" className="font-bold">FedaPay (MTN, Moov, Cartes)</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
