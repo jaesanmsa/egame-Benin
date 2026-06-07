@@ -23,12 +23,13 @@ const PaymentSuccess = () => {
       if (hasProcessed.current) return;
       hasProcessed.current = true;
 
-      const transactionId = searchParams.get('transaction_id') || searchParams.get('id');
+      const gateway = searchParams.get('gateway');
+      const transactionId = searchParams.get('transaction_id') || searchParams.get('id') || searchParams.get('maketou_id');
       const tournamentId = searchParams.get('tournamentId');
       const tName = searchParams.get('tournamentName');
       const amount = searchParams.get('amount');
 
-      // Si c'est KKiaPay (qui renvoie kkiapay_transaction_id)
+      // Si c'est KKiaPay
       const kkiapayId = searchParams.get('kkiapay_transaction_id');
 
       if (!transactionId && !kkiapayId) {
@@ -43,23 +44,24 @@ const PaymentSuccess = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error("Session utilisateur introuvable.");
 
-        if (transactionId) {
-          // LOGIQUE FEDAPAY : Appel de l'Edge Function pour vérification serveur
-          const { data, error: funcError } = await supabase.functions.invoke('verify-fedapay', {
-            body: { 
-              transaction_id: transactionId,
-              tournamentId,
-              tournamentName: tName,
-              amount
-            }
+        if (gateway === 'maketou') {
+          // LOGIQUE MAKETOU
+          const { data, error: funcError } = await supabase.functions.invoke('verify-maketou', {
+            body: { transaction_id: transactionId, tournamentId, tournamentName: tName, amount }
           });
-
-          if (funcError || data.error) throw new Error(data?.error || "Erreur de vérification FedaPay");
-          
+          if (funcError || data.error) throw new Error(data?.error || "Erreur Maketou");
+          setValidationCode(data.validation_code);
+          showSuccess("Paiement Maketou vérifié !");
+        } else if (transactionId && !kkiapayId) {
+          // LOGIQUE FEDAPAY
+          const { data, error: funcError } = await supabase.functions.invoke('verify-fedapay', {
+            body: { transaction_id: transactionId, tournamentId, tournamentName: tName, amount }
+          });
+          if (funcError || data.error) throw new Error(data?.error || "Erreur FedaPay");
           setValidationCode(data.validation_code);
           showSuccess("Paiement FedaPay vérifié !");
         } else {
-          // LOGIQUE KKIAPAY (Existante)
+          // LOGIQUE KKIAPAY
           const { data: existing } = await supabase
             .from('payments')
             .select('*')
@@ -108,7 +110,7 @@ const PaymentSuccess = () => {
             <div className="py-12 space-y-6">
               <Loader2 className="w-12 h-12 text-violet-500 animate-spin mx-auto" />
               <h1 className="text-2xl font-black">Vérification du paiement...</h1>
-              <p className="text-xs text-muted-foreground">Nous sécurisons votre transaction auprès de FedaPay</p>
+              <p className="text-xs text-muted-foreground">Nous sécurisons votre transaction</p>
             </div>
           ) : error ? (
             <div className="py-8 space-y-6">

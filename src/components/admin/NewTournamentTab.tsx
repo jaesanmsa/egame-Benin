@@ -79,6 +79,7 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTour
             <SelectContent className="bg-card border-border">
               <SelectItem value="kkiapay" className="font-bold">KKiaPay (MTN, Moov, Celtiis)</SelectItem>
               <SelectItem value="fedapay" className="font-bold">FedaPay (MTN, Moov, Cartes)</SelectItem>
+              <SelectItem value="maketou" className="font-bold">Maketou (MTN, Moov, Celtiis)</SelectItem>
             </SelectContent>
           </Select>
         </div>

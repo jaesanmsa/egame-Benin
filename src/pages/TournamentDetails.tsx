@@ -73,6 +73,33 @@ const TournamentDetails = () => {
     try { await navigator.share({ title: tournament.title, url: window.location.href }); } catch { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }
   };
 
+  const handleMaketou = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const redirectUrl = `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}&gateway=maketou`;
+      
+      // @ts-ignore
+      Maketou.init({
+        public_key: 'msk_714b9919faaccc120d399a4958a228982af874a691de05d73970a0d41aa9a650'
+      });
+
+      // @ts-ignore
+      Maketou.open({
+        amount: tournament.entry_fee,
+        description: `Inscription: ${tournament.title}`,
+        callback_url: redirectUrl,
+        customer: {
+          name: userProfile?.username || "Joueur",
+          email: user?.email,
+          phone: userProfile?.phone || ""
+        }
+      });
+    } catch (err) {
+      showError("Erreur lors du lancement de Maketou.");
+      console.error(err);
+    }
+  };
+
   const handleFedaPay = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -128,6 +155,8 @@ const TournamentDetails = () => {
 
     if (tournament.payment_gateway === 'fedapay') {
       handleFedaPay();
+    } else if (tournament.payment_gateway === 'maketou') {
+      handleMaketou();
     } else {
       handleKKiaPay();
     }
