@@ -5,7 +5,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock, CreditCard, Zap, User, AlertTriangle, FileText, Gift, Star } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock, CreditCard, Zap, User, AlertTriangle, FileText, Gift, Star, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -17,6 +17,7 @@ const TournamentDetails = () => {
   const navigate = useNavigate();
   const [tournament, setTournament] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isPaying, setIsPaying] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
@@ -74,33 +75,38 @@ const TournamentDetails = () => {
   };
 
   const handleMaketou = async () => {
+    setIsPaying(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Non connecté");
+
       const redirectUrl = `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}&gateway=maketou`;
       
-      // Vérification si le SDK est chargé
-      const MaketouSDK = (window as any).Maketou;
-      if (!MaketouSDK) {
-        throw new Error("Le service Maketou n'est pas encore prêt. Réessayez dans 2 secondes.");
-      }
-
-      MaketouSDK.init({
-        public_key: 'msk_714b9919faaccc120d399a4958a228982af874a691de05d73970a0d41aa9a650'
-      });
-
-      MaketouSDK.open({
-        amount: tournament.entry_fee,
-        description: `Inscription: ${tournament.title}`,
-        callback_url: redirectUrl,
-        customer: {
-          name: userProfile?.username || "Joueur",
-          email: user?.email,
-          phone: userProfile?.phone || ""
+      const { data, error: funcError } = await supabase.functions.invoke('verify-maketou', {
+        body: {
+          action: 'create',
+          tournamentId: id,
+          tournamentName: tournament.title,
+          amount: tournament.entry_fee,
+          productDocumentId: tournament.payment_url, // On utilise ce champ pour l'ID produit Maketou
+          customer: {
+            email: user.email,
+            firstName: userProfile?.full_name?.split(' ')[0] || userProfile?.username || "Joueur",
+            lastName: userProfile?.full_name?.split(' ')[1] || "eGame",
+            phone: userProfile?.phone || "",
+            userId: user.id,
+            redirectURL: redirectUrl
+          }
         }
       });
+
+      if (funcError || data.error) throw new Error(data?.error || "Erreur API Maketou");
+
+      // Redirection vers la page de paiement Maketou
+      window.location.href = data.redirectUrl;
     } catch (err: any) {
-      showError(err.message || "Erreur lors du lancement de Maketou.");
-      console.error("[Maketou Error]", err);
+      showError(err.message);
+      setIsPaying(false);
     }
   };
 
@@ -109,10 +115,8 @@ const TournamentDetails = () => {
       const { data: { user } } = await supabase.auth.getUser();
       const redirectUrl = `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
       
-      const FedaPaySDK = (window as any).FedaPay;
-      if (!FedaPaySDK) throw new Error("FedaPay n'est pas prêt.");
-
-      FedaPaySDK.init({
+      // @ts-ignore
+      FedaPay.init({
         public_key: 'pk_live_u7rqiI-D3oGsFCrTHNFi9Xxh',
         transaction: {
           amount: tournament.entry_fee,
@@ -128,17 +132,14 @@ const TournamentDetails = () => {
           }
         }
       }).open();
-    } catch (err: any) {
-      showError(err.message || "Erreur lors du lancement de FedaPay.");
-      console.error(err);
+    } catch (err) {
+      showError("Erreur lors du lancement de FedaPay.");
     }
   };
 
   const handleKKiaPay = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!(window as any).openKkiapayWidget) throw new Error("KKiaPay n'est pas prêt.");
-
       // @ts-ignore
       openKkiapayWidget({
         amount: tournament.entry_fee,
@@ -150,8 +151,7 @@ const TournamentDetails = () => {
         callback: `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`
       });
     } catch (err: any) { 
-      showError(err.message || "Erreur lors du lancement de KKiaPay.");
-      console.error(err);
+      showError("Erreur lors du lancement de KKiaPay.");
     }
   };
 
@@ -272,7 +272,13 @@ const TournamentDetails = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <Button onClick={handleStartRegistration} className="w-full py-7 rounded-2xl font-bold text-base bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/20">S'inscrire • {tournament.entry_fee} FCFA</Button>
+                  <Button 
+                    onClick={handleStartRegistration} 
+                    disabled={isPaying}
+                    className="w-full py-7 rounded-2xl font-bold text-base bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/20"
+                  >
+                    {isPaying ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Préparation...</> : `S'inscrire • ${tournament.entry_fee} FCFA`}
+                  </Button>
                   {formattedEndRegistration && (
                     <p className="text-center text-[9px] font-black uppercase tracking-widest text-muted-foreground">Fin des inscriptions : {formattedEndRegistration}</p>
                   )}

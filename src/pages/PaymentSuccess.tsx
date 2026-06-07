@@ -45,9 +45,15 @@ const PaymentSuccess = () => {
         if (!user) throw new Error("Session utilisateur introuvable.");
 
         if (gateway === 'maketou') {
-          // LOGIQUE MAKETOU
+          // LOGIQUE MAKETOU : On appelle l'action 'verify'
           const { data, error: funcError } = await supabase.functions.invoke('verify-maketou', {
-            body: { transaction_id: transactionId, tournamentId, tournamentName: tName, amount }
+            body: { 
+              action: 'verify',
+              transaction_id: transactionId, 
+              tournamentId, 
+              tournamentName: tName, 
+              amount 
+            }
           });
           if (funcError || data.error) throw new Error(data?.error || "Erreur Maketou");
           setValidationCode(data.validation_code);
@@ -126,7 +132,7 @@ const PaymentSuccess = () => {
           ) : (
             <>
               <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8">
-                <CheckCircle2 size={48} className="text-green-500" />
+                CheckCircle2 size={48} className="text-green-500" />
               </div>
 
               <h1 className="text-3xl font-black mb-4">C'est validé !</h1>

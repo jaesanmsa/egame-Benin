@@ -10,81 +10,106 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
 
   try {
-    const { transaction_id, tournamentId, tournamentName, amount } = await req.json()
+    const body = await req.json()
+    const { action, transaction_id, tournamentId, tournamentName, amount, productDocumentId, customer } = body
     const MAKETOU_SECRET_KEY = Deno.env.get('MAKETOU_SECRET_KEY')
 
-    if (!MAKETOU_SECRET_KEY) {
-      throw new Error("La clé secrète MAKETOU_SECRET_KEY n'est pas configurée.")
-    }
+    if (!MAKETOU_SECRET_KEY) throw new Error("MAKETOU_SECRET_KEY non configurée.")
 
-    console.log(`[verify-maketou] Vérification de la transaction: ${transaction_id}`)
+    // --- ACTION : CRÉER UN PAIEMENT ---
+    if (action === 'create') {
+      console.log(`[maketou] Création d'un panier pour le produit: ${productDocumentId}`)
+      
+      const response = await fetch(`https://api.maketou.net/api/v1/stores/cart/checkout`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${MAKETOU_SECRET_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productDocumentId: productDocumentId,
+          email: customer.email,
+          firstName: customer.firstName,
+          lastName: customer.lastName,
+          phone: customer.phone,
+          customerPrice: amount, // Utilisation du prix libre si configuré
+          redirectURL: customer.redirectURL,
+          meta: {
+            tournamentId: tournamentId,
+            tournamentName: tournamentName,
+            userId: customer.userId
+          }
+        })
+      })
 
-    // 1. Appeler l'API Maketou pour vérifier le statut (URL mise à jour vers .net)
-    const response = await fetch(`https://api.maketou.net/v1/transactions/verify/${transaction_id}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${MAKETOU_SECRET_KEY}`,
-        'Content-Type': 'application/json',
-      }
-    })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.message || "Erreur lors de la création du panier Maketou")
 
-    const maketouData = await response.json()
-    
-    // Vérification du statut
-    if (maketouData.status !== 'SUCCESS' && maketouData.status !== 'COMPLETED') {
-      throw new Error(`Paiement non validé. Statut: ${maketouData.status}`)
-    }
-
-    // 2. Enregistrement Supabase
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-
-    const authHeader = req.headers.get('Authorization')
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader! } } }
-    )
-    const { data: { user } } = await supabaseClient.auth.getUser()
-
-    if (!user) throw new Error("Utilisateur non authentifié")
-
-    const { data: existing } = await supabase
-      .from('payments')
-      .select('*')
-      .eq('fedapay_transaction_id', transaction_id)
-      .maybeSingle()
-
-    if (existing) {
-      return new Response(JSON.stringify({ success: true, validation_code: existing.validation_code }), { 
+      return new Response(JSON.stringify({ redirectUrl: data.redirectUrl, cartId: data.cart.id }), { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       })
     }
 
-    const code = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`
-    
-    await supabase.from('payments').insert({
-      user_id: user.id,
-      tournament_id: tournamentId,
-      tournament_name: tournamentName,
-      amount: amount,
-      status: 'Réussi',
-      validation_code: code,
-      fedapay_transaction_id: transaction_id
-    })
+    // --- ACTION : VÉRIFIER UN PAIEMENT ---
+    if (action === 'verify') {
+      console.log(`[maketou] Vérification du panier: ${transaction_id}`)
 
-    // Créditer les points
-    const { data: profile } = await supabase.from('profiles').select('points').eq('id', user.id).single()
-    await supabase.from('profiles').update({ points: (profile?.points || 0) + 10 }).eq('id', user.id)
+      const response = await fetch(`https://api.maketou.net/api/v1/stores/cart/${transaction_id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${MAKETOU_SECRET_KEY}`,
+          'Content-Type': 'application/json',
+        }
+      })
 
-    return new Response(JSON.stringify({ success: true, validation_code: code }), { 
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-    })
+      const data = await response.json()
+      
+      if (data.status !== 'completed') {
+        throw new Error(`Paiement non complété. Statut actuel: ${data.status}`)
+      }
+
+      // Enregistrement en base de données
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      )
+
+      // Vérifier si déjà enregistré
+      const { data: existing } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('fedapay_transaction_id', transaction_id)
+        .maybeSingle()
+
+      if (existing) {
+        return new Response(JSON.stringify({ success: true, validation_code: existing.validation_code }), { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        })
+      }
+
+      const code = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`
+      
+      await supabase.from('payments').insert({
+        user_id: data.meta.userId,
+        tournament_id: tournamentId,
+        tournament_name: tournamentName,
+        amount: amount,
+        status: 'Réussi',
+        validation_code: code,
+        fedapay_transaction_id: transaction_id
+      })
+
+      // Créditer les points
+      const { data: profile } = await supabase.from('profiles').select('points').eq('id', data.meta.userId).single()
+      await supabase.from('profiles').update({ points: (profile?.points || 0) + 10 }).eq('id', data.meta.userId)
+
+      return new Response(JSON.stringify({ success: true, validation_code: code }), { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      })
+    }
 
   } catch (error) {
-    console.error("[verify-maketou] Erreur:", error.message)
+    console.error("[maketou] Erreur:", error.message)
     return new Response(JSON.stringify({ error: error.message }), { 
       status: 400, 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
