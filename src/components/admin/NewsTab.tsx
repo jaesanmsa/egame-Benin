@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Newspaper, Plus, Trash2, Edit3, Image as ImageIcon, Clock, Star } from 'lucide-react';
+import { Newspaper, Plus, Trash2, Edit3, Image as ImageIcon, Clock, Star, RefreshCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,6 +15,7 @@ const NewsTab = () => {
   const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isRestoring, setIsRestoring] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     excerpt: '',
@@ -33,6 +34,49 @@ const NewsTab = () => {
     const { data } = await supabase.from('news').select('*').order('created_at', { ascending: false });
     if (data) setNews(data);
     setLoading(false);
+  };
+
+  const handleRestoreDefaults = async () => {
+    if (!confirm("Voulez-vous restaurer les actualités par défaut (incluant le tournoi CoC) ? Cela n'effacera pas vos articles actuels.")) return;
+    
+    setIsRestoring(true);
+    const defaultNews = [
+      {
+        title: 'Grand Tournoi Clash of Clans : 50.000 FCFA à gagner !',
+        excerpt: 'Préparez vos troupes ! Le plus grand tournoi CoC du mois arrive sur eGame Bénin.',
+        content: 'Le tournoi Clash of Clans est enfin là. Avec un cash prize de 50.000 FCFA, c\'est l\'occasion de montrer votre talent de stratège. Inscriptions ouvertes jusqu\'au 15 Mars. Format : Guerre de clans 1vs1. Les règles détaillées sont disponibles dans la section tournois.',
+        image_url: '/coc-tournament.webp',
+        read_time: '4 min',
+        is_featured: true
+      },
+      {
+        title: 'Bienvenue sur l\'Arène eGame Bénin !',
+        excerpt: 'Découvrez la plateforme eSport numéro 1 au Bénin. Tournois, cash prizes et communauté.',
+        content: 'Bienvenue sur eGame Bénin, votre nouvelle destination pour la compétition de haut niveau. Notre mission est de professionnaliser le gaming au Bénin en offrant des tournois réguliers avec des récompenses réelles. Que vous soyez fan de Clash Royale, Free Fire ou COD, il y a une place pour vous dans l\'arène.',
+        image_url: '/news-hero.png',
+        read_time: '3 min',
+        is_featured: false
+      },
+      {
+        title: 'Guide : Comment participer à un tournoi ?',
+        excerpt: 'Tout ce qu\'il faut savoir pour s\'inscrire et valider sa participation via Mobile Money.',
+        content: 'Participer à un tournoi sur eGame Bénin est simple : 1. Choisissez votre tournoi. 2. Cliquez sur S\'inscrire. 3. Payez via KKiaPay ou FedaPay. 4. Récupérez votre code de validation dans votre historique et envoyez-le au support WhatsApp. C\'est tout !',
+        image_url: '/games-news.webp',
+        read_time: '5 min',
+        is_featured: false
+      }
+    ];
+
+    try {
+      const { error } = await supabase.from('news').insert(defaultNews);
+      if (error) throw error;
+      showSuccess("Actualités restaurées !");
+      fetchNews();
+    } catch (err: any) {
+      showError(err.message);
+    } finally {
+      setIsRestoring(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,6 +124,18 @@ const NewsTab = () => {
 
   return (
     <div className="space-y-10">
+      <div className="flex justify-end">
+        <Button 
+          onClick={handleRestoreDefaults} 
+          disabled={isRestoring}
+          variant="outline" 
+          className="border-violet-500/30 text-violet-500 hover:bg-violet-500/10 rounded-xl gap-2"
+        >
+          <RefreshCcw size={16} className={isRestoring ? "animate-spin" : ""} />
+          Restaurer les actus par défaut
+        </Button>
+      </div>
+
       <motion.form 
         initial={{ opacity: 0, y: 10 }} 
         animate={{ opacity: 1, y: 0 }} 
