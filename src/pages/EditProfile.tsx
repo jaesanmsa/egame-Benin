@@ -1,3 +1,4 @@
+/profil)">
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -83,7 +84,7 @@ const EditProfile = () => {
       });
 
       showSuccess("Profil mis à jour !");
-      navigate('/profile');
+      navigate('/profil');
     } catch (error: any) {
       showError(error.message);
     } finally {

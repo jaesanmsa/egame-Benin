@@ -1,3 +1,4 @@
+/profil)">
 "use client";
 
 import React, { useState } from 'react';
@@ -64,7 +65,7 @@ const AvatarMaker = () => {
       if (profileError) throw profileError;
 
       showSuccess("Avatar mis à jour !");
-      navigate('/profile');
+      navigate('/profil');
     } catch (error: any) {
       showError(error.message);
     } finally {
