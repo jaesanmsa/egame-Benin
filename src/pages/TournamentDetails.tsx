@@ -5,7 +5,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
-import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Copy, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Gift, Loader2, X } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Copy, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Gift, Loader2, X, Globe, Share2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
