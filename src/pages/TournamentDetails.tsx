@@ -5,7 +5,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
-import { Calendar, Users, Trophy, Shield, Smartphone, ArrowLeft, Lock, X, Share2, Globe, MapPin, Info, CheckCircle2, History, Copy, ChevronRight, Clock, CreditCard, Zap, User, AlertTriangle, FileText, Gift, Star, Loader2 } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Copy, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Gift, Loader2, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -19,6 +19,7 @@ const TournamentDetails = () => {
   const [loading, setLoading] = useState(true);
   const [isPaying, setIsPaying] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showPaymentMethods, setShowPaymentMethods] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
   const [participants, setParticipants] = useState<any[]>([]);
@@ -74,43 +75,9 @@ const TournamentDetails = () => {
     try { await navigator.share({ title: tournament.title, url: window.location.href }); } catch { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }
   };
 
-  const handleMaketou = async () => {
-    setIsPaying(true);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Non connecté");
-
-      const redirectUrl = `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}&gateway=maketou`;
-      
-      const { data, error: funcError } = await supabase.functions.invoke('verify-maketou', {
-        body: {
-          action: 'create',
-          tournamentId: id,
-          tournamentName: tournament.title,
-          amount: tournament.entry_fee,
-          productDocumentId: tournament.payment_url, // On utilise ce champ pour l'ID produit Maketou
-          customer: {
-            email: user.email,
-            firstName: userProfile?.full_name?.split(' ')[0] || userProfile?.username || "Joueur",
-            lastName: userProfile?.full_name?.split(' ')[1] || "eGame",
-            phone: userProfile?.phone || "",
-            userId: user.id,
-            redirectURL: redirectUrl
-          }
-        }
-      });
-
-      if (funcError || data.error) throw new Error(data?.error || "Erreur API Maketou");
-
-      // Redirection vers la page de paiement Maketou
-      window.location.href = data.redirectUrl;
-    } catch (err: any) {
-      showError(err.message);
-      setIsPaying(false);
-    }
-  };
-
   const handleFedaPay = async () => {
+    setShowPaymentMethods(false);
+    setIsPaying(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       const redirectUrl = `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
@@ -134,10 +101,14 @@ const TournamentDetails = () => {
       }).open();
     } catch (err) {
       showError("Erreur lors du lancement de FedaPay.");
+    } finally {
+      setIsPaying(false);
     }
   };
 
   const handleKKiaPay = async () => {
+    setShowPaymentMethods(false);
+    setIsPaying(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       // @ts-ignore
@@ -152,21 +123,8 @@ const TournamentDetails = () => {
       });
     } catch (err: any) { 
       showError("Erreur lors du lancement de KKiaPay.");
-    }
-  };
-
-  const handlePayment = () => {
-    if (!isLoggedIn) {
-      navigate('/auth');
-      return;
-    }
-
-    if (tournament.payment_gateway === 'fedapay') {
-      handleFedaPay();
-    } else if (tournament.payment_gateway === 'maketou') {
-      handleMaketou();
-    } else {
-      handleKKiaPay();
+    } finally {
+      setIsPaying(false);
     }
   };
 
@@ -183,7 +141,6 @@ const TournamentDetails = () => {
 
   const isFinished = tournament.status === 'finished';
   const progress = (participantCount / (tournament.max_participants || 40)) * 100;
-
   const isRegistrationClosed = tournament.registration_end_date && new Date() > new Date(tournament.registration_end_date);
 
   const formattedDateTime = new Date(tournament.start_date).toLocaleString('fr-FR', {
@@ -307,6 +264,7 @@ const TournamentDetails = () => {
         </motion.div>
       </main>
 
+      {/* Modal 1 : Confirmation du règlement */}
       <AnimatePresence>
         {showConfirmation && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
@@ -319,13 +277,59 @@ const TournamentDetails = () => {
                 <Button 
                   onClick={() => { 
                     setShowConfirmation(false); 
-                    handlePayment(); 
+                    setShowPaymentMethods(true); 
                   }} 
                   className="w-full py-6 rounded-2xl bg-violet-600 hover:bg-violet-700 font-bold text-white"
                 >
                   J'ai lu, je continue
                 </Button>
                 <Button variant="ghost" onClick={() => setShowConfirmation(false)} className="w-full py-6 rounded-2xl font-bold text-muted-foreground">Retourner lire</Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal 2 : Choix du moyen de paiement (KKiaPay ou FedaPay) */}
+      <AnimatePresence>
+        {showPaymentMethods && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPaymentMethods(false)} />
+            <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }} className="relative bg-card border border-border w-full max-w-[400px] rounded-[2.5rem] p-8 shadow-2xl z-[10000]">
+              <button onClick={() => setShowPaymentMethods(false)} className="absolute top-6 right-6 text-muted-foreground hover:text-foreground"><X size={20} /></button>
+              
+              <div className="text-center mb-8">
+                <div className="w-12 h-12 bg-violet-600/10 rounded-xl flex items-center justify-center text-violet-500 mx-auto mb-4">
+                  <CreditCard size={24} />
+                </div>
+                <h2 className="text-xl font-black">Moyen de paiement</h2>
+                <p className="text-xs text-muted-foreground mt-1">Choisis ta passerelle préférée</p>
+              </div>
+
+              <div className="space-y-4">
+                {/* Option KKiaPay */}
+                <button 
+                  onClick={handleKKiaPay}
+                  className="w-full p-5 bg-muted/50 hover:bg-violet-600/5 border border-border hover:border-violet-500/40 rounded-2xl text-left transition-all flex items-center justify-between group"
+                >
+                  <div>
+                    <h3 className="font-bold text-sm text-foreground group-hover:text-violet-500 transition-colors">KKiaPay</h3>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">MTN, Moov, Celtiis (Mobile Money)</p>
+                  </div>
+                  <ChevronRight size={18} className="text-muted-foreground group-hover:text-violet-500 transition-colors" />
+                </button>
+
+                {/* Option FedaPay */}
+                <button 
+                  onClick={handleFedaPay}
+                  className="w-full p-5 bg-muted/50 hover:bg-violet-600/5 border border-border hover:border-violet-500/40 rounded-2xl text-left transition-all flex items-center justify-between group"
+                >
+                  <div>
+                    <h3 className="font-bold text-sm text-foreground group-hover:text-violet-500 transition-colors">FedaPay</h3>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">MTN, Moov, Cartes Bancaires</p>
+                  </div>
+                  <ChevronRight size={18} className="text-muted-foreground group-hover:text-violet-500 transition-colors" />
+                </button>
               </div>
             </motion.div>
           </div>
