@@ -3,8 +3,8 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MessageSquare, Mail, HelpCircle, Facebook, Users, Image } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, MessageSquare, Mail, HelpCircle, Facebook, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const Contact = () => {
@@ -42,17 +42,17 @@ const Contact = () => {
     <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-2xl mx-auto px-6 py-8">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
-          <ArrowLeft size={20} />
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors text-xs font-bold uppercase tracking-widest">
+          <ArrowLeft size={16} />
           Retour
         </button>
 
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-black mb-4">Contact & Aide</h1>
-          <p className="text-muted-foreground">Une question ? Notre équipe est là pour vous aider.</p>
+          <h1 className="text-3xl font-black mb-4 font-sora uppercase">Contact & Aide</h1>
+          <p className="text-muted-foreground text-sm font-medium">Une question ? Notre équipe est là pour vous aider.</p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-12">
+        <div className="grid grid-cols-2 gap-4 mb-12">
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -63,8 +63,8 @@ const Contact = () => {
               <Users size={24} className="text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-green-600 text-sm">Communauté</h3>
-              <p className="text-[10px] text-muted-foreground">Chaîne WhatsApp</p>
+              <h3 className="font-bold text-green-600 text-sm font-sora">Communauté</h3>
+              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Chaîne WhatsApp</p>
             </div>
           </motion.button>
 
@@ -78,8 +78,8 @@ const Contact = () => {
               <MessageSquare size={24} className="text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-green-500 text-sm">Support Direct</h3>
-              <p className="text-[10px] text-muted-foreground">Réponse rapide</p>
+              <h3 className="font-bold text-green-500 text-sm font-sora">Support Direct</h3>
+              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Réponse rapide</p>
             </div>
           </motion.button>
 
@@ -93,8 +93,8 @@ const Contact = () => {
               <Facebook size={24} className="text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-blue-500 text-sm">Facebook</h3>
-              <p className="text-[10px] text-muted-foreground">Actualités & News</p>
+              <h3 className="font-bold text-blue-500 text-sm font-sora">Facebook</h3>
+              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Actualités & News</p>
             </div>
           </motion.button>
 
@@ -108,8 +108,8 @@ const Contact = () => {
               <Mail size={24} className="text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-violet-500 text-sm">Email</h3>
-              <p className="text-[10px] text-muted-foreground">Support officiel</p>
+              <h3 className="font-bold text-violet-500 text-sm font-sora">Email</h3>
+              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Support officiel</p>
             </div>
           </motion.button>
         </div>
@@ -117,14 +117,14 @@ const Contact = () => {
         <section className="space-y-6 mb-12">
           <div className="flex items-center gap-2 mb-4">
             <HelpCircle className="text-violet-500" size={20} />
-            <h2 className="text-xl font-bold">Questions Fréquentes</h2>
+            <h2 className="text-xl font-bold font-sora uppercase">Questions Fréquentes</h2>
           </div>
 
           <Accordion type="single" collapsible className="w-full space-y-3">
             {faqs.map((faq, i) => (
-              <AccordionItem key={i} value={`item-${i}`} className="border border-border bg-card/50 rounded-2xl px-4 overflow-hidden">
-                <AccordionTrigger className="hover:no-underline font-bold text-sm text-left">{faq.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground text-sm leading-relaxed">
+              <AccordionItem key={i} value={`item-${i}`} className="border border-border bg-card/40 backdrop-blur-md rounded-2xl px-4 overflow-hidden">
+                <AccordionTrigger className="hover:no-underline font-bold text-sm text-left font-sora">{faq.q}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground text-xs leading-relaxed font-medium">
                   {faq.a}
                 </AccordionContent>
               </AccordionItem>
@@ -132,8 +132,8 @@ const Contact = () => {
           </Accordion>
         </section>
 
-        <div className="p-8 bg-card/50 rounded-[2rem] border border-border text-center">
-          <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
+        <div className="p-8 bg-card/40 backdrop-blur-md rounded-[2rem] border border-border text-center">
+          <p className="text-muted-foreground text-[10px] font-black uppercase tracking-widest">
             Disponible du Lundi au Samedi <br />
             De 09h00 à 20h00
           </p>
