@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, Globe, MapPin, Share2 } from 'lucide-react';
+import { Users, Calendar, Globe, MapPin, Share2, Zap } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -58,56 +58,83 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
 
   return (
     <motion.div 
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -6, scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
       onClick={handleClick}
-      className={`group relative bg-card rounded-[24px] overflow-hidden border transition-all cursor-pointer shadow-sm ${status === 'finished' ? 'opacity-75 grayscale-[0.5] border-border' : 'border-border hover:border-violet-500/40'}`}
+      className={`group relative glass-card glass-card-hover rounded-[28px] overflow-hidden transition-all cursor-pointer ${
+        status === 'finished' ? 'opacity-60 grayscale-[0.3]' : ''
+      }`}
     >
+      {/* Image de couverture avec overlay dégradé */}
       <div className="relative aspect-[16/10] overflow-hidden">
         <img 
           src={image} 
           alt={title} 
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c0414] via-[#0c0414]/40 to-transparent" />
         
-        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
-          <Badge className="bg-black/60 backdrop-blur-md text-white border-white/10 flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter py-0.5 px-2 w-fit">
-            {type === 'Online' ? <Globe size={10} className="text-cyan-400" /> : <MapPin size={10} className="text-orange-400" />}
+        {/* Badge Type (En ligne / Présentiel) */}
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+          <Badge className="bg-black/60 backdrop-blur-md text-white border-white/10 flex items-center gap-1 text-[9px] font-black uppercase tracking-wider py-1 px-2.5 rounded-xl">
+            {type === 'Online' ? (
+              <Globe size={11} className="text-cyan-400 drop-shadow-[0_0_4px_rgba(34,211,238,0.5)]" />
+            ) : (
+              <MapPin size={11} className="text-orange-400 drop-shadow-[0_0_4px_rgba(251,146,60,0.5)]" />
+            )}
             {type === 'Online' ? 'En ligne' : 'Présentiel'}
           </Badge>
         </div>
 
+        {/* Badge Live Pulsant */}
         {status === 'active' && (
-          <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-black/40 backdrop-blur-md border border-white/10 px-2 py-1 rounded-full">
+          <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-green-500/10 backdrop-blur-md border border-green-500/30 px-2.5 py-1 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.2)]">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </span>
-            <span className="text-[7px] font-black text-white uppercase tracking-widest">Live</span>
+            <span className="text-[8px] font-black text-green-400 uppercase tracking-widest">Live</span>
           </div>
         )}
 
-        <div className="absolute bottom-2.5 right-2.5">
-          <div className={`${status === 'finished' ? 'bg-zinc-700' : 'bg-violet-600'} text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-lg`}>
+        {/* Badge Prix d'entrée */}
+        <div className="absolute bottom-3 right-3">
+          <div className={`text-[10px] font-black px-3 py-1 rounded-xl shadow-lg backdrop-blur-md border ${
+            status === 'finished' 
+              ? 'bg-zinc-800/80 border-zinc-700 text-zinc-400' 
+              : 'bg-violet-600/90 border-violet-500/30 text-white shadow-violet-500/20'
+          }`}>
             {status === 'finished' ? 'Terminé' : `${entryFee} FCFA`}
           </div>
         </div>
       </div>
       
-      <div className="p-4">
-        <div className="flex items-center gap-1.5 mb-1">
-          <span className={`w-1 h-1 rounded-full ${status === 'finished' ? 'bg-muted-foreground' : 'bg-violet-500'}`} />
-          <p className={`${status === 'finished' ? 'text-muted-foreground' : 'text-violet-500'} text-[8px] font-black uppercase tracking-widest`}>{game}</p>
+      {/* Contenu de la carte */}
+      <div className="p-5">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-1.5">
+            <Zap size={12} className="text-violet-400 fill-violet-400/20" />
+            <p className="text-violet-400 text-[9px] font-black uppercase tracking-widest">{game}</p>
+          </div>
+          <button 
+            onClick={handleShare}
+            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-muted-foreground hover:text-white transition-colors"
+          >
+            <Share2 size={12} />
+          </button>
         </div>
-        <h3 className="font-bold text-sm mb-3 line-clamp-1 group-hover:text-violet-500 transition-colors">{title}</h3>
         
-        <div className="flex items-center justify-between text-muted-foreground text-[10px] font-bold">
-          <div className="flex items-center gap-1">
-            <Calendar size={12} className="text-muted-foreground/60" />
+        <h3 className="font-bold text-base mb-4 line-clamp-1 group-hover:text-violet-400 transition-colors font-sora">
+          {title}
+        </h3>
+        
+        <div className="flex items-center justify-between text-muted-foreground text-xs font-medium pt-3 border-t border-white/5">
+          <div className="flex items-center gap-1.5">
+            <Calendar size={13} className="text-violet-500/60" />
             <span>{date}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Users size={12} className="text-muted-foreground/60" />
+          <div className="flex items-center gap-1.5">
+            <Users size={13} className="text-violet-500/60" />
             <span>{participants}</span>
           </div>
         </div>
