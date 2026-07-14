@@ -176,11 +176,11 @@ const TournamentDetails = () => {
       </div>
 
       <main className="max-w-3xl mx-auto px-6 -mt-20 relative z-10">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-border rounded-[2.5rem] p-6 md:p-8 shadow-2xl mb-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card border border-border rounded-[2.5rem] p-6 md:p-8 shadow-2xl mb-6">
           <div className="flex justify-between items-start gap-4 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-1"><Zap size={12} className="text-violet-500 fill-violet-500" /><p className="text-violet-500 font-bold uppercase tracking-[0.2em] text-[9px]">{tournament.game}</p></div>
-              <h1 className="text-2xl md:text-3xl font-black tracking-tight">{tournament.title}</h1>
+              <h1 className="text-2xl md:text-3xl font-black tracking-tight font-sora">{tournament.title}</h1>
             </div>
             <div className="bg-violet-600 px-4 py-2.5 rounded-2xl text-center text-white shadow-lg shadow-violet-500/20">
               <p className="text-[8px] uppercase font-bold tracking-widest opacity-80">Cash Prize</p>
@@ -246,11 +246,11 @@ const TournamentDetails = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"><h2 className="text-sm font-bold mb-6 flex items-center gap-2.5 uppercase tracking-widest"><FileText className="text-violet-500" size={18} /> Déroulement</h2><div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium">{tournament.description}</div></div>
-          <div className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm"><h2 className="text-sm font-bold mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Info className="text-violet-500" size={18} /> Règlement</h2><div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium">{tournament.rules}</div></div>
+          <div className="glass-card border border-border rounded-[2.5rem] p-8 shadow-sm"><h2 className="text-sm font-bold mb-6 flex items-center gap-2.5 uppercase tracking-widest"><FileText className="text-violet-500" size={18} /> Déroulement</h2><div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium">{tournament.description}</div></div>
+          <div className="glass-card border border-border rounded-[2.5rem] p-8 shadow-sm"><h2 className="text-sm font-bold mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Info className="text-violet-500" size={18} /> Règlement</h2><div className="text-muted-foreground text-[11px] leading-relaxed whitespace-pre-wrap font-medium">{tournament.rules}</div></div>
         </div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card border border-border rounded-[2.5rem] p-8 shadow-sm">
           <h2 className="text-sm font-bold mb-6 flex items-center gap-2.5 uppercase tracking-widest"><Users className="text-violet-500" size={18} /> Participants ({participantCount})</h2>
           <div className="flex flex-wrap gap-3">
             {participants.map((p, i) => (

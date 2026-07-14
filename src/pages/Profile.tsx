@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import PlayerBadge from '@/components/PlayerBadge';
 import { motion } from 'framer-motion';
-import { Trophy, Settings, LogOut, Star, Palette, HelpCircle, Shield, Activity, Zap, TrendingUp, Award, Bell, BellOff, History, LayoutDashboard } from 'lucide-react';
+import { Settings, LogOut, Star, Palette, HelpCircle, Shield, Activity, Zap, TrendingUp, Award, Bell, BellOff, History, LayoutDashboard } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showSuccess, showError } from '@/utils/toast';
@@ -113,7 +113,7 @@ const Profile = () => {
             </Link>
           </div>
           <div className="flex flex-col items-center gap-2 mt-4">
-            <h1 className="text-3xl font-black">{username}</h1>
+            <h1 className="text-3xl font-black font-sora">{username}</h1>
             <PlayerBadge 
               tournamentCount={tournamentCount} 
               mvpCount={profile?.mvp_count} 
@@ -124,29 +124,29 @@ const Profile = () => {
         </section>
 
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
+          <div className="glass-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
             <Activity className="mx-auto text-violet-500 mb-2" size={24} />
             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Tournois</p>
-            <p className="text-2xl font-black">{tournamentCount}</p>
+            <p className="text-2xl font-black font-sora">{tournamentCount}</p>
           </div>
-          <div className="bg-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
+          <div className="glass-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
             <Zap className="mx-auto text-yellow-500 mb-2" size={24} />
             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Points</p>
-            <p className="text-2xl font-black">{displayPoints}</p>
+            <p className="text-2xl font-black font-sora">{displayPoints}</p>
           </div>
-          <div className="bg-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
+          <div className="glass-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
             <Award className="mx-auto text-cyan-500 mb-2" size={24} />
             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Victoires</p>
-            <p className="text-2xl font-black">{profile?.champion_count || 0}</p>
+            <p className="text-2xl font-black font-sora">{profile?.champion_count || 0}</p>
           </div>
-          <div className="bg-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
+          <div className="glass-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
             <Star className="mx-auto text-orange-500 mb-2" size={24} />
             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">MVP</p>
-            <p className="text-2xl font-black">{profile?.mvp_count || 0}</p>
+            <p className="text-2xl font-black font-sora">{profile?.mvp_count || 0}</p>
           </div>
         </section>
 
-        <section className="bg-card border border-border p-8 rounded-[2.5rem] shadow-sm mb-8">
+        <section className="glass-card border border-border p-8 rounded-[2.5rem] shadow-sm mb-8">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-violet-600/10 rounded-xl flex items-center justify-center text-violet-500"><TrendingUp size={20} /></div>
             <h2 className="text-sm font-black uppercase tracking-widest">Courbe de Progression</h2>
@@ -182,7 +182,7 @@ const Profile = () => {
           <button 
             onClick={handleToggleNotifications} 
             disabled={notifLoading}
-            className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm"
+            className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border font-bold shadow-sm"
           >
             <div className="flex items-center gap-4">
               {profile?.notifications_enabled ? <Bell size={20} className="text-green-500" /> : <BellOff size={20} className="text-muted-foreground" />}
@@ -192,7 +192,7 @@ const Profile = () => {
           </button>
 
           <Link to="/payments" className="block">
-            <button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm">
+            <button className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border font-bold shadow-sm">
               <div className="flex items-center gap-4">
                 <History size={20} className="text-violet-500" /> 
                 Flux (Mes Inscriptions)
@@ -200,10 +200,10 @@ const Profile = () => {
             </button>
           </Link>
           
-          <Link to="/contact" className="block"><button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><HelpCircle size={20} className="text-violet-500" /> Contact & Aide</div></button></Link>
-          <Link to="/privacy" className="block"><button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><Shield size={20} className="text-cyan-500" /> Politique de Confidentialité</div></button></Link>
-          <Link to="/edit-profile" className="block"><button className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><Settings size={20} className="text-muted-foreground" /> Modifier mes infos</div></button></Link>
-          <button onClick={handleLogout} className="w-full flex items-center justify-between p-5 bg-card rounded-2xl border border-border text-red-400 font-bold shadow-sm"><div className="flex items-center gap-4"><LogOut size={20} /> Déconnexion</div></button>
+          <Link to="/contact" className="block"><button className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><HelpCircle size={20} className="text-violet-500" /> Contact & Aide</div></button></Link>
+          <Link to="/privacy" className="block"><button className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><Shield size={20} className="text-cyan-500" /> Politique de Confidentialité</div></button></Link>
+          <Link to="/edit-profile" className="block"><button className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><Settings size={20} className="text-muted-foreground" /> Modifier mes infos</div></button></Link>
+          <button onClick={handleLogout} className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border text-red-400 font-bold shadow-sm"><div className="flex items-center gap-4"><LogOut size={20} /> Déconnexion</div></button>
         </div>
       </main>
     </div>

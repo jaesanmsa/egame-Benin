@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
-import { ArrowLeft, Trophy, Star, Gamepad2, Zap, Users, Target, MessageSquare, MapPin, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Trophy, Star, Gamepad2, Zap, Target, MessageSquare, ChevronRight } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -144,7 +144,7 @@ const GameDetails = () => {
             </div>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-none uppercase">{gameInfo.name}</h1>
+                <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-none uppercase font-sora">{gameInfo.name}</h1>
                 {hasActiveTournament && (
                   <div className="bg-green-500/20 backdrop-blur-md border border-green-500/30 px-3 py-1 rounded-full flex items-center gap-2">
                     <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
@@ -161,12 +161,12 @@ const GameDetails = () => {
       <main className="max-w-6xl mx-auto px-6 -mt-8 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-12">
-            <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm">
+            <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-[2.5rem] p-8 shadow-sm">
               <h2 className="text-sm font-black mb-4 flex items-center gap-2.5 uppercase tracking-widest"><Target className="text-violet-500" size={18} />À propos de la discipline</h2>
               <p className="text-muted-foreground text-sm leading-relaxed font-medium">{gameInfo.desc}</p>
             </motion.section>
             <section className="space-y-6">
-              <h2 className="text-2xl font-black tracking-tight flex items-center gap-3"><Zap className="text-yellow-500 fill-yellow-500" size={24} />Tournois Disponibles</h2>
+              <h2 className="text-2xl font-black tracking-tight flex items-center gap-3 font-sora"><Zap className="text-yellow-500 fill-yellow-500" size={24} />Tournois Disponibles</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {loading ? (
                   Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-[24px]" />)
@@ -184,7 +184,7 @@ const GameDetails = () => {
             </section>
           </div>
           <div className="space-y-8">
-            <motion.section initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm">
+            <motion.section initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-[2.5rem] p-8 shadow-sm">
               <div className="flex items-center gap-3 mb-8"><div className="w-10 h-10 bg-yellow-500/10 rounded-xl flex items-center justify-center text-yellow-500"><Trophy size={20} /></div><h2 className="text-xs font-black uppercase tracking-widest">Hall of Fame</h2></div>
               <div className="space-y-4">
                 {loading ? (
@@ -206,7 +206,7 @@ const GameDetails = () => {
               <h3 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2"><MessageSquare size={16} />Communauté</h3>
               <div className="space-y-6">
                 <p className="text-xs leading-relaxed text-violet-100 font-medium">Rejoins la communauté <span className="font-black text-white">{gameInfo.name}</span> de eGame Bénin pour ne rater aucune info.</p>
-                <a href={gameInfo.whatsapp} target="_blank" rel="noopener noreferrer"><Button className="w-full bg-white text-violet-600 hover:bg-violet-50 py-6 rounded-2xl font-black text-xs gap-2">Rejoindre le groupe<ChevronRight size={16} /></Button></a>
+                <a href={gameInfo.whatsapp} target="_blank" rel="noopener noreferrer" className="block"><Button className="w-full bg-white text-violet-600 hover:bg-violet-50 py-6 rounded-2xl font-black text-xs gap-2">Rejoindre le groupe<ChevronRight size={16} /></Button></a>
               </div>
             </motion.section>
           </div>
