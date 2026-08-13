@@ -5,8 +5,8 @@ import "./globals.css";
 const rootElement = document.getElementById("root")!;
 createRoot(rootElement).render(<App />);
 
-// Retrait de l'écran de chargement avec fondu
-window.addEventListener('load', () => {
+// Retrait sécurisé de l'écran de chargement
+const removeLoader = () => {
   const loader = document.getElementById('loading-screen');
   if (loader) {
     loader.style.opacity = '0';
@@ -15,4 +15,11 @@ window.addEventListener('load', () => {
       loader.remove();
     }, 500);
   }
-});
+};
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  removeLoader();
+} else {
+  window.addEventListener('load', removeLoader);
+  setTimeout(removeLoader, 1000);
+}

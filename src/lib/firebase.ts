@@ -3,12 +3,12 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { supabase } from "./supabase";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyD2XGohWwMcPedeXTfcgHPK2RZvWLTDYcE",
   authDomain: "egame-benin-be9af.firebaseapp.com",
   projectId: "egame-benin-be9af",
   storageBucket: "egame-benin-be9af.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "986273563315",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:986273563315:web:635e87ddb8c0b5b79526c6",
   measurementId: "G-X2YXK4V044"
 };
 
