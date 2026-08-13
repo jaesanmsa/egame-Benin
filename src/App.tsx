@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { HelmetProvider } from 'react-helmet-async';
-import { Analytics } from "@vercel/analytics/react";
 import Index from "./pages/Index";
 import TournamentDetails from "./pages/TournamentDetails";
 import Profile from "./pages/Profile";
@@ -29,7 +28,14 @@ import NotFound from "./pages/NotFound";
 import FloatingSupport from "./components/FloatingSupport";
 import CookieConsent from "./components/CookieConsent";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -64,7 +70,6 @@ const App = () => (
             <FloatingSupport />
             <CookieConsent />
           </BrowserRouter>
-          <Analytics />
         </TooltipProvider>
       </ThemeProvider>
     </HelmetProvider>
