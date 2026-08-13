@@ -4,10 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
+import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, User, Phone, Save, AtSign } from 'lucide-react';
+import { ArrowLeft, User, Phone, Save, AtSign, MapPin } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const EditProfile = () => {
@@ -18,6 +19,7 @@ const EditProfile = () => {
     full_name: '',
     username: '',
     phone: '',
+    city: 'Cotonou',
     avatar_url: ''
   });
 
@@ -31,7 +33,7 @@ const EditProfile = () => {
       if (user) {
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('full_name, username, phone, avatar_url')
+          .select('full_name, username, phone, city, avatar_url')
           .eq('id', user.id)
           .maybeSingle();
 
@@ -39,6 +41,7 @@ const EditProfile = () => {
           full_name: profileData?.full_name || user.user_metadata?.full_name || '',
           username: profileData?.username || user.user_metadata?.username || '',
           phone: profileData?.phone || user.user_metadata?.phone || '',
+          city: profileData?.city || 'Cotonou',
           avatar_url: profileData?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`
         });
       }
@@ -67,16 +70,12 @@ const EditProfile = () => {
           full_name: profile.full_name,
           username: username,
           phone: profile.phone,
+          city: profile.city,
           avatar_url: profile.avatar_url,
           updated_at: new Date().toISOString()
         });
 
-      if (profileError) {
-        if (profileError.code === '23505') {
-          throw new Error("Ce pseudo est déjà utilisé par un autre joueur.");
-        }
-        throw profileError;
-      }
+      if (profileError) throw profileError;
 
       await supabase.auth.updateUser({
         data: { ...profile, username: username }
@@ -91,72 +90,86 @@ const EditProfile = () => {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
+      <SEO title="Modifier mon profil" />
       <Navbar />
-      <main className="max-w-2xl mx-auto px-6 py-8">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
-          <ArrowLeft size={20} />
-          Retour au profil
+      <main className="max-w-2xl mx-auto px-6 space-y-8">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#8888AA] hover:text-white transition-colors text-xs font-gaming font-bold uppercase tracking-widest">
+          <ArrowLeft size={16} /> Retour
         </button>
 
-        <h1 className="text-3xl font-black mb-8">Modifier le profil</h1>
+        <h1 className="text-3xl font-gaming font-black uppercase text-white">Modifier le profil</h1>
 
-        <form onSubmit={handleSave} className="space-y-8">
-          <div className="space-y-6 bg-card p-8 rounded-[2rem] border border-border shadow-sm">
-            <div className="space-y-2">
-              <Label htmlFor="username">Pseudo Unique (Nom de joueur)</Label>
+        <form onSubmit={handleSave} className="space-y-6">
+          <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-8 rounded-3xl space-y-5 shadow-2xl">
+            <div className="space-y-1.5">
+              <Label htmlFor="username" className="text-xs font-gaming uppercase text-[#8888AA]">Pseudo de Joueur</Label>
               <div className="relative">
-                <AtSign className="absolute left-3 top-3 text-muted-foreground" size={18} />
+                <AtSign className="absolute left-3 top-3 text-[#8888AA]" size={18} />
                 <Input 
                   id="username" 
                   value={profile.username}
                   onChange={(e) => setProfile({...profile, username: e.target.value})}
-                  className="pl-10 bg-muted border-border rounded-xl"
+                  className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
                   placeholder="Ex: ProGamer229"
                   required
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="name">Nom complet</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="name" className="text-xs font-gaming uppercase text-[#8888AA]">Nom Complet</Label>
               <div className="relative">
-                <User className="absolute left-3 top-3 text-muted-foreground" size={18} />
+                <User className="absolute left-3 top-3 text-[#8888AA]" size={18} />
                 <Input 
                   id="name" 
                   value={profile.full_name}
                   onChange={(e) => setProfile({...profile, full_name: e.target.value})}
-                  className="pl-10 bg-muted border-border rounded-xl"
+                  className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
                   placeholder="Votre nom réel"
                   required
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phone">Numéro de téléphone (Bénin)</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="phone" className="text-xs font-gaming uppercase text-[#8888AA]">Numéro Mobile Money (MTN / Moov / Celtiis)</Label>
               <div className="relative">
-                <Phone className="absolute left-3 top-3 text-muted-foreground" size={18} />
+                <Phone className="absolute left-3 top-3 text-[#8888AA]" size={18} />
                 <Input 
                   id="phone" 
                   type="tel"
                   value={profile.phone}
                   onChange={(e) => setProfile({...profile, phone: e.target.value})}
-                  className="pl-10 bg-muted border-border rounded-xl"
+                  className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
                   placeholder="+229 01 XX XX XX XX"
                   required
                 />
               </div>
             </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="city" className="text-xs font-gaming uppercase text-[#8888AA]">Ville au Bénin</Label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-3 text-[#8888AA]" size={18} />
+                <Input 
+                  id="city" 
+                  value={profile.city}
+                  onChange={(e) => setProfile({...profile, city: e.target.value})}
+                  className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
+                  placeholder="Cotonou, Porto-Novo, Parakou..."
+                />
+              </div>
+            </div>
           </div>
 
-          <Button type="submit" disabled={saving} className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 text-lg font-bold shadow-xl shadow-violet-500/20 gap-2 text-white">
-            <Save size={20} />
+          <button type="submit" disabled={saving} className="w-full btn-glow-border py-4 text-xs tracking-widest uppercase flex items-center justify-center gap-2">
+            <Save size={18} />
             {saving ? "Enregistrement..." : "Enregistrer les modifications"}
-          </Button>
+          </button>
         </form>
       </main>
     </div>

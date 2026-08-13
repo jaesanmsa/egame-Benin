@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Navbar from '@/components/Navbar';
-import { motion } from 'framer-motion';
+import SEO from '@/components/SEO';
 import { ArrowLeft, MessageSquare, Mail, HelpCircle, Facebook, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -15,128 +15,101 @@ const Contact = () => {
   const whatsappChannelUrl = "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E";
 
   const handleWhatsApp = () => {
-    const message = encodeURIComponent("Bonjour eGame Bénin, je souhaite obtenir des informations.");
+    const message = encodeURIComponent("Bonjour eGame Bénin, j'ai besoin d'aide pour la plateforme.");
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
-  const handleEmail = () => {
-    window.location.href = `mailto:${email}?subject=Support eGame Bénin`;
-  };
-
-  const handleFacebook = () => {
-    window.open(facebookUrl, '_blank');
-  };
-
-  const handleWhatsAppChannel = () => {
-    window.open(whatsappChannelUrl, '_blank');
-  };
-
   const faqs = [
-    { q: "Comment s'inscrire à un tournoi ?", a: "Choisissez un tournoi sur l'accueil, cliquez sur 'Participer' et suivez les instructions de paiement via KKiaPay (MTN, Moov ou Celtiis)." },
-    { q: "Comment valider ma participation ?", a: "Après le paiement, allez dans votre 'Historique', copiez votre code de validation et envoyez-le nous sur WhatsApp." },
-    { q: "Les tournois sont-ils gratuits ?", a: "La plupart des tournois ont des frais d'entrée qui servent à constituer le 'Cash Prize' pour les gagnants." },
-    { q: "Où se déroulent les tournois présentiels ?", a: "Les lieux exacts (souvent à Cotonou) sont communiqués aux participants via WhatsApp après validation." }
+    { q: "Comment s'inscrire à un tournoi ?", a: "Accédez à la page du tournoi, cliquez sur 'S'inscrire et Payer', choisissez votre moyen Mobile Money (MTN, Moov, Celtiis) et validez." },
+    { q: "Comment sont versés les Cash Prizes ?", a: "Les gains sont transférés par Mobile Money au numéro enregistré dans votre profil immédiatement après l'officialisation des résultats." },
+    { q: "Que faire en cas de litige pendant un match ?", a: "Prenez une capture d'écran de l'écran de fin de partie et envoyez-la à nos arbitres via le support WhatsApp." },
+    { q: "Les tournois sont-ils ouverts à tous ?", a: "Oui, tous les joueurs résidant au Bénin peuvent participer." }
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
+      <SEO title="Contact & Support eGame Bénin" />
       <Navbar />
-      <main className="max-w-2xl mx-auto px-6 py-8">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors text-xs font-bold uppercase tracking-widest">
-          <ArrowLeft size={16} />
-          Retour
+      <main className="max-w-2xl mx-auto px-6 space-y-12">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#8888AA] hover:text-white transition-colors text-xs font-gaming font-bold uppercase tracking-widest">
+          <ArrowLeft size={16} /> Retour
         </button>
 
-        <div className="text-center mb-12">
-          <h1 className="text-3xl font-black mb-4 font-sora uppercase">Contact & Aide</h1>
-          <p className="text-muted-foreground text-sm font-medium">Une question ? Notre équipe est là pour vous aider.</p>
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-gaming font-black uppercase text-white">Contact & Support</h1>
+          <p className="text-xs text-[#8888AA]">L'équipe eGame Bénin répond à toutes tes questions 7j/7</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-12">
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleWhatsAppChannel}
-            className="flex flex-col items-center gap-3 p-6 bg-green-600/10 border border-green-600/20 rounded-3xl text-center transition-all hover:bg-green-600/20"
+        <div className="grid grid-cols-2 gap-4">
+          <button 
+            onClick={() => window.open(whatsappChannelUrl, '_blank')}
+            className="p-6 bg-[#0F0F1E] border border-emerald-500/30 hover:border-emerald-500 rounded-3xl text-center space-y-3 transition-all"
           >
-            <div className="w-12 h-12 bg-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-600/20">
-              <Users size={24} className="text-white" />
+            <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto">
+              <Users size={24} />
             </div>
             <div>
-              <h3 className="font-bold text-green-600 text-sm font-sora">Communauté</h3>
-              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Chaîne WhatsApp</p>
+              <p className="font-gaming font-bold text-xs text-white">Chaîne WhatsApp</p>
+              <p className="text-[10px] text-[#8888AA] uppercase">Communauté</p>
             </div>
-          </motion.button>
+          </button>
 
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button 
             onClick={handleWhatsApp}
-            className="flex flex-col items-center gap-3 p-6 bg-green-500/10 border border-green-500/20 rounded-3xl text-center transition-all hover:bg-green-500/20"
+            className="p-6 bg-[#0F0F1E] border border-[#8A2BE2]/30 hover:border-[#8A2BE2] rounded-3xl text-center space-y-3 transition-all"
           >
-            <div className="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/20">
-              <MessageSquare size={24} className="text-white" />
+            <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-2xl flex items-center justify-center mx-auto">
+              <MessageSquare size={24} />
             </div>
             <div>
-              <h3 className="font-bold text-green-500 text-sm font-sora">Support Direct</h3>
-              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Réponse rapide</p>
+              <p className="font-gaming font-bold text-xs text-white">Support Direct</p>
+              <p className="text-[10px] text-[#8888AA] uppercase">WhatsApp 24/7</p>
             </div>
-          </motion.button>
+          </button>
 
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleFacebook}
-            className="flex flex-col items-center gap-3 p-6 bg-blue-500/10 border border-blue-500/20 rounded-3xl text-center transition-all hover:bg-blue-500/20"
+          <button 
+            onClick={() => window.open(facebookUrl, '_blank')}
+            className="p-6 bg-[#0F0F1E] border border-blue-500/30 hover:border-blue-500 rounded-3xl text-center space-y-3 transition-all"
           >
-            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/20">
-              <Facebook size={24} className="text-white" />
+            <div className="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto">
+              <Facebook size={24} />
             </div>
             <div>
-              <h3 className="font-bold text-blue-500 text-sm font-sora">Facebook</h3>
-              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Actualités & News</p>
+              <p className="font-gaming font-bold text-xs text-white">Page Facebook</p>
+              <p className="text-[10px] text-[#8888AA] uppercase">Actualités</p>
             </div>
-          </motion.button>
+          </button>
 
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleEmail}
-            className="flex flex-col items-center gap-3 p-6 bg-violet-500/10 border border-violet-500/20 rounded-3xl text-center transition-all hover:bg-violet-500/20"
+          <button 
+            onClick={() => window.location.href = `mailto:${email}`}
+            className="p-6 bg-[#0F0F1E] border border-[#8A2BE2]/30 hover:border-[#8A2BE2] rounded-3xl text-center space-y-3 transition-all"
           >
-            <div className="w-12 h-12 bg-violet-500 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/20">
-              <Mail size={24} className="text-white" />
+            <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-2xl flex items-center justify-center mx-auto">
+              <Mail size={24} />
             </div>
             <div>
-              <h3 className="font-bold text-violet-500 text-sm font-sora">Email</h3>
-              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Support officiel</p>
+              <p className="font-gaming font-bold text-xs text-white">Support E-mail</p>
+              <p className="text-[10px] text-[#8888AA] uppercase">Officiel</p>
             </div>
-          </motion.button>
+          </button>
         </div>
 
-        <section className="space-y-6 mb-12">
-          <div className="flex items-center gap-2 mb-4">
-            <HelpCircle className="text-violet-500" size={20} />
-            <h2 className="text-xl font-bold font-sora uppercase">Questions Fréquentes</h2>
-          </div>
+        {/* FAQ */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-gaming font-bold text-white uppercase flex items-center gap-2">
+            <HelpCircle className="text-[#8A2BE2]" size={20} /> Questions Fréquentes
+          </h2>
 
           <Accordion type="single" collapsible className="w-full space-y-3">
             {faqs.map((faq, i) => (
-              <AccordionItem key={i} value={`item-${i}`} className="border border-border bg-card/40 backdrop-blur-md rounded-2xl px-4 overflow-hidden">
-                <AccordionTrigger className="hover:no-underline font-bold text-sm text-left font-sora">{faq.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground text-xs leading-relaxed font-medium">
+              <AccordionItem key={i} value={`item-${i}`} className="border border-[#8A2BE2]/20 bg-[#0F0F1E] rounded-2xl px-5">
+                <AccordionTrigger className="hover:no-underline font-gaming font-bold text-xs text-white text-left">{faq.q}</AccordionTrigger>
+                <AccordionContent className="text-[#8888AA] text-xs leading-relaxed font-medium">
                   {faq.a}
                 </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
-        </section>
-
-        <div className="p-8 bg-card/40 backdrop-blur-md rounded-[2rem] border border-border text-center">
-          <p className="text-muted-foreground text-[10px] font-black uppercase tracking-widest">
-            Disponible du Lundi au Samedi <br />
-            De 09h00 à 20h00
-          </p>
         </div>
       </main>
     </div>

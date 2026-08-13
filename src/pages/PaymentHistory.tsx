@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
-import { motion } from 'framer-motion';
+import SEO from '@/components/SEO';
 import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, MessageSquare, XCircle, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -45,7 +45,6 @@ const PaymentHistory = () => {
           const now = new Date().getTime();
           const diffMinutes = (now - createdAt) / (1000 * 60);
           
-          // Si toujours en attente après 5 min, on affiche échoué
           if (p.status === 'En attente' && diffMinutes > 5) {
             return { ...p, status: 'Échoué' };
           }
@@ -62,7 +61,6 @@ const PaymentHistory = () => {
   useEffect(() => {
     fetchData();
     
-    // Écoute en temps réel des changements (INSERT et UPDATE)
     const channel = supabase
       .channel('payment_updates')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'payments' }, () => {
@@ -76,97 +74,90 @@ const PaymentHistory = () => {
   }, [fetchData]);
 
   const handleWhatsAppSend = (payment: Payment) => {
-    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation de paiement : ${payment.validation_code} pour le tournoi ${payment.tournament_name}.`);
+    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation : ${payment.validation_code} pour le tournoi ${payment.tournament_name}.`);
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    showSuccess("Copié !");
+    showSuccess("Code copié !");
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
+      <SEO title="Mes Inscriptions & Paiements" />
       <Navbar />
-      <main className="max-w-2xl mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft size={20} />
-            Retour
+      <main className="max-w-2xl mx-auto px-6 space-y-8">
+        <div className="flex items-center justify-between">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#8888AA] hover:text-white transition-colors text-xs font-gaming font-bold uppercase tracking-widest">
+            <ArrowLeft size={16} /> Retour
           </button>
           <button 
             onClick={() => fetchData(true)} 
             disabled={isRefreshing}
-            className={`p-2 rounded-full bg-muted hover:bg-muted/80 transition-all ${isRefreshing ? 'animate-spin' : ''}`}
+            className={`p-2.5 rounded-full bg-[#0F0F1E] border border-[#8A2BE2]/30 hover:border-[#8A2BE2] transition-all ${isRefreshing ? 'animate-spin' : ''}`}
           >
-            <RefreshCw size={18} className="text-violet-500" />
+            <RefreshCw size={16} className="text-[#8A2BE2]" />
           </button>
         </div>
 
-        <h1 className="text-3xl font-black mb-8">Mes Inscriptions</h1>
+        <h1 className="text-3xl font-gaming font-black uppercase text-white">Mes Inscriptions</h1>
 
         {loading ? (
-          <div className="flex justify-center py-20"><div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>
+          <div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {payments.length === 0 ? (
-              <div className="text-center py-20 bg-card/50 rounded-[2rem] border border-border shadow-sm">
-                <CreditCard size={48} className="mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">Aucune inscription</p>
+              <div className="text-center py-20 bg-[#0F0F1E] rounded-3xl border border-[#8A2BE2]/20">
+                <CreditCard size={48} className="mx-auto text-[#8888AA] mb-4 opacity-40" />
+                <p className="text-sm font-gaming text-[#8888AA]">Aucune inscription enregistrée.</p>
               </div>
             ) : (
               payments.map((payment) => (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={payment.id} className="bg-card p-6 rounded-[2rem] border border-border space-y-6 shadow-sm">
+                <div key={payment.id} className="bg-[#0F0F1E] p-6 rounded-3xl border border-[#8A2BE2]/30 space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-bold text-lg">{payment.tournament_name}</h3>
-                      <p className="text-muted-foreground text-[10px]">{new Date(payment.created_at).toLocaleString('fr-FR')}</p>
+                      <h3 className="font-gaming font-bold text-base text-white">{payment.tournament_name}</h3>
+                      <p className="text-[#8888AA] text-[10px] font-mono mt-0.5">{new Date(payment.created_at).toLocaleString('fr-FR')}</p>
                     </div>
-                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] font-bold ${
-                      payment.status === 'Réussi' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 
-                      payment.status === 'Échoué' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
-                      'bg-orange-500/10 text-orange-500 border-orange-500/20'
+                    <div className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10px] font-gaming font-bold uppercase tracking-wider ${
+                      payment.status === 'Réussi' ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-500/40' : 
+                      payment.status === 'Échoué' ? 'bg-red-950/80 text-red-400 border border-red-500/40' :
+                      'bg-amber-950/80 text-amber-400 border border-amber-500/40'
                     }`}>
-                      {payment.status === 'Réussi' ? <CheckCircle2 size={14} /> : 
-                       payment.status === 'Échoué' ? <XCircle size={14} /> :
-                       <Clock size={14} className="animate-pulse" />}
+                      {payment.status === 'Réussi' ? <CheckCircle2 size={12} /> : 
+                       payment.status === 'Échoué' ? <XCircle size={12} /> :
+                       <Clock size={12} className="animate-pulse" />}
                       {payment.status}
                     </div>
                   </div>
 
                   {payment.status === 'Réussi' ? (
-                    <div className="space-y-4">
-                      <div className="p-4 bg-muted/50 rounded-2xl border border-border">
-                        <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-2">Code de validation (Preuve de paiement)</p>
-                        <div className="flex items-center justify-center gap-4">
-                          <span className="text-foreground font-mono font-black text-xl tracking-wider">{payment.validation_code}</span>
-                          <button onClick={() => copyToClipboard(payment.validation_code)} className="text-muted-foreground hover:text-foreground"><Copy size={18} /></button>
+                    <div className="space-y-3 pt-2 border-t border-[#8A2BE2]/10">
+                      <div className="p-4 bg-[#0A0A0F] rounded-2xl border border-[#FFD700]/30 flex items-center justify-between">
+                        <div>
+                          <p className="text-[#8888AA] text-[9px] font-gaming font-bold uppercase tracking-widest">Code de validation</p>
+                          <p className="text-[#FFD700] font-gaming font-black text-xl tracking-widest">{payment.validation_code}</p>
                         </div>
+                        <button onClick={() => copyToClipboard(payment.validation_code)} className="p-2 text-[#8888AA] hover:text-white">
+                          <Copy size={18} />
+                        </button>
                       </div>
 
                       <button 
                         onClick={() => handleWhatsAppSend(payment)}
-                        className="w-full py-5 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all shadow-lg shadow-green-500/20"
+                        className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-gaming font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
                       >
-                        <MessageSquare size={20} />
-                        Envoyer ma preuve sur WhatsApp
+                        <MessageSquare size={16} />
+                        Envoyer le code au support WhatsApp
                       </button>
                     </div>
-                  ) : payment.status === 'Échoué' ? (
-                    <div className="p-4 bg-red-500/5 rounded-2xl border border-red-500/10 text-center">
-                      <p className="text-red-500 text-xs font-bold">Paiement expiré ou échoué</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">Le délai de 5 minutes est dépassé. Veuillez recommencer l'inscription.</p>
-                    </div>
                   ) : (
-                    <div className="p-4 bg-muted/50 rounded-2xl text-center space-y-3">
-                      <div className="flex items-center justify-center gap-2 text-orange-500">
-                        <RefreshCw size={16} className="animate-spin" />
-                        <p className="text-xs font-bold">Vérification en cours...</p>
-                      </div>
-                      <p className="text-[10px] text-muted-foreground">Dès que votre paiement est validé sur KKiaPay, cette page se mettra à jour automatiquement.</p>
+                    <div className="p-3 bg-[#0A0A0F] rounded-xl text-center">
+                      <p className="text-xs text-[#8888AA]">Montant : <span className="text-white font-bold">{payment.amount} FCFA</span></p>
                     </div>
                   )}
-                </motion.div>
+                </div>
               ))
             )}
           </div>

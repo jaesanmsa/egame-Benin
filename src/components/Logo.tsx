@@ -11,22 +11,22 @@ interface LogoProps {
 
 const Logo = ({ className = "", size = 'md', showText = true }: LogoProps) => {
   const sizes = {
-    sm: { icon: 18, box: "w-8 h-8", text: "text-lg" },
-    md: { icon: 24, box: "w-10 h-10", text: "text-xl" },
-    lg: { icon: 40, box: "w-20 h-20", text: "text-3xl" }
+    sm: { icon: 18, box: "w-8 h-8", text: "text-base" },
+    md: { icon: 22, box: "w-10 h-10", text: "text-lg" },
+    lg: { icon: 36, box: "w-16 h-16", text: "text-2xl" }
   };
 
   const currentSize = sizes[size];
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <div className={`${currentSize.box} bg-violet-600/10 border border-violet-500/30 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/10`}>
-        <Trophy className="text-violet-500" size={currentSize.icon} strokeWidth={2} />
+    <div className={`flex items-center gap-2.5 ${className}`}>
+      <div className={`${currentSize.box} bg-[#8A2BE2]/15 border border-[#8A2BE2]/50 rounded-2xl flex items-center justify-center shadow-lg shadow-[#8A2BE2]/20`}>
+        <Trophy className="text-[#8A2BE2]" size={currentSize.icon} strokeWidth={2.5} />
       </div>
       
       {showText && (
-        <span className={`font-black tracking-tighter text-foreground ${currentSize.text}`}>
-          eGame <span className="text-violet-500">Bénin</span>
+        <span className={`font-gaming font-black uppercase tracking-wider text-white ${currentSize.text}`}>
+          eGame <span className="text-[#8A2BE2]">Bénin</span>
         </span>
       )}
     </div>

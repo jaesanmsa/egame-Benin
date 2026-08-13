@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, ArrowRight, History, MessageSquare, Copy, Loader2, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { CheckCircle2, History, MessageSquare, Copy, Loader2, AlertCircle } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import SEO from '@/components/SEO';
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
 
@@ -28,8 +28,6 @@ const PaymentSuccess = () => {
       const tournamentId = searchParams.get('tournamentId');
       const tName = searchParams.get('tournamentName');
       const amount = searchParams.get('amount');
-
-      // Si c'est KKiaPay
       const kkiapayId = searchParams.get('kkiapay_transaction_id');
 
       if (!transactionId && !kkiapayId) {
@@ -45,21 +43,13 @@ const PaymentSuccess = () => {
         if (!user) throw new Error("Session utilisateur introuvable.");
 
         if (gateway === 'maketou') {
-          // LOGIQUE MAKETOU : On appelle l'action 'verify'
           const { data, error: funcError } = await supabase.functions.invoke('verify-maketou', {
-            body: { 
-              action: 'verify',
-              transaction_id: transactionId, 
-              tournamentId, 
-              tournamentName: tName, 
-              amount 
-            }
+            body: { action: 'verify', transaction_id: transactionId, tournamentId, tournamentName: tName, amount }
           });
           if (funcError || data.error) throw new Error(data?.error || "Erreur Maketou");
           setValidationCode(data.validation_code);
           showSuccess("Paiement Maketou vérifié !");
         } else if (transactionId && !kkiapayId) {
-          // LOGIQUE FEDAPAY
           const { data, error: funcError } = await supabase.functions.invoke('verify-fedapay', {
             body: { transaction_id: transactionId, tournamentId, tournamentName: tName, amount }
           });
@@ -67,7 +57,6 @@ const PaymentSuccess = () => {
           setValidationCode(data.validation_code);
           showSuccess("Paiement FedaPay vérifié !");
         } else {
-          // LOGIQUE KKIAPAY
           const { data: existing } = await supabase
             .from('payments')
             .select('*')
@@ -88,7 +77,7 @@ const PaymentSuccess = () => {
               fedapay_transaction_id: kkiapayId
             });
             setValidationCode(code);
-            showSuccess("Inscription KKiaPay confirmée !");
+            showSuccess("Inscription confirmée !");
           }
         }
       } catch (err: any) {
@@ -108,62 +97,59 @@ const PaymentSuccess = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col">
+      <SEO title="Paiement Réussi" />
       <Navbar />
-      <main className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md bg-card border border-border rounded-[3rem] p-10 text-center shadow-2xl">
+      <main className="flex-1 flex items-center justify-center p-6 pt-24">
+        <div className="w-full max-w-md bg-[#0F0F1E] border border-[#8A2BE2]/40 rounded-3xl p-8 text-center shadow-2xl space-y-6">
           {isProcessing ? (
-            <div className="py-12 space-y-6">
-              <Loader2 className="w-12 h-12 text-violet-500 animate-spin mx-auto" />
-              <h1 className="text-2xl font-black">Vérification du paiement...</h1>
-              <p className="text-xs text-muted-foreground">Nous sécurisons votre transaction</p>
+            <div className="py-12 space-y-4">
+              <Loader2 className="w-12 h-12 text-[#8A2BE2] animate-spin mx-auto" />
+              <h1 className="text-xl font-gaming font-bold">Vérification de la transaction...</h1>
             </div>
           ) : error ? (
-            <div className="py-8 space-y-6">
-              <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto">
-                <AlertCircle size={48} className="text-red-500" />
-              </div>
-              <h1 className="text-2xl font-black text-red-500">Échec de vérification</h1>
-              <p className="text-muted-foreground text-sm">{error}</p>
+            <div className="py-8 space-y-4">
+              <AlertCircle size={48} className="text-red-400 mx-auto" />
+              <h1 className="text-xl font-gaming font-bold text-red-400">Échec de validation</h1>
+              <p className="text-xs text-[#8888AA]">{error}</p>
               <Link to="/contact" className="block">
-                <Button className="w-full py-6 rounded-2xl bg-violet-600 text-white font-bold">Contacter le support</Button>
+                <button className="w-full btn-glow-border py-3.5 text-xs uppercase">Contacter le support</button>
               </Link>
             </div>
           ) : (
             <>
-              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8">
-                <CheckCircle2 size={48} className="text-green-500" />
+              <div className="w-20 h-20 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/40">
+                <CheckCircle2 size={48} />
               </div>
 
-              <h1 className="text-3xl font-black mb-4">C'est validé !</h1>
-              <p className="text-muted-foreground mb-8 text-sm">
-                Ton inscription est enregistrée. Note bien ton code de validation :
-              </p>
+              <div className="space-y-2">
+                <h1 className="text-2xl font-gaming font-black uppercase text-white">C'est Validé !</h1>
+                <p className="text-xs text-[#8888AA]">Ton inscription au tournoi est enregistrée.</p>
+              </div>
 
-              <div className="space-y-6 mb-10">
-                <div className="p-6 bg-muted/50 rounded-[2rem] border border-border">
-                  <p className="text-muted-foreground text-[10px] font-black uppercase tracking-widest mb-2">Code de validation</p>
-                  <div className="flex items-center justify-center gap-4">
-                    <span className="text-foreground font-mono font-black text-2xl tracking-wider">{validationCode}</span>
-                    <button onClick={() => { navigator.clipboard.writeText(validationCode!); showSuccess("Copié !"); }} className="text-muted-foreground hover:text-violet-500"><Copy size={20} /></button>
-                  </div>
+              <div className="p-6 bg-[#0A0A0F] rounded-2xl border border-[#FFD700]/40 space-y-2">
+                <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase tracking-widest">Ton Code de Validation</p>
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-[#FFD700] font-gaming font-black text-2xl tracking-widest">{validationCode}</span>
+                  <button onClick={() => { navigator.clipboard.writeText(validationCode!); showSuccess("Code copié !"); }} className="text-[#8888AA] hover:text-white">
+                    <Copy size={18} />
+                  </button>
                 </div>
-
-                <Button onClick={handleWhatsAppSend} className="w-full py-8 rounded-2xl bg-green-600 hover:bg-green-700 font-black text-lg gap-3 text-white shadow-xl shadow-green-500/20">
-                  <MessageSquare size={24} />
-                  Envoyer sur WhatsApp
-                </Button>
               </div>
 
-              <div className="space-y-4">
-                <Link to="/payments">
-                  <Button variant="outline" className="w-full py-7 rounded-2xl border-border font-bold gap-3">
-                    <History size={20} />
-                    Voir mon historique
-                  </Button>
-                </Link>
-                <Link to="/">
-                  <Button variant="ghost" className="w-full py-4 rounded-2xl font-bold text-muted-foreground">Retour à l'accueil</Button>
+              <div className="space-y-3">
+                <button 
+                  onClick={handleWhatsAppSend}
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-gaming font-bold text-xs uppercase tracking-wider py-4 rounded-xl flex items-center justify-center gap-2"
+                >
+                  <MessageSquare size={18} />
+                  Envoyer au Support WhatsApp
+                </button>
+
+                <Link to="/payments" className="block">
+                  <button className="w-full bg-[#0A0A0F] border border-[#8A2BE2]/30 hover:border-[#8A2BE2] text-white font-gaming font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl flex items-center justify-center gap-2">
+                    <History size={16} /> Voir mon historique
+                  </button>
                 </Link>
               </div>
             </>

@@ -24,66 +24,66 @@ const GameDetails = () => {
       name: 'Free Fire', 
       icon: '/icon free fire.png', 
       image: '/freefire.webp',
-      desc: "Le Battle Royale mobile le plus populaire au Bénin. Survis jusqu'au bout pour remporter le Booyah.",
+      desc: "Le Battle Royale mobile numéro 1 au Bénin. Domine le terrain, élimine tes adversaires et décroche le Booyah !",
       whatsapp: "https://chat.whatsapp.com/L1iNwy7r959GMfYwfmno1U"
     },
     'clash-royale': { 
       name: 'Clash Royale', 
       icon: '/icon clash royal.jpg', 
       image: '/clash royal.webp',
-      desc: "Un mélange de stratégie et de cartes. Détruis les tours adverses et grimpe dans le classement.",
+      desc: "Duel en temps réel, stratégie et gestion de decks. Détruis les tours royales ennemies.",
       whatsapp: "https://chat.whatsapp.com/EMQDtGz5pLyJF6wxfXpBD4?mode=hq1tcla"
     },
     'clash-of-clans': { 
       name: 'Clash of Clans', 
       icon: '/icon clash of clans.jpg', 
       image: '/clash of clans.webp',
-      desc: "Construis ton village, forme tes troupes et mène ton clan à la victoire dans des guerres épiques.",
+      desc: "Construis ton village, forme tes armées et mène ton clan à la victoire ultime.",
       whatsapp: "https://chat.whatsapp.com/Dpuq4TptwKZ3oSNUl0pQp9"
     },
     'cod-mobile': { 
       name: 'COD Mobile', 
       icon: '/icon cod mobile.png', 
       image: '/cod mobile.webp',
-      desc: "L'expérience Call of Duty sur mobile. Précision et rapidité sont les clés de la victoire.",
+      desc: "FPS compétitif pur. Précision, réflexes et esprit d'équipe sur les cartes légendaires.",
       whatsapp: "https://chat.whatsapp.com/CyrUEEFw6Lr2di9GbCIVv4?mode=gi_t"
     },
     'pubg-mobile': { 
       name: 'PUBG Mobile', 
       icon: '/icon pubg.png', 
       image: '/pubg-mobile.webp',
-      desc: "Le pionnier du Battle Royale. Atterris, équipe-toi et sois le dernier survivant.",
+      desc: "Battle Royale ultra-réaliste. Survis à 100 joueurs et remporte le repas de poulet.",
       whatsapp: "https://chat.whatsapp.com/LGCchL76cYlIdCUb6ErzvP?mode=gi_t"
     },
     'mobile-legends': { 
       name: 'Mobile Legends', 
       icon: '/icon mobile legend.jpg', 
       image: '/mobile legend.webp',
-      desc: "Le MOBA mobile de référence. Choisis ton héros, forme ton équipe et détruis la base ennemie.",
+      desc: "MOBA 5v5 compétitif. Choisis ton héros et écrase la base ennemie.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'blur': { 
       name: 'Blur', 
       icon: '🏎️', 
       image: '/blur.webp',
-      desc: "Course arcade explosive. Utilise tes pouvoirs pour éjecter tes adversaires de la piste.",
+      desc: "Courses arcade explosives avec armes et bonus. Éjecte tes rivaux !",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'cod-mw4': { 
       name: 'COD MW4', 
       icon: '🔫', 
       image: '/cod mw4.webp',
-      desc: "Le classique du FPS. Affrontements intenses en local ou en ligne.",
+      desc: "Le classique du FPS compétitif.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     },
     'bombsquad': { 
       name: 'BombSquad', 
       icon: '💣', 
       image: '/bombsquad.webp',
-      desc: "Explose tes amis dans des mini-jeux délirants. Fun garanti.",
+      desc: "Jeu d'action délirant à coups de bombes.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     }
-  }[id as string] || { name: id, icon: '🎮', image: '', desc: "Rejoins la compétition sur eGame Bénin.", whatsapp: "#" };
+  }[id as string] || { name: id, icon: '🎮', image: '', desc: "Compétition eSport officielle.", whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E" };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -123,92 +123,141 @@ const GameDetails = () => {
   }, [id, gameInfo.name]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-32">
+    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32">
       <Navbar />
+      
+      {/* Header Image de fond */}
       <section className="relative h-[45vh] w-full overflow-hidden">
-        <img src={gameInfo.image} className="w-full h-full object-cover opacity-40 scale-105" alt="" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+        <img src={gameInfo.image} className="w-full h-full object-cover opacity-30" alt="" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/40 to-transparent" />
+        
         <div className="absolute top-6 left-6 z-20">
-          <button onClick={() => navigate(-1)} className="p-2.5 bg-card/80 backdrop-blur-md rounded-full border border-border shadow-lg hover:scale-110 transition-transform">
-            <ArrowLeft size={18} />
+          <button 
+            onClick={() => navigate(-1)} 
+            className="p-3 bg-[#0F0F1E]/80 backdrop-blur-md rounded-full border border-[#8A2BE2]/40 text-white hover:bg-[#8A2BE2] transition-colors"
+          >
+            <ArrowLeft size={20} />
           </button>
         </div>
-        <div className="absolute bottom-12 left-6 md:left-12 z-10">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-4 mb-2">
-            <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl">
+
+        <div className="absolute bottom-10 left-6 md:left-12 z-10">
+          <div className="flex items-center gap-4">
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden border-2 border-[#8A2BE2]/50 shadow-2xl bg-[#0F0F1E]">
               {gameInfo.icon.startsWith('/') ? (
                 <img src={gameInfo.icon} alt="" className="w-full h-full object-cover" />
               ) : (
-                <span className="text-5xl md:text-6xl flex items-center justify-center h-full bg-muted">{gameInfo.icon}</span>
+                <span className="text-5xl flex items-center justify-center h-full">{gameInfo.icon}</span>
               )}
             </div>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-none uppercase font-sora">{gameInfo.name}</h1>
+                <h1 className="text-3xl md:text-5xl font-gaming font-black uppercase text-white tracking-wide">{gameInfo.name}</h1>
                 {hasActiveTournament && (
-                  <div className="bg-green-500/20 backdrop-blur-md border border-green-500/30 px-3 py-1 rounded-full flex items-center gap-2">
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                    <span className="text-[10px] font-black text-green-400 uppercase tracking-widest">Live</span>
+                  <div className="bg-emerald-950/80 border border-emerald-500/50 px-3 py-1 rounded-full flex items-center gap-2">
+                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
+                    <span className="text-[10px] font-gaming font-bold text-emerald-400 uppercase">Tournoi Actif</span>
                   </div>
                 )}
               </div>
-              <p className="text-violet-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Discipline Officielle eGame</p>
+              <p className="text-[#A855F7] text-xs font-gaming font-bold uppercase tracking-widest mt-2">Discipline Officielle eGame Bénin</p>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      <main className="max-w-6xl mx-auto px-6 -mt-8 relative z-20">
+      {/* Contenu principal */}
+      <main className="max-w-6xl mx-auto px-6 space-y-12 relative z-20 -mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-12">
-            <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-[2.5rem] p-8 shadow-sm">
-              <h2 className="text-sm font-black mb-4 flex items-center gap-2.5 uppercase tracking-widest"><Target className="text-violet-500" size={18} />À propos de la discipline</h2>
-              <p className="text-muted-foreground text-sm leading-relaxed font-medium">{gameInfo.desc}</p>
-            </motion.section>
-            <section className="space-y-6">
-              <h2 className="text-2xl font-black tracking-tight flex items-center gap-3 font-sora"><Zap className="text-yellow-500 fill-yellow-500" size={24} />Tournois Disponibles</h2>
+          <div className="lg:col-span-2 space-y-8">
+            {/* À propos du jeu */}
+            <div className="bg-[#0F0F1E] border border-[#8A2BE2]/20 rounded-3xl p-8 space-y-3">
+              <h2 className="text-sm font-gaming font-bold uppercase text-[#A855F7] flex items-center gap-2">
+                <Target size={18} /> Description de la discipline
+              </h2>
+              <p className="text-sm text-[#8888AA] leading-relaxed font-medium">{gameInfo.desc}</p>
+            </div>
+
+            {/* Tournois disponibles */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-gaming font-black uppercase text-white flex items-center gap-3">
+                <Zap size={24} className="text-[#FFD700]" />
+                Tournois Disponibles
+              </h2>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {loading ? (
-                  Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-[24px]" />)
+                  Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-3xl bg-[#0F0F1E]" />)
                 ) : tournaments.length === 0 ? (
-                  <div className="col-span-full py-12 text-center bg-muted/10 rounded-[32px] border border-dashed border-border">
-                    <Gamepad2 size={40} className="mx-auto text-muted-foreground/20 mb-3" />
-                    <p className="text-muted-foreground text-xs font-bold italic">Aucun tournoi actif pour le moment.</p>
+                  <div className="col-span-full py-12 text-center bg-[#0F0F1E] rounded-3xl border border-[#8A2BE2]/20">
+                    <Gamepad2 size={40} className="mx-auto text-[#8888AA] mb-3 opacity-40" />
+                    <p className="text-sm font-gaming text-[#8888AA]">Aucun tournoi actif pour ce jeu actuellement.</p>
                   </div>
                 ) : (
                   tournaments.map((t) => (
-                    <TournamentCard key={t.id} id={t.id} title={t.title} game={t.game} image={t.image_url} date={new Date(t.start_date).toLocaleDateString('fr-FR')} participants={`${participantCounts[t.id] || 0}/${t.max_participants}`} entryFee={t.entry_fee.toString()} type={t.type as any} status="active" />
+                    <TournamentCard 
+                      key={t.id} 
+                      id={t.id} 
+                      title={t.title} 
+                      game={t.game} 
+                      image={t.image_url} 
+                      date={new Date(t.start_date).toLocaleDateString('fr-FR')} 
+                      participants={`${participantCounts[t.id] || 0}/${t.max_participants}`} 
+                      entryFee={t.entry_fee.toString()} 
+                      prizePool={t.prize_pool}
+                      type={t.type as any} 
+                      status="active" 
+                    />
                   ))
                 )}
               </div>
-            </section>
+            </div>
           </div>
+
+          {/* Sidebar : Champions & Communauté */}
           <div className="space-y-8">
-            <motion.section initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-[2.5rem] p-8 shadow-sm">
-              <div className="flex items-center gap-3 mb-8"><div className="w-10 h-10 bg-yellow-500/10 rounded-xl flex items-center justify-center text-yellow-500"><Trophy size={20} /></div><h2 className="text-xs font-black uppercase tracking-widest">Hall of Fame</h2></div>
-              <div className="space-y-4">
-                {loading ? (
-                  Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-16 w-full rounded-2xl" />)
-                ) : winners.length === 0 ? (
-                  <div className="text-center py-8"><Star size={24} className="mx-auto text-muted-foreground/20 mb-2" /><p className="text-[10px] text-muted-foreground font-bold italic">L'histoire reste à écrire...</p></div>
-                ) : (
-                  winners.map((w, i) => (
-                    <div key={i} className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border/50 hover:border-violet-500/30 transition-all group">
-                      <span className="text-2xl group-hover:scale-110 transition-transform">{w.winner_avatar || '🏆'}</span>
-                      <div className="flex-1"><p className="font-black text-xs">{w.winner_name}</p><p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest line-clamp-1">{w.title}</p></div>
-                      <div className="text-right"><p className="text-[9px] font-black text-green-500">+{w.prize_pool}</p></div>
+            {/* Derniers Gagnants de ce jeu */}
+            <div className="bg-[#0F0F1E] border border-[#FFD700]/30 rounded-3xl p-6 space-y-6">
+              <div className="flex items-center gap-3">
+                <Trophy className="text-[#FFD700]" size={22} />
+                <h2 className="text-sm font-gaming font-bold uppercase text-white">Hall of Fame ({gameInfo.name})</h2>
+              </div>
+
+              {winners.length === 0 ? (
+                <p className="text-xs text-[#8888AA] font-gaming text-center py-6">Pas encore de gagnant enregistré pour ce jeu.</p>
+              ) : (
+                <div className="space-y-3">
+                  {winners.map((w, i) => (
+                    <div key={i} className="flex items-center justify-between p-3.5 bg-[#0A0A0F] rounded-2xl border border-[#FFD700]/20">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{w.winner_avatar || '🏆'}</span>
+                        <div>
+                          <p className="font-gaming font-bold text-xs text-white">{w.winner_name}</p>
+                          <p className="text-[10px] text-[#8888AA] line-clamp-1">{w.title}</p>
+                        </div>
+                      </div>
+                      <span className="text-xs font-gaming font-black text-[#FFD700]">{w.prize_pool}</span>
                     </div>
-                  ))
-                )}
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Section Communauté WhatsApp */}
+            <div className="bg-[#8A2BE2] rounded-3xl p-8 space-y-6 shadow-xl shadow-[#8A2BE2]/20">
+              <div className="flex items-center gap-3 text-white">
+                <MessageSquare size={24} />
+                <h3 className="font-gaming font-bold text-base uppercase">Rejoindre la Communauté</h3>
               </div>
-            </motion.section>
-            <motion.section initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="bg-violet-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-violet-500/20">
-              <h3 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2"><MessageSquare size={16} />Communauté</h3>
-              <div className="space-y-6">
-                <p className="text-xs leading-relaxed text-violet-100 font-medium">Rejoins la communauté <span className="font-black text-white">{gameInfo.name}</span> de eGame Bénin pour ne rater aucune info.</p>
-                <a href={gameInfo.whatsapp} target="_blank" rel="noopener noreferrer" className="block"><Button className="w-full bg-white text-violet-600 hover:bg-violet-50 py-6 rounded-2xl font-black text-xs gap-2">Rejoindre le groupe<ChevronRight size={16} /></Button></a>
-              </div>
-            </motion.section>
+              <p className="text-xs text-white/80 leading-relaxed font-medium">
+                Rejoins le groupe WhatsApp officiel des joueurs de <span className="font-bold text-white">{gameInfo.name}</span> au Bénin.
+              </p>
+              <a href={gameInfo.whatsapp} target="_blank" rel="noopener noreferrer" className="block">
+                <Button className="w-full bg-white text-[#0A0A0F] hover:bg-gray-100 font-gaming font-bold text-xs py-6 rounded-2xl uppercase tracking-wider flex items-center justify-center gap-2">
+                  Rejoindre sur WhatsApp
+                  <ChevronRight size={16} />
+                </Button>
+              </a>
+            </div>
           </div>
         </div>
       </main>

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, Globe, MapPin, Share2, Zap } from 'lucide-react';
+import { Users, Calendar, Globe, MapPin, Share2, Trophy, ArrowRight } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -16,12 +16,12 @@ interface TournamentProps {
   date: string;
   participants: string;
   entryFee: string;
+  prizePool?: string;
   type: 'Online' | 'Presentiel';
-  city?: string;
   status?: 'active' | 'finished';
 }
 
-const TournamentCard = ({ id, title, game, image, date, participants, entryFee, type, status = 'active' }: TournamentProps) => {
+const TournamentCard = ({ id, title, game, image, date, participants, entryFee, prizePool = "50.000 FCFA", type, status = 'active' }: TournamentProps) => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -58,86 +58,94 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
 
   return (
     <motion.div 
-      whileHover={{ y: -6, scale: 1.01 }}
-      whileTap={{ scale: 0.99 }}
+      whileHover={{ y: -6 }}
       onClick={handleClick}
-      className={`group relative glass-card glass-card-hover rounded-[28px] overflow-hidden transition-all cursor-pointer ${
-        status === 'finished' ? 'opacity-60 grayscale-[0.3]' : ''
+      className={`group relative esport-card overflow-hidden cursor-pointer ${
+        status === 'finished' ? 'opacity-70 grayscale-[0.3]' : ''
       }`}
     >
-      {/* Image de couverture avec overlay dégradé */}
+      {/* Image de couverture avec overlay sombre */}
       <div className="relative aspect-[16/10] overflow-hidden">
         <img 
-          src={image} 
+          src={image || '/coc-tournament.webp'} 
           alt={title} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0c0414] via-[#0c0414]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F1E] via-[#0F0F1E]/50 to-transparent" />
         
         {/* Badge Type (En ligne / Présentiel) */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-          <Badge className="bg-black/60 backdrop-blur-md text-white border-white/10 flex items-center gap-1 text-[9px] font-black uppercase tracking-wider py-1 px-2.5 rounded-xl">
+        <div className="absolute top-3 left-3 flex items-center gap-2">
+          <Badge className="bg-[#0A0A0F]/80 backdrop-blur-md text-white border border-[#8A2BE2]/30 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider py-1 px-3 rounded-full">
             {type === 'Online' ? (
-              <Globe size={11} className="text-cyan-400 drop-shadow-[0_0_4px_rgba(34,211,238,0.5)]" />
+              <Globe size={12} className="text-cyan-400" />
             ) : (
-              <MapPin size={11} className="text-orange-400 drop-shadow-[0_0_4px_rgba(251,146,60,0.5)]" />
+              <MapPin size={12} className="text-orange-400" />
             )}
             {type === 'Online' ? 'En ligne' : 'Présentiel'}
           </Badge>
         </div>
 
-        {/* Badge Live Pulsant */}
+        {/* Badge "EN COURS" Vert animé pour tournois actifs */}
         {status === 'active' && (
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-green-500/10 backdrop-blur-md border border-green-500/30 px-2.5 py-1 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.2)]">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          <div className="absolute top-3 right-3 flex items-center gap-2 bg-emerald-950/80 backdrop-blur-md border border-emerald-500/40 px-3 py-1 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
             </span>
-            <span className="text-[8px] font-black text-green-400 uppercase tracking-widest">Live</span>
+            <span className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-widest font-gaming">En cours</span>
           </div>
         )}
 
-        {/* Badge Prix d'entrée */}
-        <div className="absolute bottom-3 right-3">
-          <div className={`text-[10px] font-black px-3 py-1 rounded-xl shadow-lg backdrop-blur-md border ${
-            status === 'finished' 
-              ? 'bg-zinc-800/80 border-zinc-700 text-zinc-400' 
-              : 'bg-violet-600/90 border-violet-500/30 text-white shadow-violet-500/20'
-          }`}>
-            {status === 'finished' ? 'Terminé' : `${entryFee} FCFA`}
-          </div>
-        </div>
+        {/* Bouton de partage */}
+        <button 
+          onClick={handleShare}
+          className="absolute bottom-3 right-3 p-2 rounded-full bg-[#0A0A0F]/70 hover:bg-[#8A2BE2] text-white/70 hover:text-white border border-white/10 transition-colors"
+        >
+          <Share2 size={14} />
+        </button>
       </div>
-      
-      {/* Contenu de la carte */}
-      <div className="p-5">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-1.5">
-            <Zap size={12} className="text-violet-400 fill-violet-400/20" />
-            <p className="text-violet-400 text-[9px] font-black uppercase tracking-widest">{game}</p>
-          </div>
-          <button 
-            onClick={handleShare}
-            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-muted-foreground hover:text-white transition-colors"
-          >
-            <Share2 size={12} />
-          </button>
+
+      {/* Contenu principal de la carte */}
+      <div className="p-6 space-y-4">
+        <div>
+          <p className="text-[10px] font-extrabold text-[#A855F7] uppercase tracking-[0.2em] font-gaming mb-1">
+            {game}
+          </p>
+          <h3 className="font-gaming font-extrabold text-lg text-white group-hover:text-[#A855F7] transition-colors line-clamp-1">
+            {title}
+          </h3>
         </div>
-        
-        <h3 className="font-bold text-base mb-4 line-clamp-1 group-hover:text-violet-400 transition-colors font-sora">
-          {title}
-        </h3>
-        
-        <div className="flex items-center justify-between text-muted-foreground text-xs font-medium pt-3 border-t border-white/5">
+
+        {/* AFFICHAGE EN GRAND DU CASH PRIZE EN OR */}
+        <div className="bg-[#0A0A0F] border border-[#FFD700]/30 p-3.5 rounded-2xl flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Trophy className="text-[#FFD700]" size={20} />
+            <span className="text-[10px] font-bold text-[#8888AA] uppercase tracking-wider">Cash Prize</span>
+          </div>
+          <span className="text-xl font-gaming font-black text-[#FFD700] text-glow-gold">
+            {prizePool}
+          </span>
+        </div>
+
+        {/* Infos supplémentaires : Date, Places, Frais */}
+        <div className="flex items-center justify-between text-xs font-semibold text-[#8888AA] pt-2 border-t border-[#8A2BE2]/10">
           <div className="flex items-center gap-1.5">
-            <Calendar size={13} className="text-violet-500/60" />
+            <Calendar size={13} className="text-[#8A2BE2]" />
             <span>{date}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Users size={13} className="text-violet-500/60" />
+            <Users size={13} className="text-[#8A2BE2]" />
             <span>{participants}</span>
           </div>
         </div>
+
+        {/* Bouton S'inscrire Violet */}
+        <button 
+          className="w-full btn-glow-border py-3 rounded-xl text-xs uppercase tracking-widest flex items-center justify-center gap-2 group-hover:bg-[#A855F7] transition-all"
+        >
+          S'inscrire • {entryFee} FCFA
+          <ArrowRight size={14} />
+        </button>
       </div>
     </motion.div>
   );

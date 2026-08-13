@@ -3,12 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import PlayerBadge from '@/components/PlayerBadge';
+import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
-import { Settings, LogOut, Star, Palette, HelpCircle, Shield, Activity, Zap, TrendingUp, Award, Bell, BellOff, History, LayoutDashboard } from 'lucide-react';
+import { Settings, LogOut, Star, Palette, Shield, Activity, Zap, Award, Bell, BellOff, History, LayoutDashboard, Phone, MapPin } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { showSuccess, showError } from '@/utils/toast';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer } from 'recharts';
 import { requestNotificationPermission } from '@/lib/firebase';
 
 const Profile = () => {
@@ -16,7 +16,6 @@ const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [tournamentCount, setTournamentCount] = useState(0);
-  const [progressionData, setProgressionData] = useState<any[]>([]);
   const [notifLoading, setNotifLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -30,26 +29,13 @@ const Profile = () => {
         const { data: profileData } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
         setProfile(profileData);
         
-        const { data: payments, count } = await supabase
+        const { count } = await supabase
           .from('payments')
-          .select('*', { count: 'exact' })
+          .select('*', { count: 'exact', head: true })
           .eq('user_id', user.id)
-          .eq('status', 'Réussi')
-          .order('created_at', { ascending: true });
+          .eq('status', 'Réussi');
         
         setTournamentCount(count || 0);
-
-        if (payments) {
-          let currentPoints = 0;
-          const chartData = payments.map((p, i) => {
-            currentPoints += 10;
-            return {
-              name: `T${i+1}`,
-              points: currentPoints
-            };
-          });
-          setProgressionData(chartData);
-        }
       } catch (err) {
         navigate('/auth');
       } finally {
@@ -69,12 +55,10 @@ const Profile = () => {
     setNotifLoading(true);
     try {
       if (profile?.notifications_enabled) {
-        const { error } = await supabase
+        await supabase
           .from('profiles')
           .update({ notifications_enabled: false })
           .eq('id', user.id);
-        
-        if (error) throw error;
         showSuccess("Notifications désactivées");
       } else {
         await requestNotificationPermission(user.id);
@@ -90,30 +74,41 @@ const Profile = () => {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>;
   if (!user) return null;
 
   const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
   const username = profile?.username || user.user_metadata?.username || user.email?.split('@')[0];
+  const city = profile?.city || "Bénin";
+  const phone = profile?.phone || "Non renseigné";
   const isAdmin = user.email?.toLowerCase() === 'egamebenin@gmail.com';
-  
   const displayPoints = profile?.points || (tournamentCount * 10);
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-32 pt-12 md:pt-24">
+    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
+      <SEO title={`Profil de ${username}`} />
       <Navbar />
-      <main className="max-w-4xl mx-auto px-6 py-8">
-        <section className="flex flex-col items-center mb-12">
-          <div className="relative group">
-            <div className="w-32 h-32 rounded-full border-4 border-violet-600 overflow-hidden bg-muted shadow-2xl">
+      <main className="max-w-3xl mx-auto px-6 space-y-8">
+        {/* Section En-tête Joueur */}
+        <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-3xl p-8 text-center space-y-4 shadow-2xl relative overflow-hidden">
+          <div className="relative inline-block mx-auto">
+            <div className="w-28 h-28 rounded-full border-4 border-[#8A2BE2] overflow-hidden bg-[#0A0A0F] shadow-2xl mx-auto">
               <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
             </div>
-            <Link to="/avatar-maker" className="absolute bottom-0 right-0 bg-violet-600 p-2 rounded-full border-4 border-background hover:scale-110 transition-transform text-white">
+            <Link to="/avatar-maker" className="absolute bottom-0 right-0 bg-[#8A2BE2] p-2.5 rounded-full border-2 border-[#0A0A0F] hover:scale-110 transition-transform text-white shadow-lg">
               <Palette size={16} />
             </Link>
           </div>
-          <div className="flex flex-col items-center gap-2 mt-4">
-            <h1 className="text-3xl font-black font-sora">{username}</h1>
+
+          <div className="space-y-1">
+            <h1 className="text-2xl font-gaming font-black text-white">{username}</h1>
+            <p className="text-xs font-bold text-[#8888AA] flex items-center justify-center gap-1">
+              <MapPin size={14} className="text-[#8A2BE2]" /> {city}
+            </p>
+          </div>
+
+          {/* Badges */}
+          <div className="flex justify-center pt-2">
             <PlayerBadge 
               tournamentCount={tournamentCount} 
               mvpCount={profile?.mvp_count} 
@@ -121,89 +116,91 @@ const Profile = () => {
               size="md" 
             />
           </div>
-        </section>
+        </div>
 
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="glass-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
-            <Activity className="mx-auto text-violet-500 mb-2" size={24} />
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Tournois</p>
-            <p className="text-2xl font-black font-sora">{tournamentCount}</p>
+        {/* Statistiques Joueur */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="bg-[#0F0F1E] border border-[#8A2BE2]/20 p-5 rounded-2xl text-center space-y-1">
+            <Activity className="mx-auto text-[#8A2BE2]" size={22} />
+            <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase">Tournois</p>
+            <p className="text-xl font-gaming font-black text-white">{tournamentCount}</p>
           </div>
-          <div className="glass-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
-            <Zap className="mx-auto text-yellow-500 mb-2" size={24} />
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Points</p>
-            <p className="text-2xl font-black font-sora">{displayPoints}</p>
-          </div>
-          <div className="glass-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
-            <Award className="mx-auto text-cyan-500 mb-2" size={24} />
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Victoires</p>
-            <p className="text-2xl font-black font-sora">{profile?.champion_count || 0}</p>
-          </div>
-          <div className="glass-card border border-border p-6 rounded-[2rem] shadow-sm text-center">
-            <Star className="mx-auto text-orange-500 mb-2" size={24} />
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">MVP</p>
-            <p className="text-2xl font-black font-sora">{profile?.mvp_count || 0}</p>
-          </div>
-        </section>
 
-        <section className="glass-card border border-border p-8 rounded-[2.5rem] shadow-sm mb-8">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-violet-600/10 rounded-xl flex items-center justify-center text-violet-500"><TrendingUp size={20} /></div>
-            <h2 className="text-sm font-black uppercase tracking-widest">Courbe de Progression</h2>
+          <div className="bg-[#0F0F1E] border border-[#FFD700]/30 p-5 rounded-2xl text-center space-y-1">
+            <Zap className="mx-auto text-[#FFD700]" size={22} />
+            <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase">Points</p>
+            <p className="text-xl font-gaming font-black text-[#FFD700]">{displayPoints}</p>
           </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={progressionData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#88888822" vertical={false} />
-                <XAxis dataKey="name" stroke="#888888" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#888888" fontSize={10} tickLine={false} axisLine={false} />
-                <ChartTooltip 
-                  contentStyle={{ backgroundColor: '#18181b', border: 'none', borderRadius: '12px', fontSize: '10px' }}
-                  itemStyle={{ color: '#8b5cf6' }}
-                />
-                <Line type="monotone" dataKey="points" stroke="#8b5cf6" strokeWidth={3} dot={{ r: 4, fill: '#8b5cf6' }} activeDot={{ r: 6 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </section>
 
-        <div className="space-y-4">
+          <div className="bg-[#0F0F1E] border border-emerald-500/30 p-5 rounded-2xl text-center space-y-1">
+            <Award className="mx-auto text-emerald-400" size={22} />
+            <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase">Victoires</p>
+            <p className="text-xl font-gaming font-black text-emerald-400">{profile?.champion_count || 0}</p>
+          </div>
+
+          <div className="bg-[#0F0F1E] border border-orange-500/30 p-5 rounded-2xl text-center space-y-1">
+            <Star className="mx-auto text-orange-400" size={22} />
+            <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase">MVP</p>
+            <p className="text-xl font-gaming font-black text-orange-400">{profile?.mvp_count || 0}</p>
+          </div>
+        </div>
+
+        {/* Numéro Mobile Money enregistré */}
+        <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-6 rounded-2xl flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Phone size={20} className="text-[#8A2BE2]" />
+            <div>
+              <p className="text-xs font-gaming font-bold text-white">Numéro Mobile Money</p>
+              <p className="text-xs text-[#8888AA] font-mono">{phone}</p>
+            </div>
+          </div>
+          <Link to="/edit-profile" className="text-xs font-gaming font-bold text-[#A855F7] hover:underline">
+            Modifier
+          </Link>
+        </div>
+
+        {/* Actions & Réglages */}
+        <div className="space-y-3">
           {isAdmin && (
             <Link to="/admin" className="block">
-              <button className="w-full flex items-center justify-between p-6 bg-violet-600 rounded-2xl border border-violet-500 font-black text-white shadow-xl shadow-violet-500/20 hover:bg-violet-700 transition-all">
-                <div className="flex items-center gap-4">
-                  <LayoutDashboard size={24} /> 
-                  TABLEAU DE BORD ADMIN
-                </div>
+              <button className="w-full bg-[#8A2BE2] hover:bg-[#A855F7] text-white p-4 rounded-2xl font-gaming font-black text-xs uppercase tracking-wider flex items-center justify-between shadow-lg shadow-[#8A2BE2]/30 transition-all">
+                <span className="flex items-center gap-3"><LayoutDashboard size={18} /> Tableau de Bord Admin</span>
+                <span>→</span>
               </button>
             </Link>
           )}
 
+          <Link to="/payments" className="block">
+            <button className="w-full bg-[#0F0F1E] border border-[#8A2BE2]/20 hover:border-[#8A2BE2] p-4 rounded-2xl font-gaming font-bold text-xs uppercase text-white flex items-center justify-between transition-all">
+              <span className="flex items-center gap-3"><History size={18} className="text-[#8A2BE2]" /> Mes Inscriptions & Flux</span>
+              <span>→</span>
+            </button>
+          </Link>
+
           <button 
             onClick={handleToggleNotifications} 
             disabled={notifLoading}
-            className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border font-bold shadow-sm"
+            className="w-full bg-[#0F0F1E] border border-[#8A2BE2]/20 hover:border-[#8A2BE2] p-4 rounded-2xl font-gaming font-bold text-xs uppercase text-white flex items-center justify-between transition-all"
           >
-            <div className="flex items-center gap-4">
-              {profile?.notifications_enabled ? <Bell size={20} className="text-green-500" /> : <BellOff size={20} className="text-muted-foreground" />}
+            <span className="flex items-center gap-3">
+              {profile?.notifications_enabled ? <Bell size={18} className="text-emerald-400" /> : <BellOff size={18} className="text-[#8888AA]" />}
               {profile?.notifications_enabled ? "Notifications Activées" : "Activer les Notifications Push"}
-            </div>
-            {notifLoading && <div className="w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />}
+            </span>
           </button>
 
-          <Link to="/payments" className="block">
-            <button className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border font-bold shadow-sm">
-              <div className="flex items-center gap-4">
-                <History size={20} className="text-violet-500" /> 
-                Flux (Mes Inscriptions)
-              </div>
+          <Link to="/edit-profile" className="block">
+            <button className="w-full bg-[#0F0F1E] border border-[#8A2BE2]/20 hover:border-[#8A2BE2] p-4 rounded-2xl font-gaming font-bold text-xs uppercase text-white flex items-center justify-between transition-all">
+              <span className="flex items-center gap-3"><Settings size={18} className="text-[#8888AA]" /> Modifier mon profil</span>
+              <span>→</span>
             </button>
           </Link>
-          
-          <Link to="/contact" className="block"><button className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><HelpCircle size={20} className="text-violet-500" /> Contact & Aide</div></button></Link>
-          <Link to="/privacy" className="block"><button className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><Shield size={20} className="text-cyan-500" /> Politique de Confidentialité</div></button></Link>
-          <Link to="/edit-profile" className="block"><button className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border font-bold shadow-sm"><div className="flex items-center gap-4"><Settings size={20} className="text-muted-foreground" /> Modifier mes infos</div></button></Link>
-          <button onClick={handleLogout} className="w-full flex items-center justify-between p-5 bg-card/50 backdrop-blur-md rounded-2xl border border-border text-red-400 font-bold shadow-sm"><div className="flex items-center gap-4"><LogOut size={20} /> Déconnexion</div></button>
+
+          <button 
+            onClick={handleLogout} 
+            className="w-full bg-[#0F0F1E] border border-red-500/20 hover:border-red-500 text-red-400 p-4 rounded-2xl font-gaming font-bold text-xs uppercase flex items-center justify-between transition-all"
+          >
+            <span className="flex items-center gap-3"><LogOut size={18} /> Déconnexion</span>
+          </button>
         </div>
       </main>
     </div>

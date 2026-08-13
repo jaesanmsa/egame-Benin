@@ -4,28 +4,21 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Save } from 'lucide-react';
+import SEO from '@/components/SEO';
+import { ArrowLeft } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
-const EMOJIS = ["🎮", "🕹️", "🎯", "🔥", "⚡", "🏆", "👑", "💎", "🐱", "🦊", "🐻", "🐼", "🦁", "🐯", "🐸", "🐵", "🚀", "🛸", "👾", "👻", "💀", "👽", "🤖", "🎃"];
+const EMOJIS = ["🎮", "🕹️", "🎯", "🔥", "⚡", "🏆", "👑", "💎", "🐱", "🦊", "🐻", "🐼", "🦁", "🐯", "🚀", "🛸", "👾", "💀", "👽", "🤖"];
 
 const COLOR_OPTIONS = [
-  { class: "bg-violet-600", hex: "7c3aed" },
-  { class: "bg-indigo-600", hex: "4f46e5" },
+  { class: "bg-[#8A2BE2]", hex: "8A2BE2" },
+  { class: "bg-[#A855F7]", hex: "A855F7" },
+  { class: "bg-[#FFD700]", hex: "FFD700" },
   { class: "bg-blue-600", hex: "2563eb" },
-  { class: "bg-cyan-600", hex: "0891b2" },
   { class: "bg-emerald-600", hex: "059669" },
-  { class: "bg-green-600", hex: "16a34a" },
-  { class: "bg-lime-600", hex: "65a30d" },
-  { class: "bg-yellow-600", hex: "ca8a04" },
-  { class: "bg-orange-600", hex: "ea580c" },
   { class: "bg-red-600", hex: "dc2626" },
-  { class: "bg-rose-600", hex: "e11d48" },
-  { class: "bg-pink-600", hex: "db2777" },
-  { class: "bg-zinc-800", hex: "27272a" },
-  { class: "bg-slate-700", hex: "334155" },
-  { class: "bg-neutral-900", hex: "171717" }
+  { class: "bg-orange-600", hex: "ea580c" },
+  { class: "bg-zinc-800", hex: "27272a" }
 ];
 
 const AvatarMaker = () => {
@@ -49,21 +42,19 @@ const AvatarMaker = () => {
 
       const avatarUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
 
-      const { error: authError } = await supabase.auth.updateUser({
+      await supabase.auth.updateUser({
         data: { avatar_url: avatarUrl }
       });
-      if (authError) throw authError;
 
-      const { error: profileError } = await supabase
+      await supabase
         .from('profiles')
         .upsert({
           id: user.id,
           avatar_url: avatarUrl,
           updated_at: new Date().toISOString()
         });
-      if (profileError) throw profileError;
 
-      showSuccess("Avatar mis à jour !");
+      showSuccess("Avatar eSport enregistré !");
       navigate('/profil');
     } catch (error: any) {
       showError(error.message);
@@ -73,30 +64,30 @@ const AvatarMaker = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
+    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
+      <SEO title="Studio d'Avatar eSport" />
       <Navbar />
-      <main className="max-w-2xl mx-auto px-6 py-8">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
-          <ArrowLeft size={20} />
-          Retour
+      <main className="max-w-xl mx-auto px-6 space-y-8 text-center">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#8888AA] hover:text-white transition-colors text-xs font-gaming font-bold uppercase tracking-widest">
+          <ArrowLeft size={16} /> Retour
         </button>
 
-        <h1 className="text-3xl font-black mb-8 text-center">Studio d'Avatar</h1>
+        <h1 className="text-3xl font-gaming font-black uppercase text-white">Studio d'Avatar</h1>
 
-        <div className="flex flex-col items-center gap-12">
-          <div className={`w-48 h-48 rounded-[3rem] ${selectedColor.class} flex items-center justify-center text-8xl shadow-2xl border-4 border-white/10 transition-all duration-500`}>
+        <div className="flex flex-col items-center gap-8">
+          <div className={`w-40 h-40 rounded-full ${selectedColor.class} flex items-center justify-center text-7xl shadow-2xl border-4 border-white/20 transition-all duration-300`}>
             {selectedEmoji}
           </div>
 
-          <div className="w-full space-y-8 bg-card p-8 rounded-[2.5rem] border border-border shadow-sm">
-            <div className="space-y-4">
-              <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Choisir un Emoji</p>
-              <div className="grid grid-cols-6 gap-3">
+          <div className="w-full space-y-6 bg-[#0F0F1E] p-8 rounded-3xl border border-[#8A2BE2]/30 text-left">
+            <div className="space-y-3">
+              <p className="text-xs font-gaming font-bold text-[#8888AA] uppercase">Sélectionner un Emoji</p>
+              <div className="grid grid-cols-5 gap-3">
                 {EMOJIS.map((emoji) => (
                   <button
                     key={emoji}
                     onClick={() => setSelectedEmoji(emoji)}
-                    className={`text-2xl p-3 rounded-xl transition-all ${selectedEmoji === emoji ? 'bg-violet-600 text-white scale-110' : 'bg-muted hover:bg-muted/80'}`}
+                    className={`text-2xl p-3 rounded-2xl transition-all ${selectedEmoji === emoji ? 'bg-[#8A2BE2] scale-110 shadow-lg shadow-[#8A2BE2]/50' : 'bg-[#0A0A0F] hover:bg-[#8A2BE2]/20'}`}
                   >
                     {emoji}
                   </button>
@@ -104,27 +95,27 @@ const AvatarMaker = () => {
               </div>
             </div>
 
-            <div className="space-y-4">
-              <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Couleur de fond</p>
+            <div className="space-y-3">
+              <p className="text-xs font-gaming font-bold text-[#8888AA] uppercase">Couleur du fond</p>
               <div className="flex flex-wrap gap-3">
                 {COLOR_OPTIONS.map((color) => (
                   <button
                     key={color.hex}
                     onClick={() => setSelectedColor(color)}
-                    className={`w-10 h-10 rounded-full border-2 ${color.class} ${selectedColor.hex === color.hex ? 'border-foreground scale-110' : 'border-transparent'}`}
+                    className={`w-10 h-10 rounded-full border-2 ${color.class} ${selectedColor.hex === color.hex ? 'border-white scale-110 shadow-lg' : 'border-transparent'}`}
                   />
                 ))}
               </div>
             </div>
           </div>
 
-          <Button 
+          <button 
             onClick={handleSave} 
             disabled={saving}
-            className="w-full py-8 rounded-2xl bg-violet-600 hover:bg-violet-700 text-lg font-bold shadow-xl shadow-violet-500/20 gap-2 text-white"
+            className="w-full btn-glow-border py-4 text-xs tracking-widest uppercase"
           >
             {saving ? "Enregistrement..." : "Définir comme photo de profil"}
-          </Button>
+          </button>
         </div>
       </main>
     </div>

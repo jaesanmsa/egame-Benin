@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
+import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
-import { Gamepad2, Filter, SearchX } from 'lucide-react';
+import { Gamepad2, Filter, SearchX, ArrowRight } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Link } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -53,74 +54,89 @@ const Games = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-32 pt-12 md:pt-24">
+    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
+      <SEO title="Catalogue des Jeux eSport" description="Découvrez tous les jeux eSport disponibles au Bénin : Free Fire, COD Mobile, Clash Royale, PUBG Mobile." />
       <Navbar />
-      <main className="max-w-6xl mx-auto px-6 py-8 space-y-12">
+      <main className="max-w-6xl mx-auto px-6 space-y-12">
+        {/* En-tête */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-violet-600/10 border border-violet-500/20 rounded-2xl flex items-center justify-center text-violet-500 shadow-lg shadow-violet-500/5">
-              <Gamepad2 size={24} />
+            <div className="w-12 h-12 bg-[#8A2BE2]/20 border border-[#8A2BE2]/50 rounded-2xl flex items-center justify-center text-[#8A2BE2]">
+              <Gamepad2 size={26} />
             </div>
             <div>
-              <h1 className="text-3xl font-black tracking-tight uppercase">Catalogue</h1>
-              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-1">Toutes les disciplines</p>
+              <h1 className="text-3xl font-gaming font-black uppercase text-white">Catalogue des Jeux</h1>
+              <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider mt-1">Sélectionne une arène pour concourir</p>
             </div>
           </div>
 
+          {/* Filtre dropdown */}
           <div className="w-full md:w-72">
             <Select value={selectedGame} onValueChange={setSelectedGame}>
-              <SelectTrigger className="bg-card/50 border-border rounded-2xl h-14 text-xs font-bold shadow-sm backdrop-blur-md">
+              <SelectTrigger className="bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-2xl h-14 text-xs font-gaming font-bold">
                 <div className="flex items-center gap-2">
-                  <Filter size={14} className="text-violet-500" />
+                  <Filter size={16} className="text-[#8A2BE2]" />
                   <SelectValue placeholder="Filtrer par jeu" />
                 </div>
               </SelectTrigger>
-              <SelectContent className="bg-card border-border">
+              <SelectContent className="bg-[#0F0F1E] border border-[#8A2BE2]/40 text-white">
                 <SelectItem value="all">Tous les jeux</SelectItem>
                 {ALL_GAMES.map(game => (
-                  <SelectItem key={game.id} value={game.id}>{game.name}</SelectItem>
+                  <SelectItem key={game.id} value={game.id}>
+                    <div className="flex items-center gap-2">
+                      {activeGames.has(game.id) && <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />}
+                      <span>{game.name}</span>
+                    </div>
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
         </div>
 
+        {/* Grille des jeux */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           {loading ? (
-            Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="aspect-square w-full rounded-[32px]" />)
+            Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="aspect-[3/4] w-full rounded-3xl bg-[#0F0F1E]" />)
           ) : filteredGames.length === 0 ? (
-            <div className="col-span-full py-20 text-center bg-muted/10 rounded-[32px] border border-dashed border-border">
-              <SearchX size={48} className="mx-auto text-muted-foreground/20 mb-2" />
-              <p className="text-xs text-muted-foreground font-bold">Aucun jeu trouvé.</p>
+            <div className="col-span-full py-20 text-center bg-[#0F0F1E] rounded-3xl border border-[#8A2BE2]/20">
+              <SearchX size={48} className="mx-auto text-[#8888AA] mb-3 opacity-40" />
+              <p className="text-sm font-gaming text-[#8888AA]">Aucun jeu trouvé.</p>
             </div>
           ) : (
             filteredGames.map((game) => (
               <Link key={game.id} to={`/game/${game.id}`}>
                 <motion.div 
                   whileHover={{ y: -8, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="group relative aspect-square rounded-[32px] overflow-hidden border border-white/10 shadow-xl cursor-pointer"
+                  className="group relative aspect-[3/4] rounded-3xl overflow-hidden border border-[#8A2BE2]/20 hover:border-[#8A2BE2] bg-[#0F0F1E] shadow-2xl cursor-pointer"
                 >
-                  <img src={game.image} alt={game.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                  <img src={game.image} alt={game.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/40 to-transparent" />
                   
-                  <div className="absolute top-4 left-4">
-                    {game.isComingSoon && (
-                      <Badge className="bg-orange-500/90 text-white border-none text-[8px] font-black uppercase py-1 px-2.5 rounded-xl shadow-lg shadow-orange-500/20">
+                  {/* Badge à venir */}
+                  {game.isComingSoon && (
+                    <div className="absolute top-4 left-4">
+                      <Badge className="bg-orange-500 text-white border-none text-[9px] font-gaming font-extrabold uppercase px-2.5 py-1 rounded-full shadow-lg">
                         Bientôt
                       </Badge>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
+                  {/* Point vert si tournoi actif */}
                   <div className="absolute top-4 right-4">
                     {activeGames.has(game.id) && (
-                      <div className="bg-green-500 w-3 h-3 rounded-full animate-pulse shadow-[0_0_12px_rgba(34,197,94,0.8)] border-2 border-white" />
+                      <div className="flex items-center gap-1.5 bg-emerald-950/80 backdrop-blur-md border border-emerald-500/50 px-2.5 py-1 rounded-full shadow-[0_0_12px_rgba(34,197,94,0.4)]">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                        <span className="text-[9px] font-gaming font-extrabold text-emerald-400 uppercase">Actif</span>
+                      </div>
                     )}
                   </div>
 
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <h3 className="text-white font-black text-sm md:text-lg uppercase leading-tight font-sora tracking-tight">{game.name}</h3>
-                    <p className="text-[9px] text-violet-400 font-black uppercase tracking-widest mt-1.5 group-hover:text-white transition-colors">Voir l'arène →</p>
+                  <div className="absolute bottom-6 left-6 right-6 space-y-2">
+                    <h3 className="text-white font-gaming font-black text-lg uppercase leading-tight">{game.name}</h3>
+                    <p className="text-xs font-bold text-[#A855F7] uppercase flex items-center gap-1 group-hover:text-white transition-colors">
+                      Entrer dans l'arène <ArrowRight size={14} />
+                    </p>
                   </div>
                 </motion.div>
               </Link>

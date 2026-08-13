@@ -74,71 +74,93 @@ const Auth = () => {
 
   if (isEmailSent) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-md space-y-8 bg-card p-10 rounded-[2.5rem] border border-border shadow-2xl text-center">
-          <div className="w-20 h-20 bg-violet-600/10 rounded-full flex items-center justify-center mx-auto mb-6"><Mail size={40} className="text-violet-500" /></div>
-          <h1 className="text-3xl font-black">Vérifiez vos mails</h1>
-          <p className="text-muted-foreground">Un lien de confirmation a été envoyé à <span className="text-foreground font-bold">{email}</span>.</p>
-          <Button onClick={() => setIsEmailSent(false)} variant="outline" className="w-full py-6 rounded-xl border-border">Retour à la connexion</Button>
+      <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-md space-y-8 bg-[#0F0F1E] p-10 rounded-3xl border border-[#8A2BE2]/40 shadow-2xl text-center">
+          <div className="w-20 h-20 bg-[#8A2BE2]/20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#8A2BE2]">
+            <Mail size={40} />
+          </div>
+          <h1 className="text-2xl font-gaming font-black">Vérifiez vos mails</h1>
+          <p className="text-[#8888AA] text-sm leading-relaxed">Un lien de confirmation a été envoyé à <span className="text-white font-bold">{email}</span>.</p>
+          <button onClick={() => setIsEmailSent(false)} className="w-full btn-glow-border py-4 text-xs tracking-widest uppercase">
+            Retour à la connexion
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 relative">
-      {/* Bouton Retour Accueil - Position FIXE en haut à gauche */}
+    <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6 relative">
       <Link 
         to="/" 
-        className="fixed top-6 left-6 z-[1000] flex items-center gap-2 text-muted-foreground hover:text-violet-500 transition-all group bg-background/50 backdrop-blur-sm p-2 rounded-full border border-border/50"
+        className="fixed top-6 left-6 z-[1000] flex items-center gap-2 text-[#8888AA] hover:text-white transition-all bg-[#0F0F1E]/80 px-4 py-2 rounded-full border border-[#8A2BE2]/30 text-xs font-gaming font-bold uppercase tracking-wider"
       >
-        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-violet-500/10 transition-colors">
-          <ArrowLeft size={16} />
-        </div>
-        <span className="text-[10px] font-bold uppercase tracking-widest pr-2">Accueil</span>
+        <ArrowLeft size={16} /> Accueil
       </Link>
 
-      <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-[2.5rem] border border-border shadow-2xl">
-        <div className="text-center">
-          <Link to="/" className="inline-block mb-4"><Logo size="lg" showText={false} /></Link>
-          <h1 className="text-3xl font-black">eGame <span className="text-violet-500">Bénin</span></h1>
-          <p className="text-muted-foreground mt-2">{isLogin ? "Connectez-vous pour rejoindre l'arène" : "Créez votre compte de joueur"}</p>
+      <div className="w-full max-w-md space-y-8 bg-[#0F0F1E] p-8 rounded-3xl border border-[#8A2BE2]/30 shadow-2xl">
+        <div className="text-center space-y-2">
+          <Link to="/" className="inline-block mb-2"><Logo size="lg" showText={false} /></Link>
+          <h1 className="text-3xl font-gaming font-black uppercase">
+            eGame <span className="text-[#8A2BE2]">Bénin</span>
+          </h1>
+          <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider">
+            {isLogin ? "Connecte-toi pour entrer dans l'arène" : "Crée ton compte de joueur écosystème"}
+          </p>
         </div>
 
         <div className="space-y-4">
-          <Button onClick={handleGoogleLogin} variant="outline" className="w-full py-6 rounded-xl border-border bg-muted/50 hover:bg-muted text-foreground gap-3"><Chrome size={20} /> Continuer avec Google</Button>
-          <div className="relative py-4"><div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border"></span></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">Ou par email</span></div></div>
+          <button onClick={handleGoogleLogin} className="w-full py-4 rounded-xl border border-[#8A2BE2]/30 bg-[#0A0A0F] hover:bg-[#8A2BE2]/10 text-white font-gaming text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-3 transition-colors">
+            <Chrome size={18} /> Continuer avec Google
+          </button>
+          
+          <div className="relative py-2">
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-[#8A2BE2]/20"></span></div>
+            <div className="relative flex justify-center text-[10px] uppercase font-gaming"><span className="bg-[#0F0F1E] px-3 text-[#8888AA]">Ou par e-mail</span></div>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="username">Pseudo Unique</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="username" className="text-xs font-gaming uppercase text-[#8888AA]">Pseudo de Joueur</Label>
                 <div className="relative">
-                  <AtSign className="absolute left-3 top-3 text-muted-foreground" size={18} />
-                  <Input id="username" placeholder="Ex: ProGamer229" className="pl-10 bg-muted border-border rounded-xl" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                  <AtSign className="absolute left-3 top-3 text-[#8888AA]" size={18} />
+                  <Input id="username" placeholder="Ex: ProGamer229" className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={username} onChange={(e) => setUsername(e.target.value)} required />
                 </div>
               </div>
             )}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+            
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-xs font-gaming uppercase text-[#8888AA]">Adresse E-mail</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 text-muted-foreground" size={18} />
-                <Input id="email" type="email" placeholder="votre@email.com" className="pl-10 bg-muted border-border rounded-xl" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <Mail className="absolute left-3 top-3 text-[#8888AA]" size={18} />
+                <Input id="email" type="email" placeholder="votre@email.com" className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
             </div>
-            <div className="space-y-2">
-              <div className="flex justify-between"><Label htmlFor="password">Mot de passe</Label>{isLogin && <Link to="/forgot-password" className="text-xs text-violet-400 hover:underline">Oublié ?</Link>}</div>
+
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="password" className="text-xs font-gaming uppercase text-[#8888AA]">Mot de passe</Label>
+                {isLogin && <Link to="/forgot-password" className="text-[10px] text-[#A855F7] hover:underline font-gaming">Oublié ?</Link>}
+              </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 text-muted-foreground" size={18} />
-                <Input id="password" type="password" placeholder="••••••••" className="pl-10 bg-muted border-border rounded-xl" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <Lock className="absolute left-3 top-3 text-[#8888AA]" size={18} />
+                <Input id="password" type="password" placeholder="••••••••" className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
             </div>
-            <Button type="submit" disabled={loading} className="w-full py-6 rounded-xl bg-violet-600 hover:bg-violet-700 font-bold gap-2 text-white">
+
+            <button type="submit" disabled={loading} className="w-full btn-glow-border py-4 text-xs tracking-widest uppercase flex items-center justify-center gap-2">
               {loading ? "Chargement..." : (isLogin ? <><LogIn size={18} /> Se connecter</> : <><UserPlus size={18} /> S'inscrire</>)}
-            </Button>
+            </button>
           </form>
         </div>
-        <p className="text-center text-muted-foreground text-sm">{isLogin ? "Pas encore de compte ?" : "Déjà un compte ?"}<button onClick={() => setIsLogin(!isLogin)} className="text-violet-400 font-bold hover:underline ml-1">{isLogin ? "S'inscrire" : "Se connecter"}</button></p>
+
+        <p className="text-center text-[#8888AA] text-xs font-esport">
+          {isLogin ? "Pas encore inscrit ?" : "Déjà un compte ?"}
+          <button onClick={() => setIsLogin(!isLogin)} className="text-[#FFD700] font-bold hover:underline ml-1">
+            {isLogin ? "Créer un compte" : "Se connecter"}
+          </button>
+        </p>
       </div>
     </div>
   );
