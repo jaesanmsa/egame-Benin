@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail, Lock, Chrome, UserPlus, LogIn, AtSign, ArrowLeft } from 'lucide-react';
@@ -74,14 +73,14 @@ const Auth = () => {
 
   if (isEmailSent) {
     return (
-      <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-md space-y-8 bg-[#0F0F1E] p-10 rounded-3xl border border-[#8A2BE2]/40 shadow-2xl text-center">
+      <div className="min-h-screen bg-[#07070C] text-white flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-md space-y-8 glass-panel p-10 text-center">
           <div className="w-20 h-20 bg-[#8A2BE2]/20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#8A2BE2]">
             <Mail size={40} />
           </div>
           <h1 className="text-2xl font-gaming font-black">Vérifiez vos mails</h1>
           <p className="text-[#8888AA] text-sm leading-relaxed">Un lien de confirmation a été envoyé à <span className="text-white font-bold">{email}</span>.</p>
-          <button onClick={() => setIsEmailSent(false)} className="w-full btn-glow-border py-4 text-xs tracking-widest uppercase">
+          <button onClick={() => setIsEmailSent(false)} className="w-full btn-neon py-4 text-xs tracking-widest uppercase">
             Retour à la connexion
           </button>
         </div>
@@ -90,7 +89,7 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6 relative">
+    <div className="min-h-screen bg-[#07070C] text-white flex flex-col items-center justify-center p-6 relative">
       <Link 
         to="/" 
         className="fixed top-6 left-6 z-[1000] flex items-center gap-2 text-[#8888AA] hover:text-white transition-all bg-[#0F0F1E]/80 px-4 py-2 rounded-full border border-[#8A2BE2]/30 text-xs font-gaming font-bold uppercase tracking-wider"
@@ -98,19 +97,19 @@ const Auth = () => {
         <ArrowLeft size={16} /> Accueil
       </Link>
 
-      <div className="w-full max-w-md space-y-8 bg-[#0F0F1E] p-8 rounded-3xl border border-[#8A2BE2]/30 shadow-2xl">
+      <div className="w-full max-w-md space-y-8 glass-panel p-8">
         <div className="text-center space-y-2">
           <Link to="/" className="inline-block mb-2"><Logo size="lg" showText={false} /></Link>
           <h1 className="text-3xl font-gaming font-black uppercase">
             eGame <span className="text-[#8A2BE2]">Bénin</span>
           </h1>
           <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider">
-            {isLogin ? "Connecte-toi pour entrer dans l'arène" : "Crée ton compte de joueur écosystème"}
+            {isLogin ? "Accède à ton espace joueur" : "Inscris-toi sur la plateforme"}
           </p>
         </div>
 
         <div className="space-y-4">
-          <button onClick={handleGoogleLogin} className="w-full py-4 rounded-xl border border-[#8A2BE2]/30 bg-[#0A0A0F] hover:bg-[#8A2BE2]/10 text-white font-gaming text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-3 transition-colors">
+          <button onClick={handleGoogleLogin} className="w-full py-4 rounded-xl border border-[#8A2BE2]/30 bg-[#07070C] hover:bg-[#8A2BE2]/10 text-white font-gaming text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-3 transition-colors">
             <Chrome size={18} /> Continuer avec Google
           </button>
           
@@ -125,7 +124,7 @@ const Auth = () => {
                 <Label htmlFor="username" className="text-xs font-gaming uppercase text-[#8888AA]">Pseudo de Joueur</Label>
                 <div className="relative">
                   <AtSign className="absolute left-3 top-3 text-[#8888AA]" size={18} />
-                  <Input id="username" placeholder="Ex: ProGamer229" className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                  <Input id="username" placeholder="Ex: ProGamer229" className="pl-10 bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={username} onChange={(e) => setUsername(e.target.value)} required />
                 </div>
               </div>
             )}
@@ -134,7 +133,7 @@ const Auth = () => {
               <Label htmlFor="email" className="text-xs font-gaming uppercase text-[#8888AA]">Adresse E-mail</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 text-[#8888AA]" size={18} />
-                <Input id="email" type="email" placeholder="votre@email.com" className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <Input id="email" type="email" placeholder="votre@email.com" className="pl-10 bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
             </div>
 
@@ -145,18 +144,18 @@ const Auth = () => {
               </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 text-[#8888AA]" size={18} />
-                <Input id="password" type="password" placeholder="••••••••" className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <Input id="password" type="password" placeholder="••••••••" className="pl-10 bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className="w-full btn-glow-border py-4 text-xs tracking-widest uppercase flex items-center justify-center gap-2">
+            <button type="submit" disabled={loading} className="w-full btn-neon py-4 text-xs tracking-widest uppercase flex items-center justify-center gap-2">
               {loading ? "Chargement..." : (isLogin ? <><LogIn size={18} /> Se connecter</> : <><UserPlus size={18} /> S'inscrire</>)}
             </button>
           </form>
         </div>
 
         <p className="text-center text-[#8888AA] text-xs font-esport">
-          {isLogin ? "Pas encore inscrit ?" : "Déjà un compte ?"}
+          {isLogin ? "Pas encore de compte ?" : "Déjà inscrit ?"}
           <button onClick={() => setIsLogin(!isLogin)} className="text-[#FFD700] font-bold hover:underline ml-1">
             {isLogin ? "Créer un compte" : "Se connecter"}
           </button>

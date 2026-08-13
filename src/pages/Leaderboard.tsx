@@ -45,7 +45,7 @@ const Leaderboard = () => {
 
   const PodiumItem = ({ player, rank }: { player: any, rank: number }) => {
     const configs = {
-      1: { height: "h-40", color: "text-[#FFD700]", bg: "bg-[#FFD700]/10", border: "border-[#FFD700]/50", size: "w-24 h-24", icon: <Crown size={32} className="text-[#FFD700] drop-shadow-[0_0_15px_rgba(255,215,0,0.8)]" /> },
+      1: { height: "h-40", color: "text-[#FFD700]", bg: "bg-[#FFD700]/10", border: "border-[#FFD700]/50", size: "w-24 h-24", icon: <Crown size={32} className="text-[#FFD700]" /> },
       2: { height: "h-32", color: "text-zinc-300", bg: "bg-zinc-400/10", border: "border-zinc-400/40", size: "w-20 h-20", icon: <Medal size={24} className="text-zinc-300" /> },
       3: { height: "h-28", color: "text-orange-400", bg: "bg-orange-500/10", border: "border-orange-500/40", size: "w-18 h-18", icon: <Award size={22} className="text-orange-400" /> }
     };
@@ -55,7 +55,7 @@ const Leaderboard = () => {
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: rank * 0.15 }}
+        transition={{ duration: 0.5, delay: rank * 0.1 }}
         className="flex flex-col items-center gap-3 flex-1"
       >
         <div className="relative">
@@ -78,15 +78,15 @@ const Leaderboard = () => {
         </div>
 
         <div className={`w-full ${config.height} ${config.bg} rounded-t-3xl border-x border-t ${config.border} flex items-end justify-center pb-4 relative overflow-hidden`}>
-          <span className={`text-4xl font-gaming font-black ${config.color} opacity-40`}>#{rank}</span>
+          <span className={`text-4xl font-gaming font-black ${config.color} opacity-30`}>#{rank}</span>
         </div>
       </motion.div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
-      <SEO title="Classement National eSport Bénin" description="Hall of Fame des meilleurs joueurs de jeux vidéo au Bénin." />
+    <div className="min-h-screen bg-[#07070C] text-white pb-32 pt-28">
+      <SEO title="Classement National eSport Bénin" description="Le Hall of Fame des meilleurs joueurs de jeux vidéo au Bénin." />
       <Navbar />
       <main className="max-w-3xl mx-auto px-6 space-y-10">
         <button 
@@ -104,7 +104,7 @@ const Leaderboard = () => {
             {selectedGame ? DEFAULT_GAMES.find(g => g.id === selectedGame)?.name : "Classement National"}
           </h1>
           <p className="text-xs text-[#8888AA] font-esport uppercase tracking-widest">
-            L'élite du gaming béninois • Hall of Fame
+            Hall of Fame eGame Bénin
           </p>
         </div>
 
@@ -121,7 +121,7 @@ const Leaderboard = () => {
                 <button 
                   key={game.id} 
                   onClick={() => setSelectedGame(game.id)} 
-                  className="flex items-center justify-between p-5 bg-[#0F0F1E] border border-[#8A2BE2]/20 rounded-2xl hover:border-[#8A2BE2] transition-all shadow-md group"
+                  className="flex items-center justify-between p-5 glass-panel hover:border-[#8A2BE2] transition-all group"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#8A2BE2]/30">
@@ -129,7 +129,7 @@ const Leaderboard = () => {
                     </div> 
                     <div className="text-left">
                       <p className="font-gaming font-bold text-sm text-white">{game.name}</p>
-                      <p className="text-[10px] text-[#8888AA] uppercase tracking-wider">Voir le classement des champions</p>
+                      <p className="text-[10px] text-[#8888AA] uppercase tracking-wider">Voir les champions</p>
                     </div>
                   </div>
                   <ChevronRight className="text-[#8888AA] group-hover:text-[#8A2BE2] transition-colors" size={20} />
@@ -150,23 +150,21 @@ const Leaderboard = () => {
                 </div>
               ) : (
                 <>
-                  {/* Podium Top 3 */}
                   <div className="flex items-end justify-center gap-3 px-4 pt-6">
                     <PodiumItem player={rankings[1]} rank={2} />
                     <PodiumItem player={rankings[0]} rank={1} />
                     <PodiumItem player={rankings[2]} rank={3} />
                   </div>
 
-                  {/* Tableau du reste du classement */}
                   <div className="space-y-3">
                     {rankings.slice(3).map((p, i) => (
                       <div 
                         key={i} 
-                        className="flex items-center justify-between p-4 bg-[#0F0F1E] border border-[#8A2BE2]/20 rounded-2xl shadow-sm"
+                        className="flex items-center justify-between p-4 glass-panel"
                       >
                         <div className="flex items-center gap-4">
                           <span className="font-gaming font-black text-xs text-[#8888AA] w-6">#{i + 4}</span>
-                          <div className="w-10 h-10 rounded-full bg-[#0A0A0F] border border-[#8A2BE2]/30 overflow-hidden">
+                          <div className="w-10 h-10 rounded-full bg-[#07070C] border border-[#8A2BE2]/30 overflow-hidden">
                             <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.username}`} className="w-full h-full object-cover" alt="" />
                           </div>
                           <div className="flex items-center gap-2">

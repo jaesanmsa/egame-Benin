@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
-import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, Share2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { showSuccess } from '@/utils/toast';
@@ -29,7 +28,7 @@ const NewsDetail = () => {
     fetchArticle();
   }, [id]);
 
-  if (loading) return <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="min-h-screen bg-[#07070C] flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>;
   if (!article) return null;
 
   const handleShare = () => {
@@ -38,7 +37,7 @@ const NewsDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32">
+    <div className="min-h-screen bg-[#07070C] text-white pb-32">
       <SEO 
         title={article.title} 
         description={article.excerpt} 
@@ -48,7 +47,7 @@ const NewsDetail = () => {
       
       <div className="relative h-[45vh] w-full overflow-hidden">
         <img src={article.image_url} className="w-full h-full object-cover" alt="" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#07070C] via-[#07070C]/40 to-transparent" />
         <div className="absolute top-6 left-6 z-20">
           <button 
             onClick={() => navigate(-1)} 
@@ -60,7 +59,7 @@ const NewsDetail = () => {
       </div>
 
       <main className="max-w-3xl mx-auto px-6 -mt-24 relative z-10">
-        <article className="bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-3xl p-8 md:p-12 shadow-2xl space-y-8">
+        <article className="glass-panel p-8 md:p-12 space-y-8">
           <header className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-gaming font-bold text-[#A855F7] uppercase flex items-center gap-2">

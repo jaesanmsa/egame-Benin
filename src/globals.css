@@ -4,10 +4,10 @@
 
 @layer base {
   * {
-    border-color: rgba(138, 43, 226, 0.2);
+    border-color: rgba(138, 43, 226, 0.18);
   }
   body {
-    background-color: #0A0A0F;
+    background-color: #07070C;
     color: #FFFFFF;
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
@@ -15,7 +15,7 @@
   
   h1, h2, h3 {
     font-family: 'Orbitron', sans-serif;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
   h4, h5, h6 {
@@ -23,87 +23,135 @@
   }
 }
 
-/* --- GLASSMORPHISM & CARD STYLES --- */
-.esport-card {
-  background: #0F0F1E;
+/* Glassmorphism Cards */
+.glass-panel {
+  background: rgba(15, 15, 30, 0.7);
+  backdrop-filter: blur(16px);
   border: 1px solid rgba(138, 43, 226, 0.2);
-  border-radius: 24px;
+  border-radius: 28px;
+  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.glass-panel:hover {
+  border-color: rgba(138, 43, 226, 0.5);
+  box-shadow: 0 12px 40px rgba(138, 43, 226, 0.25);
+  transform: translateY(-4px);
+}
+
+.glass-panel-gold {
+  background: rgba(15, 15, 30, 0.8);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  border-radius: 28px;
+  <dyad-write path="src/globals.css" description="Design system complet : Effets néon eSport, Glassmorphism et bordures animées.">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: rgba(138, 43, 226, 0.18);
+  }
+  body {
+    background-color: #07070C;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+  
+  h1, h2, h3 {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  h4, h5, h6 {
+    font-family: 'Rajdhani', sans-serif;
+  }
+}
+
+/* Glassmorphism Cards */
+.glass-panel {
+  background: rgba(15, 15, 30, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(138, 43, 226, 0.2);
+  border-radius: 28px;
+  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.glass-panel:hover {
+  border-color: rgba(138, 43, 226, 0.5);
+  box-shadow: 0 12px 40px rgba(138, 43, 226, 0.25);
+  transform: translateY(-4px);
+}
+
+.glass-panel-gold {
+  background: rgba(15, 15, 30, 0.8);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  border-radius: 28px;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.08);
+  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.glass-panel-gold:hover {
+  border-color: rgba(255, 215, 0, 0.75);
+  box-shadow: 0 12px 45px rgba(255, 215, 0, 0.25);
+  transform: translateY(-4px);
+}
+
+/* Boutons Néon */
+.btn-neon {
+  background: linear-gradient(135deg, #8A2BE2 0%, #7C3AED 100%);
+  color: #FFFFFF;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 800;
+  border-radius: 18px;
+  box-shadow: 0 0 25px rgba(138, 43, 226, 0.45);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.esport-card:hover {
-  border-color: rgba(138, 43, 226, 0.5);
-  box-shadow: 0 10px 30px rgba(138, 43, 226, 0.2);
-  transform: translateY(-3px);
+.btn-neon:hover {
+  background: linear-gradient(135deg, #9D4EDD 0%, #8B5CF6 100%);
+  box-shadow: 0 0 40px rgba(168, 85, 247, 0.75);
+  transform: translateY(-2px) scale(1.01);
 }
 
-.esport-card-gold {
-  background: #0F0F1E;
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  border-radius: 24px;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-}
-
-.esport-card-gold:hover {
-  border-color: rgba(255, 215, 0, 0.7);
-  box-shadow: 0 10px 35px rgba(255, 215, 0, 0.25);
-  transform: translateY(-3px);
-}
-
-/* BOUTON AVEC BORDURE LUMINEUSE ANIMÉE */
-.btn-glow-border {
-  position: relative;
-  background: #8A2BE2;
-  color: #FFFFFF;
+.btn-gold-neon {
+  background: linear-gradient(135deg, #FFD700 0%, #F59E0B 100%);
+  color: #07070C;
   font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  border-radius: 16px;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+  font-weight: 900;
+  border-radius: 18px;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.35);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-glow-border:hover {
-  background: #A855F7;
-  box-shadow: 0 0 35px rgba(168, 85, 247, 0.7);
-  transform: scale(1.02);
+.btn-gold-neon:hover {
+  box-shadow: 0 0 45px rgba(255, 215, 0, 0.7);
+  transform: translateY(-2px) scale(1.01);
 }
 
-.btn-gold {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  color: #0A0A0F;
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 800;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-  transition: all 0.3s ease;
-}
-
-.btn-gold:hover {
-  box-shadow: 0 0 35px rgba(255, 215, 0, 0.6);
-  transform: scale(1.02);
-}
-
-/* GLOW TEXT EFFECTS */
+/* Glow Texts */
 .text-glow-violet {
-  text-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+  text-shadow: 0 0 20px rgba(138, 43, 226, 0.85);
 }
 
 .text-glow-gold {
   color: #FFD700;
-  text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
 }
 
-/* SCROLLBAR */
+/* Scrollbar Custom */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #0A0A0F;
+  background: #07070C;
 }
 ::-webkit-scrollbar-thumb {
   background: #8A2BE2;
-  border-radius: 4px;
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #A855F7;

@@ -30,10 +30,10 @@ const News = () => {
   const otherArticles = news.filter(a => a.id !== featuredArticle?.id);
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
+    <div className="min-h-screen bg-[#07070C] text-white pb-32 pt-28">
       <SEO 
         title="Actualités Gaming & eSport Bénin" 
-        description="Le Mag de l'eSport au Bénin. Règlements de tournois, conseils pour progresser et actualité gaming."
+        description="L'actualité des tournois eSport au Bénin, conseils de pro et règlements."
       />
       <Navbar />
       <main className="max-w-6xl mx-auto px-6 space-y-12">
@@ -43,7 +43,7 @@ const News = () => {
           </div>
           <div>
             <h1 className="text-3xl font-gaming font-black uppercase text-white">Le Mag eSport</h1>
-            <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider mt-1">L'actualité gaming du Bénin</p>
+            <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider mt-1">Toutes les actualités gaming du Bénin</p>
           </div>
         </div>
 
@@ -57,18 +57,17 @@ const News = () => {
             </div>
           </div>
         ) : news.length === 0 ? (
-          <div className="py-20 text-center bg-[#0F0F1E] rounded-3xl border border-[#8A2BE2]/20">
+          <div className="py-20 text-center glass-panel">
             <SearchX size={48} className="mx-auto text-[#8888AA] mb-3 opacity-40" />
-            <p className="text-sm font-gaming text-[#8888AA]">Aucun article publié pour le moment.</p>
+            <p className="text-sm font-gaming text-[#8888AA]">Aucun article pour le moment.</p>
           </div>
         ) : (
           <>
-            {/* Article à la une */}
             {featuredArticle && (
               <Link to={`/news/${featuredArticle.id}`} className="block">
                 <motion.div 
                   whileHover={{ y: -6 }}
-                  className="bg-[#0F0F1E] border border-[#8A2BE2]/40 rounded-3xl overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2 group"
+                  className="glass-panel overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2 group"
                 >
                   <div className="aspect-video md:aspect-auto overflow-hidden relative">
                     <img src={featuredArticle.image_url} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -93,13 +92,12 @@ const News = () => {
               </Link>
             )}
 
-            {/* Grille des autres articles */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {otherArticles.map((article) => (
                 <Link key={article.id} to={`/news/${article.id}`}>
                   <motion.article 
                     whileHover={{ y: -6 }}
-                    className="bg-[#0F0F1E] border border-[#8A2BE2]/20 hover:border-[#8A2BE2] rounded-3xl overflow-hidden shadow-xl flex flex-col h-full group"
+                    className="glass-panel overflow-hidden shadow-xl flex flex-col h-full group"
                   >
                     <div className="aspect-video overflow-hidden relative">
                       <img src={article.image_url} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

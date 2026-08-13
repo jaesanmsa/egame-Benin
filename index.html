@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- Google Consent Mode v2 Initialization -->
+    <!-- Google Consent Mode v2 -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -17,165 +17,89 @@
     </script>
 
     <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5570474457178036"
-     crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5570474457178036" crossorigin="anonymous"></script>
 
-    <!-- SEO de base -->
-    <title>eGame Bénin | La plateforme eSport #1 au Bénin</title>
-    <meta name="description" content="Rejoins la plateforme eSport #1 au Bénin. Tournois de jeux vidéo, Cash Prizes instantanés via Mobile Money (MTN, Moov, Celtiis). Free Fire, Clash Royale, COD Mobile, PUBG Mobile." />
-    <meta name="keywords" content="egame benin, gaming benin, esport benin, tournoi jeux video benin, free fire benin, clash royale benin, cod mobile benin, kkiapay benin, fedapay benin" />
+    <!-- SEO Meta Tags -->
+    <title>eGame Bénin | La Plateforme eSport #1 au Bénin</title>
+    <meta name="description" content="Participe aux tournois officiels de eGame Bénin. Gagne des Cash Prizes distribués par Mobile Money (MTN, Moov, Celtiis). Free Fire, Clash Royale, COD Mobile, PUBG Mobile." />
+    <meta name="keywords" content="egame benin, esport benin, tournoi jeux video benin, cash prize mobile money, free fire benin, clash royale benin, cod mobile benin" />
     <meta name="author" content="eGame Benin" />
     <link rel="canonical" href="https://www.egamebenin.com/" />
 
-    <!-- Google Fonts : Orbitron (Gaming Headlines), Rajdhani (eSport Subtitles), Inter (Body) -->
+    <!-- Google Fonts : Orbitron, Rajdhani, Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
-    <!-- Styles critiques pour le Loading Screen -->
+    <!-- Preloader Styles -->
     <style>
       #loading-screen {
         position: fixed;
         inset: 0;
-        background-color: #0A0A0F;
+        background-color: #07070C;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        z-index: 9999;
-        transition: opacity 0.5s ease-out, visibility 0.5s;
+        z-index: 99999;
+        transition: opacity 0.4s ease, visibility 0.4s;
       }
-
-      .loading-logo-box {
-        width: 100px;
-        height: 100px;
-        background: rgba(138, 43, 226, 0.08);
-        border: 2px solid rgba(138, 43, 226, 0.4);
-        border-radius: 28px;
+      .loader-glow {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(168, 85, 247, 0.05));
+        border: 2px solid rgba(138, 43, 226, 0.6);
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 28px;
-        animation: pulseGlow 2s infinite ease-in-out;
-        box-shadow: 0 0 50px rgba(138, 43, 226, 0.25);
+        box-shadow: 0 0 40px rgba(138, 43, 226, 0.4);
+        animation: pulseLoader 1.8s infinite ease-in-out;
       }
-
-      .loading-logo-box svg {
-        width: 50px;
-        height: 50px;
-        fill: #8A2BE2;
-        filter: drop-shadow(0 0 12px rgba(138, 43, 226, 0.8));
-      }
-
-      .loading-title {
+      .loader-brand {
         font-family: 'Orbitron', sans-serif;
+        font-size: 1.1rem;
         font-weight: 900;
         color: #FFFFFF;
-        font-size: 1.25rem;
         letter-spacing: 0.2em;
+        margin-top: 20px;
         text-transform: uppercase;
-        margin-bottom: 20px;
       }
-
-      .loading-title span {
-        color: #8A2BE2;
+      .loader-brand span { color: #8A2BE2; }
+      @keyframes pulseLoader {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(138, 43, 226, 0.3); }
+        50% { transform: scale(1.08); box-shadow: 0 0 60px rgba(138, 43, 226, 0.7); }
       }
-
-      .loading-bar-container {
-        width: 180px;
-        height: 4px;
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-        overflow: hidden;
-        position: relative;
-        border: 1px solid rgba(138, 43, 226, 0.2);
-      }
-
-      .loading-bar {
-        position: absolute;
-        height: 100%;
-        width: 40%;
-        background: linear-gradient(90deg, #8A2BE2, #A855F7, #FFD700);
-        border-radius: 10px;
-        animation: loadingBar 1.6s infinite ease-in-out;
-        box-shadow: 0 0 15px rgba(138, 43, 226, 0.9);
-      }
-
-      @keyframes pulseGlow {
-        0%, 100% { transform: scale(1); box-shadow: 0 0 35px rgba(138, 43, 226, 0.2); }
-        50% { transform: scale(1.06); box-shadow: 0 0 60px rgba(138, 43, 226, 0.5); }
-      }
-
-      @keyframes loadingBar {
-        0% { left: -40%; }
-        100% { left: 100%; }
-      }
-
-      .seo-content {
-        display: none;
-      }
+      .seo-hidden-content { display: none; }
     </style>
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:title" content="eGame Bénin | La plateforme eSport #1 au Bénin">
-    <meta property="og:description" content="Rejoins la plateforme eSport #1 au Bénin. Tournois de jeux vidéo avec Cash Prizes instantanés.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.egamebenin.com/">
-    <meta property="og:image" content="https://ajbpdaxtynkazdrzyopd.supabase.co/storage/v1/object/public/assets/og-image.jpg">
 
     <!-- Favicons -->
     <link rel="icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="/favicon-512.png">
   </head>
 
-  <body class="bg-[#0A0A0F] text-white">
-    <!-- Écran de chargement avec animation eSport -->
+  <body class="bg-[#07070C] text-white antialiased">
+    <!-- Écran de chargement initial -->
     <div id="loading-screen">
-      <div class="loading-logo-box">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <div class="loader-glow">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="#8A2BE2" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
         </svg>
       </div>
-      <div class="loading-title">eGame <span>Bénin</span></div>
-      <div class="loading-bar-container">
-        <div class="loading-bar"></div>
-      </div>
+      <div class="loader-brand">eGame <span>Bénin</span></div>
     </div>
 
     <div id="root">
-      <!-- Contenu statique pour le SEO & AdSense -->
-      <div class="seo-content">
-        <h1>eGame Bénin - La plateforme eSport #1 au Bénin</h1>
-        <p>Participez aux tournois de jeux vidéo compétitifs au Bénin. Gagnez des cash prizes distribués directement par Mobile Money (MTN Money, Moov Money, Celtiis Cash).</p>
-        
-        <h2>Nos Tournois de Jeux Vidéo</h2>
-        <ul>
-          <li>Free Fire Bénin</li>
-          <li>Clash Royale Bénin</li>
-          <li>Clash of Clans Bénin</li>
-          <li>Call of Duty Mobile Bénin</li>
-          <li>PUBG Mobile Bénin</li>
-          <li>Mobile Legends Bénin</li>
-        </ul>
-
-        <h2>Hall of Fame & Classement National</h2>
-        <p>Retrouvez le classement national des meilleurs gamers béninois et suivez l'actualité eSport.</p>
-        
-        <nav>
-          <a href="/">Accueil</a> | 
-          <a href="/jeux">Catalogue des Jeux</a> | 
-          <a href="/classement">Classement National</a> | 
-          <a href="/news">Actualités eSport</a> | 
-          <a href="/about">À propos</a>
-        </nav>
+      <!-- Indexation SEO native pour Google & AdSense -->
+      <div class="seo-hidden-content">
+        <h1>eGame Bénin - Plateforme eSport N°1 au Bénin</h1>
+        <p>Inscrivez-vous aux tournois eSport béninois et remportez des cash prizes envoyés par Mobile Money (MTN, Moov, Celtiis).</p>
       </div>
     </div>
+
     <script type="module" src="/src/main.tsx"></script>
-    <!-- SDK Paiements -->
     <script src="https://cdn.kkiapay.me/k.js"></script>
     <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
-    <script src="https://app.maketou.net/sdk/js/v1"></script>
   </body>
 </html>

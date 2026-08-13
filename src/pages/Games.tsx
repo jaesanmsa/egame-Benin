@@ -54,11 +54,10 @@ const Games = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
-      <SEO title="Catalogue des Jeux eSport" description="Découvrez tous les jeux eSport disponibles au Bénin : Free Fire, COD Mobile, Clash Royale, PUBG Mobile." />
+    <div className="min-h-screen bg-[#07070C] text-white pb-32 pt-28">
+      <SEO title="Catalogue des Jeux eSport" description="Tous les jeux compétitifs disponibles au Bénin : Free Fire, COD Mobile, Clash Royale, PUBG Mobile." />
       <Navbar />
       <main className="max-w-6xl mx-auto px-6 space-y-12">
-        {/* En-tête */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-[#8A2BE2]/20 border border-[#8A2BE2]/50 rounded-2xl flex items-center justify-center text-[#8A2BE2]">
@@ -66,11 +65,10 @@ const Games = () => {
             </div>
             <div>
               <h1 className="text-3xl font-gaming font-black uppercase text-white">Catalogue des Jeux</h1>
-              <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider mt-1">Sélectionne une arène pour concourir</p>
+              <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider mt-1">Sélectionne ta discipline eSport</p>
             </div>
           </div>
 
-          {/* Filtre dropdown */}
           <div className="w-full md:w-72">
             <Select value={selectedGame} onValueChange={setSelectedGame}>
               <SelectTrigger className="bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-2xl h-14 text-xs font-gaming font-bold">
@@ -83,10 +81,7 @@ const Games = () => {
                 <SelectItem value="all">Tous les jeux</SelectItem>
                 {ALL_GAMES.map(game => (
                   <SelectItem key={game.id} value={game.id}>
-                    <div className="flex items-center gap-2">
-                      {activeGames.has(game.id) && <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />}
-                      <span>{game.name}</span>
-                    </div>
+                    {game.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -94,14 +89,13 @@ const Games = () => {
           </div>
         </div>
 
-        {/* Grille des jeux */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="aspect-[3/4] w-full rounded-3xl bg-[#0F0F1E]" />)
           ) : filteredGames.length === 0 ? (
-            <div className="col-span-full py-20 text-center bg-[#0F0F1E] rounded-3xl border border-[#8A2BE2]/20">
+            <div className="col-span-full py-20 text-center glass-panel">
               <SearchX size={48} className="mx-auto text-[#8888AA] mb-3 opacity-40" />
-              <p className="text-sm font-gaming text-[#8888AA]">Aucun jeu trouvé.</p>
+              <p className="text-sm font-gaming text-[#8888AA]">Aucun jeu correspondant.</p>
             </div>
           ) : (
             filteredGames.map((game) => (
@@ -111,21 +105,19 @@ const Games = () => {
                   className="group relative aspect-[3/4] rounded-3xl overflow-hidden border border-[#8A2BE2]/20 hover:border-[#8A2BE2] bg-[#0F0F1E] shadow-2xl cursor-pointer"
                 >
                   <img src={game.image} alt={game.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#07070C] via-[#07070C]/30 to-transparent" />
                   
-                  {/* Badge à venir */}
                   {game.isComingSoon && (
                     <div className="absolute top-4 left-4">
-                      <Badge className="bg-orange-500 text-white border-none text-[9px] font-gaming font-extrabold uppercase px-2.5 py-1 rounded-full shadow-lg">
+                      <Badge className="bg-orange-500 text-white border-none text-[9px] font-gaming font-extrabold uppercase px-2.5 py-1 rounded-full">
                         Bientôt
                       </Badge>
                     </div>
                   )}
 
-                  {/* Point vert si tournoi actif */}
                   <div className="absolute top-4 right-4">
                     {activeGames.has(game.id) && (
-                      <div className="flex items-center gap-1.5 bg-emerald-950/80 backdrop-blur-md border border-emerald-500/50 px-2.5 py-1 rounded-full shadow-[0_0_12px_rgba(34,197,94,0.4)]">
+                      <div className="flex items-center gap-1.5 bg-emerald-950/80 backdrop-blur-md border border-emerald-500/50 px-2.5 py-1 rounded-full">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                         <span className="text-[9px] font-gaming font-extrabold text-emerald-400 uppercase">Actif</span>
                       </div>

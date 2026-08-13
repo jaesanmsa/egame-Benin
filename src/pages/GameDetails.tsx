@@ -4,9 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
-import { ArrowLeft, Trophy, Star, Gamepad2, Zap, Target, MessageSquare, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Trophy, Gamepad2, Zap, Target, MessageSquare, ChevronRight } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { motion } from 'framer-motion';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from '@/components/ui/button';
 
@@ -16,8 +15,6 @@ const GameDetails = () => {
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [winners, setWinners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
-  const [hasActiveTournament, setHasActiveTournament] = useState(false);
 
   const gameInfo = {
     'free-fire': { 
@@ -61,27 +58,6 @@ const GameDetails = () => {
       image: '/mobile legend.webp',
       desc: "MOBA 5v5 compétitif. Choisis ton héros et écrase la base ennemie.",
       whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
-    },
-    'blur': { 
-      name: 'Blur', 
-      icon: '🏎️', 
-      image: '/blur.webp',
-      desc: "Courses arcade explosives avec armes et bonus. Éjecte tes rivaux !",
-      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
-    },
-    'cod-mw4': { 
-      name: 'COD MW4', 
-      icon: '🔫', 
-      image: '/cod mw4.webp',
-      desc: "Le classique du FPS compétitif.",
-      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
-    },
-    'bombsquad': { 
-      name: 'BombSquad', 
-      icon: '💣', 
-      image: '/bombsquad.webp',
-      desc: "Jeu d'action délirant à coups de bombes.",
-      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
     }
   }[id as string] || { name: id, icon: '🎮', image: '', desc: "Compétition eSport officielle.", whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E" };
 
@@ -95,27 +71,18 @@ const GameDetails = () => {
         .eq('status', 'active')
         .order('created_at', { ascending: false });
       
-      if (activeTours) {
-        setTournaments(activeTours);
-        setHasActiveTournament(activeTours.length > 0);
-      }
+      if (activeTours) setTournaments(activeTours);
 
       const { data: finished } = await supabase
         .from('tournaments')
         .select('winner_name, winner_avatar, title, prize_pool')
         .ilike('game', `%${gameInfo.name}%`)
         .eq('status', 'finished')
+        .not('winner_name', 'is', null)
         .order('updated_at', { ascending: false })
         .limit(5);
       
       if (finished) setWinners(finished);
-
-      const { data: participants } = await supabase.from('payments').select('tournament_id').eq('status', 'Réussi');
-      if (participants) {
-        const counts: Record<string, number> = {};
-        participants.forEach((p: any) => { counts[p.tournament_id] = (counts[p.tournament_id] || 0) + 1; });
-        setParticipantCounts(counts);
-      }
 
       setLoading(false);
     };
@@ -123,13 +90,12 @@ const GameDetails = () => {
   }, [id, gameInfo.name]);
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white pb-32">
+    <div className="min-h-screen bg-[#07070C] text-white pb-32">
       <Navbar />
       
-      {/* Header Image de fond */}
       <section className="relative h-[45vh] w-full overflow-hidden">
         <img src={gameInfo.image} className="w-full h-full object-cover opacity-30" alt="" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#07070C] via-[#07070C]/40 to-transparent" />
         
         <div className="absolute top-6 left-6 z-20">
           <button 
@@ -150,47 +116,36 @@ const GameDetails = () => {
               )}
             </div>
             <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl md:text-5xl font-gaming font-black uppercase text-white tracking-wide">{gameInfo.name}</h1>
-                {hasActiveTournament && (
-                  <div className="bg-emerald-950/80 border border-emerald-500/50 px-3 py-1 rounded-full flex items-center gap-2">
-                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
-                    <span className="text-[10px] font-gaming font-bold text-emerald-400 uppercase">Tournoi Actif</span>
-                  </div>
-                )}
-              </div>
+              <h1 className="text-3xl md:text-5xl font-gaming font-black uppercase text-white tracking-wide">{gameInfo.name}</h1>
               <p className="text-[#A855F7] text-xs font-gaming font-bold uppercase tracking-widest mt-2">Discipline Officielle eGame Bénin</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Contenu principal */}
       <main className="max-w-6xl mx-auto px-6 space-y-12 relative z-20 -mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            {/* À propos du jeu */}
-            <div className="bg-[#0F0F1E] border border-[#8A2BE2]/20 rounded-3xl p-8 space-y-3">
+            <div className="glass-panel p-8 space-y-3">
               <h2 className="text-sm font-gaming font-bold uppercase text-[#A855F7] flex items-center gap-2">
-                <Target size={18} /> Description de la discipline
+                <Target size={18} /> À propos de la discipline
               </h2>
               <p className="text-sm text-[#8888AA] leading-relaxed font-medium">{gameInfo.desc}</p>
             </div>
 
-            {/* Tournois disponibles */}
             <div className="space-y-6">
               <h2 className="text-2xl font-gaming font-black uppercase text-white flex items-center gap-3">
                 <Zap size={24} className="text-[#FFD700]" />
-                Tournois Disponibles
+                Tournois Ouverts
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {loading ? (
                   Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-3xl bg-[#0F0F1E]" />)
                 ) : tournaments.length === 0 ? (
-                  <div className="col-span-full py-12 text-center bg-[#0F0F1E] rounded-3xl border border-[#8A2BE2]/20">
+                  <div className="col-span-full py-12 text-center glass-panel">
                     <Gamepad2 size={40} className="mx-auto text-[#8888AA] mb-3 opacity-40" />
-                    <p className="text-sm font-gaming text-[#8888AA]">Aucun tournoi actif pour ce jeu actuellement.</p>
+                    <p className="text-sm font-gaming text-[#8888AA]">Aucun tournoi actif pour ce jeu.</p>
                   </div>
                 ) : (
                   tournaments.map((t) => (
@@ -201,7 +156,7 @@ const GameDetails = () => {
                       game={t.game} 
                       image={t.image_url} 
                       date={new Date(t.start_date).toLocaleDateString('fr-FR')} 
-                      participants={`${participantCounts[t.id] || 0}/${t.max_participants}`} 
+                      participants={`${t.max_participants} places`} 
                       entryFee={t.entry_fee.toString()} 
                       prizePool={t.prize_pool}
                       type={t.type as any} 
@@ -213,21 +168,19 @@ const GameDetails = () => {
             </div>
           </div>
 
-          {/* Sidebar : Champions & Communauté */}
           <div className="space-y-8">
-            {/* Derniers Gagnants de ce jeu */}
-            <div className="bg-[#0F0F1E] border border-[#FFD700]/30 rounded-3xl p-6 space-y-6">
+            <div className="glass-panel-gold p-6 space-y-6">
               <div className="flex items-center gap-3">
                 <Trophy className="text-[#FFD700]" size={22} />
-                <h2 className="text-sm font-gaming font-bold uppercase text-white">Hall of Fame ({gameInfo.name})</h2>
+                <h2 className="text-sm font-gaming font-bold uppercase text-white">Gagnants {gameInfo.name}</h2>
               </div>
 
               {winners.length === 0 ? (
-                <p className="text-xs text-[#8888AA] font-gaming text-center py-6">Pas encore de gagnant enregistré pour ce jeu.</p>
+                <p className="text-xs text-[#8888AA] font-gaming text-center py-6">Pas encore de gagnant enregistré.</p>
               ) : (
                 <div className="space-y-3">
                   {winners.map((w, i) => (
-                    <div key={i} className="flex items-center justify-between p-3.5 bg-[#0A0A0F] rounded-2xl border border-[#FFD700]/20">
+                    <div key={i} className="flex items-center justify-between p-3.5 bg-[#07070C] rounded-2xl border border-[#FFD700]/20">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">{w.winner_avatar || '🏆'}</span>
                         <div>
@@ -242,17 +195,16 @@ const GameDetails = () => {
               )}
             </div>
 
-            {/* Section Communauté WhatsApp */}
             <div className="bg-[#8A2BE2] rounded-3xl p-8 space-y-6 shadow-xl shadow-[#8A2BE2]/20">
               <div className="flex items-center gap-3 text-white">
                 <MessageSquare size={24} />
-                <h3 className="font-gaming font-bold text-base uppercase">Rejoindre la Communauté</h3>
+                <h3 className="font-gaming font-bold text-base uppercase">Groupe WhatsApp</h3>
               </div>
               <p className="text-xs text-white/80 leading-relaxed font-medium">
-                Rejoins le groupe WhatsApp officiel des joueurs de <span className="font-bold text-white">{gameInfo.name}</span> au Bénin.
+                Rejoins la communauté des joueurs de <span className="font-bold text-white">{gameInfo.name}</span> au Bénin.
               </p>
               <a href={gameInfo.whatsapp} target="_blank" rel="noopener noreferrer" className="block">
-                <Button className="w-full bg-white text-[#0A0A0F] hover:bg-gray-100 font-gaming font-bold text-xs py-6 rounded-2xl uppercase tracking-wider flex items-center justify-center gap-2">
+                <Button className="w-full bg-white text-[#07070C] hover:bg-gray-100 font-gaming font-bold text-xs py-6 rounded-2xl uppercase tracking-wider flex items-center justify-center gap-2">
                   Rejoindre sur WhatsApp
                   <ChevronRight size={16} />
                 </Button>
