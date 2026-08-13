@@ -1,7 +1,6 @@
 "use client";
 
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { useEffect } from 'react';
 
 interface SEOProps {
   title?: string;
@@ -20,34 +19,31 @@ const SEO = ({
 }: SEOProps) => {
   const siteTitle = title.includes("eGame Bénin") ? title : `${title} | eGame Bénin`;
 
-  return (
-    <Helmet>
-      {/* Balises de base */}
-      <title>{siteTitle}</title>
-      <meta name="description" content={description} />
-      <link rel="canonical" href={url} />
+  useEffect(() => {
+    document.title = siteTitle;
 
-      {/* Open Graph / Facebook */}
-      <meta property="og:type" content={type} />
-      <meta property="og:title" content={siteTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
-      <meta property="og:url" content={url} />
+    const setMeta = (name: string, content: string, attr: 'name' | 'property' = 'name') => {
+      let el = document.querySelector(`meta[${attr}="${name}"]`);
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(attr, name);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', content);
+    };
 
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={siteTitle} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
+    setMeta('description', description);
+    setMeta('og:type', type, 'property');
+    setMeta('og:title', siteTitle, 'property');
+    setMeta('og:description', description, 'property');
+    setMeta('og:image', image, 'property');
+    setMeta('og:url', url, 'property');
+    setMeta('twitter:title', siteTitle);
+    setMeta('twitter:description', description);
+    setMeta('twitter:image', image);
+  }, [siteTitle, description, image, url, type]);
 
-      {/* Mots-clés spécifiques pour le Bénin */}
-      <meta name="keywords" content="egame benin, gaming benin, tournoi jeux video benin, blur benin, call of duty benin, clash royale benin, esport benin, tournoi cotonou, jeux video 229, kkiapay benin" />
-      
-      {/* Balises pour les robots */}
-      <meta name="robots" content="index, follow" />
-      <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    </Helmet>
-  );
+  return null;
 };
 
 export default SEO;

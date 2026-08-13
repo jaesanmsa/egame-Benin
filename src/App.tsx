@@ -3,8 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@/components/theme-provider";
-import { HelmetProvider } from 'react-helmet-async';
 import Index from "./pages/Index";
 import TournamentDetails from "./pages/TournamentDetails";
 import Profile from "./pages/Profile";
@@ -39,40 +37,36 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
-      <ThemeProvider defaultTheme="dark" forcedTheme="dark" storageKey="egame-theme" attribute="class">
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/tournament/:id" element={<TournamentDetails />} />
-              <Route path="/profil" element={<Profile />} />
-              <Route path="/edit-profile" element={<EditProfile />} />
-              <Route path="/avatar-maker" element={<AvatarMaker />} />
-              <Route path="/payments" element={<PaymentHistory />} />
-              <Route path="/payment-success" element={<PaymentSuccess />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/classement" element={<Leaderboard />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/news" element={<News />} />
-              <Route path="/news/:id" element={<NewsDetail />} />
-              <Route path="/jeux" element={<Games />} />
-              <Route path="/game/:id" element={<GameDetails />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <FloatingSupport />
-            <CookieConsent />
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeProvider>
-    </HelmetProvider>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/tournament/:id" element={<TournamentDetails />} />
+          <Route path="/profil" element={<Profile />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/avatar-maker" element={<AvatarMaker />} />
+          <Route path="/payments" element={<PaymentHistory />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/classement" element={<Leaderboard />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
+          <Route path="/jeux" element={<Games />} />
+          <Route path="/game/:id" element={<GameDetails />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <FloatingSupport />
+        <CookieConsent />
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 
