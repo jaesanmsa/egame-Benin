@@ -7,7 +7,7 @@ import SEO from '@/components/SEO';
 import VSBackground from '@/components/VSBackground';
 import TournamentCard from '@/components/TournamentCard';
 import { motion } from 'framer-motion';
-import { Trophy, Shield, Smartphone, Award, ArrowRight, Gamepad2, Users, Star, Sparkles } from 'lucide-react';
+import { Trophy, Shield, Smartphone, Award, ArrowRight, Users, Sparkles } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
@@ -69,7 +69,7 @@ const Index = () => {
       <Navbar />
       
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[92vh] flex flex-col justify-between items-center pt-24 pb-20 overflow-hidden">
+      <section className="relative min-h-[85vh] flex flex-col justify-center items-center pt-24 pb-16 overflow-hidden">
         {/* Vidéo de fond en slow motion */}
         <div className="absolute inset-0 z-0">
           <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-25">
@@ -135,13 +135,6 @@ const Index = () => {
               S'inscrire
             </button>
           </motion.div>
-        </div>
-
-        {/* Défilement bas / indicateur */}
-        <div className="relative z-20 text-center">
-          <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.3em] text-[#8888AA] animate-bounce">
-            Fais défiler pour l'action
-          </p>
         </div>
       </section>
 
