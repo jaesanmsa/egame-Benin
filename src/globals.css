@@ -43,52 +43,6 @@
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 215, 0, 0.35);
   border-radius: 28px;
-  <dyad-write path="src/globals.css" description="Design system complet : Effets néon eSport, Glassmorphism et bordures animées.">
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  * {
-    border-color: rgba(138, 43, 226, 0.18);
-  }
-  body {
-    background-color: #07070C;
-    color: #FFFFFF;
-    font-family: 'Inter', sans-serif;
-    overflow-x: hidden;
-  }
-  
-  h1, h2, h3 {
-    font-family: 'Orbitron', sans-serif;
-    letter-spacing: -0.01em;
-  }
-
-  h4, h5, h6 {
-    font-family: 'Rajdhani', sans-serif;
-  }
-}
-
-/* Glassmorphism Cards */
-.glass-panel {
-  background: rgba(15, 15, 30, 0.7);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(138, 43, 226, 0.2);
-  border-radius: 28px;
-  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.glass-panel:hover {
-  border-color: rgba(138, 43, 226, 0.5);
-  box-shadow: 0 12px 40px rgba(138, 43, 226, 0.25);
-  transform: translateY(-4px);
-}
-
-.glass-panel-gold {
-  background: rgba(15, 15, 30, 0.8);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 215, 0, 0.35);
-  border-radius: 28px;
   box-shadow: 0 0 30px rgba(255, 215, 0, 0.08);
   transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
