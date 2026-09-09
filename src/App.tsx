@@ -25,6 +25,7 @@ import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import FloatingSupport from "./components/FloatingSupport";
 import CookieConsent from "./components/CookieConsent";
+import SiteLockGate from "./components/SiteLockGate";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,32 +41,34 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/tournament/:id" element={<TournamentDetails />} />
-          <Route path="/profil" element={<Profile />} />
-          <Route path="/edit-profile" element={<EditProfile />} />
-          <Route path="/avatar-maker" element={<AvatarMaker />} />
-          <Route path="/payments" element={<PaymentHistory />} />
-          <Route path="/payment-success" element={<PaymentSuccess />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/classement" element={<Leaderboard />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/news/:id" element={<NewsDetail />} />
-          <Route path="/jeux" element={<Games />} />
-          <Route path="/game/:id" element={<GameDetails />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <FloatingSupport />
-        <CookieConsent />
-      </BrowserRouter>
+      <SiteLockGate>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/tournament/:id" element={<TournamentDetails />} />
+            <Route path="/profil" element={<Profile />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/avatar-maker" element={<AvatarMaker />} />
+            <Route path="/payments" element={<PaymentHistory />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/classement" element={<Leaderboard />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/jeux" element={<Games />} />
+            <Route path="/game/:id" element={<GameDetails />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <FloatingSupport />
+          <CookieConsent />
+        </BrowserRouter>
+      </SiteLockGate>
     </TooltipProvider>
   </QueryClientProvider>
 );
