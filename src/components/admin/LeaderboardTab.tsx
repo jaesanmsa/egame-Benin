@@ -25,7 +25,7 @@ const LeaderboardTab = ({ newLeader, setNewLeader, onSubmit }: LeaderboardTabPro
         </div>
         <div className="space-y-2">
           <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Discipline</Label>
-          <Select onValueChange={(v) => setNewLeader({...newLeader, game_id: v})} defaultValue="blur">
+          <Select onValueChange={(v) => setNewLeader({...newLeader, game_id: v})} defaultValue="free-fire">
             <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
               <SelectValue />
             </SelectTrigger>
@@ -35,9 +35,7 @@ const LeaderboardTab = ({ newLeader, setNewLeader, onSubmit }: LeaderboardTabPro
               <SelectItem value="clash-of-clans" className="font-bold">Clash of Clans</SelectItem>
               <SelectItem value="cod-mobile" className="font-bold">COD Mobile</SelectItem>
               <SelectItem value="pubg-mobile" className="font-bold">PUBG Mobile</SelectItem>
-              <SelectItem value="blur" className="font-bold">Blur</SelectItem>
-              <SelectItem value="cod-mw4" className="font-bold">COD MW4</SelectItem>
-              <SelectItem value="bombsquad" className="font-bold">BombSquad</SelectItem>
+              <SelectItem value="mobile-legends" className="font-bold">Mobile Legends</SelectItem>
             </SelectContent>
           </Select>
         </div>

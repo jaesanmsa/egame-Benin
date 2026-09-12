@@ -17,10 +17,7 @@ const ALL_GAMES = [
   { id: 'cod-mobile', name: 'COD Mobile', image: '/cod mobile.webp' },
   { id: 'free-fire', name: 'Free Fire', image: '/freefire.webp' },
   { id: 'mobile-legends', name: 'Mobile Legends', image: '/mobile legend.webp' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', image: '/pubg-mobile.webp' },
-  { id: 'blur', name: 'Blur', image: '/blur.webp', isComingSoon: true },
-  { id: 'bombsquad', name: 'BombSquad', image: '/bombsquad.webp', isComingSoon: true },
-  { id: 'cod-mw4', name: 'COD MW4', image: '/cod mw4.webp', isComingSoon: true }
+  { id: 'pubg-mobile', name: 'PUBG Mobile', image: '/pubg-mobile.webp' }
 ];
 
 const Games = () => {

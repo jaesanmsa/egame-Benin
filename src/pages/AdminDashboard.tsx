@@ -48,7 +48,7 @@ const AdminDashboard = () => {
   const [editingTournament, setEditingTournament] = useState<any>(null);
 
   const [newLeader, setNewLeader] = useState({
-    username: '', game_id: 'blur', wins: 0, avatar_url: '', rank: 1
+    username: '', game_id: 'free-fire', wins: 0, avatar_url: '', rank: 1
   });
 
   const [finishData, setFinishData] = useState({
