@@ -20,6 +20,7 @@ const TournamentDetails = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [participantCount, setParticipantCount] = useState(0);
   const [participants, setParticipants] = useState<any[]>([]);
   const [userRegistration, setUserRegistration] = useState<any>(null);
@@ -56,6 +57,7 @@ const TournamentDetails = () => {
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
+      setCurrentUser(session?.user ?? null);
       if (session?.user) {
         supabase.from('payments').select('*').eq('tournament_id', id).eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(1).maybeSingle().then(({ data }) => {
           if (data) setUserRegistration(data);
@@ -74,11 +76,10 @@ const TournamentDetails = () => {
     try { await navigator.share({ title: tournament.title, url: window.location.href }); } catch { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }
   };
 
-  const handleFedaPay = async () => {
+  const handleFedaPay = () => {
     setShowPaymentMethods(false);
     setIsPaying(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       const redirectUrl = `${window.location.origin}/payment-success?gateway=fedapay&tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
       sessionStorage.setItem(`payment_gateway:${id}`, 'fedapay');
       
@@ -92,7 +93,7 @@ const TournamentDetails = () => {
         },
         customer: {
           firstname: userProfile?.full_name || userProfile?.username || "Joueur",
-          email: user?.email,
+          email: currentUser?.email,
           phone_number: {
             number: userProfile?.phone || "",
             country: 'bj'
@@ -106,11 +107,10 @@ const TournamentDetails = () => {
     }
   };
 
-  const handleKKiaPay = async () => {
+  const handleKKiaPay = () => {
     setShowPaymentMethods(false);
     setIsPaying(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       const callbackUrl = `${window.location.origin}/payment-success?gateway=kkiapay&tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
       sessionStorage.setItem(`payment_gateway:${id}`, 'kkiapay');
       // @ts-ignore
@@ -118,7 +118,7 @@ const TournamentDetails = () => {
         amount: tournament.entry_fee,
         api_key: import.meta.env.VITE_KKIAPAY_PUBLIC_KEY,
         sandbox: false,
-        email: user?.email,
+        email: currentUser?.email,
         phone: userProfile?.phone || "",
         name: userProfile?.username || "Joueur",
         callback: callbackUrl
