@@ -58,6 +58,13 @@ const AdminDashboard = () => {
   useEffect(() => {
     checkAdmin();
     fetchData();
+
+    const channel = supabase
+      .channel('admin-payments')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'payments' }, () => { fetchPayments(); })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const checkAdmin = async () => {
@@ -73,25 +80,30 @@ const AdminDashboard = () => {
     setLoading(false);
   };
 
-  const fetchData = async () => {
-    const { data: tours } = await supabase.from('tournaments').select('*').eq('status', 'active');
-    if (tours) setActiveTournaments(tours);
-
-    const { data: pays } = await supabase
+  const fetchPayments = async () => {
+    const { data: pays, error } = await supabase
       .from('payments')
       .select('*, profiles(username, full_name, phone)')
       .order('created_at', { ascending: false });
-    if (pays) setAllPayments(pays);
+    if (error) showError("Impossible de charger les transactions : " + error.message);
+    setAllPayments(pays ?? []);
+  };
+
+  const fetchData = async () => {
+    const { data: tours } = await supabase.from('tournaments').select('*').eq('status', 'active');
+    if (tours) setActiveTournaments(tours);
+    await fetchPayments();
   };
 
   const fetchParticipants = async (tournamentId: string) => {
     setSelectedTournamentId(tournamentId);
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('payments')
       .select('*, profiles(username, full_name, phone)')
       .eq('tournament_id', tournamentId)
       .eq('status', 'Réussi');
-    if (data) setParticipantsList(data);
+    if (error) showError("Impossible de charger les participants : " + error.message);
+    setParticipantsList(data ?? []);
   };
 
   const handleAddTournament = async (e: React.FormEvent) => {

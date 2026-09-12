@@ -96,7 +96,8 @@ serve(async (req) => {
         amount: amount,
         status: 'Réussi',
         validation_code: code,
-        fedapay_transaction_id: transaction_id
+        fedapay_transaction_id: transaction_id,
+        gateway: 'maketou'
       })
 
       // Créditer les points

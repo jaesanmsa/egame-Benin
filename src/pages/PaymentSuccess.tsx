@@ -78,7 +78,8 @@ const PaymentSuccess = () => {
               amount: amount || "0",
               status: 'Réussi',
               validation_code: code,
-              fedapay_transaction_id: transactionId
+              fedapay_transaction_id: transactionId,
+              gateway: 'kkiapay'
             });
             if (insertError) throw insertError;
             setValidationCode(code);
