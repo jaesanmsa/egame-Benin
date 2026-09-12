@@ -17,47 +17,47 @@ const GameDetails = () => {
   const [loading, setLoading] = useState(true);
 
   const gameInfo = {
-    'free-fire': { 
-      name: 'Free Fire', 
-      icon: '/icon free fire.png', 
+    'free-fire': {
+      name: 'Free Fire',
+      icon: '/icon free fire.png',
       image: '/freefire.webp',
       desc: "Le Battle Royale mobile numéro 1 au Bénin. Domine le terrain, élimine tes adversaires et décroche le Booyah !",
-      whatsapp: "https://chat.whatsapp.com/L1iNwy7r959GMfYwfmno1U"
+      whatsapp: "https://chat.whatsapp.com/EzIhfwTxa4DL5g7E50cAwT?s=cl&p=i&mlu=4&ilr=4"
     },
-    'clash-royale': { 
-      name: 'Clash Royale', 
-      icon: '/icon clash royal.jpg', 
+    'clash-royale': {
+      name: 'Clash Royale',
+      icon: '/icon clash royal.jpg',
       image: '/clash royal.webp',
       desc: "Duel en temps réel, stratégie et gestion de decks. Détruis les tours royales ennemies.",
-      whatsapp: "https://chat.whatsapp.com/EMQDtGz5pLyJF6wxfXpBD4?mode=hq1tcla"
+      whatsapp: "https://chat.whatsapp.com/GIzoOiID57AB7DELQsvVgt?s=cl&p=i&mlu=4&ilr=4"
     },
-    'clash-of-clans': { 
-      name: 'Clash of Clans', 
-      icon: '/icon clash of clans.jpg', 
+    'clash-of-clans': {
+      name: 'Clash of Clans',
+      icon: '/icon clash of clans.jpg',
       image: '/clash of clans.webp',
       desc: "Construis ton village, forme tes armées et mène ton clan à la victoire ultime.",
-      whatsapp: "https://chat.whatsapp.com/Dpuq4TptwKZ3oSNUl0pQp9"
+      whatsapp: "https://chat.whatsapp.com/FgkUCxPU1EvEBfmWhiMB0j?mode=gi_t"
     },
-    'cod-mobile': { 
-      name: 'COD Mobile', 
-      icon: '/icon cod mobile.png', 
+    'cod-mobile': {
+      name: 'COD Mobile',
+      icon: '/icon cod mobile.png',
       image: '/cod mobile.webp',
       desc: "FPS compétitif pur. Précision, réflexes et esprit d'équipe sur les cartes légendaires.",
-      whatsapp: "https://chat.whatsapp.com/CyrUEEFw6Lr2di9GbCIVv4?mode=gi_t"
+      whatsapp: "https://chat.whatsapp.com/CyrUEEFw6Lr2di9GbCIVv4?s=cl&p=i&mlu=4&ilr=4"
     },
-    'pubg-mobile': { 
-      name: 'PUBG Mobile', 
-      icon: '/icon pubg.png', 
+    'pubg-mobile': {
+      name: 'PUBG Mobile',
+      icon: '/icon pubg.png',
       image: '/pubg-mobile.webp',
       desc: "Battle Royale ultra-réaliste. Survis à 100 joueurs et remporte le repas de poulet.",
-      whatsapp: "https://chat.whatsapp.com/LGCchL76cYlIdCUb6ErzvP?mode=gi_t"
+      whatsapp: "https://chat.whatsapp.com/EsuFIe4zeB13IJTUNO1bew?s=cl&p=i&mlu=4&ilr=4"
     },
-    'mobile-legends': { 
-      name: 'Mobile Legends', 
-      icon: '/icon mobile legend.jpg', 
+    'mobile-legends': {
+      name: 'Mobile Legends',
+      icon: '/icon mobile legend.jpg',
       image: '/mobile legend.webp',
       desc: "MOBA 5v5 compétitif. Choisis ton héros et écrase la base ennemie.",
-      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+      whatsapp: "https://chat.whatsapp.com/KAeZjAXJQer7ZftNOqp1dp?s=cl&p=i&mlu=4&ilr=4"
     }
   }[id as string] || { name: id, icon: '🎮', image: '', desc: "Compétition eSport officielle.", whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E" };
 

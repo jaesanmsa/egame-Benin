@@ -9,7 +9,6 @@ import { supabase } from '@/lib/supabase';
 import { Link } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 
 const ALL_GAMES = [
   { id: 'clash-of-clans', name: 'Clash of Clans', image: '/clash of clans.webp' },
@@ -103,14 +102,6 @@ const Games = () => {
                 >
                   <img src={game.image} alt={game.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#07070C] via-[#07070C]/30 to-transparent" />
-                  
-                  {game.isComingSoon && (
-                    <div className="absolute top-4 left-4">
-                      <Badge className="bg-orange-500 text-white border-none text-[9px] font-gaming font-extrabold uppercase px-2.5 py-1 rounded-full">
-                        Bientôt
-                      </Badge>
-                    </div>
-                  )}
 
                   <div className="absolute top-4 right-4">
                     {activeGames.has(game.id) && (

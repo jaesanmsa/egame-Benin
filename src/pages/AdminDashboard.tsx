@@ -52,7 +52,7 @@ const AdminDashboard = () => {
   });
 
   const [finishData, setFinishData] = useState({
-    tournamentId: '', winnerName: '', winnerAvatar: '', luckyWinnerName: '', luckyWinnerAvatar: ''
+    tournamentId: '', winnerName: ''
   });
 
   useEffect(() => {
@@ -144,15 +144,18 @@ const AdminDashboard = () => {
 
   const handleFinishTournament = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const winnerName = finishData.winnerName.trim();
+    if (!finishData.tournamentId || !winnerName) {
+      showError("Sélectionnez un tournoi et saisissez le pseudo du gagnant.");
+      return;
+    }
     
     const { error } = await supabase
       .from('tournaments')
-      .update({ 
+      .update({
         status: 'finished',
-        winner_name: finishData.winnerName,
-        winner_avatar: finishData.winnerAvatar,
-        lucky_winner_name: finishData.luckyWinnerName,
-        lucky_winner_avatar: finishData.luckyWinnerAvatar
+        winner_name: winnerName
       })
       .eq('id', finishData.tournamentId);
     
@@ -164,13 +167,13 @@ const AdminDashboard = () => {
     const { data: winnerProfile } = await supabase
       .from('profiles')
       .select('id, points, champion_count')
-      .eq('username', finishData.winnerName)
+      .eq('username', winnerName)
       .maybeSingle();
 
     if (winnerProfile) {
       await supabase
         .from('profiles')
-        .update({ 
+        .update({
           points: (winnerProfile.points || 0) + 50,
           champion_count: (winnerProfile.champion_count || 0) + 1
         })
@@ -178,7 +181,7 @@ const AdminDashboard = () => {
     }
 
     showSuccess("Tournoi clôturé et points attribués !");
-    setFinishData({ tournamentId: '', winnerName: '', winnerAvatar: '', luckyWinnerName: '', luckyWinnerAvatar: '' });
+    setFinishData({ tournamentId: '', winnerName: '' });
     fetchData();
   };
 

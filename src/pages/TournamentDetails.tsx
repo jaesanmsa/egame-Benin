@@ -5,7 +5,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
-import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Gift, Loader2, X, Globe, Share2 } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Loader2, X, Globe, Share2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -196,19 +196,10 @@ const TournamentDetails = () => {
           </div>
 
           {isFinished ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-[#FFD700]/10 border border-[#FFD700]/40 p-6 rounded-2xl text-center space-y-2">
-                <Trophy className="text-[#FFD700] mx-auto" size={36} />
-                <p className="text-[10px] font-gaming font-bold uppercase tracking-widest text-[#FFD700]">Champion Officiel</p>
-                <h3 className="text-xl font-gaming font-black text-white">{tournament.winner_name}</h3>
-              </div>
-              {tournament.lucky_winner_name && (
-                <div className="bg-cyan-500/10 border border-cyan-500/40 p-6 rounded-2xl text-center space-y-2">
-                  <Gift className="text-cyan-400 mx-auto" size={36} />
-                  <p className="text-[10px] font-gaming font-bold uppercase tracking-widest text-cyan-400">Gagnant Tirage au sort</p>
-                  <h3 className="text-xl font-gaming font-black text-white">{tournament.lucky_winner_name}</h3>
-                </div>
-              )}
+            <div className="bg-[#FFD700]/10 border border-[#FFD700]/40 p-6 rounded-2xl text-center space-y-2">
+              <Trophy className="text-[#FFD700] mx-auto" size={36} />
+              <p className="text-[10px] font-gaming font-bold uppercase tracking-widest text-[#FFD700]">Champion Officiel</p>
+              <h3 className="text-xl font-gaming font-black text-white">{tournament.winner_name}</h3>
             </div>
           ) : (
             <>
