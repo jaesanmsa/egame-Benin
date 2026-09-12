@@ -59,7 +59,7 @@ const TournamentDetails = () => {
       setIsLoggedIn(!!session);
       setCurrentUser(session?.user ?? null);
       if (session?.user) {
-        supabase.from('payments').select('*').eq('tournament_id', id).eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(1).maybeSingle().then(({ data }) => {
+        supabase.from('payments').select('*').eq('tournament_id', id).eq('user_id', session.user.id).eq('status', 'Réussi').order('created_at', { ascending: false }).limit(1).maybeSingle().then(({ data }) => {
           if (data) setUserRegistration(data);
         });
         supabase.from('profiles').select('*').eq('id', session.user.id).single().then(({ data }) => {
@@ -76,20 +76,35 @@ const TournamentDetails = () => {
     try { await navigator.share({ title: tournament.title, url: window.location.href }); } catch { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }
   };
 
-  const handleFedaPay = () => {
+  const createPendingPayment = async (gateway: 'fedapay' | 'kkiapay') => {
+    const { error } = await supabase.from('payments').insert({
+      user_id: currentUser.id,
+      tournament_id: id,
+      tournament_name: tournament.title,
+      amount: tournament.entry_fee,
+      status: 'En attente',
+      gateway
+    });
+    if (error) throw error;
+  };
+
+  const handleFedaPay = async () => {
     setShowPaymentMethods(false);
     setIsPaying(true);
     try {
+      await createPendingPayment('fedapay');
       const redirectUrl = `${window.location.origin}/payment-success?gateway=fedapay&tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
       sessionStorage.setItem(`payment_gateway:${id}`, 'fedapay');
-      
+
       // @ts-ignore
       FedaPay.init({
         public_key: 'pk_live_u7rqiI-D3oGsFCrTHNFi9Xxh',
         transaction: {
           amount: tournament.entry_fee,
           description: `Inscription: ${tournament.title}`,
-          callback_url: redirectUrl
+          callback_url: redirectUrl,
+          metadata: { tournamentId: id, tournamentName: tournament.title, userId: currentUser.id },
+          custom_metadata: { tournamentId: id, tournamentName: tournament.title, userId: currentUser.id }
         },
         customer: {
           firstname: userProfile?.full_name || userProfile?.username || "Joueur",
@@ -107,10 +122,11 @@ const TournamentDetails = () => {
     }
   };
 
-  const handleKKiaPay = () => {
+  const handleKKiaPay = async () => {
     setShowPaymentMethods(false);
     setIsPaying(true);
     try {
+      await createPendingPayment('kkiapay');
       const callbackUrl = `${window.location.origin}/payment-success?gateway=kkiapay&tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
       sessionStorage.setItem(`payment_gateway:${id}`, 'kkiapay');
       // @ts-ignore

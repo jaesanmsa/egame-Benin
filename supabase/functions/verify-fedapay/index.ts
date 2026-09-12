@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
+import { genCode, claimPending, creditPoints } from '../_shared/payment.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -67,8 +68,27 @@ serve(async (req) => {
       })
     }
 
-    const code = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`
-    
+    // 1) Réclamer la ligne "En attente" créée à l'ouverture du widget
+    const code = genCode()
+    const claimed = await claimPending(supabase, {
+      userId: user.id,
+      tournamentId,
+      gateway: 'fedapay',
+      transactionId,
+      amount: amount ?? '0',
+      tournamentName,
+      code
+    })
+
+    if (claimed) {
+      console.log(`[verify-fedapay] Ligne en attente réclamée (${claimed.id}). Code: ${claimed.validation_code}`)
+      await creditPoints(supabase, user.id)
+      return new Response(JSON.stringify({ success: true, validation_code: claimed.validation_code }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
+    // 2) Sinon (pas de ligne d'attente) : insertion directe
     const { error: insertError } = await supabase.from('payments').insert({
       user_id: user.id,
       tournament_id: tournamentId,
@@ -80,7 +100,22 @@ serve(async (req) => {
       gateway: 'fedapay'
     })
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      // Course avec le webhook : la transaction vient d'être enregistrée.
+      if (insertError.code === '23505') {
+        const { data: byTx } = await supabase
+          .from('payments')
+          .select('validation_code')
+          .eq('fedapay_transaction_id', transaction_id)
+          .maybeSingle()
+        if (byTx) {
+          return new Response(JSON.stringify({ success: true, already_processed: true, validation_code: byTx.validation_code }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          })
+        }
+      }
+      throw insertError
+    }
 
     // Créditer les points
     const { data: profile } = await supabase.from('profiles').select('points').eq('id', user.id).single()

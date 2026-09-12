@@ -61,7 +61,7 @@ const PaymentSuccess = () => {
         } else if (gateway === 'kkiapay') {
           const { data: existing, error: lookupError } = await supabase
             .from('payments')
-            .select('*')
+            .select('validation_code')
             .eq('fedapay_transaction_id', transactionId)
             .maybeSingle();
 
@@ -71,18 +71,80 @@ const PaymentSuccess = () => {
             setValidationCode(existing.validation_code);
           } else {
             const code = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-            const { error: insertError } = await supabase.from('payments').insert({
-              user_id: user.id,
-              tournament_id: tournamentId,
-              tournament_name: tName || "Tournoi",
-              amount: amount || "0",
-              status: 'Réussi',
-              validation_code: code,
-              fedapay_transaction_id: transactionId,
-              gateway: 'kkiapay'
-            });
-            if (insertError) throw insertError;
-            setValidationCode(code);
+
+            // Réclamer la ligne "En attente" créée à l'ouverture du widget (évite les doublons).
+            const { data: pending } = await supabase
+              .from('payments')
+              .select('id')
+              .eq('user_id', user.id)
+              .eq('tournament_id', tournamentId)
+              .eq('gateway', 'kkiapay')
+              .is('fedapay_transaction_id', null)
+              .is('validation_code', null)
+              .order('created_at', { ascending: true })
+              .limit(1)
+              .maybeSingle();
+
+            let finalCode: string | null = null;
+
+            if (pending) {
+              const { data: claimed, error: updateError } = await supabase
+                .from('payments')
+                .update({
+                  status: 'Réussi',
+                  validation_code: code,
+                  fedapay_transaction_id: transactionId,
+                  amount: amount || "0",
+                  updated_at: new Date().toISOString()
+                })
+                .eq('id', pending.id)
+                .is('validation_code', null)
+                .select()
+                .maybeSingle();
+              if (updateError) throw updateError;
+              if (claimed) finalCode = claimed.validation_code;
+            }
+
+            if (!finalCode) {
+              // Le webhook serveur a pu valider entre-temps : relire par référence.
+              const { data: byTx } = await supabase
+                .from('payments')
+                .select('validation_code')
+                .eq('fedapay_transaction_id', transactionId)
+                .maybeSingle();
+              if (byTx) {
+                finalCode = byTx.validation_code;
+              } else {
+                const { error: insertError } = await supabase.from('payments').insert({
+                  user_id: user.id,
+                  tournament_id: tournamentId,
+                  tournament_name: tName || "Tournoi",
+                  amount: amount || "0",
+                  status: 'Réussi',
+                  validation_code: code,
+                  fedapay_transaction_id: transactionId,
+                  gateway: 'kkiapay'
+                });
+                if (insertError) {
+                  // Course avec le webhook : la transaction vient d'être enregistrée.
+                  if (insertError.code === '23505') {
+                    const { data: byTxRetry } = await supabase
+                      .from('payments')
+                      .select('validation_code')
+                      .eq('fedapay_transaction_id', transactionId)
+                      .maybeSingle();
+                    if (byTxRetry) finalCode = byTxRetry.validation_code;
+                    else throw insertError;
+                  } else {
+                    throw insertError;
+                  }
+                } else {
+                  finalCode = code;
+                }
+              }
+            }
+
+            setValidationCode(finalCode);
             showSuccess("Paiement KKiaPay enregistré !");
           }
         } else {

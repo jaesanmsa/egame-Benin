@@ -17,17 +17,19 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    console.log("[cleanup-payments] Démarrage du nettoyage des paiements expirés (5 minutes)...")
+    console.log("[cleanup-payments] Démarrage du nettoyage des paiements expirés (2 heures)...")
 
-    // Calcul de la date limite (il y a 5 minutes)
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
+    // Les paiements Mobile Money peuvent être confirmés tardivement (USSD) ;
+    // les webhooks peuvent réclamer une ligne même après bascule en "Échoué".
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
 
-    // Mise à jour des paiements en attente trop vieux
+    // Mise à jour des paiements en attente trop vieux (jamais réclamés)
     const { data, error } = await supabase
       .from('payments')
       .update({ status: 'Échoué' })
       .eq('status', 'En attente')
-      .lt('created_at', fiveMinutesAgo)
+      .is('fedapay_transaction_id', null)
+      .lt('created_at', twoHoursAgo)
       .select()
 
     if (error) throw error
