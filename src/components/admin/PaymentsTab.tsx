@@ -111,6 +111,11 @@ const PaymentsTab = ({ tournaments, payments, searchQuery, setSearchQuery }: Pay
                     <CheckCircle2 size={14} className="text-green-500" />
                   </div>
                   <p className="text-[11px] font-black truncate">{playerOf(pay)}</p>
+                  {pay.validation_code && (
+                    <p className="text-[9px] font-mono text-violet-500 bg-violet-500/10 border border-violet-500/20 rounded px-1.5 py-0.5 inline-block">
+                      Code: {pay.validation_code}
+                    </p>
+                  )}
                   <p className="text-[9px] text-muted-foreground">{fmtShort(pay.created_at)}</p>
                 </div>
               ) : (

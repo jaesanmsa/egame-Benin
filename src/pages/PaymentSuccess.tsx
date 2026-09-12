@@ -14,6 +14,7 @@ const PaymentSuccess = () => {
   const [error, setError] = useState<string | null>(null);
   const [validationCode, setValidationCode] = useState<string | null>(null);
   const [tournamentName, setTournamentName] = useState<string | null>(null);
+  const [playerUsername, setPlayerUsername] = useState<string>('Joueur');
   const hasProcessed = useRef(false);
 
   const whatsappNumber = "2290141790790";
@@ -43,6 +44,13 @@ const PaymentSuccess = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error("Session utilisateur introuvable.");
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', user.id)
+          .maybeSingle();
+        if (profile?.username) setPlayerUsername(profile.username);
 
         if (gateway === 'maketou') {
           const { data, error: funcError } = await supabase.functions.invoke('verify-maketou', {
@@ -164,7 +172,7 @@ const PaymentSuccess = () => {
   }, [searchParams]);
 
   const handleWhatsAppSend = () => {
-    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation : ${validationCode} pour le tournoi ${tournamentName}.`);
+    const message = encodeURIComponent(`Pseudo: ${playerUsername} | Code: ${validationCode}`);
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 

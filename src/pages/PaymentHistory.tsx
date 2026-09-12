@@ -23,6 +23,7 @@ const PaymentHistory = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [playerUsername, setPlayerUsername] = useState('Joueur');
   const whatsappNumber = "2290141790790";
 
   const fetchData = useCallback(async (silent = false) => {
@@ -32,6 +33,13 @@ const PaymentHistory = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (profile?.username) setPlayerUsername(profile.username);
 
       const { data, error } = await supabase
         .from('payments')
@@ -74,7 +82,7 @@ const PaymentHistory = () => {
   }, [fetchData]);
 
   const handleWhatsAppSend = (payment: Payment) => {
-    const message = encodeURIComponent(`Bonjour eGame Bénin, voici mon code de validation : ${payment.validation_code} pour le tournoi ${payment.tournament_name}.`);
+    const message = encodeURIComponent(`Pseudo: ${playerUsername} | Code: ${payment.validation_code}`);
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 

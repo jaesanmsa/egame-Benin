@@ -7,7 +7,7 @@ import { Lock, ArrowRight, ShieldAlert, Timer } from 'lucide-react';
 
 const PASSCODE = "221166@@";
 const STORAGE_KEY = "egame_site_unlocked";
-const PUBLIC_LAUNCH_AT = new Date("2026-09-13T07:00:22.228Z").getTime();
+const PUBLIC_LAUNCH_AT = new Date("2026-09-13T07:00:46.000Z").getTime();
 
 export const SiteLockGate = ({ children }: { children: React.ReactNode }) => {
   const [isUnlocked, setIsUnlocked] = useState(false);
