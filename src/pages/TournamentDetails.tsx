@@ -79,7 +79,8 @@ const TournamentDetails = () => {
     setIsPaying(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      const redirectUrl = `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
+      const redirectUrl = `${window.location.origin}/payment-success?gateway=fedapay&tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
+      sessionStorage.setItem(`payment_gateway:${id}`, 'fedapay');
       
       // @ts-ignore
       FedaPay.init({
@@ -110,6 +111,8 @@ const TournamentDetails = () => {
     setIsPaying(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      const callbackUrl = `${window.location.origin}/payment-success?gateway=kkiapay&tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
+      sessionStorage.setItem(`payment_gateway:${id}`, 'kkiapay');
       // @ts-ignore
       openKkiapayWidget({
         amount: tournament.entry_fee,
@@ -118,7 +121,7 @@ const TournamentDetails = () => {
         email: user?.email,
         phone: userProfile?.phone || "",
         name: userProfile?.username || "Joueur",
-        callback: `${window.location.origin}/payment-success?tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`
+        callback: callbackUrl
       });
     } catch (err: any) { 
       showError("Erreur lors du lancement de KKiaPay.");

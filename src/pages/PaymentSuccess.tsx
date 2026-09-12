@@ -23,14 +23,16 @@ const PaymentSuccess = () => {
       if (hasProcessed.current) return;
       hasProcessed.current = true;
 
-      const gateway = searchParams.get('gateway');
-      const transactionId = searchParams.get('transaction_id') || searchParams.get('id') || searchParams.get('maketou_id');
       const tournamentId = searchParams.get('tournamentId');
       const tName = searchParams.get('tournamentName');
       const amount = searchParams.get('amount');
-      const kkiapayId = searchParams.get('kkiapay_transaction_id');
+      const callbackGateway = searchParams.get('gateway');
+      const savedGateway = tournamentId ? sessionStorage.getItem(`payment_gateway:${tournamentId}`) : null;
+      const legacyKkiapayId = searchParams.get('kkiapay_transaction_id');
+      const gateway = callbackGateway || savedGateway || 'kkiapay';
+      const transactionId = legacyKkiapayId || searchParams.get('transaction_id') || searchParams.get('transactionId') || searchParams.get('id') || searchParams.get('maketou_id');
 
-      if (!transactionId && !kkiapayId) {
+      if (!transactionId || !tournamentId) {
         setError("Informations de transaction manquantes.");
         setIsProcessing(false);
         return;
@@ -46,43 +48,50 @@ const PaymentSuccess = () => {
           const { data, error: funcError } = await supabase.functions.invoke('verify-maketou', {
             body: { action: 'verify', transaction_id: transactionId, tournamentId, tournamentName: tName, amount }
           });
-          if (funcError || data.error) throw new Error(data?.error || "Erreur Maketou");
+          if (funcError || data?.error) throw new Error(data?.error || "Erreur Maketou");
           setValidationCode(data.validation_code);
           showSuccess("Paiement Maketou vérifié !");
-        } else if (transactionId && !kkiapayId) {
+        } else if (gateway === 'fedapay') {
           const { data, error: funcError } = await supabase.functions.invoke('verify-fedapay', {
             body: { transaction_id: transactionId, tournamentId, tournamentName: tName, amount }
           });
-          if (funcError || data.error) throw new Error(data?.error || "Erreur FedaPay");
+          if (funcError || data?.error) throw new Error(data?.error || "Erreur FedaPay");
           setValidationCode(data.validation_code);
           showSuccess("Paiement FedaPay vérifié !");
-        } else {
-          const { data: existing } = await supabase
+        } else if (gateway === 'kkiapay') {
+          const { data: existing, error: lookupError } = await supabase
             .from('payments')
             .select('*')
-            .eq('fedapay_transaction_id', kkiapayId)
+            .eq('fedapay_transaction_id', transactionId)
             .maybeSingle();
+
+          if (lookupError) throw lookupError;
 
           if (existing) {
             setValidationCode(existing.validation_code);
           } else {
             const code = `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-            await supabase.from('payments').insert({
+            const { error: insertError } = await supabase.from('payments').insert({
               user_id: user.id,
               tournament_id: tournamentId,
               tournament_name: tName || "Tournoi",
               amount: amount || "0",
               status: 'Réussi',
               validation_code: code,
-              fedapay_transaction_id: kkiapayId
+              fedapay_transaction_id: transactionId
             });
+            if (insertError) throw insertError;
             setValidationCode(code);
-            showSuccess("Inscription confirmée !");
+            showSuccess("Paiement KKiaPay enregistré !");
           }
+        } else {
+          throw new Error("Passerelle de paiement inconnue.");
         }
+
+        sessionStorage.removeItem(`payment_gateway:${tournamentId}`);
       } catch (err: any) {
         setError(err.message || "Une erreur est survenue.");
-        showError("Erreur d'enregistrement.");
+        showError(`Erreur de transaction ${gateway === 'kkiapay' ? 'KKiaPay' : gateway === 'fedapay' ? 'FedaPay' : 'Maketou'}.`);
       } finally {
         setIsProcessing(false);
       }
