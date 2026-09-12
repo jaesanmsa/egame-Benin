@@ -22,6 +22,7 @@ const AdminDashboard = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTournaments, setActiveTournaments] = useState<any[]>([]);
+  const [allTournaments, setAllTournaments] = useState<any[]>([]);
   const [allPayments, setAllPayments] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   
@@ -90,8 +91,10 @@ const AdminDashboard = () => {
   };
 
   const fetchData = async () => {
-    const { data: tours } = await supabase.from('tournaments').select('*').eq('status', 'active');
-    if (tours) setActiveTournaments(tours);
+    const { data: tours, error } = await supabase.from('tournaments').select('*');
+    if (error) showError("Impossible de charger les tournois : " + error.message);
+    setAllTournaments(tours ?? []);
+    setActiveTournaments((tours ?? []).filter((t: any) => t.status === 'active'));
     await fetchPayments();
   };
 
@@ -242,7 +245,7 @@ const AdminDashboard = () => {
           </div>
 
           <TabsContent value="payments">
-            <PaymentsTab payments={allPayments} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            <PaymentsTab tournaments={allTournaments} payments={allPayments} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
           </TabsContent>
 
           <TabsContent value="participants">
