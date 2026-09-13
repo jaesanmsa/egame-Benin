@@ -16,11 +16,24 @@ const Auth = () => {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [resending, setResending] = useState(false);
   const navigate = useNavigate();
 
   const getRedirectUrl = () => {
     let url = window.location.origin;
     return url.endsWith('/') ? url.slice(0, -1) : url;
+  };
+
+  const handleResendEmail = async () => {
+    setResending(true);
+    const { error: resendError } = await supabase.auth.resend({
+      type: 'signup',
+      email: email.trim().toLowerCase(),
+      options: { emailRedirectTo: getRedirectUrl() }
+    });
+    if (resendError) showError(resendError.message);
+    else showSuccess("Nouveau lien de confirmation envoyé !");
+    setResending(false);
   };
 
   const handleGoogleLogin = async () => {
@@ -62,7 +75,15 @@ const Auth = () => {
       });
       
       if (error) showError(error.message);
-      else if (data.user && data.session === null) setIsEmailSent(true);
+      else if (data.user && data.session === null) {
+        if (data.user.email_confirmed_at) {
+          // Un compte confirmé existe déjà avec cet e-mail : aucun lien n'est envoyé par Supabase.
+          showSuccess("Un compte existe déjà avec cet e-mail. Connecte-toi directement.");
+          setIsLogin(true);
+        } else {
+          setIsEmailSent(true);
+        }
+      }
       else {
         showSuccess("Compte créé !");
         setIsLogin(true);
@@ -80,9 +101,17 @@ const Auth = () => {
           </div>
           <h1 className="text-2xl font-gaming font-black">Vérifiez vos mails</h1>
           <p className="text-[#8888AA] text-sm leading-relaxed">Un lien de confirmation a été envoyé à <span className="text-white font-bold">{email}</span>.</p>
-          <button onClick={() => setIsEmailSent(false)} className="w-full btn-neon py-4 text-xs tracking-widest uppercase">
-            Retour à la connexion
-          </button>
+          <p className="text-[10px] text-[#8888AA]/70 leading-relaxed">
+            Pense à vérifier ton dossier spam ou promotions (expéditeur : noreply@mail.app.supabase.io).
+          </p>
+          <div className="space-y-3 pt-2">
+            <button onClick={handleResendEmail} disabled={resending} className="w-full btn-neon py-4 text-xs tracking-widest uppercase">
+              {resending ? "Envoi en cours..." : "Renvoyer le lien de confirmation"}
+            </button>
+            <button onClick={() => setIsEmailSent(false)} className="w-full text-xs font-gaming font-bold uppercase tracking-widest text-[#8888AA] hover:text-white py-2">
+              Retour à la connexion
+            </button>
+          </div>
         </div>
       </div>
     );

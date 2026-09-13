@@ -67,7 +67,7 @@ const About = () => {
             L'Arène des Champions
           </h1>
           <p className="text-base text-[#8888AA] max-w-2xl mx-auto leading-relaxed font-medium">
-            eGame Bénin est la plateforme eSport de référence dédiée à l'organisation de compétitions de jeux vidéo compétitifs au Bénin avec remise directe des Cash Prizes par Mobile Money.
+            eGame Bénin est une plateforme eSport où les joueurs s'inscrivent à des tournois, paient les frais d'inscription prévus pour la compétition, affrontent d'autres joueurs et peuvent remporter des récompenses en argent. Une partie des frais d'inscription sert notamment à constituer les cash prizes du tournoi.
           </p>
         </div>
 
