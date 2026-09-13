@@ -22,7 +22,7 @@ const GameDetails = () => {
       icon: '/icon brawl stars.webp',
       image: '/brawl stars.jpg',
       desc: "Combats 3v3 frénétiques et modes compétitifs explosifs. Choisis ton Brawler, débloque ses supers et domine l'arène.",
-      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+      whatsapp: "https://chat.whatsapp.com/INmxAExPcaPHT4DrVBIfiw?s=cl&p=i&mlu=4&ilr=4"
     },
     'free-fire': {
       name: 'Free Fire',

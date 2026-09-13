@@ -48,7 +48,7 @@ const Leaderboard = () => {
     const configs = {
       1: { height: "h-40", color: "text-[#FFD700]", bg: "bg-[#FFD700]/10", border: "border-[#FFD700]/50", size: "w-24 h-24", icon: <Crown size={32} className="text-[#FFD700]" /> },
       2: { height: "h-32", color: "text-zinc-300", bg: "bg-zinc-400/10", border: "border-zinc-400/40", size: "w-20 h-20", icon: <Medal size={24} className="text-zinc-300" /> },
-      3: { height: "h-28", color: "text-orange-400", bg: "bg-orange-500/10", border: "border-orange-500/40", size: "w-18 h-18", icon: <Award size={22} className="text-orange-400" /> }
+      3: { height: "h-28", color: "text-orange-400", bg: "bg-orange-500/10", border: "border-orange-500/40", size: "w-16 h-16", icon: <Award size={22} className="text-orange-400" /> }
     };
     const config = configs[rank as keyof typeof configs];
 
