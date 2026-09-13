@@ -7,7 +7,7 @@ import SEO from '@/components/SEO';
 import VSBackground from '@/components/VSBackground';
 import TournamentCard from '@/components/TournamentCard';
 import { motion } from 'framer-motion';
-import { Trophy, Shield, Smartphone, Award, ArrowRight, Users, Sparkles } from 'lucide-react';
+import { Trophy, Shield, Smartphone, Award, ArrowRight, Users, Sparkles, User } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
@@ -25,7 +25,20 @@ const Index = () => {
   const [activeGames, setActiveGames] = useState<Set<string>>(new Set());
   const [hallOfFame, setHallOfFame] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -128,12 +141,22 @@ const Index = () => {
               <ArrowRight size={16} />
             </button>
 
-            <button 
-              onClick={() => navigate('/auth')}
-              className="w-full sm:w-auto px-8 py-4 border border-[#8A2BE2]/50 hover:border-[#8A2BE2] bg-[#0F0F1E]/80 hover:bg-[#8A2BE2]/10 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all"
-            >
-              S'inscrire
-            </button>
+            {isLoggedIn ? (
+              <button
+                onClick={() => navigate('/profil')}
+                className="w-full sm:w-auto px-8 py-4 border border-[#8A2BE2]/50 hover:border-[#8A2BE2] bg-[#0F0F1E]/80 hover:bg-[#8A2BE2]/10 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all flex items-center justify-center gap-3"
+              >
+                <User size={16} />
+                Mon Profil
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('/auth')}
+                className="w-full sm:w-auto px-8 py-4 border border-[#8A2BE2]/50 hover:border-[#8A2BE2] bg-[#0F0F1E]/80 hover:bg-[#8A2BE2]/10 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all"
+              >
+                S'inscrire
+              </button>
+            )}
           </motion.div>
         </div>
       </section>
