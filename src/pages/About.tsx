@@ -3,9 +3,51 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
-import { Target, Users, Shield, ArrowLeft, Trophy } from 'lucide-react';
+import { Target, Users, Shield, ArrowLeft, Trophy, UserPlus, Gamepad2, CreditCard, Hash, MessageSquare, Zap } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
+
+interface Step {
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  highlight?: boolean;
+}
+
+const STEPS: Step[] = [
+  {
+    icon: UserPlus,
+    title: "Crée ton compte",
+    desc: "Inscris-toi gratuitement avec ton e-mail ou ton compte Google. C'est rapide et sans engagement."
+  },
+  {
+    icon: Gamepad2,
+    title: "Choisis ton tournoi",
+    desc: "Explore les tournois ouverts, sélectionne ton jeu préféré et vérifie la date, les frais et le Cash Prize."
+  },
+  {
+    icon: CreditCard,
+    title: "Paie tes frais d'inscription",
+    desc: "Accepte le règlement du tournoi puis paie par Mobile Money (MTN, Moov, Celtiis) ou carte bancaire via KKiaPay ou FedaPay."
+  },
+  {
+    icon: Hash,
+    title: "Reçois ton code de validation",
+    desc: "Dès que ton paiement est validé, un code unique (ex : EGB-A1B2C) t'est remis. Tu le retrouves aussi dans « Mes Inscriptions » sur ton profil."
+  },
+  {
+    icon: MessageSquare,
+    title: "Envoie ton code par WhatsApp",
+    desc: "Envoie ton pseudo et ton code de validation au support WhatsApp officiel pour confirmer ton inscription auprès des arbitres.",
+    highlight: true
+  },
+  {
+    icon: Trophy,
+    title: "Joue et encaisse",
+    desc: "Rejoins la salle de jeu à l'heure indiquée, domine tes adversaires et reçois ton Cash Prize directement par Mobile Money."
+  }
+];
 
 const About = () => {
   const navigate = useNavigate();
@@ -46,6 +88,73 @@ const About = () => {
             </p>
           </div>
         </div>
+
+        {/* Guide : Comment participer à un tournoi */}
+        <section className="space-y-10">
+          <div className="text-center space-y-3">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 text-[#A855F7] text-[10px] font-gaming font-extrabold tracking-widest uppercase">
+              <Zap size={14} className="text-[#FFD700]" />
+              Guide de l'Arène
+            </div>
+            <h2 className="text-3xl font-gaming font-black uppercase text-white">
+              Comment <span className="text-[#8A2BE2]">participer</span> à un tournoi ?
+            </h2>
+            <p className="text-sm text-[#8888AA] max-w-2xl mx-auto font-medium">
+              De l'inscription jusqu'au Cash Prize, tout se fait en 6 étapes simples. Suis le guide !
+            </p>
+          </div>
+
+          <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {STEPS.map((step, i) => (
+              <li
+                key={step.title}
+                className={`relative bg-[#0F0F1E] border p-8 rounded-3xl space-y-4 ${
+                  step.highlight
+                    ? 'border-emerald-500/50 shadow-xl shadow-emerald-500/10'
+                    : 'border-[#8A2BE2]/30'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-4xl font-gaming font-black text-[#8A2BE2]/30">{String(i + 1).padStart(2, '0')}</span>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${step.highlight ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/40' : 'bg-[#8A2BE2]/20 text-[#8A2BE2]'}`}>
+                    <step.icon size={24} />
+                  </div>
+                </div>
+                <h3 className="font-gaming font-bold text-base text-white uppercase flex flex-wrap items-center gap-2">
+                  {step.title}
+                  {step.highlight && (
+                    <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/40 font-extrabold">Étape clé</span>
+                  )}
+                </h3>
+                <p className="text-xs text-[#8888AA] leading-relaxed">{step.desc}</p>
+              </li>
+            ))}
+          </ol>
+
+          {/* Rappel WhatsApp */}
+          <div className="bg-emerald-950/40 border border-emerald-500/40 rounded-3xl p-8 md:p-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+              <div className="w-16 h-16 bg-emerald-500/15 text-emerald-400 rounded-2xl flex items-center justify-center border border-emerald-500/40 shrink-0">
+                <MessageSquare size={30} />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-gaming font-black text-lg text-white uppercase">Le réflexe à ne pas oublier</h3>
+                <p className="text-xs text-[#8888AA] leading-relaxed max-w-xl">
+                  Après chaque paiement, envoie ton <span className="text-white font-bold">pseudo</span> et ton <span className="text-emerald-400 font-bold">code de validation</span> (ex : EGB-A1B2C) par WhatsApp au support. C'est ce qui confirme officiellement ta place dans le tournoi.
+                </p>
+              </div>
+            </div>
+            <a
+              href={`https://wa.me/2290141790790?text=${encodeURIComponent("Bonjour eGame Bénin ! Voici mon inscription au tournoi : Pseudo : | Code : ")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 bg-emerald-600 hover:bg-emerald-500 text-white font-gaming font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-2xl shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2"
+            >
+              <MessageSquare size={16} />
+              Support WhatsApp
+            </a>
+          </div>
+        </section>
 
         <div className="bg-[#0F0F1E] border border-[#FFD700]/30 rounded-3xl p-10 text-center space-y-8">
           <h2 className="text-2xl font-gaming font-black uppercase text-white">Pourquoi nous faire confiance ?</h2>
