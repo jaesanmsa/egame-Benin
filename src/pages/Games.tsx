@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ALL_GAMES = [
+  { id: 'brawl-stars', name: 'Brawl Stars', image: '/brawl stars.jpg' },
   { id: 'clash-of-clans', name: 'Clash of Clans', image: '/clash of clans.webp' },
   { id: 'clash-royale', name: 'Clash Royale', image: '/clash royal.webp' },
   { id: 'cod-mobile', name: 'COD Mobile', image: '/cod mobile.webp' },
@@ -85,7 +86,7 @@ const Games = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="aspect-[3/4] w-full rounded-3xl bg-[#0F0F1E]" />)
           ) : filteredGames.length === 0 ? (

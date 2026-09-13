@@ -17,6 +17,13 @@ const GameDetails = () => {
   const [loading, setLoading] = useState(true);
 
   const gameInfo = {
+    'brawl-stars': {
+      name: 'Brawl Stars',
+      icon: '/icon brawl stars.webp',
+      image: '/brawl stars.jpg',
+      desc: "Combats 3v3 frénétiques et modes compétitifs explosifs. Choisis ton Brawler, débloque ses supers et domine l'arène.",
+      whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E"
+    },
     'free-fire': {
       name: 'Free Fire',
       icon: '/icon free fire.png',

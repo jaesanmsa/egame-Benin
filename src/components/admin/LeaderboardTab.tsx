@@ -30,6 +30,7 @@ const LeaderboardTab = ({ newLeader, setNewLeader, onSubmit }: LeaderboardTabPro
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-card border-border">
+              <SelectItem value="brawl-stars" className="font-bold">Brawl Stars</SelectItem>
               <SelectItem value="free-fire" className="font-bold">Free Fire</SelectItem>
               <SelectItem value="clash-royale" className="font-bold">Clash Royale</SelectItem>
               <SelectItem value="clash-of-clans" className="font-bold">Clash of Clans</SelectItem>

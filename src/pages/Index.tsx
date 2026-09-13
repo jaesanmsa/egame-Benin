@@ -12,6 +12,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
 const ALL_GAMES = [
+  { id: 'brawl-stars', name: 'Brawl Stars', image: '/brawl stars.jpg' },
   { id: 'clash-of-clans', name: 'Clash of Clans', image: '/clash of clans.webp' },
   { id: 'clash-royale', name: 'Clash Royale', image: '/clash royal.webp' },
   { id: 'cod-mobile', name: 'COD Mobile', image: '/cod mobile.webp' },
@@ -217,7 +218,7 @@ const Index = () => {
           <p className="text-sm text-[#8888AA] font-esport">Sélectionne ta discipline et entre dans l'arène</p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-7 gap-4">
           {ALL_GAMES.map((game) => {
             const hasActive = activeGames.has(game.id);
             return (
