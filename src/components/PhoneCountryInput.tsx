@@ -4,20 +4,22 @@ import React, { useMemo } from 'react';
 import { Phone } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
-import { AFRICAN_COUNTRIES, DEFAULT_COUNTRY_CODE } from '@/lib/countries';
+import { AFRICAN_COUNTRIES, DEFAULT_COUNTRY_CODE, getCountryByCode } from '@/lib/countries';
 
 interface PhoneCountryInputProps {
   value: string;
   onChange: (value: string) => void;
   id?: string;
   placeholder?: string;
+  /** Pays affiché par défaut quand aucun numéro n'est encore saisi (ex : suit le pays choisi à l'inscription). */
+  defaultCountryCode?: string;
 }
 
 /**
  * Décompose un numéro stocké (ex : "2290141790790") en pays + numéro national.
- * Les numéros locaux courts (ex : "0141790790") sont rattachés au pays par défaut.
+ * `code` est null quand aucun indicatif n'est identifiable (numéro local court ou vide).
  */
-const parsePhoneNumber = (value: string) => {
+export const parsePhoneNumber = (value: string): { code: string | null; national: string } => {
   const hadPlus = (value || '').trim().startsWith('+');
   const digits = (value || '').replace(/\D/g, '');
 
@@ -30,12 +32,27 @@ const parsePhoneNumber = (value: string) => {
     }
   }
 
-  return { code: DEFAULT_COUNTRY_CODE, national: digits };
+  return { code: null, national: digits };
 };
 
-const PhoneCountryInput = ({ value, onChange, id, placeholder }: PhoneCountryInputProps) => {
+/**
+ * Remplace l'indicatif d'un numéro par celui du pays donné, en conservant les chiffres nationaux.
+ * Retourne '' si aucun chiffre n'est saisi.
+ */
+export const setPhoneCountry = (phone: string, code: string): string => {
+  const country = getCountryByCode(code);
+  if (!country) return phone;
+  const { national } = parsePhoneNumber(phone);
+  return national ? `${country.dial}${national}` : '';
+};
+
+const PhoneCountryInput = ({ value, onChange, id, placeholder, defaultCountryCode }: PhoneCountryInputProps) => {
   const parsed = useMemo(() => parsePhoneNumber(value), [value]);
-  const selected = AFRICAN_COUNTRIES.find((c) => c.code === parsed.code) ?? AFRICAN_COUNTRIES[0];
+
+  const selected =
+    (parsed.code ? AFRICAN_COUNTRIES.find((c) => c.code === parsed.code) : undefined) ??
+    (defaultCountryCode ? AFRICAN_COUNTRIES.find((c) => c.code === defaultCountryCode) : undefined) ??
+    AFRICAN_COUNTRIES.find((c) => c.code === DEFAULT_COUNTRY_CODE)!;
 
   const handleCountryChange = (code: string) => {
     const country = AFRICAN_COUNTRIES.find((c) => c.code === code);
@@ -52,8 +69,8 @@ const PhoneCountryInput = ({ value, onChange, id, placeholder }: PhoneCountryInp
     <div className="flex gap-2">
       <Select value={selected.code} onValueChange={handleCountryChange}>
         <SelectTrigger
-          aria-label="Pays du numéro"
-          className="w-[7.5rem] shrink-0 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium gap-1"
+          aria-label="Indicatif du pays"
+          className="w-[7.5rem] shrink-0 bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium gap-1"
         >
           <span className="flex items-center gap-1.5 text-xs font-bold whitespace-nowrap">
             {selected.flag} +{selected.dial}
@@ -76,7 +93,7 @@ const PhoneCountryInput = ({ value, onChange, id, placeholder }: PhoneCountryInp
           inputMode="numeric"
           value={parsed.national}
           onChange={(e) => handleNumberChange(e.target.value)}
-          className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
+          className="pl-10 bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
           placeholder={placeholder || 'Ex : 01 97 12 34 56'}
           required
         />

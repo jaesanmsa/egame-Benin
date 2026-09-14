@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
-import PhoneCountryInput from '@/components/PhoneCountryInput';
+import PhoneCountryInput, { setPhoneCountry } from '@/components/PhoneCountryInput';
 import { AFRICAN_COUNTRIES, getCountryByCode } from '@/lib/countries';
 import { ArrowLeft, User, Save, AtSign, MapPin, Globe } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
@@ -147,6 +147,7 @@ const EditProfile = () => {
                 id="phone"
                 value={profile.phone}
                 onChange={(phone) => setProfile({ ...profile, phone })}
+                defaultCountryCode={profile.country}
               />
               <p className="text-[10px] text-[#8888AA]/70">Sélectionne ton pays africain puis saisis ton numéro (Orange, MTN, Moov, M-Pesa, Wave...)</p>
             </div>
@@ -154,7 +155,7 @@ const EditProfile = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">Pays</Label>
-                <Select value={profile.country} onValueChange={(country) => setProfile({ ...profile, country })}>
+                <Select value={profile.country} onValueChange={(country) => setProfile({ ...profile, country, phone: setPhoneCountry(profile.phone, country) })}>
                   <SelectTrigger id="country" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
                     <span className="flex items-center gap-2 text-sm">
                       <Globe size={16} className="text-[#8A2BE2] shrink-0" />

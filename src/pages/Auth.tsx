@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import PhoneCountryInput, { setPhoneCountry } from '@/components/PhoneCountryInput';
 import { AFRICAN_COUNTRIES, getCountryByCode } from '@/lib/countries';
 import { Mail, Lock, Chrome, UserPlus, LogIn, AtSign, ArrowLeft, Globe } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
@@ -17,6 +18,7 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [country, setCountry] = useState('BJ');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [resending, setResending] = useState(false);
@@ -47,6 +49,12 @@ const Auth = () => {
     if (error) showError(error.message);
   };
 
+  // Change de pays et aligne automatiquement l'indicatif du numéro saisi.
+  const handleCountryChange = (code: string) => {
+    setCountry(code);
+    setPhone((prev) => setPhoneCountry(prev, code));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -73,7 +81,7 @@ const Auth = () => {
         password,
         options: {
           emailRedirectTo: getRedirectUrl(),
-          data: { username: cleanUsername, full_name: cleanUsername, country }
+          data: { username: cleanUsername, full_name: cleanUsername, country, phone }
         }
       });
       
@@ -164,7 +172,7 @@ const Auth = () => {
             {!isLogin && (
               <div className="space-y-1.5">
                 <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">Pays</Label>
-                <Select value={country} onValueChange={setCountry}>
+                <Select value={country} onValueChange={handleCountryChange}>
                   <SelectTrigger id="country" className="bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
                     <span className="flex items-center gap-2 text-sm w-full">
                       <Globe size={16} className="text-[#8A2BE2] shrink-0" />
@@ -181,6 +189,18 @@ const Auth = () => {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+            )}
+
+            {!isLogin && (
+              <div className="space-y-1.5">
+                <Label htmlFor="phone" className="text-xs font-gaming uppercase text-[#8888AA]">Numéro Mobile Money</Label>
+                <PhoneCountryInput
+                  id="phone"
+                  value={phone}
+                  onChange={setPhone}
+                  defaultCountryCode={country}
+                />
               </div>
             )}
             
