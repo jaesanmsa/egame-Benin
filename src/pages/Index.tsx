@@ -86,7 +86,7 @@ const Index = () => {
       <section className="relative min-h-[85vh] flex flex-col justify-center items-center pt-24 pb-16 overflow-hidden">
         {/* Vidéo de fond en slow motion */}
         <div className="absolute inset-0 z-0">
-          <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-25">
+          <video autoPlay loop muted playsInline preload="metadata" poster="/blur.webp" className="w-full h-full object-cover opacity-25">
             <source src="/hero-video.webm" type="video/webm" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0F]/60 via-[#0A0A0F]/80 to-[#0A0A0F]" />

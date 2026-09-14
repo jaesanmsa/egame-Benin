@@ -14,4 +14,27 @@ export default defineConfig(() => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Découpage des dépendances : chargement en parallèle + cache long terme
+        // (les bundles "vendor" ne changent pas à chaque déploiement).
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+          if (id.includes("@supabase")) return "supabase";
+          if (id.includes("framer-motion")) return "motion";
+          if (
+            id.includes("@radix-ui") ||
+            id.includes("lucide-react") ||
+            id.includes("sonner") ||
+            id.includes("@tanstack")
+          ) {
+            return "ui-vendor";
+          }
+          if (id.includes("react")) return "react-vendor";
+          return "vendor";
+        },
+      },
+    },
+  },
 }));
