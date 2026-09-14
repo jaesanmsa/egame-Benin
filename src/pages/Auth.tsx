@@ -5,7 +5,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, Chrome, UserPlus, LogIn, AtSign, ArrowLeft } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import { AFRICAN_COUNTRIES, getCountryByCode } from '@/lib/countries';
+import { Mail, Lock, Chrome, UserPlus, LogIn, AtSign, ArrowLeft, Globe } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Logo from '@/components/Logo';
 
@@ -14,6 +16,7 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [country, setCountry] = useState('BJ');
   const [loading, setLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [resending, setResending] = useState(false);
@@ -70,7 +73,7 @@ const Auth = () => {
         password,
         options: {
           emailRedirectTo: getRedirectUrl(),
-          data: { username: cleanUsername, full_name: cleanUsername }
+          data: { username: cleanUsername, full_name: cleanUsername, country }
         }
       });
       
@@ -155,6 +158,29 @@ const Auth = () => {
                   <AtSign className="absolute left-3 top-3 text-[#8888AA]" size={18} />
                   <Input id="username" placeholder="Ex: ProGamer229" className="pl-10 bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={username} onChange={(e) => setUsername(e.target.value)} required />
                 </div>
+              </div>
+            )}
+
+            {!isLogin && (
+              <div className="space-y-1.5">
+                <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">Pays</Label>
+                <Select value={country} onValueChange={setCountry}>
+                  <SelectTrigger id="country" className="bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
+                    <span className="flex items-center gap-2 text-sm w-full">
+                      <Globe size={16} className="text-[#8A2BE2] shrink-0" />
+                      {getCountryByCode(country)
+                        ? `${getCountryByCode(country)!.flag} ${getCountryByCode(country)!.name}`
+                        : '🌍 Choisis ton pays'}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white max-h-80">
+                    {AFRICAN_COUNTRIES.map((c) => (
+                      <SelectItem key={c.code} value={c.code} className="text-xs">
+                        {c.flag} {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             )}
             
