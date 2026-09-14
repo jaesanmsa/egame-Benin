@@ -28,7 +28,7 @@ const GameDetails = () => {
       name: 'Free Fire',
       icon: '/icon free fire.png',
       image: '/freefire.webp',
-      desc: "Le Battle Royale mobile numéro 1 au Bénin. Domine le terrain, élimine tes adversaires et décroche le Booyah !",
+      desc: "Le Battle Royale mobile numéro 1 en Afrique. Domine le terrain, élimine tes adversaires et décroche le Booyah !",
       whatsapp: "https://chat.whatsapp.com/EzIhfwTxa4DL5g7E50cAwT?s=cl&p=i&mlu=4&ilr=4"
     },
     'clash-royale': {
@@ -208,7 +208,7 @@ const GameDetails = () => {
                 <h3 className="font-gaming font-bold text-base uppercase">Groupe WhatsApp</h3>
               </div>
               <p className="text-xs text-white/80 leading-relaxed font-medium">
-                Rejoins la communauté des joueurs de <span className="font-bold text-white">{gameInfo.name}</span> au Bénin.
+                Rejoins la communauté des joueurs de <span className="font-bold text-white">{gameInfo.name}</span> en Afrique.
               </p>
               <a href={gameInfo.whatsapp} target="_blank" rel="noopener noreferrer" className="block">
                 <Button className="w-full bg-white text-[#07070C] hover:bg-gray-100 font-gaming font-bold text-xs py-6 rounded-2xl uppercase tracking-wider flex items-center justify-center gap-2">

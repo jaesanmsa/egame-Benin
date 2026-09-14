@@ -52,7 +52,7 @@ const Games = () => {
 
   return (
     <div className="min-h-screen bg-[#07070C] text-white pb-32 pt-28">
-      <SEO title="Catalogue des Jeux eSport" description="Tous les jeux compétitifs disponibles au Bénin : Free Fire, COD Mobile, Clash Royale, PUBG Mobile." />
+      <SEO title="Catalogue des Jeux eSport" description="Tous les jeux compétitifs disponibles en Afrique : Free Fire, COD Mobile, Clash Royale, PUBG Mobile." />
       <Navbar />
       <main className="max-w-6xl mx-auto px-6 space-y-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">

@@ -51,7 +51,7 @@ const NewsTab = () => {
       },
       {
         title: 'Bienvenue sur l\'Arène eGame Bénin !',
-        excerpt: 'Découvrez la plateforme eSport numéro 1 au Bénin. Tournois, cash prizes et communauté.',
+        excerpt: 'Découvrez la plateforme eSport numéro 1 en Afrique. Tournois, cash prizes et communauté.',
         content: 'Bienvenue sur eGame Bénin, votre nouvelle destination pour la compétition de haut niveau. Notre mission est de professionnaliser le gaming au Bénin en offrant des tournois réguliers avec des récompenses réelles. Que vous soyez fan de Clash Royale, Free Fire ou COD, il y a une place pour vous dans l\'arène.',
         image_url: '/news-hero.png',
         read_time: '3 min',

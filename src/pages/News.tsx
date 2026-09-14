@@ -31,9 +31,9 @@ const News = () => {
 
   return (
     <div className="min-h-screen bg-[#07070C] text-white pb-32 pt-28">
-      <SEO 
-        title="Actualités Gaming & eSport Bénin" 
-        description="L'actualité des tournois eSport au Bénin, conseils de pro et règlements."
+      <SEO
+        title="Actualités Gaming & eSport en Afrique"
+        description="L'actualité des tournois eSport en Afrique, conseils de pro et règlements."
       />
       <Navbar />
       <main className="max-w-6xl mx-auto px-6 space-y-12">
@@ -43,7 +43,7 @@ const News = () => {
           </div>
           <div>
             <h1 className="text-3xl font-gaming font-black uppercase text-white">Le Mag eSport</h1>
-            <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider mt-1">Toutes les actualités gaming du Bénin</p>
+            <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider mt-1">Toutes les actualités gaming d'Afrique</p>
           </div>
         </div>
 

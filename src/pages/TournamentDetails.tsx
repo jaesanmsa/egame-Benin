@@ -111,7 +111,7 @@ const TournamentDetails = () => {
           email: currentUser?.email,
           phone_number: {
             number: userProfile?.phone || "",
-            country: 'bj'
+            country: (userProfile?.country || 'BJ').toLowerCase()
           }
         }
       }).open();
@@ -167,17 +167,15 @@ const TournamentDetails = () => {
     month: 'short',
     year: 'numeric',
     hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Africa/Porto-Novo'
-  }) + " (UTC+1)";
+    minute: '2-digit'
+  }) + " (heure locale)";
 
   const formattedEndRegistration = tournament.registration_end_date ? new Date(tournament.registration_end_date).toLocaleString('fr-FR', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
     hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Africa/Porto-Novo'
+    minute: '2-digit'
   }) : null;
 
   return (

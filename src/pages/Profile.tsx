@@ -6,6 +6,7 @@ import PlayerBadge from '@/components/PlayerBadge';
 import SEO from '@/components/SEO';
 import { Settings, LogOut, Star, Palette, Activity, Zap, Award, Bell, BellOff, History, LayoutDashboard, Phone, MapPin } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { getCountryByCode } from '@/lib/countries';
 import { useNavigate, Link } from 'react-router-dom';
 import { showSuccess, showError } from '@/utils/toast';
 import { requestNotificationPermission } from '@/lib/firebase';
@@ -78,7 +79,9 @@ const Profile = () => {
 
   const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
   const username = profile?.username || user.user_metadata?.username || user.email?.split('@')[0];
-  const city = profile?.city || "Bénin";
+  const country = getCountryByCode(profile?.country);
+  const city = profile?.city || "";
+  const location = [city, country?.name].filter(Boolean).join(', ') || "Afrique";
   const phone = profile?.phone || "Non renseigné";
   const isAdmin = user.email?.toLowerCase() === 'egamebenin@gmail.com';
   const displayPoints = profile?.points || (tournamentCount * 10);
@@ -101,7 +104,7 @@ const Profile = () => {
           <div className="space-y-1">
             <h1 className="text-2xl font-gaming font-black text-white">{username}</h1>
             <p className="text-xs font-bold text-[#8888AA] flex items-center justify-center gap-1">
-              <MapPin size={14} className="text-[#8A2BE2]" /> {city}
+              <MapPin size={14} className="text-[#8A2BE2]" /> {country ? `${country.flag} ` : ''}{location}
             </p>
           </div>
 

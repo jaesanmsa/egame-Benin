@@ -101,7 +101,7 @@ const Index = () => {
         <div className="relative z-20 max-w-7xl mx-auto px-6 w-full text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 text-[#A855F7] text-xs font-gaming font-extrabold tracking-widest uppercase mb-6 shadow-lg shadow-[#8A2BE2]/20">
             <Sparkles size={14} className="text-[#FFD700]" />
-            L'Arène Élite du Bénin
+            L'Arène Élite d'Afrique
           </div>
         </div>
 
@@ -125,7 +125,7 @@ const Index = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-[#8888AA] text-base md:text-xl font-medium max-w-2xl mx-auto font-esport tracking-wide"
           >
-            La plateforme eSport #1 au Bénin. Affronte les meilleurs joueurs, participe à des tournois officiels et retire tes gains directement par Mobile Money.
+            La plateforme eSport panafricaine. Affronte les meilleurs joueurs du continent, participe à des tournois officiels et retire tes gains directement par Mobile Money.
           </motion.p>
 
           <motion.div 
@@ -284,8 +284,8 @@ const Index = () => {
               <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
                 <Users size={24} />
               </div>
-              <h3 className="font-gaming font-bold text-sm text-white">Communauté Béninoise</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Rejoins des milliers de passionnés de Cotonou, Porto-Novo et de tout le Bénin.</p>
+              <h3 className="font-gaming font-bold text-sm text-white">Communauté Panafricaine</h3>
+              <p className="text-xs text-[#8888AA] leading-relaxed">Rejoins des millions de passionnés, de Dakar à Nairobi et de Casablanca à Johannesburg. Toute l'Afrique se retrouve dans l'arène.</p>
             </div>
 
             <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
@@ -350,7 +350,7 @@ const Index = () => {
           <Link to="/classement" className="hover:text-white">Classement</Link>
         </div>
         <p className="text-[10px] text-[#8888AA]/50 font-gaming uppercase tracking-widest">
-          © 2026 eGame Bénin • La plateforme eSport #1 au Bénin
+          © 2026 eGame Bénin • L'arène eSport de l'Afrique
         </p>
       </footer>
     </div>

@@ -87,7 +87,7 @@ const Leaderboard = () => {
 
   return (
     <div className="min-h-screen bg-[#07070C] text-white pb-32 pt-28">
-      <SEO title="Classement National eSport Bénin" description="Le Hall of Fame des meilleurs joueurs de jeux vidéo au Bénin." />
+      <SEO title="Classement eSport Panafricain" description="Le Hall of Fame des meilleurs joueurs de jeux vidéo d'Afrique." />
       <Navbar />
       <main className="max-w-3xl mx-auto px-6 space-y-10">
         <button 
@@ -102,10 +102,10 @@ const Leaderboard = () => {
             <Trophy size={32} />
           </div>
           <h1 className="text-3xl md:text-4xl font-gaming font-black uppercase tracking-tight">
-            {selectedGame ? DEFAULT_GAMES.find(g => g.id === selectedGame)?.name : "Classement National"}
+            {selectedGame ? DEFAULT_GAMES.find(g => g.id === selectedGame)?.name : "Classement Continental"}
           </h1>
           <p className="text-xs text-[#8888AA] font-esport uppercase tracking-widest">
-            Hall of Fame eGame Bénin
+            Hall of Fame Panafricain
           </p>
         </div>
 

@@ -54,7 +54,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
-      <SEO title="À propos de eGame Bénin" description="La vision et la mission de la plateforme eSport numéro 1 au Bénin." />
+      <SEO title="À propos de eGame Bénin" description="La vision et la mission de la plateforme eSport panafricaine eGame Bénin." />
       <Navbar />
       <main className="max-w-4xl mx-auto px-6 space-y-16">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#8888AA] hover:text-white transition-colors text-xs font-gaming font-bold uppercase tracking-widest">
@@ -76,7 +76,7 @@ const About = () => {
             <Target className="text-[#8A2BE2]" size={36} />
             <h2 className="text-xl font-gaming font-bold uppercase text-white">Notre Mission</h2>
             <p className="text-sm text-[#8888AA] leading-relaxed">
-              Professionnaliser la scène eSport béninoise en offrant une infrastructure moderne, des règles strictes, des prix attractifs et des paiements instantanés.
+              Professionnaliser la scène eSport africaine en offrant une infrastructure moderne, des règles strictes, des prix attractifs et des paiements instantanés.
             </p>
           </div>
 
@@ -84,7 +84,7 @@ const About = () => {
             <Users className="text-[#8A2BE2]" size={36} />
             <h2 className="text-xl font-gaming font-bold uppercase text-white">La Communauté</h2>
             <p className="text-sm text-[#8888AA] leading-relaxed">
-              Rassembler les gamers de Cotonou, Porto-Novo, Parakou et de tout le Bénin autour du fair-play, de la passion du jeu et de la compétition de haut niveau.
+              Rassembler les gamers de tout le continent, de Dakar à Nairobi et de Casablanca à Johannesburg, autour du fair-play, de la passion du jeu et de la compétition de haut niveau.
             </p>
           </div>
         </div>

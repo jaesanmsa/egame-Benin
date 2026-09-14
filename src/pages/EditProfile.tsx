@@ -8,7 +8,10 @@ import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, User, Phone, Save, AtSign, MapPin } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import PhoneCountryInput from '@/components/PhoneCountryInput';
+import { AFRICAN_COUNTRIES, getCountryByCode } from '@/lib/countries';
+import { ArrowLeft, User, Save, AtSign, MapPin, Globe } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const EditProfile = () => {
@@ -19,7 +22,8 @@ const EditProfile = () => {
     full_name: '',
     username: '',
     phone: '',
-    city: 'Cotonou',
+    country: 'BJ',
+    city: '',
     avatar_url: ''
   });
 
@@ -33,7 +37,7 @@ const EditProfile = () => {
       if (user) {
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('full_name, username, phone, city, avatar_url')
+          .select('full_name, username, phone, country, city, avatar_url')
           .eq('id', user.id)
           .maybeSingle();
 
@@ -41,7 +45,8 @@ const EditProfile = () => {
           full_name: profileData?.full_name || user.user_metadata?.full_name || '',
           username: profileData?.username || user.user_metadata?.username || '',
           phone: profileData?.phone || user.user_metadata?.phone || '',
-          city: profileData?.city || 'Cotonou',
+          country: profileData?.country || 'BJ',
+          city: profileData?.city || '',
           avatar_url: profileData?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`
         });
       }
@@ -70,6 +75,7 @@ const EditProfile = () => {
           full_name: profile.full_name,
           username: username,
           phone: profile.phone,
+          country: profile.country,
           city: profile.city,
           avatar_url: profile.avatar_url,
           updated_at: new Date().toISOString()
@@ -136,32 +142,49 @@ const EditProfile = () => {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="phone" className="text-xs font-gaming uppercase text-[#8888AA]">Numéro Mobile Money (MTN / Moov / Celtiis)</Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-3 text-[#8888AA]" size={18} />
-                <Input 
-                  id="phone" 
-                  type="tel"
-                  value={profile.phone}
-                  onChange={(e) => setProfile({...profile, phone: e.target.value})}
-                  className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
-                  placeholder="+229 01 XX XX XX XX"
-                  required
-                />
-              </div>
+              <Label htmlFor="phone" className="text-xs font-gaming uppercase text-[#8888AA]">Numéro Mobile Money</Label>
+              <PhoneCountryInput
+                id="phone"
+                value={profile.phone}
+                onChange={(phone) => setProfile({ ...profile, phone })}
+              />
+              <p className="text-[10px] text-[#8888AA]/70">Sélectionne ton pays africain puis saisis ton numéro (Orange, MTN, Moov, M-Pesa, Wave...)</p>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="city" className="text-xs font-gaming uppercase text-[#8888AA]">Ville au Bénin</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 text-[#8888AA]" size={18} />
-                <Input 
-                  id="city" 
-                  value={profile.city}
-                  onChange={(e) => setProfile({...profile, city: e.target.value})}
-                  className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
-                  placeholder="Cotonou, Porto-Novo, Parakou..."
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">Pays</Label>
+                <Select value={profile.country} onValueChange={(country) => setProfile({ ...profile, country })}>
+                  <SelectTrigger id="country" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
+                    <span className="flex items-center gap-2 text-sm">
+                      <Globe size={16} className="text-[#8A2BE2] shrink-0" />
+                      {getCountryByCode(profile.country)
+                        ? `${getCountryByCode(profile.country)!.flag} ${getCountryByCode(profile.country)!.name}`
+                        : '🌍 Choisis ton pays'}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white max-h-80">
+                    {AFRICAN_COUNTRIES.map((country) => (
+                      <SelectItem key={country.code} value={country.code} className="text-xs">
+                        {country.flag} {country.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="city" className="text-xs font-gaming uppercase text-[#8888AA]">Ville</Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 text-[#8888AA]" size={18} />
+                  <Input
+                    id="city"
+                    value={profile.city}
+                    onChange={(e) => setProfile({...profile, city: e.target.value})}
+                    className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
+                    placeholder="Ex : Cotonou, Abidjan, Lagos..."
+                  />
+                </div>
               </div>
             </div>
           </div>

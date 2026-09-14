@@ -23,7 +23,7 @@ const Contact = () => {
     { q: "Comment s'inscrire à un tournoi ?", a: "Accédez à la page du tournoi, cliquez sur 'S'inscrire et Payer', choisissez votre moyen Mobile Money (MTN, Moov, Celtiis) et validez." },
     { q: "Comment sont versés les Cash Prizes ?", a: "Les gains sont transférés par Mobile Money au numéro enregistré dans votre profil immédiatement après l'officialisation des résultats." },
     { q: "Que faire en cas de litige pendant un match ?", a: "Prenez une capture d'écran de l'écran de fin de partie et envoyez-la à nos arbitres via le support WhatsApp." },
-    { q: "Les tournois sont-ils ouverts à tous ?", a: "Oui, tous les joueurs résidant au Bénin peuvent participer." }
+    { q: "Les tournois sont-ils ouverts à tous ?", a: "Oui, tous les joueurs résidant en Afrique peuvent participer." }
   ];
 
   return (
