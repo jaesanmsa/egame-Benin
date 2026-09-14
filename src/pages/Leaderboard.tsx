@@ -149,6 +149,12 @@ const Leaderboard = () => {
                 <div className="text-center py-20">
                   <div className="w-10 h-10 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin mx-auto" />
                 </div>
+              ) : rankings.length === 0 ? (
+                <div className="text-center py-16 glass-panel space-y-3">
+                  <Trophy size={40} className="mx-auto text-[#FFD700] opacity-40" />
+                  <p className="text-sm font-gaming font-bold text-[#8888AA]">Aucun champion encore sur ce jeu.</p>
+                  <p className="text-xs text-[#8888AA]/70">Sois le premier à écrire ton nom au sommet du classement !</p>
+                </div>
               ) : (
                 <>
                   <div className="flex items-end justify-center gap-3 px-4 pt-6">

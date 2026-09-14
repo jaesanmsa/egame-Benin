@@ -227,10 +227,12 @@ const Index = () => {
                   whileHover={{ y: -6, scale: 1.02 }}
                   className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#8A2BE2]/20 hover:border-[#8A2BE2] shadow-xl bg-[#0F0F1E] cursor-pointer"
                 >
-                  <img 
-                    src={game.image} 
-                    alt={game.name} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                  <img
+                    src={game.image}
+                    alt={game.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent" />
                   

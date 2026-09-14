@@ -66,9 +66,11 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
     >
       {/* Image de couverture */}
       <div className="relative aspect-[16/10] overflow-hidden">
-        <img 
-          src={image || '/coc-tournament.webp'} 
-          alt={title} 
+        <img
+          src={image || '/coc-tournament.webp'}
+          alt={title}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F1E] via-[#0F0F1E]/40 to-transparent" />

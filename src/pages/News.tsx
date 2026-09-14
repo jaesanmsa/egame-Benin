@@ -70,7 +70,7 @@ const News = () => {
                   className="glass-panel overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2 group"
                 >
                   <div className="aspect-video md:aspect-auto overflow-hidden relative">
-                    <img src={featuredArticle.image_url} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <img src={featuredArticle.image_url} alt={featuredArticle.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                   </div>
                   <div className="p-8 flex flex-col justify-between space-y-4">
                     <div className="space-y-3">
@@ -100,7 +100,7 @@ const News = () => {
                     className="glass-panel overflow-hidden shadow-xl flex flex-col h-full group"
                   >
                     <div className="aspect-video overflow-hidden relative">
-                      <img src={article.image_url} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={article.image_url} alt={article.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div className="p-6 flex flex-col justify-between flex-1 space-y-4">
                       <div className="space-y-2">

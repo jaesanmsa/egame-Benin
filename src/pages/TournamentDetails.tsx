@@ -28,20 +28,28 @@ const TournamentDetails = () => {
 
   const fetchParticipants = useCallback(async () => {
     try {
-      const { count } = await supabase.from('payments').select('*', { count: 'exact', head: true }).eq('tournament_id', id).eq('status', 'Réussi');
+      // Vue publique sécurisée : accessible à tous, sans données sensibles.
+      const { count } = await supabase.from('public_payments').select('user_id', { count: 'exact', head: true }).eq('tournament_id', id).eq('status', 'Réussi');
       setParticipantCount(count || 0);
-      
-      const { data } = await supabase.from('payments').select('user_id, profiles(username, avatar_url, mvp_count, champion_count)').eq('tournament_id', id).eq('status', 'Réussi').limit(16);
+
+      const { data } = await supabase.from('public_payments').select('user_id, profiles(username, avatar_url, mvp_count, champion_count)').eq('tournament_id', id).eq('status', 'Réussi').limit(16);
       if (data) {
-        const list = await Promise.all(data.map(async (p: any) => {
-          const { count: tCount } = await supabase.from('payments').select('*', { count: 'exact', head: true }).eq('user_id', p.user_id).eq('status', 'Réussi');
-          return {
-            username: p.profiles?.username || "Joueur",
-            avatar_url: p.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.user_id}`,
-            tournamentCount: tCount || 0,
-            mvpCount: p.profiles?.mvp_count || 0,
-            championCount: p.profiles?.champion_count || 0
-          };
+        // Un seul requête agrégée pour compter les tournois de chaque participant.
+        const userIds = [...new Set(data.map((p: any) => p.user_id))];
+        const countsByUser: Record<string, number> = {};
+        if (userIds.length > 0) {
+          const { data: userPayments } = await supabase.from('public_payments').select('user_id').eq('status', 'Réussi').in('user_id', userIds);
+          userPayments?.forEach((row: any) => {
+            countsByUser[row.user_id] = (countsByUser[row.user_id] || 0) + 1;
+          });
+        }
+
+        const list = data.map((p: any) => ({
+          username: p.profiles?.username || "Joueur",
+          avatar_url: p.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.user_id}`,
+          tournamentCount: countsByUser[p.user_id] || 0,
+          mvpCount: p.profiles?.mvp_count || 0,
+          championCount: p.profiles?.champion_count || 0
         }));
         setParticipants(list);
       }

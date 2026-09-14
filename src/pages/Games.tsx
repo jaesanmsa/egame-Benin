@@ -101,7 +101,7 @@ const Games = () => {
                   whileHover={{ y: -8, scale: 1.02 }}
                   className="group relative aspect-[3/4] rounded-3xl overflow-hidden border border-[#8A2BE2]/20 hover:border-[#8A2BE2] bg-[#0F0F1E] shadow-2xl cursor-pointer"
                 >
-                  <img src={game.image} alt={game.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img src={game.image} alt={game.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#07070C] via-[#07070C]/30 to-transparent" />
 
                   <div className="absolute top-4 right-4">
