@@ -61,6 +61,23 @@ const About = () => {
           <ArrowLeft size={16} /> Retour
         </button>
 
+        <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-3xl p-8 md:p-10 flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+          <img
+            src="/portrait-moussa.webp"
+            alt="Moussa Jae San Thierry, Fondateur de eGame Bénin"
+            className="w-32 h-32 rounded-full border-4 border-[#8A2BE2] object-cover shrink-0 shadow-2xl shadow-[#8A2BE2]/30"
+          />
+          <div className="space-y-3">
+            <div>
+              <h2 className="text-xl font-gaming font-bold text-white">Moussa Jae San Thierry</h2>
+              <p className="text-xs font-bold text-[#A855F7] uppercase tracking-wider">Fondateur de eGame Bénin</p>
+            </div>
+            <p className="text-sm text-[#8888AA] leading-relaxed">
+              Passionné de gaming et d’eSport, Moussa a créé eGame Bénin avec l’ambition de rassembler les joueurs, développer la compétition et contribuer à la structuration de l’eSport au Bénin et progressivement à travers l’Afrique.
+            </p>
+          </div>
+        </div>
+
         <div className="text-center space-y-6">
           <Logo size="lg" className="justify-center" />
           <h1 className="text-4xl md:text-5xl font-gaming font-black uppercase text-white tracking-tight">
