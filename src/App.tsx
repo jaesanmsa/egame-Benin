@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import FloatingSupport from "@/components/FloatingSupport";
 import CookieConsent from "@/components/CookieConsent";
-import SiteLockGate from "@/components/SiteLockGate";
 
 // Découpage du bundle : chaque page est chargée uniquement quand on la visite.
 const TournamentDetails = React.lazy(() => import("./pages/TournamentDetails"));
@@ -51,10 +50,9 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <SiteLockGate>
-        <BrowserRouter>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
+      <BrowserRouter>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -75,13 +73,12 @@ const App = () => (
               <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/jeux" element={<Games />} />
               <Route path="/game/:id" element={<GameDetails />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-          <FloatingSupport />
-          <CookieConsent />
-        </BrowserRouter>
-      </SiteLockGate>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+        <FloatingSupport />
+        <CookieConsent />
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );

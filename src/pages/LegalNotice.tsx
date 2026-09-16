@@ -102,21 +102,28 @@ const LegalNotice = () => {
             <p>
               Le site egamebenin.com est hébergé par <strong className="text-foreground">Supabase</strong> — supabase.com.
             </p>
-            <p className="flex items-start gap-2">
+            <div className="flex items-start gap-3">
               <Globe className="text-violet-500 shrink-0 mt-0.5" size={16} />
-              Les paiements sont traités par nos partenaires agréés KKiaPay, FedaPay et Maketou (Mobile Money).
-            </p>
-            <p className="flex items-start gap-2">
+              <p className="min-w-0">Les paiements sont traités par nos partenaires agréés KKiaPay, FedaPay et Maketou (Mobile Money).</p>
+            </div>
+            <div className="flex items-start gap-3">
               <Mail className="text-violet-500 shrink-0 mt-0.5" size={16} />
-              Toute réclamation ou demande d'information : <span className="text-violet-500 font-bold">contact@egamebenin.com</span>
-            </p>
+              <div className="min-w-0 flex-1">
+                <p>Toute réclamation ou demande d'information :</p>
+                <a href="mailto:contact@egamebenin.com" className="mt-1 block max-w-full break-all text-violet-500 font-bold hover:text-violet-400 transition-colors">
+                  contact@egamebenin.com
+                </a>
+              </div>
+            </div>
           </div>
         </motion.section>
 
-        <footer className="mt-12 text-center text-[10px] text-muted-foreground tracking-wider">
-          <p>
-            © 2026 eGame Bénin — RCCM : <span className="font-mono">RB/ABC/26 A 138238</span> | IFU : <span className="font-mono">0202398541260</span> |{' '}
-            <Link to="/privacy" className="hover:text-violet-500 underline underline-offset-2">Politique de confidentialité</Link>
+        <footer className="mt-12 px-2 text-center text-[10px] leading-relaxed text-muted-foreground tracking-normal sm:tracking-wider">
+          <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
+            <span>© 2026 eGame Bénin</span>
+            <span>— RCCM : <span className="font-mono">RB/ABC/26 A 138238</span></span>
+            <span>| IFU : <span className="font-mono">0202398541260</span></span>
+            <span>| <Link to="/privacy" className="hover:text-violet-500 underline underline-offset-2">Politique de confidentialité</Link></span>
           </p>
         </footer>
       </main>
