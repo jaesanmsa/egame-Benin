@@ -160,7 +160,7 @@ const Privacy = () => {
         </motion.div>
 
         <footer className="mt-12 text-center text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
-          <p>© 2026 eGame Bénin • Tous droits réservés</p>
+          <p>© 2026 eGame Bénin • RCCM : RB/ABC/26 A 138238 | IFU : 0202398541260</p>
         </footer>
       </main>
     </div>

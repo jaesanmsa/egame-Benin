@@ -23,6 +23,7 @@ const PaymentSuccess = React.lazy(() => import("./pages/PaymentSuccess"));
 const Contact = React.lazy(() => import("./pages/Contact"));
 const Leaderboard = React.lazy(() => import("./pages/Leaderboard"));
 const Privacy = React.lazy(() => import("./pages/Privacy"));
+const LegalNotice = React.lazy(() => import("./pages/LegalNotice"));
 const Games = React.lazy(() => import("./pages/Games"));
 const GameDetails = React.lazy(() => import("./pages/GameDetails"));
 const News = React.lazy(() => import("./pages/News"));
@@ -68,6 +69,7 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/classement" element={<Leaderboard />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/mentions-legales" element={<LegalNotice />} />
               <Route path="/about" element={<About />} />
               <Route path="/news" element={<News />} />
               <Route path="/news/:id" element={<NewsDetail />} />

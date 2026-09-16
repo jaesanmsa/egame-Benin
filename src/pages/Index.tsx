@@ -348,11 +348,11 @@ const Index = () => {
         <div className="flex flex-wrap justify-center gap-6 text-xs text-[#8888AA] font-bold uppercase tracking-wider">
           <Link to="/about" className="hover:text-white">À propos</Link>
           <Link to="/contact" className="hover:text-white">Contact</Link>
-          <Link to="/privacy" className="hover:text-white">Confidentialité</Link>
+          <Link to="/mentions-legales" className="hover:text-white">Mentions légales</Link>
           <Link to="/classement" className="hover:text-white">Classement</Link>
         </div>
         <p className="text-[10px] text-[#8888AA]/50 font-gaming uppercase tracking-widest">
-          © 2026 eGame Bénin • L'arène eSport de l'Afrique
+          © 2026 eGame Bénin — RCCM : <span className="font-mono normal-case">RB/ABC/26 A 138238</span> | IFU : <span className="font-mono normal-case">0202398541260</span> | <Link to="/privacy" className="hover:text-[#8A2BE2] transition-colors">Politique de confidentialité</Link>
         </p>
       </footer>
     </div>
