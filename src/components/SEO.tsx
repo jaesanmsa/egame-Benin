@@ -11,8 +11,8 @@ interface SEOProps {
 }
 
 const SEO = ({ 
-  title = "eGame Bénin | La communauté gaming #1 en Afrique",
-  description = "Rejoins la communauté gaming #1 en Afrique. Joueurs de tout le continent : inscris-toi aux tournois, paye via Mobile Money et gagne des cash prizes. Free Fire, COD, Clash Royale et plus.",
+  title = "eGame Bénin | Plateforme eSport — Tournois et Cash Prizes",
+  description = "Rejoins la communauté gaming eGame Bénin. Joueurs de tout le continent : inscris-toi aux tournois, paye via Mobile Money et gagne des cash prizes. Free Fire, COD, Clash Royale et plus.",
   image = "https://ajbpdaxtynkazdrzyopd.supabase.co/storage/v1/object/public/assets/og-image.jpg",
   url = "https://www.egamebenin.com",
   type = "website"
