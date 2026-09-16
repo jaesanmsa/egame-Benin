@@ -17,21 +17,20 @@ interface PhoneCountryInputProps {
 
 /**
  * Décompose un numéro stocké (ex : "2290141790790") en pays + numéro national.
- * `code` est null quand aucun indicatif n'est identifiable (numéro local court ou vide).
+ * L'indicatif est recherché à toutes les longueurs : c'est ce qui empêche
+ * l'indicatif de s'accumuler ("229229…") pendant la saisie d'un numéro court.
+ * `code` est null quand aucun indicatif n'est identifiable (numéro vide ou local).
  */
 export const parsePhoneNumber = (value: string): { code: string | null; national: string } => {
-  const hadPlus = (value || '').trim().startsWith('+');
   const digits = (value || '').replace(/\D/g, '');
+  if (!digits) return { code: null, national: '' };
 
-  if (hadPlus || digits.length >= 11) {
-    const sorted = [...AFRICAN_COUNTRIES].sort((a, b) => b.dial.length - a.dial.length);
-    for (const country of sorted) {
-      if (digits.startsWith(country.dial)) {
-        return { code: country.code, national: digits.slice(country.dial.length) };
-      }
+  const sorted = [...AFRICAN_COUNTRIES].sort((a, b) => b.dial.length - a.dial.length);
+  for (const country of sorted) {
+    if (digits.length > country.dial.length && digits.startsWith(country.dial)) {
+      return { code: country.code, national: digits.slice(country.dial.length) };
     }
   }
-
   return { code: null, national: digits };
 };
 
