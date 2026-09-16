@@ -7,6 +7,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const ADMIN_EMAIL = 'egamebenin@gmail.com'
+const SITE_URL = 'https://www.egamebenin.com'
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
 
@@ -15,6 +18,20 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
+
+    // 0. Authentification de l'appelant : soit la clé service_role (appels serveur à
+    // serveur des fonctions de paiement), soit l'administrateur connecté (dashboard).
+    const token = (req.headers.get('Authorization') ?? '').replace('Bearer ', '')
+    const isServiceRole = token !== '' && token === Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    if (!isServiceRole) {
+      const { data: { user } } = await supabase.auth.getUser(token)
+      if (!user || user.email?.toLowerCase() !== ADMIN_EMAIL) {
+        return new Response(JSON.stringify({ error: "Accès réservé à l'administrateur." }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
+      }
+    }
 
     // 1. Récupération du Service Account depuis les secrets
     const serviceAccount = JSON.parse(Deno.env.get('FIREBASE_SERVICE_ACCOUNT') || '{}')
@@ -28,22 +45,27 @@ serve(async (req) => {
     let tokens: string[] = []
     let title = ""
     let body = ""
+    let link = SITE_URL
 
-    // 2. Logique de ciblage (identique à la version précédente)
+    // 2. Logique de ciblage
     switch (payload.type) {
-      case 'NEW_TOURNAMENT':
-        const { data: cityUsers } = await supabase
+      case 'NEW_TOURNAMENT': {
+        // Plateforme panafricaine : on notifie TOUS les joueurs abonnés
+        // (l'ancien filtre par ville excluait la majorité des joueurs).
+        const { data: subscribers, error: fetchError } = await supabase
           .from('profiles')
           .select('fcm_token')
-          .eq('city', payload.city)
           .eq('notifications_enabled', true)
           .not('fcm_token', 'is', null)
-        tokens = cityUsers?.map(u => u.fcm_token) || []
+        if (fetchError) throw fetchError
+        tokens = subscribers?.map((u: any) => u.fcm_token) || []
         title = `🎮 Nouveau tournoi ${payload.game} !`
         body = `${payload.slots} places — ${payload.fee} FCFA — Cash prize ${payload.prize}`
+        if (payload.tournament_id) link = `${SITE_URL}/tournament/${encodeURIComponent(payload.tournament_id)}`
         break;
+      }
 
-      case 'PAYMENT_CONFIRMED':
+      case 'PAYMENT_CONFIRMED': {
         const { data: user } = await supabase
           .from('profiles')
           .select('fcm_token')
@@ -52,24 +74,29 @@ serve(async (req) => {
         if (user?.fcm_token) tokens = [user.fcm_token]
         title = "✅ Inscription confirmée !"
         body = `Ton inscription au tournoi ${payload.tournament_name} est validée. Bonne chance !`
+        link = `${SITE_URL}/payments`
         break;
+      }
 
-      case 'RESULTS_PUBLISHED':
+      case 'RESULTS_PUBLISHED': {
         const { data: participants } = await supabase
           .from('payments')
           .select('user_id')
           .eq('tournament_id', payload.tournament_id)
           .eq('status', 'Réussi')
-        const userIds = participants?.map(p => p.user_id) || []
+        const userIds = participants?.map((p: any) => p.user_id).filter(Boolean) || []
         const { data: participantTokens } = await supabase
           .from('profiles')
           .select('fcm_token')
           .in('id', userIds)
           .eq('notifications_enabled', true)
-        tokens = participantTokens?.map(u => u.fcm_token) || []
+          .not('fcm_token', 'is', null)
+        tokens = participantTokens?.map((u: any) => u.fcm_token) || []
         title = `🏆 Résultats : ${payload.tournament_name}`
         body = `Le tournoi est terminé ! Félicitations à ${payload.winner}.`
+        if (payload.tournament_id) link = `${SITE_URL}/tournament/${encodeURIComponent(payload.tournament_id)}`
         break;
+      }
     }
 
     if (tokens.length === 0) {
@@ -87,7 +114,7 @@ serve(async (req) => {
     const fcmUrl = `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`
 
     // 4. Envoi des notifications (une par token pour FCM v1)
-    const sendPromises = tokens.map(token => {
+    const sendPromises = tokens.map((token) => {
       return fetch(fcmUrl, {
         method: 'POST',
         headers: {
@@ -100,7 +127,7 @@ serve(async (req) => {
             notification: { title, body },
             webpush: {
               fcm_options: {
-                link: "https://www.egamebenin.com"
+                link
               }
             }
           }
@@ -109,18 +136,22 @@ serve(async (req) => {
     })
 
     const results = await Promise.all(sendPromises)
-    console.log(`[send-push-notification] ${results.length} notifications envoyées.`)
+    const failures = results.filter((r) => !r.ok)
+    for (const failure of failures) {
+      console.error("[send-push-notification] Échec FCM:", failure.status, await failure.text())
+    }
+    console.log(`[send-push-notification] ${results.length - failures.length}/${results.length} notifications envoyées.`)
 
-    return new Response(JSON.stringify({ success: true, sent: results.length }), { 
+    return new Response(JSON.stringify({ success: true, sent: results.length - failures.length }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200 
+      status: 200
     })
 
   } catch (error) {
     console.error("[send-push-notification] ERREUR:", error.message)
-    return new Response(JSON.stringify({ error: error.message }), { 
+    return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 400 
+      status: 400
     })
   }
 })

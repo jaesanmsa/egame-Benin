@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
+import { notifyPaymentConfirmed } from '../_shared/push.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -104,7 +105,10 @@ serve(async (req) => {
       const { data: profile } = await supabase.from('profiles').select('points').eq('id', data.meta.userId).single()
       await supabase.from('profiles').update({ points: (profile?.points || 0) + 10 }).eq('id', data.meta.userId)
 
-      return new Response(JSON.stringify({ success: true, validation_code: code }), { 
+      // Notifier le joueur (push)
+      await notifyPaymentConfirmed(data.meta.userId, tournamentName)
+
+      return new Response(JSON.stringify({ success: true, validation_code: code }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       })
     }

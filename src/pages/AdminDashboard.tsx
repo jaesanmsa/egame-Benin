@@ -119,7 +119,20 @@ const AdminDashboard = () => {
     if (error) showError(error.message);
     else {
       showSuccess("Tournoi ajouté !");
-      setNewTournament({ 
+      // Notification push à tous les joueurs abonnés (Chrome/Android via FCM)
+      supabase.functions.invoke('send-push-notification', {
+        body: {
+          type: 'NEW_TOURNAMENT',
+          game: newTournament.game,
+          slots: newTournament.max_participants,
+          fee: newTournament.entry_fee,
+          prize: newTournament.prize_pool,
+          tournament_id: newTournament.id
+        }
+      }).then(({ error: pushError }) => {
+        if (pushError) showError("Notification non envoyée : " + pushError.message);
+      });
+      setNewTournament({
         id: '', title: '', game: 'Free Fire', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '', payment_gateway: 'kkiapay',
         start_date: new Date().toISOString().slice(0, 16),
         registration_end_date: new Date().toISOString().slice(0, 16)
@@ -194,6 +207,19 @@ const AdminDashboard = () => {
         })
         .eq('id', winnerProfile.id);
     }
+
+    // Notification push aux participants du tournoi clôturé
+    const tournament = activeTournaments.find((t: any) => t.id === finishData.tournamentId);
+    supabase.functions.invoke('send-push-notification', {
+      body: {
+        type: 'RESULTS_PUBLISHED',
+        tournament_id: finishData.tournamentId,
+        tournament_name: tournament?.title ?? 'Tournoi eGame Bénin',
+        winner: winnerName
+      }
+    }).then(({ error: pushError }) => {
+      if (pushError) showError("Notification non envoyée : " + pushError.message);
+    });
 
     showSuccess("Tournoi clôturé et points attribués !");
     setFinishData({ tournamentId: '', winnerName: '' });

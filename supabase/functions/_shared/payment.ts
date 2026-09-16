@@ -1,6 +1,8 @@
 // Helpers partagés pour l'enregistrement idempotent des paiements.
 // Import : import { genCode, claimPending, insertPayment, creditPoints } from '../_shared/payment.ts'
 
+import { notifyPaymentConfirmed } from './push.ts';
+
 export function genCode(): string {
   return `EGB-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 }
@@ -54,6 +56,7 @@ export async function claimPending(
     .maybeSingle();
 
   if (error || !claimed) return null;
+  await notifyPaymentConfirmed(claimed.user_id, claimed.tournament_name);
   return claimed;
 }
 
@@ -104,6 +107,7 @@ export async function insertPayment(
     }
     throw error;
   }
+  await notifyPaymentConfirmed(row?.user_id, row?.tournament_name);
   return { row, duplicate: false };
 }
 
