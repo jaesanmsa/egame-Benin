@@ -54,7 +54,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
-      <SEO title="À propos de eGame Bénin" description="La vision et la mission de la plateforme eSport panafricaine eGame Bénin." />
+      <SEO title="À propos de eGame Bénin" description="La vision et la mission de eGame Bénin : une plateforme eSport pensée pour connecter les gamers africains." />
       <Navbar />
       <main className="max-w-4xl mx-auto px-6 space-y-16">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#8888AA] hover:text-white transition-colors text-xs font-gaming font-bold uppercase tracking-widest">

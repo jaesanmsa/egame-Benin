@@ -125,7 +125,7 @@ const Index = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-[#8888AA] text-base md:text-xl font-medium max-w-2xl mx-auto font-esport tracking-wide"
           >
-            La plateforme eSport panafricaine. Affronte les meilleurs joueurs du continent, participe à des tournois officiels et retire tes gains directement par Mobile Money.
+            Une plateforme eSport pensée pour connecter les gamers africains. Participe à des tournois officiels, affronte d'autres passionnés et retire tes gains directement par Mobile Money.
           </motion.p>
 
           <motion.div 
@@ -286,8 +286,8 @@ const Index = () => {
               <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
                 <Users size={24} />
               </div>
-              <h3 className="font-gaming font-bold text-sm text-white">Communauté Panafricaine</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Rejoins des millions de passionnés, de Dakar à Nairobi et de Casablanca à Johannesburg. Toute l'Afrique se retrouve dans l'arène.</p>
+              <h3 className="font-gaming font-bold text-sm text-white">Communauté Africaine</h3>
+              <p className="text-xs text-[#8888AA] leading-relaxed">Rejoins une communauté de passionnés de gaming à travers l'Afrique, de Dakar à Nairobi et de Casablanca à Johannesburg.</p>
             </div>
 
             <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
