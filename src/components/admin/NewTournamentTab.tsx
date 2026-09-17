@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const GAMES_CONFIG: Record<string, string> = {
+  "Blood Strike": "/blood strike.jpg",
   "Brawl Stars": "/brawl stars.jpg",
   "Free Fire": "/freefire.webp",
   "Clash Royale": "/clash royal.webp",

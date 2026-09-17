@@ -12,7 +12,7 @@ interface SEOProps {
 
 const SEO = ({ 
   title = "eGame Bénin | Plateforme eSport — Tournois et Cash Prizes",
-  description = "Rejoins la communauté gaming eGame Bénin. Joueurs de tout le continent : inscris-toi aux tournois, paye via Mobile Money et gagne des cash prizes. Free Fire, COD, Clash Royale et plus.",
+  description = "Rejoins la communauté gaming eGame Bénin. Joueurs de tout le continent : inscris-toi aux tournois, paye via Mobile Money et gagne des cash prizes. Blood Strike, Free Fire, COD, Clash Royale et plus.",
   image = "https://ajbpdaxtynkazdrzyopd.supabase.co/storage/v1/object/public/assets/og-image.jpg",
   url = "https://www.egamebenin.com",
   type = "website"

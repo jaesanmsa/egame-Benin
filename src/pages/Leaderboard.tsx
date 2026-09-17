@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
 const DEFAULT_GAMES = [
+  { id: 'blood-strike', name: 'Blood Strike', icon: '/blood strike.jpg' },
   { id: 'brawl-stars', name: 'Brawl Stars', icon: '/icon brawl stars.webp' },
   { id: 'clash-of-clans', name: 'Clash of Clans', icon: '/icon clash of clans.jpg' },
   { id: 'clash-royale', name: 'Clash Royale', icon: '/icon clash royal.jpg' },
