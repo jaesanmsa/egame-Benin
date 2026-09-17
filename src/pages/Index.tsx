@@ -17,6 +17,7 @@ const ALL_GAMES = [
   { id: 'clash-of-clans', name: 'Clash of Clans', image: '/clash of clans.webp' },
   { id: 'clash-royale', name: 'Clash Royale', image: '/clash royal.webp' },
   { id: 'cod-mobile', name: 'COD Mobile', image: '/cod mobile.webp' },
+  { id: 'efootball-mobile', name: 'eFootball Mobile', image: '/efootball.webp' },
   { id: 'free-fire', name: 'Free Fire', image: '/freefire.webp' },
   { id: 'mobile-legends', name: 'Mobile Legends', image: '/mobile legend.webp' },
   { id: 'pubg-mobile', name: 'PUBG Mobile', image: '/pubg-mobile.webp' }
@@ -219,7 +220,7 @@ const Index = () => {
           <p className="text-sm text-[#8888AA] font-esport">Sélectionne ta discipline et entre dans l'arène</p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-9 gap-4">
           {ALL_GAMES.map((game) => {
             const hasActive = activeGames.has(game.id);
             return (

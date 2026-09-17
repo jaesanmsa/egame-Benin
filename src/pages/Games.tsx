@@ -16,6 +16,7 @@ const ALL_GAMES = [
   { id: 'clash-of-clans', name: 'Clash of Clans', image: '/clash of clans.webp' },
   { id: 'clash-royale', name: 'Clash Royale', image: '/clash royal.webp' },
   { id: 'cod-mobile', name: 'COD Mobile', image: '/cod mobile.webp' },
+  { id: 'efootball-mobile', name: 'eFootball Mobile', image: '/efootball.webp' },
   { id: 'free-fire', name: 'Free Fire', image: '/freefire.webp' },
   { id: 'mobile-legends', name: 'Mobile Legends', image: '/mobile legend.webp' },
   { id: 'pubg-mobile', name: 'PUBG Mobile', image: '/pubg-mobile.webp' }

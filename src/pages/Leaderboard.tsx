@@ -15,6 +15,7 @@ const DEFAULT_GAMES = [
   { id: 'clash-of-clans', name: 'Clash of Clans', icon: '/icon clash of clans.jpg' },
   { id: 'clash-royale', name: 'Clash Royale', icon: '/icon clash royal.jpg' },
   { id: 'cod-mobile', name: 'COD Mobile', icon: '/icon cod mobile.png' },
+  { id: 'efootball-mobile', name: 'eFootball Mobile', icon: '/logo efootball.webp' },
   { id: 'free-fire', name: 'Free Fire', icon: '/icon free fire.png' },
   { id: 'mobile-legends', name: 'Mobile Legends', icon: '/icon mobile legend.jpg' },
   { id: 'pubg-mobile', name: 'PUBG Mobile', icon: '/icon pubg.png' }

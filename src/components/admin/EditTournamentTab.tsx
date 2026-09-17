@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const GAMES = ["Free Fire", "Blood Strike", "Clash Royale", "Clash of Clans", "COD Mobile", "PUBG Mobile", "Mobile Legends", "Autre"];
+const GAMES = ["Free Fire", "Blood Strike", "Clash Royale", "Clash of Clans", "COD Mobile", "eFootball Mobile", "PUBG Mobile", "Mobile Legends", "Autre"];
 
 interface EditTournamentTabProps {
   activeTournaments: any[];

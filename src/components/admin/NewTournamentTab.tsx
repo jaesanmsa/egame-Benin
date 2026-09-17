@@ -16,6 +16,7 @@ const GAMES_CONFIG: Record<string, string> = {
   "Clash Royale": "/clash royal.webp",
   "Clash of Clans": "/clash of clans.webp",
   "COD Mobile": "/cod mobile.webp",
+  "eFootball Mobile": "/efootball.webp",
   "PUBG Mobile": "/pubg-mobile.webp",
   "Mobile Legends": "/mobile legend.webp",
   "Autre": ""

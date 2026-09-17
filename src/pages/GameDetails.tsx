@@ -59,6 +59,13 @@ const GameDetails = () => {
       desc: "FPS compétitif pur. Précision, réflexes et esprit d'équipe sur les cartes légendaires.",
       whatsapp: "https://chat.whatsapp.com/CyrUEEFw6Lr2di9GbCIVv4?s=cl&p=i&mlu=4&ilr=4"
     },
+    'efootball-mobile': {
+      name: 'eFootball Mobile',
+      icon: '/efootball.webp',
+      image: '/efootball.webp',
+      desc: "Le football compétitif signé Konami. Construis ton équipe de rêve, maîtrise tes tactiques et dispute des matchs intenses pour dominer le continent.",
+      whatsapp: "https://chat.whatsapp.com/ExH59qGnumKFmYi0TvYwjH?s=cl&p=i&mlu=4&ilr=4"
+    },
     'pubg-mobile': {
       name: 'PUBG Mobile',
       icon: '/icon pubg.png',
