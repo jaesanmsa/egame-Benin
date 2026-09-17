@@ -20,10 +20,9 @@ const GameDetails = () => {
     'blood-strike': {
       name: 'Blood Strike',
       icon: '/blood strike.jpg',
-      image: '/blood strike.jpg',
+      image: '/bloodstrike.webp',
       desc: "FPS Battle Royale nerveux et ultra-fluide, optimisé pour tous les mobiles. Loot rapide, esquives dynamiques et visée chirurgicale pour survivre jusqu'au dernier cercle.",
-      whatsapp: "https://chat.whatsapp.com/Ihmd1xtysXz9TbRDf4LmT6?s=cl&p=i&mlu=4&ilr=4",
-      video: '/bloodstrike.webm'
+      whatsapp: "https://chat.whatsapp.com/Ihmd1xtysXz9TbRDf4LmT6?s=cl&p=i&mlu=4&ilr=4"
     },
     'brawl-stars': {
       name: 'Brawl Stars',
@@ -108,14 +107,8 @@ const GameDetails = () => {
     <div className="min-h-screen bg-[#07070C] text-white pb-32">
       <Navbar />
       
-      <section className="relative h-[45vh] w-full overflow-hidden bg-[#07070C]">
-        {gameInfo.video ? (
-          <video autoPlay loop muted playsInline preload="auto" className="w-full h-full object-cover opacity-30">
-            <source src={gameInfo.video} type="video/webm" />
-          </video>
-        ) : (
-          <img src={gameInfo.image} className="w-full h-full object-cover opacity-30" alt="" />
-        )}
+      <section className="relative h-[45vh] w-full overflow-hidden">
+        <img src={gameInfo.image} className="w-full h-full object-cover opacity-30" alt="" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#07070C] via-[#07070C]/40 to-transparent" />
         
         <div className="absolute top-6 left-6 z-20">
