@@ -349,6 +349,7 @@ const Index = () => {
         <Logo size="md" className="justify-center" />
         <div className="flex flex-wrap justify-center gap-6 text-xs text-[#8888AA] font-bold uppercase tracking-wider">
           <Link to="/about" className="hover:text-white">À propos</Link>
+          <Link to="/devenir-partenaire" className="hover:text-white">Devenir partenaire</Link>
           <Link to="/contact" className="hover:text-white">Contact</Link>
           <Link to="/mentions-legales" className="hover:text-white">Mentions légales</Link>
           <Link to="/classement" className="hover:text-white">Classement</Link>

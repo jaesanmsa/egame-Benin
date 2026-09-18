@@ -28,6 +28,7 @@ const GameDetails = React.lazy(() => import("./pages/GameDetails"));
 const News = React.lazy(() => import("./pages/News"));
 const NewsDetail = React.lazy(() => import("./pages/NewsDetail"));
 const About = React.lazy(() => import("./pages/About"));
+const BecomePartner = React.lazy(() => import("./pages/BecomePartner"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 
 const PageLoader = () => (
@@ -69,6 +70,7 @@ const App = () => (
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/mentions-legales" element={<LegalNotice />} />
               <Route path="/about" element={<About />} />
+              <Route path="/devenir-partenaire" element={<BecomePartner />} />
               <Route path="/news" element={<News />} />
               <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/jeux" element={<Games />} />

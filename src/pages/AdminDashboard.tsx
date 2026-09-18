@@ -16,6 +16,7 @@ import EditTournamentTab from '@/components/admin/EditTournamentTab';
 import FinishTournamentTab from '@/components/admin/FinishTournamentTab';
 import LeaderboardTab from '@/components/admin/LeaderboardTab';
 import NewsTab from '@/components/admin/NewsTab';
+import PartnershipsTab from '@/components/admin/PartnershipsTab';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -267,6 +268,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="news" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Actualités</TabsTrigger>
               <TabsTrigger value="finish" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Clôturer</TabsTrigger>
               <TabsTrigger value="leaderboard" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Top 5</TabsTrigger>
+              <TabsTrigger value="partnerships" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Partenariats</TabsTrigger>
             </TabsList>
           </div>
 
@@ -314,11 +316,15 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="leaderboard">
-            <LeaderboardTab 
-              newLeader={newLeader} 
-              setNewLeader={setNewLeader} 
-              onSubmit={handleUpdateLeader} 
+            <LeaderboardTab
+              newLeader={newLeader}
+              setNewLeader={setNewLeader}
+              onSubmit={handleUpdateLeader}
             />
+          </TabsContent>
+
+          <TabsContent value="partnerships">
+            <PartnershipsTab />
           </TabsContent>
         </Tabs>
       </main>
