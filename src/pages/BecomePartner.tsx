@@ -11,13 +11,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import {
-  Handshake, Banknote, Users, Cpu, Newspaper, Gift, MapPin, GraduationCap, Megaphone,
-  ShieldCheck, CheckCircle2, Send, Download, FileText, Mail, ArrowRight, AlertTriangle, Clock,
+  Handshake, CheckCircle2, Send, Download, FileText, Mail, ArrowRight, AlertTriangle, Clock,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 const CONTACT_EMAIL = "contact@egamebenin.com";
-const DOSSIER_URL = "/dossier-sponsoring-egame-benin.html";
+const DOSSIER_URL = "/dossier-sponsoring-egame-benin.pdf";
 
 const PARTNERSHIP_TYPES = [
   "Sponsor financier",
@@ -52,23 +51,6 @@ const BUDGETS = [
   "2 000 000 – 3 000 000 FCFA",
   "3 000 000 FCFA et plus",
   "Non applicable",
-];
-
-const SPONSOR_LEVELS = [
-  { name: "Starter", price: "250 000 FCFA", perk: "Logo sur le site + publications dédiées" },
-  { name: "Officiel", price: "500 000 FCFA", perk: "Starter + contenus co-brandés + intégration aux tournois" },
-  { name: "Premium", price: "1 000 000 FCFA", perk: "Officiel + livestreams + rapport de performance" },
-  { name: "Sponsor Principal", price: "2 000 000 FCFA", perk: "Premium + présence étendue sur l'ensemble de la saison" },
-  { name: "Sponsor Titre / Naming", price: "à partir de 3 000 000 FCFA", perk: "La compétition porte votre nom + toutes les contreparties" },
-];
-
-const NON_FINANCIAL_TYPES = [
-  { icon: Cpu, title: "Technique & Technologique", desc: "Connexion Internet, matériel, smartphones, logiciels, solutions de paiement." },
-  { icon: Newspaper, title: "Média", desc: "Couverture média, relais d'actualité, diffusion et promotion des compétitions." },
-  { icon: Gift, title: "Dotation / Récompenses", desc: "Lots, produits et services offerts aux joueurs et aux gagnants." },
-  { icon: MapPin, title: "Lieu / Logistique", desc: "Espaces, salles, équipement et logistique pour les événements." },
-  { icon: GraduationCap, title: "Institutionnel / Éducation", desc: "Écoles, universités, institutions et programmes de formation." },
-  { icon: Megaphone, title: "Créateur / Ambassadeur", desc: "Créateurs de contenu et personnalités du gaming africain." },
 ];
 
 const emptyForm = {
@@ -193,163 +175,33 @@ const BecomePartner = () => {
             Marques, entreprises, médias, communautés gaming, clans et acteurs de l'eSport :
             construisons ensemble des collaborations utiles et durables.
           </p>
+          <p className="text-xs text-[#8888AA] max-w-2xl mx-auto leading-relaxed">
+            Tout est détaillé dans notre dossier officiel : niveaux de sponsoring, contreparties,
+            partenariats techniques, médias et communautaires.
+          </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button onClick={scrollToForm} className="btn-glow-border w-full sm:w-auto px-8 py-4 text-xs tracking-widest uppercase flex items-center justify-center gap-3">
-              Proposer un partenariat
-              <ArrowRight size={16} />
-            </button>
             <a
               href={DOSSIER_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto px-8 py-4 border border-[#8A2BE2]/50 hover:border-[#8A2BE2] bg-[#0F0F1E]/80 hover:bg-[#8A2BE2]/10 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all flex items-center justify-center gap-3"
+              className="btn-glow-border w-full sm:w-auto px-8 py-4 text-xs tracking-widest uppercase flex items-center justify-center gap-3"
             >
               <FileText size={16} />
               Consulter le dossier partenariat
             </a>
+            <button
+              onClick={scrollToForm}
+              className="w-full sm:w-auto px-8 py-4 border border-[#8A2BE2]/50 hover:border-[#8A2BE2] bg-[#0F0F1E]/80 hover:bg-[#8A2BE2]/10 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all flex items-center justify-center gap-3"
+            >
+              Proposer un partenariat
+              <ArrowRight size={16} />
+            </button>
           </div>
         </div>
       </header>
 
-      {/* ============ LES 3 CATÉGORIES ============ */}
-      <section className="max-w-6xl mx-auto px-6 mt-24 space-y-8">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl md:text-3xl font-gaming font-black uppercase">
-            Trois façons de <span className="text-[#8A2BE2]">collaborer</span>
-          </h2>
-          <p className="text-sm text-[#8888AA] font-esport">Choisis le format qui correspond à ton organisation</p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-          {/* --- 1. SPONSOR FINANCIER --- */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5 }}
-            className="glass-panel p-8 space-y-6 flex flex-col"
-          >
-            <div className="w-14 h-14 bg-[#FFD700]/10 border border-[#FFD700]/40 rounded-2xl flex items-center justify-center text-[#FFD700]">
-              <Banknote size={26} />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-gaming font-black uppercase text-white">1 — Sponsor financier</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">
-                Pour les entreprises ou marques souhaitant financer une compétition, une série de tournois,
-                des récompenses ou une activation eGame.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {SPONSOR_LEVELS.map((lvl) => (
-                <div key={lvl.name} className="flex items-center justify-between gap-3 bg-[#0A0A0F] border border-[#FFD700]/20 rounded-2xl px-4 py-3">
-                  <div className="min-w-0">
-                    <p className="text-xs font-gaming font-black text-white uppercase">{lvl.name}</p>
-                    <p className="text-[10px] text-[#8888AA] truncate">{lvl.perk}</p>
-                  </div>
-                  <p className="text-xs font-gaming font-black text-[#FFD700] whitespace-nowrap">{lvl.price}</p>
-                </div>
-              ))}
-            </div>
-
-            <p className="text-[11px] text-[#8888AA] leading-relaxed border-t border-[#8A2BE2]/20 pt-4">
-              Chaque niveau ouvre des contreparties progressives : visibilité sur le site, logo, publications,
-              contenus, intégration dans les tournois, livestreams, rapports de performance et naming selon le niveau.
-            </p>
-          </motion.div>
-
-          {/* --- 2. PARTENAIRE NON FINANCIER --- */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="glass-panel p-8 space-y-6 flex flex-col"
-          >
-            <div className="w-14 h-14 bg-[#8A2BE2]/20 border border-[#8A2BE2]/50 rounded-2xl flex items-center justify-center text-[#A855F7]">
-              <Cpu size={26} />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-gaming font-black uppercase text-white">2 — Partenaire non financier</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">
-                Contribue avec ce que tu sais faire le mieux : connexion Internet, matériel, smartphones, logiciels,
-                solutions de paiement, lots, services, couverture média, espaces, logistique…
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {NON_FINANCIAL_TYPES.map((t) => (
-                <div key={t.title} className="bg-[#0A0A0F] border border-[#8A2BE2]/20 rounded-2xl p-4 space-y-2">
-                  <t.icon size={18} className="text-[#A855F7]" />
-                  <p className="text-xs font-gaming font-bold text-white uppercase leading-tight">{t.title}</p>
-                  <p className="text-[10px] text-[#8888AA] leading-relaxed">{t.desc}</p>
-                </div>
-              ))}
-            </div>
-
-            <p className="text-[11px] text-[#8888AA] leading-relaxed border-t border-[#8A2BE2]/20 pt-4">
-              En échange, selon la collaboration : statut officiel, visibilité sur le site, logo et lien, publications,
-              mentions, contenus co-brandés, présence sur les événements, rapports et contreparties adaptées à la valeur
-              de ton apport.
-            </p>
-          </motion.div>
-
-          {/* --- 3. PARTENAIRE COMMUNAUTAIRE --- */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="glass-panel p-8 space-y-6 flex flex-col"
-          >
-            <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/40 rounded-2xl flex items-center justify-center text-emerald-400">
-              <Users size={26} />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-gaming font-black uppercase text-white">3 — Partenaire communautaire</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">
-                Chefs de clan, responsables de groupes gaming, administrateurs de communautés, responsables
-                Mobile Legends, Clash Royale, Free Fire, Blood Strike, eFootball, Call of Duty Mobile…,
-                organisateurs de tournois, modérateurs, arbitres et créateurs.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <p className="text-[10px] font-gaming font-black text-emerald-400 uppercase tracking-wider mb-2">Ce que tu apportes</p>
-                <ul className="space-y-1.5 text-[11px] text-[#8888AA]">
-                  <li className="flex gap-2"><CheckCircle2 size={13} className="text-emerald-500 shrink-0 mt-0.5" /> Mobiliser des joueurs autour des tournois</li>
-                  <li className="flex gap-2"><CheckCircle2 size={13} className="text-emerald-500 shrink-0 mt-0.5" /> Relayer les tournois eGame</li>
-                  <li className="flex gap-2"><CheckCircle2 size={13} className="text-emerald-500 shrink-0 mt-0.5" /> Partager ton expertise sur ton jeu</li>
-                  <li className="flex gap-2"><CheckCircle2 size={13} className="text-emerald-500 shrink-0 mt-0.5" /> Proposer des compétitions et formats</li>
-                  <li className="flex gap-2"><CheckCircle2 size={13} className="text-emerald-500 shrink-0 mt-0.5" /> Aider à l'organisation et faire remonter les besoins</li>
-                </ul>
-              </div>
-              <div>
-                <p className="text-[10px] font-gaming font-black text-[#FFD700] uppercase tracking-wider mb-2">Ce que eGame t'offre</p>
-                <ul className="space-y-1.5 text-[11px] text-[#8888AA]">
-                  <li className="flex gap-2"><CheckCircle2 size={13} className="text-[#FFD700] shrink-0 mt-0.5" /> Statut Partenaire Communautaire / Collaborateur eSport</li>
-                  <li className="flex gap-2"><CheckCircle2 size={13} className="text-[#FFD700] shrink-0 mt-0.5" /> Mise en avant de ton groupe / clan et lien vers ta communauté</li>
-                  <li className="flex gap-2"><CheckCircle2 size={13} className="text-[#FFD700] shrink-0 mt-0.5" /> Mentions sur les réseaux et kit média</li>
-                  <li className="flex gap-2"><CheckCircle2 size={13} className="text-[#FFD700] shrink-0 mt-0.5" /> Co-organisation de tournois et formats proposés</li>
-                  <li className="flex gap-2"><CheckCircle2 size={13} className="text-[#FFD700] shrink-0 mt-0.5" /> Reconnaissance comme co-organisateur quand c'est ton rôle</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 bg-[#0A0A0F] border border-emerald-500/30 rounded-2xl p-4">
-              <ShieldCheck size={18} className="text-emerald-400 shrink-0 mt-0.5" />
-              <p className="text-[11px] text-[#8888AA] leading-relaxed">
-                <span className="text-white font-bold">Fair-play garanti :</span> un partenaire communautaire ne reçoit
-                aucun avantage sportif sur les tirages, arbitrages, classements ou résultats.
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* ============ FORMULAIRE ============ */}
-      <section ref={formRef} className="max-w-3xl mx-auto px-6 mt-24 scroll-mt-24">
+      <section ref={formRef} className="max-w-3xl mx-auto px-6 mt-20 scroll-mt-24">
         <div className="text-center space-y-2 mb-10">
           <h2 className="text-2xl md:text-3xl font-gaming font-black uppercase">
             Proposer un <span className="text-[#8A2BE2]">partenariat</span>
@@ -607,7 +459,7 @@ const BecomePartner = () => {
             <Mail size={16} /> {CONTACT_EMAIL}
           </a>
           <div className="pt-2">
-            <a href={DOSSIER_URL} download="dossier-sponsoring-egame-benin.html">
+            <a href={DOSSIER_URL} download="eGame-Benin-Dossier-Sponsoring-Partenariats-2026.pdf">
               <Button className="btn-gold rounded-2xl font-gaming font-bold text-xs uppercase tracking-wider px-8 py-5 flex items-center gap-2 mx-auto">
                 <Download size={16} />
                 Télécharger le dossier Sponsoring & Partenariats
