@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import TournamentCard from '@/components/TournamentCard';
-import { ArrowLeft, Trophy, Gamepad2, Zap, Target, MessageSquare, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Trophy, Gamepad2, Zap, Target, MessageSquare, ChevronRight, History } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,8 @@ const GameDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [tournaments, setTournaments] = useState<any[]>([]);
-  const [winners, setWinners] = useState<any[]>([]);
+  const [history, setHistory] = useState<any[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const gameInfo = {
@@ -96,14 +97,12 @@ const GameDetails = () => {
 
       const { data: finished } = await supabase
         .from('tournaments')
-        .select('winner_name, winner_avatar, title, prize_pool')
+        .select('id, title, prize_pool, winner_name, updated_at')
         .ilike('game', `%${gameInfo.name}%`)
         .eq('status', 'finished')
-        .not('winner_name', 'is', null)
-        .order('updated_at', { ascending: false })
-        .limit(5);
+        .order('updated_at', { ascending: false });
       
-      if (finished) setWinners(finished);
+      if (finished) setHistory(finished);
 
       setLoading(false);
     };
@@ -155,14 +154,57 @@ const GameDetails = () => {
             </div>
 
             <div className="space-y-6">
-              <h2 className="text-2xl font-gaming font-black uppercase text-white flex items-center gap-3">
-                <Zap size={24} className="text-[#FFD700]" />
-                Tournois Ouverts
-              </h2>
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <h2 className="text-2xl font-gaming font-black uppercase text-white flex items-center gap-3">
+                  {showHistory ? (
+                    <><History size={24} className="text-[#A855F7]" /> Historique des Tournois</>
+                  ) : (
+                    <><Zap size={24} className="text-[#FFD700]" /> Tournois Ouverts</>
+                  )}
+                </h2>
+
+                {history.length > 0 && (
+                  <button
+                    onClick={() => setShowHistory(v => !v)}
+                    className="flex items-center gap-2 px-4 py-2.5 border border-[#8A2BE2]/50 hover:border-[#8A2BE2] bg-[#0F0F1E] hover:bg-[#8A2BE2]/10 rounded-2xl text-[10px] font-gaming font-bold uppercase tracking-widest text-white transition-all"
+                  >
+                    {showHistory ? (
+                      <><Zap size={13} className="text-[#FFD700]" /> Tournois ouverts</>
+                    ) : (
+                      <><History size={13} className="text-[#A855F7]" /> Historique</>
+                    )}
+                  </button>
+                )}
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {loading ? (
                   Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-3xl bg-[#0F0F1E]" />)
+                ) : showHistory ? (
+                  history.map((t) => (
+                    <div
+                      key={t.id}
+                      className="bg-[#0F0F1E] border border-[#8A2BE2]/20 hover:border-[#8A2BE2]/50 rounded-3xl p-5 flex items-center justify-between gap-4 transition-colors"
+                    >
+                      <div className="min-w-0">
+                        <p className="font-gaming font-black text-sm text-white uppercase truncate">{t.title}</p>
+                        <p className="text-[10px] text-[#8888AA] mt-1">
+                          Terminé le {new Date(t.updated_at).toLocaleDateString('fr-FR')}
+                        </p>
+                        {t.winner_name && (
+                          <p className="text-[11px] text-[#FFD700] font-gaming font-bold mt-2 flex items-center gap-1.5">
+                            <Trophy size={12} className="shrink-0" /> {t.winner_name}
+                          </p>
+                        )}
+                      </div>
+                      {t.prize_pool && (
+                        <div className="shrink-0 text-right">
+                          <p className="text-[9px] uppercase tracking-widest text-[#8888AA] font-bold">Cash Prize</p>
+                          <p className="text-sm font-gaming font-black text-[#FFD700]">{t.prize_pool}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))
                 ) : tournaments.length === 0 ? (
                   <div className="col-span-full py-12 text-center glass-panel">
                     <Gamepad2 size={40} className="mx-auto text-[#8888AA] mb-3 opacity-40" />
@@ -170,18 +212,18 @@ const GameDetails = () => {
                   </div>
                 ) : (
                   tournaments.map((t) => (
-                    <TournamentCard 
-                      key={t.id} 
-                      id={t.id} 
-                      title={t.title} 
-                      game={t.game} 
-                      image={t.image_url} 
-                      date={new Date(t.start_date).toLocaleDateString('fr-FR')} 
-                      participants={`${t.max_participants} places`} 
-                      entryFee={t.entry_fee.toString()} 
+                    <TournamentCard
+                      key={t.id}
+                      id={t.id}
+                      title={t.title}
+                      game={t.game}
+                      image={t.image_url}
+                      date={new Date(t.start_date).toLocaleDateString('fr-FR')}
+                      participants={`${t.max_participants} places`}
+                      entryFee={t.entry_fee.toString()}
                       prizePool={t.prize_pool}
-                      type={t.type as any} 
-                      status="active" 
+                      type={t.type as any}
+                      status="active"
                     />
                   ))
                 )}
@@ -190,32 +232,6 @@ const GameDetails = () => {
           </div>
 
           <div className="space-y-8">
-            <div className="glass-panel-gold p-6 space-y-6">
-              <div className="flex items-center gap-3">
-                <Trophy className="text-[#FFD700]" size={22} />
-                <h2 className="text-sm font-gaming font-bold uppercase text-white">Gagnants {gameInfo.name}</h2>
-              </div>
-
-              {winners.length === 0 ? (
-                <p className="text-xs text-[#8888AA] font-gaming text-center py-6">Pas encore de gagnant enregistré.</p>
-              ) : (
-                <div className="space-y-3">
-                  {winners.map((w, i) => (
-                    <div key={i} className="flex items-center justify-between p-3.5 bg-[#07070C] rounded-2xl border border-[#FFD700]/20">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{w.winner_avatar || '🏆'}</span>
-                        <div>
-                          <p className="font-gaming font-bold text-xs text-white">{w.winner_name}</p>
-                          <p className="text-[10px] text-[#8888AA] line-clamp-1">{w.title}</p>
-                        </div>
-                      </div>
-                      <span className="text-xs font-gaming font-black text-[#FFD700]">{w.prize_pool}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
             <div className="bg-[#8A2BE2] rounded-3xl p-8 space-y-6 shadow-xl shadow-[#8A2BE2]/20">
               <div className="flex items-center gap-3 text-white">
                 <MessageSquare size={24} />

@@ -27,7 +27,6 @@ const ALL_GAMES = [
 const Index = () => {
   const [activeTournaments, setActiveTournaments] = useState<any[]>([]);
   const [activeGames, setActiveGames] = useState<Set<string>>(new Set());
-  const [hallOfFame, setHallOfFame] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
@@ -63,17 +62,7 @@ const Index = () => {
         setActiveGames(activeSet);
       }
 
-      // 2. Récupération des champions récents pour le Hall of Fame
-      const { data: champions } = await supabase
-        .from('tournaments')
-        .select('winner_name, winner_avatar, title, game, prize_pool')
-        .eq('status', 'finished')
-        .not('winner_name', 'is', null)
-        .order('updated_at', { ascending: false })
-        .limit(3);
-
-      if (champions) setHallOfFame(champions);
-
+      // 2. Récupération terminée
       setLoading(false);
     };
 
@@ -305,47 +294,6 @@ const Index = () => {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* 5. SECTION CHAMPIONS / HALL OF FAME */}
-      <section className="max-w-7xl mx-auto px-6 py-16 space-y-8">
-        <div className="text-center space-y-2">
-          <h2 className="text-3xl font-gaming font-black uppercase text-white">
-            Derniers <span className="text-[#FFD700]">Champions</span>
-          </h2>
-          <p className="text-sm text-[#8888AA]">Ils ont dominé le jeu et empoché le Cash Prize</p>
-        </div>
-
-        {hallOfFame.length === 0 ? (
-          <div className="bg-[#0F0F1E] border border-[#FFD700]/30 rounded-3xl p-12 text-center max-w-2xl mx-auto space-y-6">
-            <Trophy size={64} className="mx-auto text-[#FFD700] animate-pulse" />
-            <div className="space-y-2">
-              <h3 className="text-xl font-gaming font-bold text-white">Sois le premier champion !</h3>
-              <p className="text-xs text-[#8888AA]">Inscris-toi maintenant à un tournoi et entre dans la légende eGame Bénin.</p>
-            </div>
-            <button 
-              onClick={() => navigate('/jeux')}
-              className="btn-gold px-8 py-4 text-xs tracking-widest uppercase"
-            >
-              Inscris-toi maintenant
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {hallOfFame.map((c, i) => (
-              <div key={i} className="esport-card-gold p-6 text-center space-y-4">
-                <div className="text-4xl">{c.winner_avatar || "🏆"}</div>
-                <div>
-                  <h3 className="font-gaming font-bold text-lg text-white">{c.winner_name}</h3>
-                  <p className="text-xs text-[#A855F7] font-bold uppercase">{c.game} • {c.title}</p>
-                </div>
-                <div className="bg-[#0A0A0F] py-2 px-4 rounded-xl inline-block border border-[#FFD700]/40">
-                  <span className="text-[#FFD700] font-gaming font-black text-sm">Gagné : {c.prize_pool}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </section>
 
       {/* PIED DE PAGE */}
