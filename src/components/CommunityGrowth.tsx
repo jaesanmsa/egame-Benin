@@ -2,14 +2,14 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Gamepad2, TrendingUp } from "lucide-react";
+import { Gamepad2, Users } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 /**
  * Options d'affichage de la preuve sociale.
  * Passe simplement la valeur à false pour désactiver un élément :
- *  - showTotal        : compteur public du nombre de joueurs inscrits
- *  - showToday        : nombre de nouveaux joueurs inscrits aujourd'hui
+ *  - showTotal         : compteur public du nombre de joueurs inscrits
+ *  - showToday         : nombre de nouveaux joueurs inscrits aujourd'hui
  *  - showNotifications : notifications temps réel à chaque inscription
  */
 const FEATURES = {
@@ -86,7 +86,6 @@ const CommunityGrowth = () => {
       const t = setTimeout(() => setPulse(false), 1200);
       return () => clearTimeout(t);
     }
-    if (stats) prevTotal.current = stats.total_players;
   }, [stats?.total_players]);
 
   useEffect(() => {
@@ -110,76 +109,82 @@ const CommunityGrowth = () => {
 
   return (
     <>
-      {/* ============ SECTION PREUVE SOCIALE ============ */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="relative bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-3xl p-8 md:p-12 overflow-hidden shadow-2xl">
-          <div className="absolute -top-32 -right-24 w-96 h-96 bg-[#8A2BE2]/10 rounded-full blur-3xl pointer-events-none" />
+      {/* ============ BANDEAU PREUVE SOCIALE ============ */}
+      <section className="max-w-7xl mx-auto px-6 py-6">
+        <div className="relative bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-3xl px-5 py-5 md:px-8 md:py-6 overflow-hidden shadow-xl">
+          <div className="absolute -top-20 -right-16 w-64 h-64 bg-[#8A2BE2]/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative text-center space-y-3 mb-10">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 text-[10px] font-gaming font-extrabold tracking-widest uppercase">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              En direct
-            </div>
-            <h2 className="text-2xl md:text-3xl font-gaming font-black uppercase text-white">
-              La communauté eGame grandit 🎮
-            </h2>
-            <p className="text-sm text-[#8888AA] font-esport">
-              Rejoins les joueurs qui construisent la nouvelle génération eSport au Bénin.
-            </p>
-          </div>
-
-          <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {FEATURES.showTotal && (
-              <div className="bg-[#0A0A0F] border border-[#8A2BE2]/30 rounded-3xl p-8 text-center space-y-2">
-                <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.span
-                    key={stats.total_players}
-                    initial={{ y: 14, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -14, opacity: 0 }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                    className={`block text-4xl md:text-5xl font-gaming font-black tracking-tight transition-colors duration-500 ${
-                      pulse ? "text-[#FFD700] text-glow-gold" : "text-white"
-                    }`}
-                  >
-                    {formatNumber(stats.total_players)}
-                  </motion.span>
-                </AnimatePresence>
-                <p className="text-xs font-gaming font-bold uppercase tracking-widest text-[#A855F7]">
-                  Joueurs inscrits
-                </p>
-                <p className="text-[11px] text-[#8888AA] font-esport italic pt-1">
-                  Et le prochain joueur, c'est peut-être toi.
-                </p>
+          <div className="relative flex flex-col lg:flex-row items-center justify-between gap-5 lg:gap-10">
+            <div className="text-center lg:text-left space-y-1 min-w-0">
+              <div className="flex items-center justify-center lg:justify-start gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-[#8A2BE2]/20 border border-[#8A2BE2]/40 flex items-center justify-center shrink-0">
+                  <Users size={16} className="text-[#A855F7]" />
+                </div>
+                <h2 className="text-base md:text-lg font-gaming font-black uppercase text-white leading-tight">
+                  La communauté eGame grandit 🎮
+                </h2>
               </div>
-            )}
+              <p className="text-[11px] md:text-xs text-[#8888AA] font-esport">
+                Rejoins les joueurs qui construisent la nouvelle génération eSport au Bénin.
+              </p>
+              <p className="text-[10px] text-[#A855F7]/80 font-esport italic">
+                Et le prochain joueur, c'est peut-être toi.
+              </p>
+            </div>
 
-            {FEATURES.showToday && (
-              <div className="bg-[#0A0A0F] border border-emerald-500/25 rounded-3xl p-8 text-center space-y-2 flex flex-col justify-center">
-                {stats.new_today > 0 ? (
+            <div className="flex items-center gap-5 md:gap-8 shrink-0">
+              {FEATURES.showTotal && (
+                <div className="text-center">
                   <AnimatePresence mode="popLayout" initial={false}>
                     <motion.span
-                      key={stats.new_today}
-                      initial={{ y: 14, opacity: 0 }}
+                      key={stats.total_players}
+                      initial={{ y: 10, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -14, opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="block text-4xl md:text-5xl font-gaming font-black tracking-tight text-emerald-400"
+                      exit={{ y: -10, opacity: 0 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      className={`block text-3xl md:text-4xl font-gaming font-black tracking-tight leading-none transition-colors duration-500 ${
+                        pulse ? "text-[#FFD700] text-glow-gold" : "text-white"
+                      }`}
                     >
-                      +{formatNumber(stats.new_today)}
+                      {formatNumber(stats.total_players)}
                     </motion.span>
                   </AnimatePresence>
-                ) : (
-                  <span className="block text-4xl md:text-5xl font-gaming font-black tracking-tight text-[#8888AA]/40">
-                    —
-                  </span>
-                )}
-                <p className="text-xs font-gaming font-bold uppercase tracking-widest text-emerald-400/80 flex items-center justify-center gap-1.5">
-                  <TrendingUp size={13} />
-                  Nouveaux aujourd'hui
-                </p>
+                  <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-[#A855F7] mt-1.5">
+                    Joueurs inscrits
+                  </p>
+                </div>
+              )}
+
+              {FEATURES.showToday && stats.new_today > 0 && (
+                <>
+                  <div className="w-px h-10 bg-[#8A2BE2]/25" />
+                  <div className="text-center">
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      <motion.span
+                        key={stats.new_today}
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -10, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        className="block text-2xl md:text-3xl font-gaming font-black tracking-tight leading-none text-emerald-400"
+                      >
+                        +{formatNumber(stats.new_today)}
+                      </motion.span>
+                    </AnimatePresence>
+                    <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-emerald-400/80 mt-1.5">
+                      Aujourd'hui
+                    </p>
+                  </div>
+                </>
+              )}
+
+              <div className="hidden sm:flex flex-col items-center gap-1 pl-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+                <span className="text-[8px] font-gaming font-black uppercase tracking-widest text-emerald-400">
+                  En direct
+                </span>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </section>

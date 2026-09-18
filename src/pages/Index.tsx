@@ -165,6 +165,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* 1.5 PREUVE SOCIALE — LA COMMUNAUTÉ GRANDIT (juste sous S'inscrire) */}
+      <CommunityGrowth />
+
       {/* 2. SECTION TOURNOIS ACTIFS */}
       <section className="max-w-7xl mx-auto px-6 py-16 space-y-8">
         <div className="flex items-center justify-between">
@@ -255,9 +258,6 @@ const Index = () => {
           })}
         </div>
       </section>
-
-      {/* 3.5 SECTION PREUVE SOCIALE — COMMUNAUTÉ QUI GRANDIT */}
-      <CommunityGrowth />
 
       {/* 4. SECTION POURQUOI EGAME BÉNIN */}
       <section className="max-w-7xl mx-auto px-6 py-16">

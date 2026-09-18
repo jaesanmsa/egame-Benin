@@ -458,10 +458,14 @@ const BecomePartner = () => {
           >
             <Mail size={16} /> {CONTACT_EMAIL}
           </a>
-          <div className="pt-2">
-            <a href={DOSSIER_URL} download="eGame-Benin-Dossier-Sponsoring-Partenariats-2026.pdf">
-              <Button className="btn-gold rounded-2xl font-gaming font-bold text-xs uppercase tracking-wider px-8 py-5 flex items-center gap-2 mx-auto">
-                <Download size={16} />
+          <div className="pt-2 w-full flex justify-center">
+            <a
+              href={DOSSIER_URL}
+              download="eGame-Benin-Dossier-Sponsoring-Partenariats-2026.pdf"
+              className="w-full sm:w-auto inline-flex justify-center max-w-full"
+            >
+              <Button className="btn-gold rounded-2xl font-gaming font-bold text-xs uppercase tracking-wider px-6 py-5 flex items-center justify-center gap-2 w-full sm:w-auto whitespace-normal text-center h-auto leading-snug">
+                <Download size={16} className="shrink-0" />
                 Télécharger le dossier Sponsoring & Partenariats
               </Button>
             </a>
