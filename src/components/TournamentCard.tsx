@@ -76,11 +76,16 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
         <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F1E] via-[#0F0F1E]/40 to-transparent" />
         
         {/* Badge Mode */}
-        <div className="absolute top-3 left-3 flex items-center gap-2">
+        <div className="absolute top-3 left-3 flex items-center gap-2 flex-wrap">
           <Badge className="bg-[#07070C]/80 backdrop-blur-md text-white border border-[#8A2BE2]/40 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider py-1 px-3 rounded-full">
             {type === 'Online' ? <Globe size={12} className="text-cyan-400" /> : <MapPin size={12} className="text-orange-400" />}
             {type === 'Online' ? 'En ligne' : 'Présentiel'}
           </Badge>
+          {entryFee === "0" && (
+            <Badge className="bg-emerald-950/80 backdrop-blur-md text-emerald-300 border border-emerald-500/50 text-[10px] font-bold uppercase tracking-wider py-1 px-3 rounded-full">
+              Gratuit
+            </Badge>
+          )}
         </div>
 
         {/* Badge Live */}
@@ -137,10 +142,10 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
           </div>
         </div>
 
-        <button 
+        <button
           className="w-full btn-neon py-3 rounded-xl text-xs uppercase tracking-widest flex items-center justify-center gap-2"
         >
-          S'inscrire • {entryFee} FCFA
+          {entryFee === "0" ? "S'inscrire • Gratuit" : `S'inscrire • ${entryFee} FCFA`}
           <ArrowRight size={14} />
         </button>
       </div>

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const GAMES_CONFIG: Record<string, string> = {
   "Blood Strike": "/blood strike.jpg",
@@ -37,6 +38,16 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTour
       ...newTournament,
       game: game,
       image_url: defaultImage
+    });
+  };
+
+  const [isFree, setIsFree] = React.useState(false);
+
+  const handleFreeToggle = (free: boolean) => {
+    setIsFree(free);
+    setNewTournament({
+      ...newTournament,
+      entry_fee: free ? 0 : (newTournament.entry_fee || 1000)
     });
   };
 
@@ -150,7 +161,15 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTour
 
         <div className="space-y-2">
           <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Frais d'entrée (FCFA)</Label>
-          <Input type="number" value={newTournament.entry_fee} onChange={e => setNewTournament({...newTournament, entry_fee: parseInt(e.target.value)})} className="py-6 bg-muted/50 border-border rounded-xl" />
+          <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/50 px-4 py-4">
+            <Switch id="free-tournament" checked={isFree} onCheckedChange={handleFreeToggle} />
+            <Label htmlFor="free-tournament" className="text-xs font-bold cursor-pointer select-none">
+              {isFree ? "Gratuit — inscription sans paiement, avec ticket" : "Payant — définir les frais ci-dessous"}
+            </Label>
+          </div>
+          {!isFree && (
+            <Input type="number" value={newTournament.entry_fee || ''} onChange={e => setNewTournament({...newTournament, entry_fee: parseInt(e.target.value) || 0})} className="py-6 bg-muted/50 border-border rounded-xl" placeholder="ex: 1000" />
+          )}
         </div>
 
         <div className="md:col-span-2 space-y-2">

@@ -5,11 +5,21 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
-import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Loader2, X, Globe, Share2 } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Loader2, X, Globe, Share2, Ticket, Copy } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Numéro de l'IA eGame sur WhatsApp qui confirme les tickets des tournois gratuits.
+const WHATSAPP_AI_NUMBER = "2290141790790";
+
+// Code de ticket lisible et sans caractères ambigus (ex: EGB-7K2M-QX49).
+const generateTicketCode = () => {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const pick = (n: number) => Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  return `EGB-${pick(4)}-${pick(4)}`;
+};
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -24,13 +34,21 @@ const TournamentDetails = () => {
   const [participantCount, setParticipantCount] = useState(0);
   const [participants, setParticipants] = useState<any[]>([]);
   const [userRegistration, setUserRegistration] = useState<any>(null);
+  const [userTicket, setUserTicket] = useState<any>(null);
+  const [showTicketModal, setShowTicketModal] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
 
   const fetchParticipants = useCallback(async () => {
     try {
       // Vue publique sécurisée : accessible à tous, sans données sensibles.
       const { count } = await supabase.from('public_payments').select('user_id', { count: 'exact', head: true }).eq('tournament_id', id).eq('status', 'Réussi');
-      setParticipantCount(count || 0);
+
+      // Tickets des tournois gratuits (compteur agrégé public, codes jamais exposés).
+      let ticketCount = 0;
+      const { data: ticketStats } = await supabase.from('public_ticket_counts').select('ticket_count').eq('tournament_id', id).maybeSingle();
+      if (ticketStats) ticketCount = ticketStats.ticket_count || 0;
+
+      setParticipantCount((count || 0) + ticketCount);
 
       const { data } = await supabase.from('public_payments').select('user_id, profiles(username, avatar_url, mvp_count, champion_count)').eq('tournament_id', id).eq('status', 'Réussi').limit(16);
       if (data) {
@@ -69,6 +87,9 @@ const TournamentDetails = () => {
       if (session?.user) {
         supabase.from('payments').select('*').eq('tournament_id', id).eq('user_id', session.user.id).eq('status', 'Réussi').order('created_at', { ascending: false }).limit(1).maybeSingle().then(({ data }) => {
           if (data) setUserRegistration(data);
+        });
+        supabase.from('tickets').select('*').eq('tournament_id', id).eq('user_id', session.user.id).maybeSingle().then(({ data }) => {
+          if (data) setUserTicket(data);
         });
         supabase.from('profiles').select('*').eq('id', session.user.id).single().then(({ data }) => {
           if (data) setUserProfile(data);
@@ -162,10 +183,41 @@ const TournamentDetails = () => {
     setShowConfirmation(true);
   };
 
+  // Inscription gratuite : création du ticket personnel à envoyer à l'IA eGame sur WhatsApp.
+  const handleFreeRegistration = async () => {
+    setShowConfirmation(false);
+    setIsPaying(true);
+    try {
+      const { data, error } = await supabase.from('tickets').insert({
+        tournament_id: id,
+        user_id: currentUser.id,
+        username: userProfile?.username || currentUser.email?.split('@')[0] || 'Joueur',
+        code: generateTicketCode()
+      }).select().single();
+
+      if (error) {
+        showError(error.message?.includes('duplicate') ? 'Tu as déjà un ticket pour ce tournoi.' : "Erreur lors de la création du ticket.");
+        return;
+      }
+      setUserTicket(data);
+      setShowTicketModal(true);
+      fetchParticipants();
+    } catch {
+      showError("Erreur lors de la création du ticket.");
+    } finally {
+      setIsPaying(false);
+    }
+  };
+
+  const whatsappTicketLink = userTicket
+    ? `https://wa.me/${WHATSAPP_AI_NUMBER}?text=${encodeURIComponent(`eGame Bénin — Ticket ${tournament?.title}\nMon code : ${userTicket.code}`)}`
+    : '#';
+
   if (loading) return <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>;
   if (!tournament) return null;
 
   const isFinished = tournament.status === 'finished';
+  const isFree = Number(tournament.entry_fee) === 0;
   const maxSlots = tournament.max_participants || 40;
   const progress = Math.min(100, (participantCount / maxSlots) * 100);
   const isRegistrationClosed = tournament.registration_end_date && new Date() > new Date(tournament.registration_end_date);
@@ -272,6 +324,29 @@ const TournamentDetails = () => {
                     </Button>
                   </Link>
                 </div>
+              ) : userTicket ? (
+                <div className="bg-emerald-950/40 border border-emerald-500/40 p-6 rounded-2xl space-y-4">
+                  <div className="flex items-center justify-center gap-3 text-emerald-400">
+                    <CheckCircle2 size={24} />
+                    <h3 className="font-gaming font-bold text-base uppercase">Inscription Validée !</h3>
+                  </div>
+                  <div className="bg-[#0A0A0F] border border-emerald-500/30 rounded-2xl p-5 text-center space-y-2">
+                    <p className="text-[10px] font-gaming font-bold uppercase tracking-widest text-[#8888AA] flex items-center justify-center gap-1.5">
+                      <Ticket size={12} /> Ton ticket eGame
+                    </p>
+                    <p className="text-2xl md:text-3xl font-gaming font-black text-[#FFD700] tracking-widest">{userTicket.code}</p>
+                    <p className={`text-[10px] font-gaming font-bold uppercase tracking-wider ${userTicket.status === 'valide' ? 'text-emerald-400' : 'text-orange-400'}`}>
+                      {userTicket.status === 'valide'
+                        ? '✅ Place confirmée par eGame'
+                        : "⏳ En attente : envoie ton ticket à l'IA eGame sur WhatsApp"}
+                    </p>
+                  </div>
+                  <a href={whatsappTicketLink} target="_blank" rel="noopener noreferrer">
+                    <Button className="w-full bg-emerald-600 hover:bg-emerald-500 font-gaming font-bold text-white py-6 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                      Envoyer mon ticket sur WhatsApp
+                    </Button>
+                  </a>
+                </div>
               ) : isRegistrationClosed ? (
                 <div className="bg-orange-950/40 border border-orange-500/40 p-6 rounded-2xl text-center space-y-2">
                   <div className="flex items-center justify-center gap-2 text-orange-400">
@@ -287,7 +362,13 @@ const TournamentDetails = () => {
                     disabled={isPaying}
                     className="w-full btn-glow-border py-5 rounded-2xl text-sm uppercase tracking-widest flex items-center justify-center gap-2"
                   >
-                    {isPaying ? <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Préparation...</> : `S'inscrire et Payer • ${tournament.entry_fee} FCFA`}
+                    {isPaying ? (
+                      <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Préparation...</>
+                    ) : isFree ? (
+                      "S'inscrire Gratuitement • Ticket"
+                    ) : (
+                      `S'inscrire et Payer • ${tournament.entry_fee} FCFA`
+                    )}
                   </button>
                   {formattedEndRegistration && (
                     <p className="text-center text-[10px] font-gaming font-bold uppercase tracking-widest text-[#8888AA]">
@@ -352,16 +433,28 @@ const TournamentDetails = () => {
               </div>
               <div className="space-y-2">
                 <h2 className="text-xl font-gaming font-bold text-white">Avant de continuer</h2>
-                <p className="text-xs text-[#8888AA] leading-relaxed">
-                  Vérifiez bien que vous acceptez le règlement du tournoi. Les frais d'inscription ({tournament.entry_fee} FCFA) sont engagés pour le Cash Prize.
-                </p>
+                {isFree ? (
+                  <p className="text-xs text-[#8888AA] leading-relaxed">
+                    Ce tournoi est <span className="text-emerald-400 font-bold">100% gratuit</span>. Vérifie que tu acceptes le règlement :
+                    tu recevras ensuite un <span className="text-[#FFD700] font-bold">ticket personnel</span> à envoyer à l'IA eGame sur
+                    WhatsApp pour confirmer ta place.
+                  </p>
+                ) : (
+                  <p className="text-xs text-[#8888AA] leading-relaxed">
+                    Vérifiez bien que vous acceptez le règlement du tournoi. Les frais d'inscription ({tournament.entry_fee} FCFA) sont engagés pour le Cash Prize.
+                  </p>
+                )}
               </div>
               <div className="space-y-3 pt-2">
-                <button 
-                  onClick={() => { setShowConfirmation(false); setShowPaymentMethods(true); }} 
+                <button
+                  onClick={() => {
+                    setShowConfirmation(false);
+                    if (isFree) handleFreeRegistration();
+                    else setShowPaymentMethods(true);
+                  }}
                   className="w-full btn-glow-border py-4 text-xs tracking-widest uppercase"
                 >
-                  J'accepte, choisir le paiement
+                  {isFree ? "J'accepte, obtenir mon ticket" : "J'accepte, choisir le paiement"}
                 </button>
                 <button onClick={() => setShowConfirmation(false)} className="w-full text-xs font-gaming text-[#8888AA] hover:text-white py-2">
                   Annuler
@@ -409,6 +502,55 @@ const TournamentDetails = () => {
                     <p className="text-[10px] text-[#8888AA]">MTN, Moov Money, Cartes Bancaires VISA/Mastercard</p>
                   </div>
                   <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white" />
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      {/* Modal 3 : Ticket créé (tournoi gratuit) */}
+      <AnimatePresence>
+        {showTicketModal && userTicket && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowTicketModal(false)} />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative bg-[#0F0F1E] border border-[#8A2BE2] w-full max-w-[420px] rounded-3xl p-8 shadow-2xl z-[10000] text-center space-y-6"
+            >
+              <button onClick={() => setShowTicketModal(false)} className="absolute top-6 right-6 text-[#8888AA] hover:text-white"><X size={20} /></button>
+
+              <div className="w-16 h-16 bg-[#FFD700]/10 text-[#FFD700] rounded-2xl flex items-center justify-center mx-auto border border-[#FFD700]/40">
+                <Ticket size={32} />
+              </div>
+
+              <div className="space-y-2">
+                <h2 className="text-xl font-gaming font-bold text-white">Ton ticket est prêt !</h2>
+                <p className="text-xs text-[#8888AA] leading-relaxed">
+                  Envoie ce code à <span className="text-white font-bold">l'IA eGame sur WhatsApp</span> :
+                  elle confirme ton inscription en quelques secondes et ta place est réservée.
+                </p>
+              </div>
+
+              <div className="bg-[#0A0A0F] border-2 border-dashed border-[#FFD700]/50 rounded-2xl p-5 space-y-3">
+                <p className="text-2xl md:text-3xl font-gaming font-black text-[#FFD700] tracking-widest">{userTicket.code}</p>
+                <button
+                  onClick={() => { navigator.clipboard.writeText(userTicket.code); showSuccess("Code copié !"); }}
+                  className="mx-auto flex items-center gap-1.5 text-[10px] font-gaming font-bold uppercase tracking-widest text-[#8888AA] hover:text-white transition-colors"
+                >
+                  <Copy size={12} /> Copier le code
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <a href={whatsappTicketLink} target="_blank" rel="noopener noreferrer" className="block">
+                  <Button className="w-full bg-emerald-600 hover:bg-emerald-500 font-gaming font-bold text-white py-5 rounded-xl text-xs uppercase tracking-wider">
+                    Envoyer sur WhatsApp
+                  </Button>
+                </a>
+                <button onClick={() => setShowTicketModal(false)} className="w-full text-xs font-gaming text-[#8888AA] hover:text-white py-2">
+                  J'ai compris
                 </button>
               </div>
             </motion.div>

@@ -17,6 +17,7 @@ import FinishTournamentTab from '@/components/admin/FinishTournamentTab';
 import LeaderboardTab from '@/components/admin/LeaderboardTab';
 import NewsTab from '@/components/admin/NewsTab';
 import PartnershipsTab from '@/components/admin/PartnershipsTab';
+import TicketsTab from '@/components/admin/TicketsTab';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -269,6 +270,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="finish" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Clôturer</TabsTrigger>
               <TabsTrigger value="leaderboard" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Top 5</TabsTrigger>
               <TabsTrigger value="partnerships" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Partenariats</TabsTrigger>
+              <TabsTrigger value="tickets" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Tickets</TabsTrigger>
             </TabsList>
           </div>
 
@@ -325,6 +327,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="partnerships">
             <PartnershipsTab />
+          </TabsContent>
+
+          <TabsContent value="tickets">
+            <TicketsTab tournaments={allTournaments} />
           </TabsContent>
         </Tabs>
       </main>
