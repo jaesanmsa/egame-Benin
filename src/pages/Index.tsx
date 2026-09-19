@@ -7,8 +7,11 @@ import SEO from '@/components/SEO';
 import VSBackground from '@/components/VSBackground';
 import TournamentCard from '@/components/TournamentCard';
 import CommunityGrowth from '@/components/CommunityGrowth';
+import PlatformStats from '@/components/PlatformStats';
+import PartnersSection from '@/components/PartnersSection';
+import SponsorCta from '@/components/SponsorCta';
 import { motion } from 'framer-motion';
-import { Trophy, Shield, Smartphone, Award, ArrowRight, Users, Sparkles, User } from 'lucide-react';
+import { Trophy, ArrowRight, Users, Sparkles, User, ScrollText, TrendingUp, MessageSquare, Handshake, BadgeCheck } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
@@ -27,6 +30,7 @@ const ALL_GAMES = [
 const Index = () => {
   const [activeTournaments, setActiveTournaments] = useState<any[]>([]);
   const [activeGames, setActiveGames] = useState<Set<string>>(new Set());
+  const [hasPartners, setHasPartners] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
@@ -62,7 +66,10 @@ const Index = () => {
         setActiveGames(activeSet);
       }
 
-      // 2. Récupération terminée
+      // 2. Partenaires publics visibles (pour la carte de confiance)
+      const { count: partnerCount } = await supabase.from('partners').select('id', { count: 'exact', head: true }).eq('visible', true);
+      setHasPartners((partnerCount ?? 0) > 0);
+
       setLoading(false);
     };
 
@@ -248,53 +255,80 @@ const Index = () => {
         </div>
       </section>
 
-      {/* 4. SECTION POURQUOI EGAME BÉNIN */}
+      {/* 4. SECTION CONFIANCE — CE QU'OFFRE EGAME BÉNIN */}
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-3xl p-8 md:p-12 space-y-12 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#8A2BE2]/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <h2 className="text-3xl font-gaming font-black uppercase text-white">
-              Pourquoi <span className="text-[#FFD700]">eGame Bénin</span> ?
+              Ce qu'offre <span className="text-[#FFD700]">eGame Bénin</span>
             </h2>
-            <p className="text-sm text-[#8888AA]">L'excellence eSport avec la garantie d'une plateforme 100% fiable</p>
+            <p className="text-sm text-[#8888AA]">Une plateforme pensée pour les joueurs et les communautés gaming</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
               <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
-                <Smartphone size={24} />
+                <Trophy size={24} />
               </div>
-              <h3 className="font-gaming font-bold text-sm text-white">Cash Prizes Mobile Money</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Paiement ultra-rapide des récompenses via MTN, Moov et Celtiis.</p>
-            </div>
-
-            <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
-              <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
-                <Shield size={24} />
-              </div>
-              <h3 className="font-gaming font-bold text-sm text-white">Transparents & Sécurisés</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Règlements clairs, arbitres dédiés et système anti-triche strict.</p>
+              <h3 className="font-gaming font-bold text-sm text-white">Compétitions eSport</h3>
+              <p className="text-xs text-[#8888AA] leading-relaxed">Des tournois en ligne réguliers sur les jeux mobiles les plus compétitifs du moment.</p>
             </div>
 
             <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
               <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
                 <Users size={24} />
               </div>
-              <h3 className="font-gaming font-bold text-sm text-white">Communauté Africaine</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Rejoins une communauté de passionnés de gaming à travers l'Afrique, de Dakar à Nairobi et de Casablanca à Johannesburg.</p>
+              <h3 className="font-gaming font-bold text-sm text-white">Communautés gaming</h3>
+              <p className="text-xs text-[#8888AA] leading-relaxed">Un groupe WhatsApp dédié par jeu pour échanger, s'organiser et progresser ensemble.</p>
             </div>
 
             <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
-              <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#FFD700] rounded-xl flex items-center justify-center mx-auto">
-                <Award size={24} />
+              <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
+                <ScrollText size={24} />
               </div>
-              <h3 className="font-gaming font-bold text-sm text-white">Classement National</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Marque des points, débloque des badges et monte au sommet de l'Élite.</p>
+              <h3 className="font-gaming font-bold text-sm text-white">Règles claires et publiées</h3>
+              <p className="text-xs text-[#8888AA] leading-relaxed">Chaque tournoi affiche son règlement officiel : format, horaires et conditions de participation.</p>
             </div>
+
+            <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
+              <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
+                <TrendingUp size={24} />
+              </div>
+              <h3 className="font-gaming font-bold text-sm text-white">Suivi des performances</h3>
+              <p className="text-xs text-[#8888AA] leading-relaxed">Profil joueur, points, badges et classement pour suivre ta progression.</p>
+            </div>
+
+            <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
+              <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
+                <MessageSquare size={24} />
+              </div>
+              <h3 className="font-gaming font-bold text-sm text-white">Support disponible</h3>
+              <p className="text-xs text-[#8888AA] leading-relaxed">Une équipe joignable 7j/7 par WhatsApp et e-mail pour accompagner les joueurs.</p>
+            </div>
+
+            {hasPartners && (
+              <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-emerald-500/25 space-y-3 text-center">
+                <div className="w-12 h-12 bg-emerald-500/15 text-emerald-400 rounded-xl flex items-center justify-center mx-auto">
+                  <BadgeCheck size={24} />
+                </div>
+                <h3 className="font-gaming font-bold text-sm text-white">Partenaires officiels</h3>
+                <p className="text-xs text-[#8888AA] leading-relaxed">Des marques, médias et communautés collaborent officiellement avec eGame Bénin.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
+
+      {/* 4.5 RÉSULTATS RÉELS DE LA PLATEFORME */}
+      <PlatformStats />
+
+      {/* 4.6 NOS PARTENAIRES & COMMUNAUTÉS */}
+      <PartnersSection />
+
+      {/* 4.7 BLOC SPONSORS / DEVENIR PARTENAIRE */}
+      <SponsorCta />
 
       {/* PIED DE PAGE */}
       <footer className="border-t border-[#8A2BE2]/20 pt-16 pb-12 text-center space-y-6">

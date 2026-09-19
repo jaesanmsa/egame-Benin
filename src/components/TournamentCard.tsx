@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Users, Calendar, Globe, MapPin, Share2, Trophy, ArrowRight, Zap } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
 import { showSuccess } from '@/utils/toast';
 
 interface TournamentProps {
@@ -23,19 +22,6 @@ interface TournamentProps {
 
 const TournamentCard = ({ id, title, game, image, date, participants, entryFee, prizePool = "50.000 FCFA", type, status = 'active' }: TournamentProps) => {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsLoggedIn(!!session);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -48,12 +34,10 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
     }
   };
 
+  // Découverte ouverte : tout le monde peut consulter la page du tournoi,
+  // l'inscription redirige vers la connexion si nécessaire.
   const handleClick = () => {
-    if (!isLoggedIn) {
-      navigate('/auth');
-    } else {
-      navigate(`/tournament/${id}`);
-    }
+    navigate(`/tournament/${id}`);
   };
 
   return (

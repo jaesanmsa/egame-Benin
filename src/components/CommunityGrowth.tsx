@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Gamepad2, Users } from "lucide-react";
+import { Gamepad2, Users, UserPlus } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 /**
@@ -17,6 +18,9 @@ const FEATURES = {
   showToday: true,
   showNotifications: true,
 };
+
+/** Délai minimum (ms) entre deux notifications pour éviter le spam d'inscriptions simultanées. */
+const TOAST_COOLDOWN_MS = 5000;
 
 interface CommunityStats {
   total_players: number;
@@ -38,6 +42,7 @@ const CommunityGrowth = () => {
   const [pulse, setPulse] = useState(false);
   const prevTotal = useRef<number | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastToastAt = useRef(0);
 
   // 1. Chargement initial : une seule ligne, aucun COUNT côté client.
   useEffect(() => {
@@ -68,6 +73,9 @@ const CommunityGrowth = () => {
         { event: "INSERT", schema: "public", table: "community_events" },
         (payload: any) => {
           if (!FEATURES.showNotifications) return;
+          // Anti-spam : si une notification vient d'apparaître, on ignore les suivantes.
+          if (Date.now() - lastToastAt.current < TOAST_COOLDOWN_MS) return;
+          lastToastAt.current = Date.now();
           // Données publiques uniquement : pseudo et avatar, rien d'autre.
           setToast({ key: Date.now(), username: payload.new.username, avatar_url: payload.new.avatar_url });
         }
@@ -121,11 +129,11 @@ const CommunityGrowth = () => {
                   <Users size={16} className="text-[#A855F7]" />
                 </div>
                 <h2 className="text-base md:text-lg font-gaming font-black uppercase text-white leading-tight">
-                  La communauté eGame grandit 🎮
+                  La communauté eGame grandit ! 🎮
                 </h2>
               </div>
               <p className="text-[11px] md:text-xs text-[#8888AA] font-esport">
-                Rejoins les joueurs qui construisent la nouvelle génération eSport en Afrique.
+                Rejoins les joueurs qui construisent la nouvelle génération eSport au Bénin et en Afrique.
               </p>
               <p className="text-[10px] text-[#A855F7]/80 font-esport italic">
                 Et le prochain joueur, c'est peut-être toi.
@@ -185,6 +193,14 @@ const CommunityGrowth = () => {
                 </span>
               </div>
             </div>
+
+            <Link
+              to="/auth"
+              className="btn-glow-border shrink-0 px-6 py-3.5 text-[10px] tracking-widest uppercase flex items-center justify-center gap-2 w-full sm:w-auto lg:w-auto"
+            >
+              <UserPlus size={14} />
+              Rejoindre la communauté
+            </Link>
           </div>
         </div>
       </section>
@@ -212,10 +228,10 @@ const CommunityGrowth = () => {
                 <p className="text-xs font-gaming font-bold text-white leading-snug">
                   {toast.username ? (
                     <>
-                      🎮 <span className="text-[#A855F7]">{toast.username}</span> vient de rejoindre eGame
+                      🎮 <span className="text-[#A855F7]">{toast.username}</span> vient de rejoindre eGame Bénin !
                     </>
                   ) : (
-                    <>🔥 Un nouveau joueur vient de rejoindre eGame !</>
+                    <>🎮 Un nouveau joueur vient de rejoindre eGame Bénin !</>
                   )}
                 </p>
                 <p className="text-[10px] text-[#8888AA] mt-0.5">Il y a quelques secondes</p>
