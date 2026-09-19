@@ -11,7 +11,7 @@ const LEGAL_INFO = [
   { label: 'Plateforme', value: 'eGame Bénin — Plateforme eSport' },
   { label: 'RCCM', value: 'RB/ABC/26 A 138238', mono: true },
   { label: 'IFU', value: '0202398541260', mono: true },
-  { label: 'Responsable', value: 'Moussa' },
+  { label: 'Responsable', value: 'MOUSSA Jae San Thierry' },
   { label: 'Pays', value: 'Bénin' },
   { label: 'Site web', value: 'egamebenin.com', href: 'https://www.egamebenin.com' },
   { label: 'Contact', value: 'contact@egamebenin.com', href: 'mailto:contact@egamebenin.com' }
@@ -100,11 +100,15 @@ const LegalNotice = () => {
           </div>
           <div className="bg-card border border-border p-8 rounded-[2rem] space-y-4 text-sm text-muted-foreground leading-relaxed shadow-sm">
             <p>
-              Le site egamebenin.com est hébergé par <strong className="text-foreground">Supabase</strong> — supabase.com.
+              Le site egamebenin.com est hébergé par <strong className="text-foreground">Vercel</strong> — vercel.com.
+            </p>
+            <p>
+              Les services backend (authentification, base de données et fonctions serveur) sont fournis par{' '}
+              <strong className="text-foreground">Supabase</strong> — supabase.com.
             </p>
             <div className="flex items-start gap-3">
               <Globe className="text-violet-500 shrink-0 mt-0.5" size={16} />
-              <p className="min-w-0">Les paiements sont traités par nos partenaires agréés KKiaPay, FedaPay et Maketou (Mobile Money).</p>
+              <p className="min-w-0">Les paiements en ligne sont traités par nos partenaires agréés KKiaPay et FedaPay (Mobile Money et cartes bancaires).</p>
             </div>
             <div className="flex items-start gap-3">
               <Mail className="text-violet-500 shrink-0 mt-0.5" size={16} />

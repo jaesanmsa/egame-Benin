@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
+import SEO from '@/components/SEO';
 import TournamentCard from '@/components/TournamentCard';
 import { ArrowLeft, Trophy, Gamepad2, Zap, Target, MessageSquare, ChevronRight, History } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -111,6 +112,10 @@ const GameDetails = () => {
 
   return (
     <div className="min-h-screen bg-[#07070C] text-white pb-32">
+      <SEO
+        title={`${gameInfo.name} — Tournois eSport`}
+        description={`Tournois ${gameInfo.name} sur eGame Bénin : inscris-toi aux compétitions, consulte les tournois ouverts et l'historique, et rejoins la communauté ${gameInfo.name} en Afrique.`}
+      />
       <Navbar />
       
       <section className="relative h-[45vh] w-full overflow-hidden">

@@ -65,7 +65,7 @@ const AvatarMaker = () => {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
-      <SEO title="Studio d'Avatar eSport" />
+      <SEO title="Studio d'Avatar eSport" noindex />
       <Navbar />
       <main className="max-w-xl mx-auto px-6 space-y-8 text-center">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#8888AA] hover:text-white transition-colors text-xs font-gaming font-bold uppercase tracking-widest">

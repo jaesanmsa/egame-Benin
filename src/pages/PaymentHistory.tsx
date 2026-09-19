@@ -93,7 +93,7 @@ const PaymentHistory = () => {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
-      <SEO title="Mes Inscriptions & Paiements" />
+      <SEO title="Mes Inscriptions & Paiements" noindex />
       <Navbar />
       <main className="max-w-2xl mx-auto px-6 space-y-8">
         <div className="flex items-center justify-between">

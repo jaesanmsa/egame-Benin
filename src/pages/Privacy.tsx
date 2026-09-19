@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Navbar from '@/components/Navbar';
+import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Shield, Scale, Lock, FileText, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +27,7 @@ const Privacy = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
+      <SEO title="Confidentialité & Conditions d'utilisation" description="Conditions d'utilisation, règles de l'arène, protection des données, paiements et remboursements sur eGame Bénin." />
       <Navbar />
       <main className="max-w-3xl mx-auto px-6 py-8">
         <motion.button 
@@ -124,7 +126,7 @@ const Privacy = () => {
 
               <div>
                 <h3 className="font-bold text-foreground mb-2">Sécurité des paiements</h3>
-                <p>Les transactions financières sont gérées par notre partenaire certifié KKiaPay. eGame Bénin n'a jamais accès à vos codes PIN ou informations de carte bancaire.</p>
+                <p>Les transactions financières sont gérées par nos partenaires certifiés KKiaPay et FedaPay. eGame Bénin n'a jamais accès à vos codes PIN ou informations de carte bancaire.</p>
               </div>
 
               <div>

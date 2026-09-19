@@ -1,3 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /profil
+Disallow: /edit-profile
+Disallow: /avatar-maker
+Disallow: /payments
+Disallow: /payment-success
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+
 Sitemap: https://www.egamebenin.com/sitemap.xml

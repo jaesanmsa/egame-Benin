@@ -8,16 +8,21 @@ interface SEOProps {
   image?: string;
   url?: string;
   type?: string;
+  /** true = page exclue des moteurs de recherche (pages privées / utilitaires) */
+  noindex?: boolean;
 }
 
-const SEO = ({ 
-  title = "eGame Bénin | Plateforme eSport — Tournois et Cash Prizes",
-  description = "Rejoins la communauté gaming eGame Bénin. Joueurs de tout le continent : inscris-toi aux tournois, paye via Mobile Money et gagne des cash prizes. Blood Strike, Free Fire, COD, Clash Royale et plus.",
+const SEO = ({
+  title = "eGame Bénin | Tournois eSport et communauté gaming en Afrique",
+  description = "Rejoignez eGame Bénin, la plateforme dédiée aux compétitions eSport et aux communautés gaming. Créez votre profil, découvrez les tournois et affrontez d'autres joueurs.",
   image = "https://ajbpdaxtynkazdrzyopd.supabase.co/storage/v1/object/public/assets/og-image.jpg",
-  url = "https://www.egamebenin.com",
-  type = "website"
+  url,
+  type = "website",
+  noindex = false
 }: SEOProps) => {
   const siteTitle = title.includes("eGame Bénin") ? title : `${title} | eGame Bénin`;
+  // URL canonique propre : page courante sans paramètres de suivi (évite le contenu dupliqué).
+  const canonicalUrl = url || `https://www.egamebenin.com${window.location.pathname}`;
 
   useEffect(() => {
     document.title = siteTitle;
@@ -33,15 +38,26 @@ const SEO = ({
     };
 
     setMeta('description', description);
+    setMeta('robots', noindex ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large');
     setMeta('og:type', type, 'property');
     setMeta('og:title', siteTitle, 'property');
     setMeta('og:description', description, 'property');
     setMeta('og:image', image, 'property');
-    setMeta('og:url', url, 'property');
+    setMeta('og:url', canonicalUrl, 'property');
+    setMeta('og:site_name', 'eGame Bénin', 'property');
+    setMeta('twitter:card', 'summary_large_image');
     setMeta('twitter:title', siteTitle);
     setMeta('twitter:description', description);
     setMeta('twitter:image', image);
-  }, [siteTitle, description, image, url, type]);
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', canonicalUrl);
+  }, [siteTitle, description, image, canonicalUrl, type, noindex]);
 
   return null;
 };

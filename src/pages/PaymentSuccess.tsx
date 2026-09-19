@@ -178,7 +178,7 @@ const PaymentSuccess = () => {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col">
-      <SEO title="Paiement Réussi" />
+      <SEO title="Paiement Réussi" noindex />
       <Navbar />
       <main className="flex-1 flex items-center justify-center p-6 pt-24">
         <div className="w-full max-w-md bg-[#0F0F1E] border border-[#8A2BE2]/40 rounded-3xl p-8 text-center shadow-2xl space-y-6">

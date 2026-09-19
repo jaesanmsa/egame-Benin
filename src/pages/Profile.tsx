@@ -88,7 +88,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-[#07070C] text-white pb-32 pt-28">
-      <SEO title={`Profil de ${username}`} />
+      <SEO title={`Profil de ${username}`} noindex />
       <Navbar />
       <main className="max-w-3xl mx-auto px-6 space-y-8">
         <div className="glass-panel p-8 text-center space-y-4 relative overflow-hidden">
