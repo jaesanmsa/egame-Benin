@@ -66,7 +66,7 @@ const GameDetails = () => {
       icon: '/efootball.webp',
       image: '/efootball.webp',
       desc: "Le football compétitif signé Konami. Construis ton équipe de rêve, maîtrise tes tactiques et dispute des matchs intenses pour dominer le continent.",
-      whatsapp: "https://chat.whatsapp.com/ExH59qGnumKFmYi0TvYwjH?s=cl&p=i&mlu=4&ilr=4"
+      whatsapp: "https://chat.whatsapp.com/LpvQyzOc1bD3gOHvtBMqst?s=cl&p=i&mlu=4&ilr=4"
     },
     'pubg-mobile': {
       name: 'PUBG Mobile',
