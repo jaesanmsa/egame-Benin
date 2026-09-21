@@ -218,6 +218,8 @@ const TournamentDetails = () => {
 
   const isFinished = tournament.status === 'finished';
   const isFree = Number(tournament.entry_fee) === 0;
+  // Passerelle imposée à la création du tournoi : seul ce moyen de paiement est proposé.
+  const paymentGateway = (tournament.payment_gateway || '').toLowerCase();
   const maxSlots = tournament.max_participants || 40;
   const progress = Math.min(100, (participantCount / maxSlots) * 100);
   const isRegistrationClosed = tournament.registration_end_date && new Date() > new Date(tournament.registration_end_date);
@@ -450,11 +452,19 @@ const TournamentDetails = () => {
                   onClick={() => {
                     setShowConfirmation(false);
                     if (isFree) handleFreeRegistration();
+                    else if (paymentGateway === 'kkiapay') handleKKiaPay();
+                    else if (paymentGateway === 'fedapay') handleFedaPay();
                     else setShowPaymentMethods(true);
                   }}
                   className="w-full btn-glow-border py-4 text-xs tracking-widest uppercase"
                 >
-                  {isFree ? "J'accepte, obtenir mon ticket" : "J'accepte, choisir le paiement"}
+                  {isFree
+                    ? "J'accepte, obtenir mon ticket"
+                    : paymentGateway === 'kkiapay'
+                    ? "J'accepte, payer avec KKiaPay"
+                    : paymentGateway === 'fedapay'
+                    ? "J'accepte, payer avec FedaPay"
+                    : "J'accepte, choisir le paiement"}
                 </button>
                 <button onClick={() => setShowConfirmation(false)} className="w-full text-xs font-gaming text-[#8888AA] hover:text-white py-2">
                   Annuler
@@ -482,27 +492,31 @@ const TournamentDetails = () => {
               </div>
 
               <div className="space-y-3">
-                <button 
-                  onClick={handleKKiaPay}
-                  className="w-full p-4 bg-[#0A0A0F] hover:bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 hover:border-[#8A2BE2] rounded-2xl text-left transition-all flex items-center justify-between group"
-                >
-                  <div>
-                    <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">KKiaPay</h3>
-                    <p className="text-[10px] text-[#8888AA]">MTN Mobile Money, Moov Money, Celtiis Cash</p>
-                  </div>
-                  <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white" />
-                </button>
+                {paymentGateway !== 'fedapay' && (
+                  <button
+                    onClick={handleKKiaPay}
+                    className="w-full p-4 bg-[#0A0A0F] hover:bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 hover:border-[#8A2BE2] rounded-2xl text-left transition-all flex items-center justify-between group"
+                  >
+                    <div>
+                      <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">KKiaPay</h3>
+                      <p className="text-[10px] text-[#8888AA]">MTN Mobile Money, Moov Money, Celtiis Cash</p>
+                    </div>
+                    <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white" />
+                  </button>
+                )}
 
-                <button 
-                  onClick={handleFedaPay}
-                  className="w-full p-4 bg-[#0A0A0F] hover:bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 hover:border-[#8A2BE2] rounded-2xl text-left transition-all flex items-center justify-between group"
-                >
-                  <div>
-                    <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">FedaPay</h3>
-                    <p className="text-[10px] text-[#8888AA]">MTN, Moov Money, Cartes Bancaires VISA/Mastercard</p>
-                  </div>
-                  <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white" />
-                </button>
+                {paymentGateway !== 'kkiapay' && (
+                  <button
+                    onClick={handleFedaPay}
+                    className="w-full p-4 bg-[#0A0A0F] hover:bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 hover:border-[#8A2BE2] rounded-2xl text-left transition-all flex items-center justify-between group"
+                  >
+                    <div>
+                      <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">FedaPay</h3>
+                      <p className="text-[10px] text-[#8888AA]">MTN, Moov Money, Cartes Bancaires VISA/Mastercard</p>
+                    </div>
+                    <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white" />
+                  </button>
+                )}
               </div>
             </motion.div>
           </div>
