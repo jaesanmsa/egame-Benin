@@ -25,6 +25,7 @@ const TOAST_COOLDOWN_MS = 5000;
 interface CommunityStats {
   total_players: number;
   new_today: number;
+  stats_date: string;
 }
 
 interface JoinToast {
@@ -48,11 +49,11 @@ const CommunityGrowth = () => {
   useEffect(() => {
     supabase
       .from("community_stats")
-      .select("total_players, new_today")
+      .select("total_players, new_today, stats_date")
       .eq("id", 1)
       .maybeSingle()
       .then(({ data }) => {
-        if (data) setStats({ total_players: data.total_players, new_today: data.new_today });
+        if (data) setStats({ total_players: data.total_players, new_today: data.new_today, stats_date: data.stats_date });
         setLoaded(true);
       });
   }, []);
@@ -65,7 +66,7 @@ const CommunityGrowth = () => {
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "community_stats", filter: "id=1" },
         (payload: any) => {
-          setStats({ total_players: payload.new.total_players, new_today: payload.new.new_today });
+          setStats({ total_players: payload.new.total_players, new_today: payload.new.new_today, stats_date: payload.new.stats_date });
         }
       )
       .on(
@@ -115,6 +116,16 @@ const CommunityGrowth = () => {
   if (!stats) return null;
   if (stats.total_players <= 0) return null;
 
+  // Jour courant au Bénin (GMT+1) : si la base n'a pas encore basculé de jour,
+  // le compteur du jour est considéré comme réinitialisé à zéro.
+  const beninToday = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Porto-Novo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+  const todayCount = stats.stats_date === beninToday ? stats.new_today : 0;
+
   return (
     <>
       {/* ============ BANDEAU PREUVE SOCIALE ============ */}
@@ -163,20 +174,20 @@ const CommunityGrowth = () => {
                 </div>
               )}
 
-              {FEATURES.showToday && stats.new_today > 0 && (
+              {FEATURES.showToday && todayCount > 0 && (
                 <>
                   <div className="w-px h-10 bg-[#8A2BE2]/25" />
                   <div className="text-center">
                     <AnimatePresence mode="popLayout" initial={false}>
                       <motion.span
-                        key={stats.new_today}
+                        key={todayCount}
                         initial={{ y: 10, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: -10, opacity: 0 }}
                         transition={{ duration: 0.35, ease: "easeOut" }}
                         className="block text-2xl md:text-3xl font-gaming font-black tracking-tight leading-none text-emerald-400"
                       >
-                        +{formatNumber(stats.new_today)}
+                        +{formatNumber(todayCount)}
                       </motion.span>
                     </AnimatePresence>
                     <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-emerald-400/80 mt-1.5">
