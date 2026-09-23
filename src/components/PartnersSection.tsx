@@ -110,24 +110,23 @@ const PartnersSection = () => {
           {partners.map((p) => (
             <div
               key={p.id}
-              className="snap-start shrink-0 w-[46%] sm:w-[42%] lg:w-[30%] bg-[#0F0F1E] border border-[#8A2BE2]/25 hover:border-[#8A2BE2]/60 rounded-3xl p-5 md:p-6 space-y-4 transition-colors shadow-xl"
+              className="relative snap-start shrink-0 w-[46%] sm:w-[42%] lg:w-[30%] bg-[#0F0F1E] border border-[#8A2BE2]/25 hover:border-[#8A2BE2]/60 rounded-3xl p-5 md:p-6 space-y-4 transition-colors shadow-xl"
             >
-              <div className="flex items-start justify-between gap-2">
-                <div className="w-14 h-14 rounded-2xl overflow-hidden bg-[#8A2BE2]/15 border border-[#8A2BE2]/30 flex items-center justify-center shrink-0">
-                  {p.logo_url ? (
-                    <img src={p.logo_url} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-contain p-1" draggable={false} />
-                  ) : (
-                    <span className="font-gaming font-black text-lg text-[#A855F7]">{p.name.charAt(0)}</span>
-                  )}
-                </div>
-                {p.is_official && (
-                  <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-gaming font-black uppercase tracking-widest text-emerald-300 bg-emerald-950/60 border border-emerald-500/40 px-2 py-1 rounded-full">
-                    <BadgeCheck size={10} /> Officiel
-                  </span>
+              {p.is_official && (
+                <span className="absolute top-3 right-3 inline-flex items-center gap-0.5 text-[7px] font-gaming font-black uppercase tracking-normal text-emerald-300 bg-emerald-950/60 border border-emerald-500/40 px-1.5 py-0.5 rounded-full">
+                  <BadgeCheck size={8} className="shrink-0" /> Officiel
+                </span>
+              )}
+
+              <div className="w-14 h-14 rounded-2xl overflow-hidden bg-[#8A2BE2]/15 border border-[#8A2BE2]/30 flex items-center justify-center shrink-0">
+                {p.logo_url ? (
+                  <img src={p.logo_url} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-contain p-1" draggable={false} />
+                ) : (
+                  <span className="font-gaming font-black text-lg text-[#A855F7]">{p.name.charAt(0)}</span>
                 )}
               </div>
 
-              <h4 className="font-gaming font-bold text-sm text-white leading-tight break-words">{p.name}</h4>
+              <h4 className="font-gaming font-bold text-sm text-white leading-tight break-words pr-8">{p.name}</h4>
 
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[9px] font-gaming font-bold uppercase tracking-wider text-[#A855F7] bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 px-2.5 py-1 rounded-full">
