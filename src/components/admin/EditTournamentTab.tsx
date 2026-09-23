@@ -91,6 +91,7 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
                   </div>
                 </SelectTrigger>
                 <SelectContent className="bg-card border-border">
+                  <SelectItem value="both" className="font-bold">KKiaPay et FedaPay (au choix du joueur)</SelectItem>
                   <SelectItem value="kkiapay" className="font-bold">KKiaPay (MTN, Moov, Celtiis)</SelectItem>
                   <SelectItem value="fedapay" className="font-bold">FedaPay (MTN, Moov, Cartes)</SelectItem>
                   <SelectItem value="maketou" className="font-bold">Maketou (MTN, Moov, Celtiis)</SelectItem>
