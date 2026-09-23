@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import { Trophy, ArrowRight, Users, Sparkles, User, ScrollText, TrendingUp, MessageSquare, Handshake, BadgeCheck } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { formatBeninShort } from '@/utils/datetime';
 
 const ALL_GAMES = [
   { id: 'blood-strike', name: 'Blood Strike', image: '/blood strike.jpg' },
@@ -199,7 +200,7 @@ const Index = () => {
                 title={t.title}
                 game={t.game}
                 image={t.image_url}
-                date={new Date(t.start_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                date={formatBeninShort(t.start_date)}
                 participants={`${t.max_participants} places`}
                 entryFee={t.entry_fee.toString()}
                 prizePool={t.prize_pool}

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { beninNowInput, beninInputToIso } from '@/utils/datetime';
 import Navbar from '@/components/Navbar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutDashboard } from 'lucide-react';
@@ -33,20 +34,21 @@ const AdminDashboard = () => {
   const [participantsList, setParticipantsList] = useState<any[]>([]);
   
   const [newTournament, setNewTournament] = useState({
-    id: '', 
-    title: '', 
-    game: 'Free Fire', 
-    image_url: '', 
-    entry_fee: 0, 
-    prize_pool: '', 
-    type: 'Online', 
-    max_participants: 40, 
-    rules: '', 
-    description: '', 
+    id: '',
+    title: '',
+    game: 'Free Fire',
+    image_url: '',
+    entry_fee: 0,
+    prize_pool: '',
+    type: 'Online',
+    max_participants: 40,
+    rules: '',
+    description: '',
     payment_url: '',
     payment_gateway: 'kkiapay',
-    start_date: new Date().toISOString().slice(0, 16),
-    registration_end_date: new Date().toISOString().slice(0, 16)
+    registration_start_date: beninNowInput(),
+    start_date: beninNowInput(),
+    registration_end_date: beninNowInput()
   });
 
   const [editingTournament, setEditingTournament] = useState<any>(null);
@@ -116,6 +118,10 @@ const AdminDashboard = () => {
     e.preventDefault();
     const { error } = await supabase.from('tournaments').insert([{
       ...newTournament,
+      // Les heures saisies (GMT+1) sont converties en instants exacts.
+      registration_start_date: beninInputToIso(newTournament.registration_start_date),
+      start_date: beninInputToIso(newTournament.start_date),
+      registration_end_date: beninInputToIso(newTournament.registration_end_date),
       status: 'active',
       created_at: new Date().toISOString()
     }]);
@@ -137,8 +143,9 @@ const AdminDashboard = () => {
       });
       setNewTournament({
         id: '', title: '', game: 'Free Fire', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '', payment_gateway: 'kkiapay',
-        start_date: new Date().toISOString().slice(0, 16),
-        registration_end_date: new Date().toISOString().slice(0, 16)
+        registration_start_date: beninNowInput(),
+        start_date: beninNowInput(),
+        registration_end_date: beninNowInput()
       });
       fetchData();
     }
@@ -160,8 +167,9 @@ const AdminDashboard = () => {
         rules: editingTournament.rules,
         payment_url: editingTournament.payment_url,
         payment_gateway: editingTournament.payment_gateway,
-        start_date: editingTournament.start_date,
-        registration_end_date: editingTournament.registration_end_date
+        registration_start_date: beninInputToIso(editingTournament.registration_start_date),
+        start_date: beninInputToIso(editingTournament.start_date),
+        registration_end_date: beninInputToIso(editingTournament.registration_end_date)
       })
       .eq('id', editingTournament.id);
     

@@ -33,10 +33,33 @@ serve(async (req) => {
       }
     }
 
-    // 1. Récupération du Service Account depuis les secrets
-    const serviceAccount = JSON.parse(Deno.env.get('FIREBASE_SERVICE_ACCOUNT') || '{}')
+    // 1. Récupération du Service Account depuis les secrets.
+    // Si le secret n'est pas configuré, on répond 200 avec skipped:true :
+    // ce n'est pas une erreur de requête, et le tournoi reste bien créé.
+    const serviceAccountRaw = Deno.env.get('FIREBASE_SERVICE_ACCOUNT')
+    if (!serviceAccountRaw) {
+      console.warn('[send-push-notification] Secret FIREBASE_SERVICE_ACCOUNT absent : notifications push ignorées. Configurez-le dans Supabase Console > Edge Functions > Manage Secrets.')
+      return new Response(JSON.stringify({ success: false, skipped: true, reason: 'FIREBASE_SERVICE_ACCOUNT manquant' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      })
+    }
+    let serviceAccount: any
+    try {
+      serviceAccount = JSON.parse(serviceAccountRaw)
+    } catch {
+      console.warn('[send-push-notification] Secret FIREBASE_SERVICE_ACCOUNT invalide (JSON illisible).')
+      return new Response(JSON.stringify({ success: false, skipped: true, reason: 'FIREBASE_SERVICE_ACCOUNT invalide' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      })
+    }
     if (!serviceAccount.project_id) {
-      throw new Error("Le secret FIREBASE_SERVICE_ACCOUNT est manquant ou invalide.")
+      console.warn('[send-push-notification] Secret FIREBASE_SERVICE_ACCOUNT incomplet (project_id manquant).')
+      return new Response(JSON.stringify({ success: false, skipped: true, reason: 'FIREBASE_SERVICE_ACCOUNT incomplet' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      })
     }
 
     const payload = await req.json()

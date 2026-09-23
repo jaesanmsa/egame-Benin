@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatBeninDateTime } from '@/utils/datetime';
 
 // Numéro de l'IA eGame sur WhatsApp qui confirme les tickets des tournois gratuits.
 const WHATSAPP_AI_NUMBER = "2290141790790";
@@ -223,22 +224,13 @@ const TournamentDetails = () => {
   const maxSlots = tournament.max_participants || 40;
   const progress = Math.min(100, (participantCount / maxSlots) * 100);
   const isRegistrationClosed = tournament.registration_end_date && new Date() > new Date(tournament.registration_end_date);
+  const registrationStart = tournament.registration_start_date ? new Date(tournament.registration_start_date) : null;
+  const isRegistrationNotOpen = registrationStart ? new Date() < registrationStart : false;
 
-  const formattedDateTime = new Date(tournament.start_date).toLocaleString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }) + " (heure locale)";
-
-  const formattedEndRegistration = tournament.registration_end_date ? new Date(tournament.registration_end_date).toLocaleString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }) : null;
+  // Toutes les heures sont affichées en heure du Bénin (GMT+1).
+  const formattedDateTime = formatBeninDateTime(tournament.start_date) + " (heure du Bénin, GMT+1)";
+  const formattedStartRegistration = registrationStart ? formatBeninDateTime(tournament.registration_start_date) : null;
+  const formattedEndRegistration = tournament.registration_end_date ? formatBeninDateTime(tournament.registration_end_date) : null;
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-20">
@@ -270,7 +262,7 @@ const TournamentDetails = () => {
             {/* Cash Prize Géant en Or */}
             <div className="bg-[#0A0A0F] border-2 border-[#FFD700]/50 px-6 py-4 rounded-2xl text-center shadow-xl shadow-[#FFD700]/10">
               <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase tracking-widest">Cash Prize</p>
-              <p className="text-2xl md:text-3xl font-gaming font-black text-[#FFD700] text-glow-gold">{tournament.prize_pool || "50.000 FCFA"}</p>
+              <p className="text-2xl md:text-3xl font-gaming font-black text-[#FFD700] text-glow-gold">{tournament.prize_pool || "À annoncer"}</p>
             </div>
           </div>
 
@@ -349,6 +341,14 @@ const TournamentDetails = () => {
                     </Button>
                   </a>
                 </div>
+              ) : isRegistrationNotOpen ? (
+                <div className="bg-violet-950/40 border border-violet-500/40 p-6 rounded-2xl text-center space-y-2">
+                  <div className="flex items-center justify-center gap-2 text-violet-300">
+                    <Clock size={22} />
+                    <h3 className="font-gaming font-bold text-base uppercase">Inscriptions bientôt ouvertes</h3>
+                  </div>
+                  <p className="text-xs text-[#8888AA]">Les inscriptions ouvrent le {formattedStartRegistration} (heure du Bénin)</p>
+                </div>
               ) : isRegistrationClosed ? (
                 <div className="bg-orange-950/40 border border-orange-500/40 p-6 rounded-2xl text-center space-y-2">
                   <div className="flex items-center justify-center gap-2 text-orange-400">
@@ -374,7 +374,9 @@ const TournamentDetails = () => {
                   </button>
                   {formattedEndRegistration && (
                     <p className="text-center text-[10px] font-gaming font-bold uppercase tracking-widest text-[#8888AA]">
-                      Fin des inscriptions : {formattedEndRegistration}
+                      {formattedStartRegistration
+                        ? `Inscriptions : ${formattedStartRegistration} → ${formattedEndRegistration}`
+                        : `Fin des inscriptions : ${formattedEndRegistration}`}
                     </p>
                   )}
                 </div>

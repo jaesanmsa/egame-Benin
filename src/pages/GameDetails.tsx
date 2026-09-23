@@ -7,6 +7,7 @@ import SEO from '@/components/SEO';
 import TournamentCard from '@/components/TournamentCard';
 import { ArrowLeft, Trophy, Gamepad2, Zap, Target, MessageSquare, ChevronRight, History } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { formatBeninDate } from '@/utils/datetime';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from '@/components/ui/button';
 
@@ -194,7 +195,7 @@ const GameDetails = () => {
                       <div className="min-w-0">
                         <p className="font-gaming font-black text-sm text-white uppercase truncate">{t.title}</p>
                         <p className="text-[10px] text-[#8888AA] mt-1">
-                          Terminé le {new Date(t.updated_at).toLocaleDateString('fr-FR')}
+                          Terminé le {formatBeninDate(t.updated_at)}
                         </p>
                         {t.winner_name && (
                           <p className="text-[11px] text-[#FFD700] font-gaming font-bold mt-2 flex items-center gap-1.5">
@@ -223,7 +224,7 @@ const GameDetails = () => {
                       title={t.title}
                       game={t.game}
                       image={t.image_url}
-                      date={new Date(t.start_date).toLocaleDateString('fr-FR')}
+                      date={formatBeninDate(t.start_date)}
                       participants={`${t.max_participants} places`}
                       entryFee={t.entry_fee.toString()}
                       prizePool={t.prize_pool}

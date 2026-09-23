@@ -15,12 +15,12 @@ interface TournamentProps {
   date: string;
   participants: string;
   entryFee: string;
-  prizePool?: string;
+  prizePool?: string | null;
   type: 'Online' | 'Presentiel';
   status?: 'active' | 'finished';
 }
 
-const TournamentCard = ({ id, title, game, image, date, participants, entryFee, prizePool = "50.000 FCFA", type, status = 'active' }: TournamentProps) => {
+const TournamentCard = ({ id, title, game, image, date, participants, entryFee, prizePool, type, status = 'active' }: TournamentProps) => {
   const navigate = useNavigate();
 
   const handleShare = (e: React.MouseEvent) => {
@@ -110,7 +110,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
             <span className="text-[10px] font-bold text-[#8888AA] uppercase tracking-wider">Cash Prize</span>
           </div>
           <span className="text-xl font-gaming font-black text-[#FFD700] text-glow-gold">
-            {prizePool}
+            {prizePool || <span className="text-sm text-[#8888AA] font-bold">À annoncer</span>}
           </span>
         </div>
 

@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Edit3, Settings, Image as ImageIcon, Calendar, Clock, CreditCard } from 'lucide-react';
+import { Edit3, Settings, Image as ImageIcon, Calendar, Clock, CreditCard, Zap } from 'lucide-react';
+import { isoToBeninInput } from '@/utils/datetime';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,11 +20,6 @@ interface EditTournamentTabProps {
 }
 
 const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTournament, onSubmit }: EditTournamentTabProps) => {
-  const formatDateForInput = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toISOString().slice(0, 16);
-  };
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm">
@@ -103,15 +99,29 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Date et Heure de début</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-emerald-600">Début des inscriptions</Label>
               <div className="relative">
-                <Calendar className="absolute left-3 top-3 text-muted-foreground" size={18} />
-                <Input 
-                  type="datetime-local" 
-                  value={formatDateForInput(editingTournament.start_date)} 
-                  onChange={e => setEditingTournament({...editingTournament, start_date: e.target.value})} 
-                  className="pl-10 py-6 bg-muted/50 border-border rounded-xl" 
-                  required 
+                <Calendar className="absolute left-3 top-3 text-emerald-500/70" size={18} />
+                <Input
+                  type="datetime-local"
+                  value={isoToBeninInput(editingTournament.registration_start_date)}
+                  onChange={e => setEditingTournament({...editingTournament, registration_start_date: e.target.value})}
+                  className="pl-10 py-6 bg-muted/50 border-emerald-500/20 rounded-xl focus:border-emerald-500"
+                  required
+                />
+              </div>
+            </div>
+    
+            <div className="md:col-span-2 space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-violet-600">Date et heure du tournoi (déroulement)</Label>
+              <div className="relative">
+                <Zap className="absolute left-3 top-3 text-violet-500/70" size={18} />
+                <Input
+                  type="datetime-local"
+                  value={isoToBeninInput(editingTournament.start_date)}
+                  onChange={e => setEditingTournament({...editingTournament, start_date: e.target.value})}
+                  className="pl-10 py-6 bg-muted/50 border-violet-500/20 rounded-xl focus:border-violet-500"
+                  required
                 />
               </div>
             </div>
@@ -120,10 +130,10 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-orange-500">Fin des inscriptions</Label>
               <div className="relative">
                 <Clock className="absolute left-3 top-3 text-orange-500/60" size={18} />
-                <Input 
-                  type="datetime-local" 
-                  value={formatDateForInput(editingTournament.registration_end_date)} 
-                  onChange={e => setEditingTournament({...editingTournament, registration_end_date: e.target.value})} 
+                <Input
+                  type="datetime-local"
+                  value={isoToBeninInput(editingTournament.registration_end_date)}
+                  onChange={e => setEditingTournament({...editingTournament, registration_end_date: e.target.value})}
                   className="pl-10 py-6 bg-muted/50 border-orange-500/20 rounded-xl focus:border-orange-500" 
                   required 
                 />
