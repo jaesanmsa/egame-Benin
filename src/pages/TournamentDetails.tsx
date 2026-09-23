@@ -12,15 +12,8 @@ import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatBeninDateTime } from '@/utils/datetime';
 
-// Numéro de l'IA eGame sur WhatsApp qui confirme les tickets des tournois gratuits.
+// Numéro de l'IA eGame sur WhatsApp qui confirme les tickets des tournois.
 const WHATSAPP_AI_NUMBER = "2290141790790";
-
-// Code de ticket lisible et sans caractères ambigus (ex: EGB-7K2M-QX49).
-const generateTicketCode = () => {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const pick = (n: number) => Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-  return `EGB-${pick(4)}-${pick(4)}`;
-};
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -184,20 +177,15 @@ const TournamentDetails = () => {
     setShowConfirmation(true);
   };
 
-  // Inscription gratuite : création du ticket personnel à envoyer à l'IA eGame sur WhatsApp.
+  // Inscription gratuite : attribution d'un ticket pré-généré à envoyer à l'IA eGame sur WhatsApp.
   const handleFreeRegistration = async () => {
     setShowConfirmation(false);
     setIsPaying(true);
     try {
-      const { data, error } = await supabase.from('tickets').insert({
-        tournament_id: id,
-        user_id: currentUser.id,
-        username: userProfile?.username || currentUser.email?.split('@')[0] || 'Joueur',
-        code: generateTicketCode()
-      }).select().single();
+      const { data, error } = await supabase.rpc('claim_tournament_ticket', { p_tournament_id: id });
 
       if (error) {
-        showError(error.message?.includes('duplicate') ? 'Tu as déjà un ticket pour ce tournoi.' : "Erreur lors de la création du ticket.");
+        showError(error.message || "Erreur lors de l'attribution du ticket.");
         return;
       }
       setUserTicket(data);
@@ -227,8 +215,8 @@ const TournamentDetails = () => {
   const registrationStart = tournament.registration_start_date ? new Date(tournament.registration_start_date) : null;
   const isRegistrationNotOpen = registrationStart ? new Date() < registrationStart : false;
 
-  // Toutes les heures sont affichées en heure du Bénin (GMT+1).
-  const formattedDateTime = formatBeninDateTime(tournament.start_date) + " (heure du Bénin, GMT+1)";
+  // Toutes les heures sont affichées en heure du tournoi (GMT+1).
+  const formattedDateTime = formatBeninDateTime(tournament.start_date) + " (heure du tournoi, GMT+1)";
   const formattedStartRegistration = registrationStart ? formatBeninDateTime(tournament.registration_start_date) : null;
   const formattedEndRegistration = tournament.registration_end_date ? formatBeninDateTime(tournament.registration_end_date) : null;
 
@@ -347,7 +335,7 @@ const TournamentDetails = () => {
                     <Clock size={22} />
                     <h3 className="font-gaming font-bold text-base uppercase">Inscriptions bientôt ouvertes</h3>
                   </div>
-                  <p className="text-xs text-[#8888AA]">Les inscriptions ouvrent le {formattedStartRegistration} (heure du Bénin)</p>
+                  <p className="text-xs text-[#8888AA]">Les inscriptions ouvrent le {formattedStartRegistration} (heure du tournoi, GMT+1)</p>
                 </div>
               ) : isRegistrationClosed ? (
                 <div className="bg-orange-950/40 border border-orange-500/40 p-6 rounded-2xl text-center space-y-2">

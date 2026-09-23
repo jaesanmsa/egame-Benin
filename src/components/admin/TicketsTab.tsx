@@ -11,25 +11,31 @@ import { showError, showSuccess } from "@/utils/toast";
 
 interface TicketRow {
   id: string;
-  username: string;
+  username: string | null;
   code: string;
   status: string;
   created_at: string;
   validated_at: string | null;
 }
 
-const TicketsTab = ({ tournaments }: { tournaments: any[] }) => {
-  const [selectedTournament, setSelectedTournament] = useState<string>("");
+interface TicketsTabProps {
+  tournaments: any[];
+  initialTournamentId?: string;
+}
+
+const TicketsTab = ({ tournaments, initialTournamentId }: TicketsTabProps) => {
+  const [selectedTournament, setSelectedTournament] = useState<string>(initialTournamentId || "");
   const [tickets, setTickets] = useState<TicketRow[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Par défaut : premier tournoi gratuit, sinon premier tournoi.
+  // Ouvre directement le tournoi venant d'être créé, sinon le premier disponible.
   useEffect(() => {
-    if (!selectedTournament && tournaments.length > 0) {
-      const free = tournaments.find((t: any) => Number(t.entry_fee) === 0);
-      setSelectedTournament((free || tournaments[0]).id);
+    if (initialTournamentId && tournaments.some((t: any) => t.id === initialTournamentId)) {
+      setSelectedTournament(initialTournamentId);
+    } else if (!selectedTournament && tournaments.length > 0) {
+      setSelectedTournament(tournaments[0].id);
     }
-  }, [tournaments, selectedTournament]);
+  }, [initialTournamentId, tournaments, selectedTournament]);
 
   const fetchTickets = async () => {
     if (!selectedTournament) return;
@@ -70,16 +76,21 @@ const TicketsTab = ({ tournaments }: { tournaments: any[] }) => {
     }
   };
 
-  // Copier la liste des tickets (code + joueur) pour la coller à l'IA WhatsApp.
+  // Copier tout le stock (code + attribution) pour le transmettre à l'IA WhatsApp.
   const copyForAI = async () => {
     if (tickets.length === 0) return;
-    const lines = tickets.map((t) => `${t.code} — ${t.username}`);
+    const tournament = tournaments.find((t: any) => t.id === selectedTournament);
+    const lines = [
+      `Tickets — ${tournament?.title || selectedTournament}`,
+      ...tickets.map((t) => `${t.code} — ${t.username || "Disponible"}${t.status === "valide" ? " — VALIDÉ" : ""}`)
+    ];
     await navigator.clipboard.writeText(lines.join("\n"));
     showSuccess(`${tickets.length} tickets copiés ! Colle-les à ton IA sur WhatsApp.`);
   };
 
   const validCount = tickets.filter((t) => t.status === "valide").length;
-  const pendingCount = tickets.length - validCount;
+  const assignedCount = tickets.filter((t) => t.username).length;
+  const availableCount = tickets.length - assignedCount;
 
   if (tournaments.length === 0) {
     return (
@@ -93,9 +104,12 @@ const TicketsTab = ({ tournaments }: { tournaments: any[] }) => {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div className="bg-card p-6 md:p-8 rounded-[2.5rem] border border-border shadow-sm space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <h2 className="text-xl font-black flex items-center gap-3">
-            <Ticket className="text-violet-500" /> Tickets des tournois gratuits
-          </h2>
+          <div>
+            <h2 className="text-xl font-black flex items-center gap-3">
+              <Ticket className="text-violet-500" /> Tickets des tournois
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">Le stock est généré dès la création selon le nombre de places.</p>
+          </div>
           <div className="flex items-center gap-3">
             <Select value={selectedTournament} onValueChange={setSelectedTournament}>
               <SelectTrigger className="w-56 bg-muted/50 border-border rounded-xl py-4 text-xs font-bold">
@@ -119,11 +133,14 @@ const TicketsTab = ({ tournaments }: { tournaments: any[] }) => {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-muted/40 border border-border rounded-2xl p-4">
           <div className="flex items-center gap-4 text-xs font-bold">
             <span className="text-foreground">{tickets.length} tickets</span>
-            <span className="flex items-center gap-1.5 text-emerald-600">
-              <CheckCircle2 size={14} /> {validCount} validés
+            <span className="flex items-center gap-1.5 text-violet-600">
+              <Ticket size={14} /> {availableCount} disponibles
             </span>
             <span className="flex items-center gap-1.5 text-orange-500">
-              <Clock size={14} /> {pendingCount} en attente
+              <Clock size={14} /> {assignedCount - validCount} à confirmer
+            </span>
+            <span className="flex items-center gap-1.5 text-emerald-600">
+              <CheckCircle2 size={14} /> {validCount} validés
             </span>
           </div>
           <Button
@@ -143,8 +160,8 @@ const TicketsTab = ({ tournaments }: { tournaments: any[] }) => {
           </div>
         ) : tickets.length === 0 ? (
           <div className="py-12 text-center text-sm text-muted-foreground">
-            Aucun ticket pour ce tournoi pour le moment.<br />
-            Les joueurs inscrits à un tournoi gratuit recevront leur ticket automatiquement.
+            Aucun ticket pour ce tournoi.<br />
+            Vérifie que le tournoi possède au moins une place disponible.
           </div>
         ) : (
           <div className="space-y-3">
@@ -157,15 +174,15 @@ const TicketsTab = ({ tournaments }: { tournaments: any[] }) => {
               >
                 <div className="flex items-center gap-4 min-w-0">
                   <div className="flex flex-col items-center gap-1 shrink-0">
-                    <Switch checked={t.status === "valide"} onCheckedChange={(v) => toggleTicket(t, v)} />
+                    <Switch disabled={!t.username} checked={t.status === "valide"} onCheckedChange={(v) => toggleTicket(t, v)} />
                     <span className={`text-[9px] font-black uppercase tracking-widest ${t.status === "valide" ? "text-emerald-600" : "text-muted-foreground"}`}>
-                      {t.status === "valide" ? "Validé" : "Attente"}
+                      {t.status === "valide" ? "Validé" : t.username ? "Attente" : "Libre"}
                     </span>
                   </div>
                   <div className="min-w-0">
                     <p className="font-mono font-black text-sm tracking-wider text-foreground">{t.code}</p>
                     <p className="text-xs text-muted-foreground truncate">
-                      {t.username} • inscrit le {new Date(t.created_at).toLocaleString("fr-FR")}
+                      {t.username ? `${t.username} • attribué le ${new Date(t.created_at).toLocaleString("fr-FR")}` : "Disponible — pas encore attribué"}
                     </p>
                     {t.status === "valide" && t.validated_at && (
                       <p className="text-[10px] text-emerald-600 font-bold">
@@ -178,9 +195,13 @@ const TicketsTab = ({ tournaments }: { tournaments: any[] }) => {
                   <span className="shrink-0 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-100 border border-emerald-300 px-3 py-1.5 rounded-full">
                     ✅ Confirmé
                   </span>
-                ) : (
+                ) : t.username ? (
                   <span className="shrink-0 text-[10px] font-black uppercase tracking-widest text-orange-500 bg-orange-100 border border-orange-300 px-3 py-1.5 rounded-full">
                     ⏳ À confirmer
+                  </span>
+                ) : (
+                  <span className="shrink-0 text-[10px] font-black uppercase tracking-widest text-violet-600 bg-violet-100 border border-violet-300 px-3 py-1.5 rounded-full">
+                    Disponible
                   </span>
                 )}
               </div>

@@ -25,12 +25,14 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("payments");
   const [activeTournaments, setActiveTournaments] = useState<any[]>([]);
   const [allTournaments, setAllTournaments] = useState<any[]>([]);
   const [allPayments, setAllPayments] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   
   const [selectedTournamentId, setSelectedTournamentId] = useState<string>("");
+  const [ticketTournamentId, setTicketTournamentId] = useState<string>("");
   const [participantsList, setParticipantsList] = useState<any[]>([]);
   
   const [newTournament, setNewTournament] = useState({
@@ -116,7 +118,7 @@ const AdminDashboard = () => {
 
   const handleAddTournament = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabase.from('tournaments').insert([{
+    const { data: createdTournament, error } = await supabase.from('tournaments').insert([{
       ...newTournament,
       // Les heures saisies (GMT+1) sont converties en instants exacts.
       registration_start_date: beninInputToIso(newTournament.registration_start_date),
@@ -124,10 +126,12 @@ const AdminDashboard = () => {
       registration_end_date: beninInputToIso(newTournament.registration_end_date),
       status: 'active',
       created_at: new Date().toISOString()
-    }]);
+    }]).select('id').single();
     if (error) showError(error.message);
     else {
-      showSuccess("Tournoi ajouté !");
+      showSuccess(`${newTournament.max_participants} tickets générés. Ils sont prêts dans le panneau Tickets !`);
+      setTicketTournamentId(createdTournament.id);
+      setActiveTab("tickets");
       // Notification push à tous les joueurs abonnés (Chrome/Android via FCM)
       supabase.functions.invoke('send-push-notification', {
         body: {
@@ -268,7 +272,7 @@ const AdminDashboard = () => {
           </div>
         </div>
         
-        <Tabs defaultValue="payments" className="space-y-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <div className="bg-muted/50 p-1.5 rounded-[25px] border border-border overflow-x-auto no-scrollbar">
             <TabsList className="flex w-full bg-transparent h-auto gap-1 min-w-max px-4">
               <TabsTrigger value="payments" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Transactions</TabsTrigger>
@@ -340,7 +344,7 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="tickets">
-            <TicketsTab tournaments={allTournaments} />
+            <TicketsTab tournaments={allTournaments} initialTournamentId={ticketTournamentId} />
           </TabsContent>
 
           <TabsContent value="partners-admin">
