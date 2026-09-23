@@ -10,6 +10,7 @@ import { showSuccess } from '@/utils/toast';
 
 interface Payment {
   id: string;
+  tournament_id: string;
   tournament_name: string;
   amount: string;
   status: 'En attente' | 'Réussi' | 'Échoué';
@@ -21,6 +22,7 @@ interface Payment {
 const PaymentHistory = () => {
   const navigate = useNavigate();
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [ticketCodes, setTicketCodes] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [playerUsername, setPlayerUsername] = useState('Joueur');
@@ -41,11 +43,19 @@ const PaymentHistory = () => {
         .maybeSingle();
       if (profile?.username) setPlayerUsername(profile.username);
 
-      const { data, error } = await supabase
-        .from('payments')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+      const [{ data, error }, { data: tickets }] = await Promise.all([
+        supabase
+          .from('payments')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('tickets')
+          .select('tournament_id, code')
+          .eq('user_id', user.id)
+      ]);
+
+      setTicketCodes(Object.fromEntries((tickets ?? []).map((ticket: any) => [ticket.tournament_id, ticket.code])));
 
       if (!error && data) {
         const processedPayments = data.map((p: any) => {
@@ -81,8 +91,10 @@ const PaymentHistory = () => {
     };
   }, [fetchData]);
 
+  const ticketCodeFor = (payment: Payment) => ticketCodes[payment.tournament_id] || payment.validation_code;
+
   const handleWhatsAppSend = (payment: Payment) => {
-    const message = encodeURIComponent(`Pseudo: ${playerUsername} | Code: ${payment.validation_code}`);
+    const message = encodeURIComponent(`eGame Bénin — ${payment.tournament_name}\nPseudo : ${playerUsername}\nMon ticket : ${ticketCodeFor(payment)}`);
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
@@ -142,22 +154,25 @@ const PaymentHistory = () => {
 
                   {payment.status === 'Réussi' ? (
                     <div className="space-y-3 pt-2 border-t border-[#8A2BE2]/10">
+                      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/30 p-3 text-center">
+                        <p className="text-xs font-bold text-emerald-300">Paiement reçu. Envoie maintenant ce ticket à eGame Bénin sur WhatsApp pour confirmer ta place.</p>
+                      </div>
                       <div className="p-4 bg-[#0A0A0F] rounded-2xl border border-[#FFD700]/30 flex items-center justify-between">
                         <div>
-                          <p className="text-[#8888AA] text-[9px] font-gaming font-bold uppercase tracking-widest">Code de validation</p>
-                          <p className="text-[#FFD700] font-gaming font-black text-xl tracking-widest">{payment.validation_code}</p>
+                          <p className="text-[#8888AA] text-[9px] font-gaming font-bold uppercase tracking-widest">Ticket eGame Bénin</p>
+                          <p className="text-[#FFD700] font-gaming font-black text-xl tracking-widest">{ticketCodeFor(payment)}</p>
                         </div>
-                        <button onClick={() => copyToClipboard(payment.validation_code)} className="p-2 text-[#8888AA] hover:text-white">
+                        <button onClick={() => copyToClipboard(ticketCodeFor(payment))} className="p-2 text-[#8888AA] hover:text-white">
                           <Copy size={18} />
                         </button>
                       </div>
 
-                      <button 
+                      <button
                         onClick={() => handleWhatsAppSend(payment)}
                         className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-gaming font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
                       >
                         <MessageSquare size={16} />
-                        Envoyer le code au support WhatsApp
+                        Envoyer mon ticket à eGame Bénin
                       </button>
                     </div>
                   ) : (

@@ -159,6 +159,17 @@ const PaymentSuccess = () => {
           throw new Error("Passerelle de paiement inconnue.");
         }
 
+        // Le ticket pré-généré est attribué par la base dès que le paiement passe à « Réussi ».
+        // C'est ce code que le joueur doit envoyer à eGame Bénin sur WhatsApp.
+        const { data: ticket, error: ticketError } = await supabase
+          .from('tickets')
+          .select('code')
+          .eq('tournament_id', tournamentId)
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (ticketError) throw ticketError;
+        if (ticket?.code) setValidationCode(ticket.code);
+
         sessionStorage.removeItem(`payment_gateway:${tournamentId}`);
       } catch (err: any) {
         setError(err.message || "Une erreur est survenue.");
@@ -172,7 +183,8 @@ const PaymentSuccess = () => {
   }, [searchParams]);
 
   const handleWhatsAppSend = () => {
-    const message = encodeURIComponent(`Pseudo: ${playerUsername} | Code: ${validationCode}`);
+    if (!validationCode) return;
+    const message = encodeURIComponent(`eGame Bénin — ${tournamentName || 'Tournoi'}\nPseudo : ${playerUsername}\nMon ticket : ${validationCode}`);
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
@@ -203,12 +215,13 @@ const PaymentSuccess = () => {
               </div>
 
               <div className="space-y-2">
-                <h1 className="text-2xl font-gaming font-black uppercase text-white">C'est Validé !</h1>
-                <p className="text-xs text-[#8888AA]">Ton inscription au tournoi est enregistrée.</p>
+                <h1 className="text-2xl font-gaming font-black uppercase text-white">Paiement validé !</h1>
+                <p className="text-sm font-bold text-white">Dernière étape : envoie ton ticket à eGame Bénin sur WhatsApp.</p>
+                <p className="text-xs text-[#8888AA]">Ta place sera confirmée après vérification de ce code.</p>
               </div>
 
-              <div className="p-6 bg-[#0A0A0F] rounded-2xl border border-[#FFD700]/40 space-y-2">
-                <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase tracking-widest">Ton Code de Validation</p>
+              <div className="p-6 bg-[#0A0A0F] rounded-2xl border-2 border-dashed border-[#FFD700]/50 space-y-2">
+                <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase tracking-widest">Ton ticket eGame Bénin</p>
                 <div className="flex items-center justify-center gap-3">
                   <span className="text-[#FFD700] font-gaming font-black text-2xl tracking-widest">{validationCode}</span>
                   <button onClick={() => { navigator.clipboard.writeText(validationCode!); showSuccess("Code copié !"); }} className="text-[#8888AA] hover:text-white">
@@ -223,7 +236,7 @@ const PaymentSuccess = () => {
                   className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-gaming font-bold text-xs uppercase tracking-wider py-4 rounded-xl flex items-center justify-center gap-2"
                 >
                   <MessageSquare size={18} />
-                  Envoyer au Support WhatsApp
+                  Envoyer mon ticket à eGame Bénin
                 </button>
 
                 <Link to="/payments" className="block">

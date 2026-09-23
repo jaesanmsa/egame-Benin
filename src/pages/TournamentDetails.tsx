@@ -293,8 +293,8 @@ const TournamentDetails = () => {
                 </div>
               </div>
               
-              {/* Action d'inscription */}
-              {userRegistration ? (
+              {/* Action d'inscription : le ticket WhatsApp reste prioritaire après un paiement réussi. */}
+              {userRegistration && !userTicket ? (
                 <div className="bg-emerald-950/40 border border-emerald-500/40 p-6 rounded-2xl text-center space-y-4">
                   <div className="flex items-center justify-center gap-3 text-emerald-400">
                     <CheckCircle2 size={24} />

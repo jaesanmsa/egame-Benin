@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { beninNowInput, beninInputToIso } from '@/utils/datetime';
 import Navbar from '@/components/Navbar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard, MessageSquareText } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 // Import des composants modulaires
@@ -262,14 +262,23 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-background text-foreground pb-32 pt-12 md:pt-24">
       <Navbar />
       <main className="max-w-5xl mx-auto px-6 py-8">
-        <div className="flex items-center gap-4 mb-10">
-          <div className="w-12 h-12 bg-violet-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-violet-500/20">
-            <LayoutDashboard size={24} />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 mb-10">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-violet-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-violet-500/20">
+              <LayoutDashboard size={24} />
+            </div>
+            <div>
+              <h1 className="text-3xl font-black tracking-tight">Administration</h1>
+              <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Gestion de l'arène eGame Bénin</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight">Administration</h1>
-            <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Gestion de l'arène eGame Bénin</p>
-          </div>
+          <button
+            type="button"
+            onClick={() => setActiveTab("tickets")}
+            className="w-full sm:w-auto rounded-2xl bg-emerald-600 px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-emerald-500/20 transition-colors hover:bg-emerald-500 flex items-center justify-center gap-2"
+          >
+            <MessageSquareText size={18} /> Tickets pour l'IA WhatsApp
+          </button>
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
