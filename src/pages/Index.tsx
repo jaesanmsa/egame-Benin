@@ -255,6 +255,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* 3.6 NOS PARTENAIRES & COMMUNAUTÉS */}
+      <PartnersSection />
+
       {/* 4. SECTION CONFIANCE — CE QU'OFFRE EGAME BÉNIN */}
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-3xl p-8 md:p-12 space-y-12 shadow-2xl relative overflow-hidden">
@@ -323,9 +326,6 @@ const Index = () => {
 
       {/* 4.5 RÉSULTATS RÉELS DE LA PLATEFORME */}
       <PlatformStats />
-
-      {/* 4.6 NOS PARTENAIRES & COMMUNAUTÉS */}
-      <PartnersSection />
 
       {/* 4.7 BLOC SPONSORS / DEVENIR PARTENAIRE */}
       <SponsorCta />
