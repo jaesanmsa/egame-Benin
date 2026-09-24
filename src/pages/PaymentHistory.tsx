@@ -58,17 +58,7 @@ const PaymentHistory = () => {
       setTicketCodes(Object.fromEntries((tickets ?? []).map((ticket: any) => [ticket.tournament_id, ticket.code])));
 
       if (!error && data) {
-        const processedPayments = data.map((p: any) => {
-          const createdAt = new Date(p.created_at).getTime();
-          const now = new Date().getTime();
-          const diffMinutes = (now - createdAt) / (1000 * 60);
-          
-          if (p.status === 'En attente' && diffMinutes > 5) {
-            return { ...p, status: 'Échoué' };
-          }
-          return p;
-        });
-        setPayments(processedPayments);
+        setPayments(data);
       }
     } finally {
       setLoading(false);
@@ -176,8 +166,11 @@ const PaymentHistory = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="p-3 bg-[#0A0A0F] rounded-xl text-center">
+                    <div className="p-3 bg-[#0A0A0F] rounded-xl text-center space-y-2">
                       <p className="text-xs text-[#8888AA]">Montant : <span className="text-white font-bold">{payment.amount} FCFA</span></p>
+                      {payment.status === 'En attente' && (
+                        <p className="text-xs text-amber-200">Confirmation en attente. Si tu as été débité, ne paie pas à nouveau. Contacte le support avec ton reçu.</p>
+                      )}
                     </div>
                   )}
                 </div>

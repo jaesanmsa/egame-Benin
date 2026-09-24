@@ -137,15 +137,16 @@ export async function creditPoints(supabase: any, userId?: string | null, points
     .eq('id', userId);
 }
 
-/** Extrait tournamentId / tournamentName depuis l'URL de callback passée à la passerelle. */
-export function parseCallbackUrl(raw: string | null | undefined): { tournamentId?: string; tournamentName?: string; amount?: string } {
+/** Extrait tournamentId / tournamentName / paymentId depuis l'URL de callback passée à la passerelle. */
+export function parseCallbackUrl(raw: string | null | undefined): { tournamentId?: string; tournamentName?: string; amount?: string; paymentId?: string } {
   if (!raw || !raw.includes('tournamentId=')) return {};
   try {
     const url = new URL(raw);
     return {
       tournamentId: url.searchParams.get('tournamentId') ?? undefined,
       tournamentName: url.searchParams.get('tournamentName') ?? undefined,
-      amount: url.searchParams.get('amount') ?? undefined
+      amount: url.searchParams.get('amount') ?? undefined,
+      paymentId: url.searchParams.get('paymentId') ?? undefined
     };
   } catch {
     return {};

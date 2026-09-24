@@ -119,15 +119,12 @@ const TournamentDetails = () => {
   };
 
   const createPendingPayment = async (gateway: 'fedapay' | 'kkiapay') => {
-    const { error } = await supabase.from('payments').insert({
-      user_id: currentUser.id,
-      tournament_id: id,
-      tournament_name: tournament.title,
-      amount: tournament.entry_fee,
-      status: 'En attente',
-      gateway
+    const { data, error } = await supabase.rpc('begin_tournament_payment', {
+      p_tournament_id: id,
+      p_gateway: gateway
     });
     if (error) throw error;
+    return data;
   };
 
   const handleFedaPay = async () => {
@@ -158,8 +155,8 @@ const TournamentDetails = () => {
           }
         }
       }).open();
-    } catch (err) {
-      showError("Erreur lors du lancement de FedaPay.");
+    } catch (err: any) {
+      showError(err.message || "Erreur lors du lancement de FedaPay.");
     } finally {
       setIsPaying(false);
     }
@@ -170,21 +167,26 @@ const TournamentDetails = () => {
     setIsPaying(true);
     try {
       if (!await checkAvailability()) return;
-      await createPendingPayment('kkiapay');
-      const callbackUrl = `${window.location.origin}/payment-success?gateway=kkiapay&tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
+      const { data: config, error: configError } = await supabase.functions.invoke('https://ajbpdaxtynkazdrzyopd.supabase.co/functions/v1/verify-kkiapay', { body: { action: 'configuration' } });
+      if (configError || !config?.publicKey) throw new Error("Paiement temporairement indisponible : configuration KKiaPay à vérifier par le support.");
+      // @ts-ignore
+      if (typeof openKkiapayWidget !== 'function') throw new Error("Le module de paiement n'est pas chargé. Actualise la page.");
+      const attempt = await createPendingPayment('kkiapay');
+      const callbackUrl = `${window.location.origin}/payment-success?gateway=kkiapay&tournamentId=${encodeURIComponent(id!)}&tournamentName=${encodeURIComponent(tournament.title)}&paymentAttemptId=${attempt.id}`;
       sessionStorage.setItem(`payment_gateway:${id}`, 'kkiapay');
       // @ts-ignore
       openKkiapayWidget({
-        amount: tournament.entry_fee,
-        api_key: import.meta.env.VITE_KKIAPAY_PUBLIC_KEY,
+        amount: Number(attempt.amount),
+        api_key: config.publicKey,
         sandbox: false,
+        data: JSON.stringify({ paymentAttemptId: attempt.id }),
         email: currentUser?.email,
         phone: userProfile?.phone || "",
         name: userProfile?.username || "Joueur",
         callback: callbackUrl
       });
-    } catch (err: any) { 
-      showError("Erreur lors du lancement de KKiaPay.");
+    } catch (err: any) {
+      showError(err.message || "Erreur lors du lancement de KKiaPay.");
     } finally {
       setIsPaying(false);
     }

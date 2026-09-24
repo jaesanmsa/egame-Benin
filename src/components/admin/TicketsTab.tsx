@@ -192,7 +192,11 @@ const TicketsTab = ({ tournaments, initialTournamentId, refreshTournaments }: Ti
           .single();
 
         if (error) {
-          showError("Enregistrement impossible : " + error.message);
+          if (error.code === '23505') {
+            showError(`${selectedPlayer.username || "Ce joueur"} a déjà un paiement réussi pour ce tournoi.`);
+          } else {
+            showError("Enregistrement impossible : " + error.message);
+          }
           return;
         }
 

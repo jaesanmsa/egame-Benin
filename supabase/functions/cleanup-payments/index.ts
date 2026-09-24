@@ -19,11 +19,10 @@ serve(async (req) => {
 
     console.log("[cleanup-payments] Démarrage du nettoyage des paiements expirés (2 heures)...")
 
-    // Les paiements Mobile Money peuvent être confirmés tardivement (USSD) ;
-    // les webhooks peuvent réclamer une ligne même après bascule en "Échoué".
+    // Les tentatives anciennes passent en "Échoué" : le règlement par référence
+    // (settle_kkiapay_payment) reste possible ensuite, quel que soit le statut.
     const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
 
-    // Mise à jour des paiements en attente trop vieux (jamais réclamés)
     const { data, error } = await supabase
       .from('payments')
       .update({ status: 'Échoué' })
