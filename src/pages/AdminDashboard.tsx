@@ -353,7 +353,7 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="tickets">
-            <TicketsTab tournaments={allTournaments} initialTournamentId={ticketTournamentId} />
+            <TicketsTab tournaments={allTournaments} initialTournamentId={ticketTournamentId} refreshTournaments={fetchData} />
           </TabsContent>
 
           <TabsContent value="partners-admin">

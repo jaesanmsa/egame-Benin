@@ -15,7 +15,8 @@ interface PaymentsTabProps {
 const GATEWAY_LABELS: Record<string, string> = {
   kkiapay: 'KKiaPay',
   fedapay: 'FedaPay',
-  maketou: 'Maketou'
+  maketou: 'Maketou',
+  manuel: 'Manuel (hors site)'
 };
 
 const playerOf = (pay: any) => pay.profiles?.username || pay.profiles?.full_name || 'Joueur';

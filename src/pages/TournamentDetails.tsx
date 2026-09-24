@@ -35,14 +35,12 @@ const TournamentDetails = () => {
   const fetchParticipants = useCallback(async () => {
     try {
       // Vue publique sécurisée : accessible à tous, sans données sensibles.
-      const { count } = await supabase.from('public_payments').select('user_id', { count: 'exact', head: true }).eq('tournament_id', id).eq('status', 'Réussi');
+      // Compteur unifié : paiements réussis + tickets attribués (y compris manuels), sans doublons.
+      let participantCount = 0;
+      const { data: participantStats } = await supabase.from('public_participant_counts').select('participant_count').eq('tournament_id', id).maybeSingle();
+      if (participantStats) participantCount = participantStats.participant_count || 0;
 
-      // Tickets des tournois gratuits (compteur agrégé public, codes jamais exposés).
-      let ticketCount = 0;
-      const { data: ticketStats } = await supabase.from('public_ticket_counts').select('ticket_count').eq('tournament_id', id).maybeSingle();
-      if (ticketStats) ticketCount = ticketStats.ticket_count || 0;
-
-      setParticipantCount((count || 0) + ticketCount);
+      setParticipantCount(participantCount);
 
       const { data } = await supabase.from('public_payments').select('user_id, profiles(username, avatar_url, mvp_count, champion_count)').eq('tournament_id', id).eq('status', 'Réussi').limit(16);
       if (data) {
