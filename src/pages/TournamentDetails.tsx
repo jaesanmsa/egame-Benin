@@ -345,10 +345,10 @@ const TournamentDetails = () => {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <button 
-                    onClick={handleStartRegistration} 
+                  <button
+                    onClick={handleStartRegistration}
                     disabled={isPaying}
-                    className="w-full btn-glow-border py-5 rounded-2xl text-sm uppercase tracking-widest flex items-center justify-center gap-2"
+                    className="w-full border-2 border-violet-400 bg-violet-700 hover:bg-violet-600 text-white px-4 py-5 rounded-2xl text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-violet-500/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F0F1E] disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {isPaying ? (
                       <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Préparation...</>
