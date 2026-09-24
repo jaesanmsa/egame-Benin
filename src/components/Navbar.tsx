@@ -5,6 +5,7 @@ import { User, Home, Trophy, Gamepad2, Newspaper, LogIn, Sparkles } from 'lucide
 import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Logo from './Logo';
+import ProfileReminder from './ProfileReminder';
 
 const Navbar = () => {
   const location = useLocation();
@@ -26,6 +27,7 @@ const Navbar = () => {
 
   return (
     <>
+      <ProfileReminder />
       {/* NAVBAR DESKTOP */}
       <header className="hidden md:flex fixed top-4 left-6 right-6 z-50 max-w-6xl mx-auto items-center justify-between bg-[#0F0F1E]/80 backdrop-blur-2xl border border-[#8A2BE2]/30 px-8 py-3.5 rounded-full shadow-2xl shadow-[#8A2BE2]/10">
         <Link to="/" className="flex items-center gap-3">
