@@ -61,11 +61,11 @@ const PaymentSuccess = () => {
           showSuccess("Paiement Maketou vérifié !");
         } else if (gateway === 'fedapay') {
           const { data, error: funcError } = await supabase.functions.invoke('verify-fedapay', {
-            body: { transaction_id: transactionId, tournamentId, tournamentName: tName, amount }
+            body: { transaction_id: transactionId, tournamentId, paymentAttemptId: searchParams.get('paymentAttemptId') }
           });
           if (funcError || data?.error) throw new Error(data?.error || "Erreur FedaPay");
           setValidationCode(data.validation_code);
-          showSuccess("Paiement FedaPay vérifié !");
+          showSuccess(data?.already_processed ? "Paiement déjà enregistré !" : "Paiement FedaPay vérifié !");
         } else if (gateway === 'kkiapay') {
           const paymentAttemptId = searchParams.get('paymentAttemptId');
           const { data, error: verifyError } = await supabase.functions.invoke('https://ajbpdaxtynkazdrzyopd.supabase.co/functions/v1/verify-kkiapay', {

@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
-import { genCode, claimPending, creditPoints } from '../_shared/payment.ts'
+import { verifyTransaction, settleTransaction } from '../_shared/fedapay.ts'
 import { notifyPaymentConfirmed } from '../_shared/push.ts'
 
 const corsHeaders = {
@@ -8,134 +8,72 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+
+/**
+ * Vérification SERVEUR d'une transaction FedaPay après le retour du joueur.
+ * Le navigateur ne décide jamais seul : seule l'API FedaPay (clé secrète serveur)
+ * fait foi, et le règlement passe par le RPC idempotent settle_fedapay_payment.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
+  if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
+
+  const authHeader = req.headers.get('Authorization')
+  if (!authHeader) return json({ error: 'Non authentifié' }, 401)
 
   try {
-    const { transaction_id, tournamentId, tournamentName, amount } = await req.json()
-    const FEDAPAY_SECRET_KEY = Deno.env.get('FEDAPAY_SECRET_KEY')
+    const userClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    )
+    const { data: { user }, error: userError } = await userClient.auth.getUser()
+    if (userError || !user) return json({ error: 'Session invalide' }, 401)
 
-    if (!FEDAPAY_SECRET_KEY) {
-      throw new Error("La clé secrète FEDAPAY_SECRET_KEY n'est pas configurée dans Supabase.")
-    }
+    const body = await req.json().catch(() => ({}))
+    const transactionId = String(body?.transaction_id ?? body?.transactionId ?? '').trim()
+    const fallbackAttemptId = typeof body?.paymentAttemptId === 'string' && body.paymentAttemptId ? body.paymentAttemptId : null
+    if (!transactionId) return json({ error: 'Identifiant de transaction manquant' }, 400)
 
-    console.log(`[verify-fedapay] Vérification de la transaction: ${transaction_id}`)
+    console.log(`[verify-fedapay] Vérification de la transaction ${transactionId} pour ${user.id}...`)
 
-    // 1. Appeler l'API FedaPay pour vérifier le statut réel
-    const response = await fetch(`https://api.fedapay.com/v1/transactions/${transaction_id}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${FEDAPAY_SECRET_KEY}`,
-        'Content-Type': 'application/json',
-      }
-    })
+    // Source de vérité : l'API FedaPay.
+    const tx = await verifyTransaction(transactionId)
 
-    const fedaData = await response.json()
-    
-    // Le statut doit être 'approved' chez FedaPay
-    if (fedaData.v1?.transaction?.status !== 'approved') {
-      throw new Error(`Paiement non approuvé. Statut actuel: ${fedaData.v1?.transaction?.status}`)
-    }
-
-    // 2. Si c'est bon, on enregistre dans la base de données Supabase
-    const supabase = createClient(
+    // Règlement idempotent : transaction → tentative exacte → paiement + ticket.
+    const db = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
+    const result = await settleTransaction(db, transactionId, tx, fallbackAttemptId)
 
-    // Récupérer l'utilisateur via le token d'auth (si présent) ou gérer via le contexte
-    // Pour simplifier, on récupère l'ID utilisateur lié à la transaction si FedaPay le permet 
-    // ou on attend que le frontend envoie l'ID utilisateur.
-    const authHeader = req.headers.get('Authorization')
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader! } } }
-    )
-    const { data: { user } } = await supabaseClient.auth.getUser()
-
-    if (!user) throw new Error("Utilisateur non authentifié")
-
-    // Vérifier si déjà enregistré
-    const { data: existing } = await supabase
-      .from('payments')
-      .select('*')
-      .eq('fedapay_transaction_id', transaction_id)
-      .maybeSingle()
-
-    if (existing) {
-      return new Response(JSON.stringify({ success: true, already_processed: true, validation_code: existing.validation_code }), { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    if (!result?.attributed) {
+      console.error(`[verify-fedapay] Transaction ${transactionId} non attribuée : ${result?.reason}`)
+      return json({
+        error: result?.reason ?? 'Paiement non attribué. Contacte le support avec ton reçu — ne paie pas à nouveau.'
       })
     }
 
-    // 1) Réclamer la ligne "En attente" créée à l'ouverture du widget
-    const code = genCode()
-    const claimed = await claimPending(supabase, {
-      userId: user.id,
-      tournamentId,
-      gateway: 'fedapay',
-      transactionId,
-      amount: amount ?? '0',
-      tournamentName,
-      code
-    })
-
-    if (claimed) {
-      console.log(`[verify-fedapay] Ligne en attente réclamée (${claimed.id}). Code: ${claimed.validation_code}`)
-      await creditPoints(supabase, user.id)
-      return new Response(JSON.stringify({ success: true, validation_code: claimed.validation_code }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      })
+    if (!result.duplicate) {
+      const { data: row } = await db
+        .from('payments')
+        .select('tournament_name')
+        .eq('id', result.payment_id)
+        .maybeSingle()
+      await notifyPaymentConfirmed(result.user_id, row?.tournament_name)
     }
 
-    // 2) Sinon (pas de ligne d'attente) : insertion directe
-    const { error: insertError } = await supabase.from('payments').insert({
-      user_id: user.id,
-      tournament_id: tournamentId,
-      tournament_name: tournamentName,
-      amount: amount,
-      status: 'Réussi',
-      validation_code: code,
-      fedapay_transaction_id: transaction_id,
-      gateway: 'fedapay'
+    console.log(`[verify-fedapay] Transaction ${transactionId} réglée pour ${user.id} — ticket ${result.validation_code}.`)
+    return json({
+      success: true,
+      validation_code: result.validation_code,
+      tournament_id: result.tournament_id,
+      already_processed: !!result.duplicate
     })
-
-    if (insertError) {
-      // Course avec le webhook : la transaction vient d'être enregistrée.
-      if (insertError.code === '23505') {
-        const { data: byTx } = await supabase
-          .from('payments')
-          .select('validation_code')
-          .eq('fedapay_transaction_id', transaction_id)
-          .maybeSingle()
-        if (byTx) {
-          return new Response(JSON.stringify({ success: true, already_processed: true, validation_code: byTx.validation_code }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          })
-        }
-      }
-      throw insertError
-    }
-
-    // Créditer les points
-    const { data: profile } = await supabase.from('profiles').select('points').eq('id', user.id).single()
-    await supabase.from('profiles').update({ points: (profile?.points || 0) + 10 }).eq('id', user.id)
-
-    // Notifier le joueur (push)
-    await notifyPaymentConfirmed(user.id, tournamentName)
-
-    console.log(`[verify-fedapay] Succès ! Code généré: ${code}`)
-
-    return new Response(JSON.stringify({ success: true, validation_code: code }), { 
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-    })
-
   } catch (error) {
-    console.error("[verify-fedapay] Erreur:", error.message)
-    return new Response(JSON.stringify({ error: error.message }), { 
-      status: 400, 
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-    })
+    console.error('[verify-fedapay] Erreur:', error.message)
+    return json({ error: error.message })
   }
 })

@@ -132,8 +132,8 @@ const TournamentDetails = () => {
     setIsPaying(true);
     try {
       if (!await checkAvailability()) return;
-      await createPendingPayment('fedapay');
-      const redirectUrl = `${window.location.origin}/payment-success?gateway=fedapay&tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
+      const attempt = await createPendingPayment('fedapay');
+      const redirectUrl = `${window.location.origin}/payment-success?gateway=fedapay&tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}&paymentAttemptId=${attempt.id}`;
       sessionStorage.setItem(`payment_gateway:${id}`, 'fedapay');
 
       // @ts-ignore
@@ -143,8 +143,8 @@ const TournamentDetails = () => {
           amount: tournament.entry_fee,
           description: `Inscription: ${tournament.title}`,
           callback_url: redirectUrl,
-          metadata: { tournamentId: id, tournamentName: tournament.title, userId: currentUser.id },
-          custom_metadata: { tournamentId: id, tournamentName: tournament.title, userId: currentUser.id }
+          metadata: { tournamentId: id, tournamentName: tournament.title, userId: currentUser.id, paymentAttemptId: attempt.id },
+          custom_metadata: { tournamentId: id, tournamentName: tournament.title, userId: currentUser.id, paymentAttemptId: attempt.id }
         },
         customer: {
           firstname: userProfile?.full_name || userProfile?.username || "Joueur",
