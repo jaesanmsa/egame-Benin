@@ -97,6 +97,27 @@ const TournamentDetails = () => {
     try { await navigator.share({ title: tournament.title, url: window.location.href }); } catch { navigator.clipboard.writeText(window.location.href); showSuccess("Lien copié !"); }
   };
 
+  const checkAvailability = async () => {
+    const [{ data: latest, error: tournamentError }, { data: stats, error: countError }] = await Promise.all([
+      supabase.from('tournaments').select('max_participants').eq('id', id).single(),
+      supabase.from('public_participant_counts').select('participant_count').eq('tournament_id', id).maybeSingle()
+    ]);
+    if (tournamentError || countError) {
+      showError("Impossible de vérifier les places disponibles. Réessaie dans un instant.");
+      return false;
+    }
+    const count = stats?.participant_count ?? 0;
+    setParticipantCount(count);
+    setTournament((previous: any) => ({ ...previous, max_participants: latest.max_participants }));
+    if (count >= (latest.max_participants ?? 40)) {
+      setShowConfirmation(false);
+      setShowPaymentMethods(false);
+      showError("Tournoi complet : toutes les places sont prises.");
+      return false;
+    }
+    return true;
+  };
+
   const createPendingPayment = async (gateway: 'fedapay' | 'kkiapay') => {
     const { error } = await supabase.from('payments').insert({
       user_id: currentUser.id,
@@ -113,6 +134,7 @@ const TournamentDetails = () => {
     setShowPaymentMethods(false);
     setIsPaying(true);
     try {
+      if (!await checkAvailability()) return;
       await createPendingPayment('fedapay');
       const redirectUrl = `${window.location.origin}/payment-success?gateway=fedapay&tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
       sessionStorage.setItem(`payment_gateway:${id}`, 'fedapay');
@@ -147,6 +169,7 @@ const TournamentDetails = () => {
     setShowPaymentMethods(false);
     setIsPaying(true);
     try {
+      if (!await checkAvailability()) return;
       await createPendingPayment('kkiapay');
       const callbackUrl = `${window.location.origin}/payment-success?gateway=kkiapay&tournamentId=${id}&tournamentName=${encodeURIComponent(tournament.title)}&amount=${tournament.entry_fee}`;
       sessionStorage.setItem(`payment_gateway:${id}`, 'kkiapay');
@@ -167,12 +190,18 @@ const TournamentDetails = () => {
     }
   };
 
-  const handleStartRegistration = () => {
-    if (!isLoggedIn) {
-      navigate('/auth');
-      return;
+  const handleStartRegistration = async () => {
+    setIsPaying(true);
+    try {
+      if (!await checkAvailability()) return;
+      if (!isLoggedIn) {
+        navigate('/auth');
+        return;
+      }
+      setShowConfirmation(true);
+    } finally {
+      setIsPaying(false);
     }
-    setShowConfirmation(true);
   };
 
   // Inscription gratuite : attribution d'un ticket pré-généré à envoyer à l'IA eGame sur WhatsApp.
@@ -180,6 +209,7 @@ const TournamentDetails = () => {
     setShowConfirmation(false);
     setIsPaying(true);
     try {
+      if (!await checkAvailability()) return;
       const { data, error } = await supabase.rpc('claim_tournament_ticket', { p_tournament_id: id });
 
       if (error) {
@@ -326,6 +356,15 @@ const TournamentDetails = () => {
                       Envoyer mon ticket sur WhatsApp
                     </Button>
                   </a>
+                </div>
+              ) : participantCount >= maxSlots ? (
+                <div className="rounded-2xl border-2 border-orange-400/60 bg-orange-950/40 p-6 text-center space-y-3" role="status">
+                  <Users className="mx-auto text-orange-300" size={26} />
+                  <h3 className="font-gaming font-bold text-orange-200 uppercase">Tournoi complet</h3>
+                  <p className="text-sm text-orange-100">Toutes les places sont prises ({participantCount}/{maxSlots}). Les inscriptions sont fermées.</p>
+                  <Button disabled className="w-full rounded-2xl border border-orange-300/40 bg-orange-900 text-white py-5 disabled:opacity-80">
+                    Aucune place disponible
+                  </Button>
                 </div>
               ) : isRegistrationNotOpen ? (
                 <div className="bg-violet-950/40 border border-violet-500/40 p-6 rounded-2xl text-center space-y-2">
