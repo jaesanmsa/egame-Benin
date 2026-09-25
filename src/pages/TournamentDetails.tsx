@@ -31,6 +31,9 @@ const TournamentDetails = () => {
   const [userTicket, setUserTicket] = useState<any>(null);
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [showPendingPaymentDialog, setShowPendingPaymentDialog] = useState(false);
+  const [pendingGateway, setPendingGateway] = useState<'fedapay' | 'kkiapay' | null>(null);
+  const [isResolvingPending, setIsResolvingPending] = useState(false);
 
   const fetchParticipants = useCallback(async () => {
     try {
@@ -156,7 +159,12 @@ const TournamentDetails = () => {
         }
       }).open();
     } catch (err: any) {
-      showError(err.message || "Erreur lors du lancement de FedaPay.");
+      if (String(err?.message).includes('paiement est déjà en attente')) {
+        setPendingGateway('fedapay');
+        setShowPendingPaymentDialog(true);
+      } else {
+        showError(err.message || "Erreur lors du lancement de FedaPay.");
+      }
     } finally {
       setIsPaying(false);
     }
@@ -186,10 +194,44 @@ const TournamentDetails = () => {
         callback: callbackUrl
       });
     } catch (err: any) {
-      showError(err.message || "Erreur lors du lancement de KKiaPay.");
+      if (String(err?.message).includes('paiement est déjà en attente')) {
+        setPendingGateway('kkiapay');
+        setShowPendingPaymentDialog(true);
+      } else {
+        showError(err.message || "Erreur lors du lancement de KKiaPay.");
+      }
     } finally {
       setIsPaying(false);
     }
+  };
+
+  const handlePendingPaymentAnswer = async (wasDebited: boolean) => {
+    if (wasDebited) {
+      const message = encodeURIComponent(
+        `Bonjour eGame Bénin, j'ai été débité pour l'inscription au tournoi « ${tournament.title} » (${tournament.entry_fee} FCFA), mais mon paiement est toujours en attente. Je vais joindre ici le reçu de paiement reçu par e-mail.`
+      );
+      setShowPendingPaymentDialog(false);
+      window.open(`https://wa.me/${WHATSAPP_AI_NUMBER}?text=${message}`, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    if (!pendingGateway) return;
+    setIsResolvingPending(true);
+    const gatewayToRetry = pendingGateway;
+    const { error } = await supabase.rpc('abandon_pending_tournament_payment', { p_tournament_id: id });
+    if (error) {
+      showError("Impossible de reprendre le paiement : " + error.message);
+      setIsResolvingPending(false);
+      return;
+    }
+
+    setShowPendingPaymentDialog(false);
+    setPendingGateway(null);
+    setIsResolvingPending(false);
+    showSuccess("Ancienne tentative annulée. Tu peux reprendre le paiement.");
+
+    if (gatewayToRetry === 'kkiapay') await handleKKiaPay();
+    else await handleFedaPay();
   };
 
   const handleStartRegistration = async () => {
@@ -461,6 +503,74 @@ const TournamentDetails = () => {
           </div>
         </div>
       </main>
+
+      {/* Paiement déjà en attente : le joueur confirme s'il a réellement été débité. */}
+      <AnimatePresence>
+        {showPendingPaymentDialog && (
+          <div className="fixed inset-0 z-[10020] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/85 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0, y: 16 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 16 }}
+              className="relative z-[10021] w-full max-w-[440px] rounded-3xl border border-amber-500/50 bg-[#0F0F1E] p-6 md:p-8 shadow-2xl shadow-amber-950/40"
+            >
+              <div className="space-y-6 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-amber-500/40 bg-amber-500/15 text-amber-400">
+                  <AlertTriangle size={32} />
+                </div>
+                <div className="space-y-3">
+                  <h2 className="text-xl font-gaming font-black text-white">Un paiement est déjà en cours</h2>
+                  <p className="text-sm font-bold text-white">As-tu été débité pour cette tentative ?</p>
+                  <p className="text-xs leading-relaxed text-[#A0A0B8]">
+                    Vérifie ton solde Mobile Money, tes SMS et ton e-mail avant de répondre. Ne relance pas le paiement si le montant a été débité.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    disabled={isResolvingPending}
+                    onClick={() => handlePendingPaymentAnswer(true)}
+                    className="w-full rounded-2xl border border-emerald-500/40 bg-emerald-600 px-5 py-4 text-xs font-gaming font-black uppercase tracking-wider text-white transition-colors hover:bg-emerald-500 disabled:opacity-50"
+                  >
+                    Oui, j'ai été débité
+                  </button>
+                  <p className="text-[11px] leading-relaxed text-emerald-300/90">
+                    Le support WhatsApp va s'ouvrir. Joins-y le reçu reçu par e-mail afin que eGame Bénin vérifie le paiement.
+                  </p>
+
+                  <button
+                    type="button"
+                    disabled={isResolvingPending}
+                    onClick={() => handlePendingPaymentAnswer(false)}
+                    className="w-full rounded-2xl border border-[#8A2BE2]/50 bg-[#8A2BE2] px-5 py-4 text-xs font-gaming font-black uppercase tracking-wider text-white transition-colors hover:bg-[#9B4DEB] disabled:cursor-wait disabled:opacity-60"
+                  >
+                    {isResolvingPending ? 'Préparation du nouveau paiement…' : "Non, je n'ai pas été débité"}
+                  </button>
+                  <p className="text-[11px] leading-relaxed text-[#A0A0B8]">
+                    L'ancienne tentative sera annulée, puis le paiement pourra reprendre immédiatement.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  disabled={isResolvingPending}
+                  onClick={() => { setShowPendingPaymentDialog(false); setPendingGateway(null); }}
+                  className="text-xs font-gaming font-bold text-[#8888AA] transition-colors hover:text-white disabled:opacity-50"
+                >
+                  Fermer sans rien faire
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Modal 1 : Avertissement & Validation */}
       <AnimatePresence>
