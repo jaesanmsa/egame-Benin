@@ -68,7 +68,7 @@ const PaymentSuccess = () => {
           showSuccess(data?.already_processed ? "Paiement déjà enregistré !" : "Paiement FedaPay vérifié !");
         } else if (gateway === 'kkiapay') {
           const paymentAttemptId = searchParams.get('paymentAttemptId');
-          const { data, error: verifyError } = await supabase.functions.invoke('https://ajbpdaxtynkazdrzyopd.supabase.co/functions/v1/verify-kkiapay', {
+          const { data, error: verifyError } = await supabase.functions.invoke('verify-kkiapay', {
             body: { transactionId, tournamentId, paymentAttemptId }
           });
           if (verifyError) {

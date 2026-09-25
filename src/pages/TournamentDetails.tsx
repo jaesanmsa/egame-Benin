@@ -167,7 +167,7 @@ const TournamentDetails = () => {
     setIsPaying(true);
     try {
       if (!await checkAvailability()) return;
-      const { data: config, error: configError } = await supabase.functions.invoke('https://ajbpdaxtynkazdrzyopd.supabase.co/functions/v1/verify-kkiapay', { body: { action: 'configuration' } });
+      const { data: config, error: configError } = await supabase.functions.invoke('verify-kkiapay', { body: { action: 'configuration' } });
       if (configError || !config?.publicKey) throw new Error("Paiement temporairement indisponible : configuration KKiaPay à vérifier par le support.");
       // @ts-ignore
       if (typeof openKkiapayWidget !== 'function') throw new Error("Le module de paiement n'est pas chargé. Actualise la page.");
