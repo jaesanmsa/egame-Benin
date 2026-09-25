@@ -2,6 +2,7 @@ import React, { Component, ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./globals.css";
+import "./lib/pwaInstall";
 import { isModuleLoadError, recoverModuleLoad } from "./utils/moduleRecovery";
 
 interface Props {
