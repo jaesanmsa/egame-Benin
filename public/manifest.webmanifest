@@ -1,0 +1,28 @@
+{
+  "id": "/",
+  "name": "eGame Bénin",
+  "short_name": "eGame Bénin",
+  "description": "Tournois eSport, actualités et communauté gaming au Bénin.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#07070c",
+  "theme_color": "#7c3aed",
+  "categories": ["games", "sports", "social"],
+  "icons": [
+    {
+      "src": "/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
