@@ -33,8 +33,9 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
               className="flex items-center justify-between p-5 bg-muted/30 rounded-2xl border border-border/50 hover:border-violet-500/30 transition-all"
             >
               <div className="text-left">
-                <p className="font-black text-sm">
+                <p className="font-black text-sm flex items-center gap-2">
                   {t.title}
+                  {t.is_test && <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/30">Essai</span>}
                 </p>
                 <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{t.game} • {t.prize_pool}</p>
               </div>

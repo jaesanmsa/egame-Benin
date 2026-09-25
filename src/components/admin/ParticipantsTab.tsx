@@ -36,7 +36,7 @@ const ParticipantsTab = ({ activeTournaments, fetchParticipants, selectedTournam
           </SelectTrigger>
           <SelectContent className="bg-card border-border">
             {activeTournaments.map(t => (
-              <SelectItem key={t.id} value={t.id} className="font-bold">{t.title}</SelectItem>
+              <SelectItem key={t.id} value={t.id} className="font-bold">{t.is_test ? `🧪 ${t.title} (ESSAI)` : t.title}</SelectItem>
             ))}
           </SelectContent>
         </Select>

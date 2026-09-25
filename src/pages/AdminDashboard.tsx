@@ -48,6 +48,7 @@ const AdminDashboard = () => {
     description: '',
     payment_url: '',
     payment_gateway: 'kkiapay',
+    is_test: false,
     registration_start_date: beninNowInput(),
     start_date: beninNowInput(),
     registration_end_date: beninNowInput()
@@ -129,24 +130,30 @@ const AdminDashboard = () => {
     }]).select('id').single();
     if (error) showError(error.message);
     else {
-      showSuccess(`${newTournament.max_participants} tickets générés. Ils sont prêts dans le panneau Tickets !`);
+      if (newTournament.is_test) {
+        showSuccess("Tournoi d'essai créé : visible uniquement par toi, aucune notification envoyée.");
+      } else {
+        showSuccess(`${newTournament.max_participants} tickets générés. Ils sont prêts dans le panneau Tickets !`);
+      }
       setTicketTournamentId(createdTournament.id);
       setActiveTab("tickets");
-      // Notification push à tous les joueurs abonnés (Chrome/Android via FCM)
-      supabase.functions.invoke('send-push-notification', {
-        body: {
-          type: 'NEW_TOURNAMENT',
-          game: newTournament.game,
-          slots: newTournament.max_participants,
-          fee: newTournament.entry_fee,
-          prize: newTournament.prize_pool,
-          tournament_id: newTournament.id
-        }
-      }).then(({ error: pushError }) => {
-        if (pushError) showError("Notification non envoyée : " + pushError.message);
-      });
+      // Notification push à tous les joueurs abonnés (jamais pour un tournoi d'essai)
+      if (!newTournament.is_test) {
+        supabase.functions.invoke('send-push-notification', {
+          body: {
+            type: 'NEW_TOURNAMENT',
+            game: newTournament.game,
+            slots: newTournament.max_participants,
+            fee: newTournament.entry_fee,
+            prize: newTournament.prize_pool,
+            tournament_id: newTournament.id
+          }
+        }).then(({ error: pushError }) => {
+          if (pushError) showError("Notification non envoyée : " + pushError.message);
+        });
+      }
       setNewTournament({
-        id: '', title: '', game: 'Free Fire', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '', payment_gateway: 'kkiapay',
+        id: '', title: '', game: 'Free Fire', image_url: '', entry_fee: 0, prize_pool: '', type: 'Online', max_participants: 40, rules: '', description: '', payment_url: '', payment_gateway: 'kkiapay', is_test: false,
         registration_start_date: beninNowInput(),
         start_date: beninNowInput(),
         registration_end_date: beninNowInput()
@@ -187,6 +194,21 @@ const AdminDashboard = () => {
 
   const handleFinishTournament = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Un tournoi d'essai ne se clôture pas : il est supprimé définitivement,
+    // avec tous ses paiements et tickets. Rien n'est conservé ni comptabilisé.
+    const selectedTournament = allTournaments.find((t: any) => t.id === finishData.tournamentId);
+    if (selectedTournament?.is_test) {
+      const { error } = await supabase.rpc('delete_test_tournament', { p_tournament_id: finishData.tournamentId });
+      if (error) {
+        showError("Suppression impossible : " + error.message);
+        return;
+      }
+      showSuccess("Tournoi d'essai supprimé : paiements, tickets et données effacés de la base.");
+      setFinishData({ tournamentId: '', winnerName: '' });
+      fetchData();
+      return;
+    }
 
     const winnerName = finishData.winnerName.trim();
     if (!finishData.tournamentId || !winnerName) {

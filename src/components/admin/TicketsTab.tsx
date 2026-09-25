@@ -329,7 +329,7 @@ const TicketsTab = ({ tournaments, initialTournamentId, refreshTournaments }: Ti
               <SelectContent>
                 {tournaments.map((t: any) => (
                   <SelectItem key={t.id} value={t.id} className="font-bold">
-                    {t.title} {Number(t.entry_fee) === 0 ? "· Gratuit" : ""}
+                    {t.is_test ? `🧪 ${t.title} (ESSAI)` : t.title} {Number(t.entry_fee) === 0 ? "· Gratuit" : ""}
                   </SelectItem>
                 ))}
               </SelectContent>

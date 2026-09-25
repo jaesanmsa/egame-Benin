@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Image as ImageIcon, Calendar, Clock, CreditCard, Zap } from 'lucide-react';
+import { Plus, Image as ImageIcon, Calendar, Clock, CreditCard, Zap, FlaskConical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -201,8 +201,24 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTour
           <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Règlement</Label>
           <Textarea placeholder="Règlement du tournoi..." value={newTournament.rules} onChange={e => setNewTournament({...newTournament, rules: e.target.value})} className="bg-muted/50 border-border rounded-2xl min-h-[100px] p-4" />
         </div>
+        <div className="md:col-span-2 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5 space-y-3">
+          <div className="flex items-center gap-3">
+            <Switch id="test-tournament" checked={!!newTournament.is_test} onCheckedChange={(v) => setNewTournament({ ...newTournament, is_test: v })} />
+            <Label htmlFor="test-tournament" className="text-sm font-black cursor-pointer select-none flex items-center gap-2">
+              <FlaskConical size={16} className="text-amber-500" />
+              Tournoi d'essai (test des paiements)
+            </Label>
+          </div>
+          {newTournament.is_test && (
+            <p className="text-xs text-amber-600 dark:text-amber-400 font-bold leading-relaxed">
+              Visible uniquement par le compte administrateur : aucun joueur ne le verra et aucune notification push ne sera envoyée. Il n'est pas comptabilisé dans les statistiques du site. À la clôture, il est supprimé définitivement avec tous ses paiements et tickets.
+            </p>
+          )}
+        </div>
       </div>
-      <Button type="submit" className="w-full bg-violet-600 hover:bg-violet-700 py-8 rounded-2xl font-black text-base shadow-xl shadow-violet-500/20 text-white">Créer le tournoi</Button>
+      <Button type="submit" className={`w-full py-8 rounded-2xl font-black text-base shadow-xl text-white ${newTournament.is_test ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-500/20' : 'bg-violet-600 hover:bg-violet-700 shadow-violet-500/20'}`}>
+        {newTournament.is_test ? 'Créer le tournoi d\'essai' : 'Créer le tournoi'}
+      </Button>
     </motion.form>
   );
 };

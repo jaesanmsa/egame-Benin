@@ -18,9 +18,10 @@ interface TournamentProps {
   prizePool?: string | null;
   type: 'Online' | 'Presentiel';
   status?: 'active' | 'finished';
+  isTest?: boolean;
 }
 
-const TournamentCard = ({ id, title, game, image, date, participants, entryFee, prizePool, type, status = 'active' }: TournamentProps) => {
+const TournamentCard = ({ id, title, game, image, date, participants, entryFee, prizePool, type, status = 'active', isTest = false }: TournamentProps) => {
   const navigate = useNavigate();
 
   const handleShare = (e: React.MouseEvent) => {
@@ -68,6 +69,11 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
           {entryFee === "0" && (
             <Badge className="bg-emerald-950/80 backdrop-blur-md text-emerald-300 border border-emerald-500/50 text-[10px] font-bold uppercase tracking-wider py-1 px-3 rounded-full">
               Gratuit
+            </Badge>
+          )}
+          {isTest && (
+            <Badge className="bg-amber-950/80 backdrop-blur-md text-amber-300 border border-amber-500/50 text-[10px] font-bold uppercase tracking-wider py-1 px-3 rounded-full">
+              Essai
             </Badge>
           )}
         </div>

@@ -206,6 +206,7 @@ const Index = () => {
                 prizePool={t.prize_pool}
                 type={t.type as any}
                 status="active"
+                isTest={t.is_test}
               />
             ))}
           </div>

@@ -5,7 +5,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
-import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Loader2, X, Globe, Share2, Ticket, Copy } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Loader2, X, Globe, Share2, Ticket, Copy, FlaskConical } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -266,6 +266,15 @@ const TournamentDetails = () => {
       </div>
 
       <main className="max-w-4xl mx-auto px-6 -mt-24 relative z-10 space-y-8">
+        {/* Bandeau tournoi d'essai : visible uniquement par l'administration */}
+        {tournament.is_test && (
+          <div className="bg-amber-500/10 border border-amber-500/40 rounded-3xl p-4 flex items-center gap-3">
+            <FlaskConical className="text-amber-400 shrink-0" size={22} />
+            <p className="text-xs font-bold text-amber-300 leading-relaxed">
+              Tournoi d'essai — visible uniquement par l'administration. Il n'est pas comptabilisé sur le site et sera supprimé définitivement (paiements et tickets inclus) à sa clôture.
+            </p>
+          </div>
+        )}
         {/* Card Principale du Tournoi */}
         <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-3xl p-6 md:p-10 shadow-2xl space-y-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-6 border-b border-[#8A2BE2]/20">

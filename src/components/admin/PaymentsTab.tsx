@@ -47,10 +47,14 @@ const PaymentsTab = ({ tournaments, payments, searchQuery, setSearchQuery }: Pay
   const attributedIds = new Set(tournaments.map(t => t.id));
   const orphans = payments.filter(pay => !attributedIds.has(pay.tournament_id));
 
+  // Les tournois d'essai ne polluent pas la caisse réelle du site.
+  const testIds = new Set(tournaments.filter(t => t.is_test).map(t => t.id));
+  const realTournaments = tournaments.filter(t => !t.is_test);
+
   const totalCollected = payments
-    .filter(pay => pay.status === 'Réussi')
+    .filter(pay => pay.status === 'Réussi' && !testIds.has(pay.tournament_id))
     .reduce((sum, pay) => sum + (parseInt(pay.amount, 10) || 0), 0);
-  const totalTicketsSold = tournaments.reduce((sum, t) => sum + successPayments(t.id).length, 0);
+  const totalTicketsSold = realTournaments.reduce((sum, t) => sum + successPayments(t.id).length, 0);
 
   /* ---------------------------- Vue détail d'un tournoi ---------------------------- */
   const selected = tournaments.find(t => t.id === selectedId);
@@ -73,6 +77,11 @@ const PaymentsTab = ({ tournaments, payments, searchQuery, setSearchQuery }: Pay
               <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${isFinished ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'}`}>
                 {isFinished ? 'Clôturé' : 'En cours'}
               </span>
+              {selected.is_test && (
+                <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/30">
+                  Essai — non comptabilisé
+                </span>
+              )}
               <span className="text-[10px] font-black uppercase tracking-widest text-violet-500">{selected.game}</span>
             </div>
             <h2 className="text-xl md:text-2xl font-black truncate">{selected.title}</h2>
@@ -188,7 +197,10 @@ const PaymentsTab = ({ tournaments, payments, searchQuery, setSearchQuery }: Pay
             {isFinished ? <Trophy size={20} /> : <Ticket size={20} />}
           </div>
           <div className="min-w-0">
-            <p className="font-black text-sm truncate">{t.title}</p>
+            <p className="font-black text-sm truncate flex items-center gap-2">
+              <span className="truncate">{t.title}</span>
+              {t.is_test && <span className="shrink-0 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/30">Essai</span>}
+            </p>
             <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest truncate">{t.game} • {fmtDay(t.start_date ?? t.created_at)}</p>
             <p className="text-[10px] font-bold mt-1">
               <span className="text-emerald-600 dark:text-emerald-400">{caisse.toLocaleString('fr-FR')} FCFA</span>
