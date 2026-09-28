@@ -180,19 +180,81 @@ const EditProfile = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">Pays</Label>
-                <Select value={profile.country} onValueChange={(country) => setProfile({ ...profile, country, phone: setPhoneCountry(profile.phone, country), timezone: proposeTimezone(country) })}>\n                  <SelectTrigger id="country" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">\n                    <span className="flex items-center gap-2 text-sm">\n                      <Globe size={16} className="text-[#8A2BE2] shrink-0" />\n                      {getCountryByCode(profile.country)\n                        ? `${getCountryByCode(profile.country)!.flag} ${getCountryByCode(profile.country)!.name}`\n                        : '🌍 Choisis ton pays'}\n                    </span>\n                  </SelectTrigger>\n                  <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white max-h-80">\n                    {AFRICAN_COUNTRIES.map((country) => (\n                      <SelectItem key={country.code} value={country.code} className="text-xs">\n                        {country.flag} {country.name}\n                      </SelectItem>\n                    ))}\n                  </SelectContent>\n                </Select>\n              </div>
+                <Select value={profile.country} onValueChange={(country) => setProfile({ ...profile, country, phone: setPhoneCountry(profile.phone, country), timezone: proposeTimezone(country) })}>
+                  <SelectTrigger id="country" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
+                    <span className="flex items-center gap-2 text-sm">
+                      <Globe size={16} className="text-[#8A2BE2] shrink-0" />
+                      {getCountryByCode(profile.country)
+                        ? `${getCountryByCode(profile.country)!.flag} ${getCountryByCode(profile.country)!.name}`
+                        : '🌍 Choisis ton pays'}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white max-h-80">
+                    {AFRICAN_COUNTRIES.map((country) => (
+                      <SelectItem key={country.code} value={country.code} className="text-xs">
+                        {country.flag} {country.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
               <div className="space-y-1.5">
                 <Label htmlFor="city" className="text-xs font-gaming uppercase text-[#8888AA]">Ville</Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-3 text-[#8888AA]" size={18} />
-                  <Input\n                    id="city"\n                    value={profile.city}\n                    onChange={(e) => setProfile({...profile, city: e.target.value})}\n                    className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"\n                    placeholder="Ex : Cotonou, Abidjan, Lagos..."\n                  />\n                </div>\n              </div>\n            </div>
+                  <Input
+                    id="city"
+                    value={profile.city}
+                    onChange={(e) => setProfile({...profile, city: e.target.value})}
+                    className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
+                    placeholder="Ex : Cotonou, Abidjan, Lagos..."
+                  />
+                </div>
+              </div>
+            </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="timezone" className="text-xs font-gaming uppercase text-[#8888AA] flex items-center gap-1.5">
-                <Clock size={13} className="text-[#8A2BE2] /> Fuseau horaire
+                <Clock size={13} className="text-[#8A2BE2]" /> Fuseau horaire
               </Label>
-              <Select value={profile.timezone} onValueChange={(timezone) => setProfile({ ...profile, timezone })}>\n                <SelectTrigger id="timezone" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">\n                  <span className="text-xs font-mono">{profile.timezone || 'Sélectionner'}</span>\n                </SelectTrigger>\n                <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white max-h-80">\n                  {profile.country ? (\n                    <>\n                      {getTimezonesForCountry(profile.country).map((tz) => (\n                        <SelectItem key={tz} value={tz} className="text-xs font-mono">\n                          {tz}\n                        </SelectItem>\n                      ))}\n                      {profile.timezone && !getTimezonesForCountry(profile.country).includes(profile.timezone) && (\n                        <SelectItem key={profile.timezone} value={profile.timezone} className="text-xs font-mono text-orange-400">\n                          {profile.timezone} (personnalisé)\n                        </SelectItem>\n                      )}\n                    </>\n                  ) : (\n                    <>\n                      {Array.from(new Set([\n                        ...getTimezonesForCountry(profile.country),\n                        profile.timezone,\n                        proposeTimezone(profile.country)\n                      ])).filter((tz): tz is string => !!tz).map((tz) => (\n                        <SelectItem key={tz} value={tz} className="text-xs font-mono">\n                          {tz}\n                        </SelectItem>\n                      ))}\n                    </>\n                  )}\n                </SelectContent>\n              </Select>\n              <p className="text-[10px] text-[#8888AA]/70">\n                Utilisé pour ton check-in quotidien (série 7 jours). Le fuseau est verrouillé au début de chaque cycle de série côté serveur. Si tu changes de fuseau pendant une série active, le changement s'appliquera uniquement à ta prochaine série.\n              </p>\n            </div>
+              <Select value={profile.timezone} onValueChange={(timezone) => setProfile({ ...profile, timezone })}>
+                <SelectTrigger id="timezone" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
+                  <span className="text-xs font-mono">{profile.timezone || 'Sélectionner'}</span>
+                </SelectTrigger>
+                <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white max-h-80">
+                  {profile.country ? (
+                    <>
+                      {getTimezonesForCountry(profile.country).map((tz) => (
+                        <SelectItem key={tz} value={tz} className="text-xs font-mono">
+                          {tz}
+                        </SelectItem>
+                      ))}
+                      {profile.timezone && !getTimezonesForCountry(profile.country).includes(profile.timezone) && (
+                        <SelectItem key={profile.timezone} value={profile.timezone} className="text-xs font-mono text-orange-400">
+                          {profile.timezone} (personnalisé)
+                        </SelectItem>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {Array.from(new Set([
+                        ...getTimezonesForCountry(profile.country),
+                        profile.timezone,
+                        proposeTimezone(profile.country)
+                      ])).filter((tz): tz is string => !!tz).map((tz) => (
+                        <SelectItem key={tz} value={tz} className="text-xs font-mono">
+                          {tz}
+                        </SelectItem>
+                      ))}
+                    </>
+                  )}
+                </SelectContent>
+              </Select>
+              <p className="text-[10px] text-[#8888AA]/70">
+                Utilisé pour ton check-in quotidien (série 7 jours). Le fuseau est verrouillé au début de chaque cycle de série côté serveur. Si tu changes de fuseau pendant une série active, le changement s'appliquera uniquement à ta prochaine série.
+              </p>
+            </div>
           </div>
 
           <button type="submit" disabled={saving} className="w-full btn-glow-border py-4 text-xs tracking-widest uppercase flex items-center justify-center gap-2">
