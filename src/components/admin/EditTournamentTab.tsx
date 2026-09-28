@@ -12,6 +12,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const GAMES = ["Free Fire", "Blood Strike", "Clash Royale", "Clash of Clans", "COD Mobile", "eFootball Mobile", "PUBG Mobile", "Mobile Legends", "Autre"];
 
+const GAME_IMAGES: Record<string, string> = {
+  "Blood Strike": "/blood strike.jpg",
+  "Brawl Stars": "/brawl stars.jpg",
+  "Free Fire": "/freefire.webp",
+  "Clash Royale": "/clash royal.webp",
+  "Clash of Clans": "/coc-tournament.webp",
+  "COD Mobile": "/cod mobile.webp",
+  "eFootball Mobile": "/efootball.webp",
+  "PUBG Mobile": "/pubg-mobile.webp",
+  "Mobile Legends": "/mobile legend.webp",
+  "Autre": ""
+};
+
 interface EditTournamentTabProps {
   activeTournaments: any[];
   editingTournament: any;
@@ -70,7 +83,7 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
 
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Jeu</Label>
-              <Select onValueChange={(v) => setEditingTournament({...editingTournament, game: v})} value={editingTournament.game}>
+              <Select onValueChange={(v) => setEditingTournament({...editingTournament, game: v, image_url: GAME_IMAGES[v] ?? editingTournament.image_url})} value={editingTournament.game}>
                 <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
                   <SelectValue placeholder="Jeu" />
                 </SelectTrigger>

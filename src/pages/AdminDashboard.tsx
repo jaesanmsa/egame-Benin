@@ -39,7 +39,7 @@ const AdminDashboard = () => {
     id: '',
     title: '',
     game: 'Free Fire',
-    image_url: '',
+    image_url: '/freefire.webp',
     entry_fee: 0,
     prize_pool: '',
     type: 'Online',

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
+import NotFound from '@/pages/NotFound';
 import { ArrowLeft, Clock, Share2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { showSuccess } from '@/utils/toast';
@@ -29,7 +30,7 @@ const NewsDetail = () => {
   }, [id]);
 
   if (loading) return <div className="min-h-screen bg-[#07070C] flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>;
-  if (!article) return null;
+  if (!article) return <NotFound />;
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);

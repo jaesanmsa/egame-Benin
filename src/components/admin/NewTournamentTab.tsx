@@ -15,7 +15,7 @@ const GAMES_CONFIG: Record<string, string> = {
   "Brawl Stars": "/brawl stars.jpg",
   "Free Fire": "/freefire.webp",
   "Clash Royale": "/clash royal.webp",
-  "Clash of Clans": "/clash of clans.webp",
+  "Clash of Clans": "/coc-tournament.webp",
   "COD Mobile": "/cod mobile.webp",
   "eFootball Mobile": "/efootball.webp",
   "PUBG Mobile": "/pubg-mobile.webp",
