@@ -20,10 +20,14 @@ Procédure à exécuter avec le même compte de test sur téléphone et ordinate
 
 ## Écarts restant à traiter avant recette exhaustive
 - Les propositions de fuseaux multi-zones peuvent choisir le premier fuseau sans choix explicite ; les pays hors Afrique ne sont pas tous accessibles dans le formulaire.
-- L'horloge de compte à rebours repose sur Date.now() ; la validation reste serveur, mais l'affichage est sensible à une modification de l'heure de l'appareil.
-- Les états de succès locaux peuvent rester visibles après le changement de journée.
-- Les statistiques de séries actives/interrompues doivent tenir compte des séries expirées même sans nouvelle réclamation.
 - L'historique des changements pays/fuseau et un historique unifié des récompenses de tournoi ne sont pas implémentés.
 - Le barème podium 50/20/10 retenu précédemment n'est pas la proposition 1 victoire pour chaque place de l'utilisateur et nécessite sa confirmation.
+
+## Corrections supplémentaires vérifiées statiquement
+- Le compte à rebours utilise server_now_epoch renvoyé par PostgreSQL, puis performance.now() comme horloge monotone : un changement de l'heure système ne change plus sa base de calcul.
+- Une nouvelle lecture serveur est programmée après minuit ; les confirmations locales sont effacées quand today_local ou le compte change.
+- Les statistiques classent les séries expirées comme interrompues sans attendre une nouvelle réclamation ; leurs points ne sont plus inclus dans le total en attente.
+- Les joueurs ayant terminé J7 aujourd'hui sont inclus dans la répartition J7.
+- Le nouveau calcul des statistiques a été appelé avec succès dans un test SQL ; TypeScript passe. Cela ne remplace pas un test visuel au passage réel de minuit.
 
 La recette complète des 25 scénarios ne doit pas être déclarée réussie à ce stade.

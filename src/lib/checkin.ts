@@ -17,6 +17,7 @@ export interface CheckInState {
   balance: number;
   today_local: string;
   next_midnight_epoch: number;
+  server_now_epoch: number;
   already_claimed_today: boolean;
   gap_detected: boolean;
   points_to_lose: number;

@@ -100,6 +100,11 @@ const CheckInCard = ({ userId }: { userId: string }) => {
     loadHistory();
   }, [loadHistory, state?.streak_day, state?.pending_points, state?.balance]);
 
+  useEffect(() => {
+    setJustClaimed(null);
+    setClaimError(null);
+  }, [state?.today_local, userId]);
+
   const handleClaim = async () => {
     setClaimError(null);
     try {

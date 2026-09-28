@@ -55,6 +55,11 @@ const DailyCheckInModal = () => {
     setOpen(true);
   }, [state, loading, userId]);
 
+  useEffect(() => {
+    setJustClaimed(null);
+    setClaimError(null);
+  }, [state?.today_local, userId]);
+
   const handleClaim = async () => {
     setClaimError(null);
     try {

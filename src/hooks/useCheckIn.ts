@@ -18,7 +18,8 @@ export function useCheckIn(userId: string | null) {
   const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState(false);
   const [lastClaim, setLastClaim] = useState<ClaimResult | null>(null);
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState(() => performance.now());
+  const clock = useRef({ server: 0, received: 0 });
   const mounted = useRef(true);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export function useCheckIn(userId: string | null) {
 
   // Horloge pour le compte à rebours jusqu'au prochain minuit LOCAL du joueur.
   useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 15000);
+    const timer = setInterval(() => setNow(performance.now()), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -44,7 +45,11 @@ export function useCheckIn(userId: string | null) {
     try {
       await ensureProfileTimezone(userId, null);
       const s = await fetchCheckInState();
-      if (mounted.current) setState(s);
+      if (mounted.current) {
+        clock.current = { server: (s?.server_now_epoch ?? 0) * 1000, received: performance.now() };
+        setNow(performance.now());
+        setState(s);
+      }
     } finally {
       if (mounted.current) setLoading(false);
     }
@@ -62,6 +67,13 @@ export function useCheckIn(userId: string | null) {
       window.removeEventListener("egame-points-updated", sync);
     };
   }, [refresh]);
+
+  useEffect(() => {
+    if (!state?.server_now_epoch || !state.next_midnight_epoch) return;
+    const delay = Math.max(0, (state.next_midnight_epoch - state.server_now_epoch) * 1000);
+    const timer = setTimeout(() => { void refresh().catch(() => setState(null)); }, delay + 1000);
+    return () => clearTimeout(timer);
+  }, [state?.today_local, state?.next_midnight_epoch, state?.server_now_epoch, refresh]);
 
   const claim = useCallback(async (): Promise<ClaimResult | null> => {
     if (!userId || claiming) return null;
@@ -83,7 +95,7 @@ export function useCheckIn(userId: string | null) {
 
   const timeRemaining: TimeRemaining | null = (() => {
     if (!state?.next_midnight_epoch) return null;
-    const diffMs = state.next_midnight_epoch * 1000 - now;
+    const diffMs = state.next_midnight_epoch * 1000 - (clock.current.server + now - clock.current.received);
     if (diffMs <= 0) return { hours: 0, minutes: 0, label: "0h 00min" };
     const totalMinutes = Math.floor(diffMs / 60000);
     const hours = Math.floor(totalMinutes / 60);
