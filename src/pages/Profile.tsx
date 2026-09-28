@@ -146,8 +146,9 @@ const Profile = () => {
         </div>
 
         <CheckInCard userId={user.id} />
-
-        <div className="glass-panel p-6 flex items-center justify-between">
+                <RewardsHistory userId={user.id} />
+        
+                <div className="glass-panel p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Phone size={20} className="text-[#8A2BE2]" />
             <div>
