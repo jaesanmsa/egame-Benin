@@ -10,6 +10,7 @@ import { getCountryByCode } from '@/lib/countries';
 import { useNavigate, Link } from 'react-router-dom';
 import { showSuccess, showError } from '@/utils/toast';
 import { requestNotificationPermission } from '@/lib/firebase';
+import CheckInCard from '@/components/checkin/CheckInCard';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
@@ -143,6 +144,8 @@ const Profile = () => {
             <p className="text-xl font-gaming font-black text-orange-400">{profile?.mvp_count || 0}</p>
           </div>
         </div>
+
+        <CheckInCard userId={user.id} />
 
         <div className="glass-panel p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">

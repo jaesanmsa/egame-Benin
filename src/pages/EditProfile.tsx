@@ -11,7 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import PhoneCountryInput, { setPhoneCountry } from '@/components/PhoneCountryInput';
 import { AFRICAN_COUNTRIES, getCountryByCode } from '@/lib/countries';
-import { ArrowLeft, User, Save, AtSign, MapPin, Globe } from 'lucide-react';
+import { getTimezonesForCountry, proposeTimezone, isValidTimezone } from '@/lib/timezones';
+import { ArrowLeft, User, Save, AtSign, MapPin, Globe, Clock } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const EditProfile = () => {
@@ -24,7 +25,8 @@ const EditProfile = () => {
     phone: '',
     country: 'BJ',
     city: '',
-    avatar_url: ''
+    avatar_url: '',
+    timezone: ''
   });
 
   useEffect(() => {
@@ -37,7 +39,7 @@ const EditProfile = () => {
       if (user) {
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('full_name, username, phone, country, city, avatar_url')
+          .select('full_name, username, phone, country, city, avatar_url, timezone')
           .eq('id', user.id)
           .maybeSingle();
 
@@ -47,7 +49,8 @@ const EditProfile = () => {
           phone: profileData?.phone || user.user_metadata?.phone || '',
           country: profileData?.country || 'BJ',
           city: profileData?.city || '',
-          avatar_url: profileData?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`
+          avatar_url: profileData?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`,
+          timezone: isValidTimezone(profileData?.timezone) ? profileData.timezone : proposeTimezone(profileData?.country || 'BJ')
         });
       }
     } catch (error) {
@@ -78,6 +81,7 @@ const EditProfile = () => {
           country: profile.country,
           city: profile.city,
           avatar_url: profile.avatar_url,
+          timezone: profile.timezone,
           updated_at: new Date().toISOString()
         });
 
@@ -155,7 +159,7 @@ const EditProfile = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">Pays</Label>
-                <Select value={profile.country} onValueChange={(country) => setProfile({ ...profile, country, phone: setPhoneCountry(profile.phone, country) })}>
+                <Select value={profile.country} onValueChange={(country) => setProfile({ ...profile, country, phone: setPhoneCountry(profile.phone, country), timezone: proposeTimezone(country) })}>
                   <SelectTrigger id="country" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
                     <span className="flex items-center gap-2 text-sm">
                       <Globe size={16} className="text-[#8A2BE2] shrink-0" />
@@ -187,6 +191,31 @@ const EditProfile = () => {
                   />
                 </div>
               </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="timezone" className="text-xs font-gaming uppercase text-[#8888AA] flex items-center gap-1.5">
+                <Clock size={13} className="text-[#8A2BE2]" /> Fuseau horaire
+              </Label>
+              <Select value={profile.timezone} onValueChange={(timezone) => setProfile({ ...profile, timezone })}>
+                <SelectTrigger id="timezone" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
+                  <span className="text-xs font-mono">{profile.timezone || 'Automatique'}</span>
+                </SelectTrigger>
+                <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white max-h-80">
+                  {Array.from(new Set([
+                    ...getTimezonesForCountry(profile.country),
+                    profile.timezone,
+                    proposeTimezone(profile.country)
+                  ])).filter((tz): tz is string => !!tz).map((tz) => (
+                    <SelectItem key={tz} value={tz} className="text-xs font-mono">
+                      {tz}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-[10px] text-[#8888AA]/70">
+                Utilisé pour ton check-in quotidien (série 7 jours). Si tu changes de fuseau pendant une série active, le changement s'appliquera uniquement à ta prochaine série.
+              </p>
             </div>
           </div>
 

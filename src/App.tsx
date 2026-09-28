@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import FloatingSupport from "@/components/FloatingSupport";
+import DailyCheckInModal from "@/components/checkin/DailyCheckInModal";
 
 // Découpage du bundle : chaque page est chargée uniquement quand on la visite.
 const TournamentDetails = React.lazy(() => import("./pages/TournamentDetails"));
@@ -78,6 +79,7 @@ const App = () => (
           </Routes>
         </Suspense>
         <FloatingSupport />
+        <DailyCheckInModal />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

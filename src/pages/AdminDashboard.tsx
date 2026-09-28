@@ -14,12 +14,13 @@ import PaymentsTab from '@/components/admin/PaymentsTab';
 import ParticipantsTab from '@/components/admin/ParticipantsTab';
 import NewTournamentTab from '@/components/admin/NewTournamentTab';
 import EditTournamentTab from '@/components/admin/EditTournamentTab';
-import FinishTournamentTab from '@/components/admin/FinishTournamentTab';
+import FinishTournamentTab, { PODIUM_REWARDS } from '@/components/admin/FinishTournamentTab';
 import LeaderboardTab from '@/components/admin/LeaderboardTab';
 import NewsTab from '@/components/admin/NewsTab';
 import PartnershipsTab from '@/components/admin/PartnershipsTab';
 import TicketsTab from '@/components/admin/TicketsTab';
 import PartnersAdminTab from '@/components/admin/PartnersAdminTab';
+import CheckInsAdminTab from '@/components/admin/CheckInsAdminTab';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ const AdminDashboard = () => {
   });
 
   const [finishData, setFinishData] = useState({
-    tournamentId: '', winnerName: ''
+    tournamentId: '', winnerName: '', secondPlace: '', thirdPlace: '', mvpName: ''
   });
 
   useEffect(() => {
@@ -205,45 +206,41 @@ const AdminDashboard = () => {
         return;
       }
       showSuccess("Tournoi d'essai supprimé : paiements, tickets et données effacés de la base.");
-      setFinishData({ tournamentId: '', winnerName: '' });
+      setFinishData({ tournamentId: '', winnerName: '', secondPlace: '', thirdPlace: '', mvpName: '' });
       fetchData();
       return;
     }
 
     const winnerName = finishData.winnerName.trim();
+    const secondPlace = finishData.secondPlace.trim();
+    const thirdPlace = finishData.thirdPlace.trim();
+    const mvpName = finishData.mvpName.trim();
+
     if (!finishData.tournamentId || !winnerName) {
-      showError("Sélectionnez un tournoi et saisissez le pseudo du gagnant.");
+      showError("Sélectionnez un tournoi et saisissez le pseudo du gagnant (obligatoire).");
       return;
     }
-    
-    const { error } = await supabase
-      .from('tournaments')
-      .update({
-        status: 'finished',
-        winner_name: winnerName
-      })
-      .eq('id', finishData.tournamentId);
-    
+
+    // Le gagnant ne peut pas figurer à deux places du podium.
+    const podium = [winnerName, secondPlace, thirdPlace].filter(Boolean);
+    if (new Set(podium).size !== podium.length) {
+      showError("Le même pseudo ne peut pas apparaître à deux places du podium.");
+      return;
+    }
+
+    const { data, error } = await supabase.rpc('finish_tournament_rewards', {
+      p_id: finishData.tournamentId,
+      p_winner: winnerName,
+      p_second: secondPlace || null,
+      p_third: thirdPlace || null,
+      p_mvp: mvpName || null,
+    });
     if (error) {
       showError(error.message);
       return;
     }
-
-    const { data: winnerProfile } = await supabase
-      .from('profiles')
-      .select('id, points, champion_count')
-      .eq('username', winnerName)
-      .maybeSingle();
-
-    if (winnerProfile) {
-      await supabase
-        .from('profiles')
-        .update({
-          points: (winnerProfile.points || 0) + 50,
-          champion_count: (winnerProfile.champion_count || 0) + 1
-        })
-        .eq('id', winnerProfile.id);
-    }
+    const rewarded: string[] = data.rewarded;
+    const notFound: string[] = data.missing;
 
     // Notification push aux participants du tournoi clôturé
     const tournament = activeTournaments.find((t: any) => t.id === finishData.tournamentId);
@@ -258,8 +255,15 @@ const AdminDashboard = () => {
       if (pushError) showError("Notification non envoyée : " + pushError.message);
     });
 
-    showSuccess("Tournoi clôturé et points attribués !");
-    setFinishData({ tournamentId: '', winnerName: '' });
+    let summary = `Tournoi clôturé ! ${rewarded.length} joueur(s) récompensé(s) — Gagnant : +${PODIUM_REWARDS.first} pts + 1 Victoire`;
+    if (secondPlace) summary += `, 2e : +${PODIUM_REWARDS.second} pts`;
+    if (thirdPlace) summary += `, 3e : +${PODIUM_REWARDS.third} pts`;
+    if (mvpName) summary += `, MVP : +1 MVP`;
+    showSuccess(summary);
+    if (notFound.length > 0) {
+      showError(`Pseudos introuvables (aucun point attribué) : ${notFound.join(', ')}`);
+    }
+    setFinishData({ tournamentId: '', winnerName: '', secondPlace: '', thirdPlace: '', mvpName: '' });
     fetchData();
   };
 
@@ -316,6 +320,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="partnerships" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Partenariats</TabsTrigger>
               <TabsTrigger value="tickets" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Tickets</TabsTrigger>
               <TabsTrigger value="partners-admin" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Partenaires</TabsTrigger>
+              <TabsTrigger value="checkins" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Check-ins</TabsTrigger>
             </TabsList>
           </div>
 
@@ -380,6 +385,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="partners-admin">
             <PartnersAdminTab />
+          </TabsContent>
+
+          <TabsContent value="checkins">
+            <CheckInsAdminTab />
           </TabsContent>
         </Tabs>
       </main>

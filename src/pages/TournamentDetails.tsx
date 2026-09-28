@@ -5,7 +5,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
-import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Loader2, X, Globe, Share2, Ticket, Copy, FlaskConical } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Loader2, X, Globe, Share2, Ticket, Copy, FlaskConical, Medal, Star } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -336,10 +336,37 @@ const TournamentDetails = () => {
           </div>
 
           {isFinished ? (
-            <div className="bg-[#FFD700]/10 border border-[#FFD700]/40 p-6 rounded-2xl text-center space-y-2">
-              <Trophy className="text-[#FFD700] mx-auto" size={36} />
-              <p className="text-[10px] font-gaming font-bold uppercase tracking-widest text-[#FFD700]">Champion Officiel</p>
-              <h3 className="text-xl font-gaming font-black text-white">{tournament.winner_name}</h3>
+            <div className="space-y-3">
+              <div className="bg-[#FFD700]/10 border border-[#FFD700]/40 p-6 rounded-2xl text-center space-y-2">
+                <Trophy className="text-[#FFD700] mx-auto" size={36} />
+                <p className="text-[10px] font-gaming font-bold uppercase tracking-widest text-[#FFD700]">Champion Officiel — 1ère place</p>
+                <h3 className="text-xl font-gaming font-black text-white">{tournament.winner_name}</h3>
+              </div>
+              {(tournament.second_place || tournament.third_place || tournament.mvp_name) && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {tournament.second_place && (
+                    <div className="bg-slate-500/10 border border-slate-400/40 p-4 rounded-2xl text-center space-y-1">
+                      <Medal className="text-slate-300 mx-auto" size={22} />
+                      <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-slate-300">2ème place</p>
+                      <p className="text-sm font-gaming font-black text-white">{tournament.second_place}</p>
+                    </div>
+                  )}
+                  {tournament.third_place && (
+                    <div className="bg-orange-500/10 border border-orange-400/40 p-4 rounded-2xl text-center space-y-1">
+                      <Medal className="text-orange-400 mx-auto" size={22} />
+                      <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-orange-400">3ème place</p>
+                      <p className="text-sm font-gaming font-black text-white">{tournament.third_place}</p>
+                    </div>
+                  )}
+                  {tournament.mvp_name && (
+                    <div className="bg-violet-500/10 border border-violet-400/40 p-4 rounded-2xl text-center space-y-1">
+                      <Star className="text-violet-400 mx-auto" size={22} />
+                      <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-violet-400">MVP du tournoi</p>
+                      <p className="text-sm font-gaming font-black text-white">{tournament.mvp_name}</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ) : (
             <>
