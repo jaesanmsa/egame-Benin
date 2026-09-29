@@ -4,7 +4,6 @@ import {
   ClaimResult,
   fetchCheckInState,
   claimDailyCheckIn,
-  ensureProfileTimezone,
 } from "@/lib/checkin";
 
 export interface TimeRemaining {
@@ -43,7 +42,6 @@ export function useCheckIn(userId: string | null) {
     }
     setLoading(true);
     try {
-      await ensureProfileTimezone(userId, null);
       const s = await fetchCheckInState();
       if (mounted.current) {
         clock.current = { server: (s?.server_now_epoch ?? 0) * 1000, received: performance.now() };

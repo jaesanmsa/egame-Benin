@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase";
-import { isValidTimezone, proposeTimezone } from "@/lib/timezones";
 
 // Barème officiel du cycle de 7 jours : J1-J3 = 1 pt, J4-J6 = 2 pts, J7 = 3 pts.
 // Les points des jours 1 à 6 restent EN ATTENTE ; les 12 points du cycle ne sont
@@ -10,8 +9,13 @@ export const CYCLE_TOTAL_POINTS = 12;
 export interface CheckInState {
   authenticated: boolean;
   profile_found?: boolean;
+  /** false tant que le joueur n'a pas configuré son pays + fuseau dans son profil. */
+  country_configured?: boolean;
   timezone: string;
   profile_timezone: string;
+  /** Changement de pays/fuseau programmé pendant la série active (appliqué après le Jour 7). */
+  pending_country?: string | null;
+  pending_timezone?: string | null;
   streak_day: number;
   pending_points: number;
   balance: number;
@@ -49,30 +53,4 @@ export async function claimDailyCheckIn(): Promise<ClaimResult> {
   const { data, error } = await supabase.rpc("claim_daily_checkin");
   if (error) throw new Error(error.message);
   return data as ClaimResult;
-}
-
-/**
- * Garantit que le profil a un fuseau horaire valide enregistré.
- * Le fuseau est PROPOSÉ depuis le pays du profil (ou du navigateur en dernier
- * recours) puis enregistré : le serveur s'en sert comme source de vérité pour
- * calculer les journées locales et verrouille le fuseau de chaque cycle.
- */
-export async function ensureProfileTimezone(
-  userId: string,
-  currentTz: string | null | undefined
-): Promise<string> {
-  if (isValidTimezone(currentTz)) return currentTz!;
-
-  const { data: profile, error } = await supabase
-    .from("profiles")
-    .select("country, timezone")
-    .eq("id", userId)
-    .maybeSingle();
-  if (error) throw error;
-  if (isValidTimezone(profile?.timezone)) return profile.timezone;
-
-  const proposed = proposeTimezone(profile?.country);
-  const { error: updateError } = await supabase.from("profiles").update({ timezone: proposed }).eq("id", userId).is("timezone", null);
-  if (updateError) throw updateError;
-  return proposed;
 }

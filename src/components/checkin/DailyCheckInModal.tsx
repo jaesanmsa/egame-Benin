@@ -46,7 +46,9 @@ const DailyCheckInModal = () => {
   // Ouverture automatique une fois par journée locale.
   useEffect(() => {
     if (loading || !state || !state.authenticated || state.profile_found === false) return;
-    const shouldShow = !state.already_claimed_today;
+    // Pas de fenêtre automatique tant que le pays/fuseau n'est pas configuré :
+    // le joueur est invité à compléter son profil depuis sa page de profil.
+    const shouldShow = state.country_configured !== false && !state.already_claimed_today;
     if (!shouldShow || !userId) return;
     const key = `${MODAL_STORAGE_PREFIX}${userId}_${state.today_local}`;
     if (localStorage.getItem(key)) return;

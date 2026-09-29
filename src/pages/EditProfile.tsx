@@ -5,25 +5,25 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import PhoneCountryInput, { setPhoneCountry } from '@/components/PhoneCountryInput';
 import { AFRICAN_COUNTRIES, getCountryByCode } from '@/lib/countries';
 import { getTimezonesForCountry, proposeTimezone, isValidTimezone } from '@/lib/timezones';
-import { ArrowLeft, User, Save, AtSign, MapPin, Globe, Clock } from 'lucide-react';
+import { ArrowLeft, User, Save, AtSign, MapPin, Globe, Clock, Hourglass } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const EditProfile = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [checkin, setCheckin] = useState<any>(null);
   const [profile, setProfile] = useState({
     full_name: '',
     username: '',
     phone: '',
-    country: 'BJ',
+    country: '',
     city: '',
     avatar_url: '',
     timezone: ''
@@ -47,11 +47,19 @@ const EditProfile = () => {
           full_name: profileData?.full_name || user.user_metadata?.full_name || '',
           username: profileData?.username || user.user_metadata?.username || '',
           phone: profileData?.phone || user.user_metadata?.phone || '',
-          country: profileData?.country || 'BJ',
+          // Pas de pays par défaut : le joueur DOIT choisir son pays lui-même
+          // (notamment après une inscription Google) pour activer le check-in.
+          country: profileData?.country || '',
           city: profileData?.city || '',
           avatar_url: profileData?.avatar_url || user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`,
-          timezone: isValidTimezone(profileData?.timezone) ? profileData.timezone : proposeTimezone(profileData?.country || 'BJ')
+          timezone: isValidTimezone(profileData?.timezone)
+            ? profileData.timezone
+            : (profileData?.country ? proposeTimezone(profileData.country) : '')
         });
+
+        // État check-in : bannière du changement programmé + série active.
+        const { data: cs } = await supabase.rpc('get_checkin_state');
+        setCheckin(cs || null);
       }
     } catch (error) {
       console.error("Erreur profil:", error);
@@ -65,18 +73,57 @@ const EditProfile = () => {
     const username = profile.username.trim();
     if (!username) return showError("Le pseudo est obligatoire");
     if (username.length < 3) return showError("Le pseudo doit faire au moins 3 caractères");
+    if (!profile.country) return showError("Sélectionne ton pays : il est obligatoire pour le check-in quotidien.");
+    if (!profile.timezone) return showError("Sélectionne ton fuseau horaire : il est obligatoire pour le check-in quotidien.");
 
     setSaving(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Non connecté");
 
-      // Get current profile to detect changes
+      // Profil actuel pour détecter les changements
       const { data: currentProfile } = await supabase
         .from('profiles')
         .select('country, timezone')
         .eq('id', user.id)
         .maybeSingle();
+
+      const countryChanged = !!currentProfile && currentProfile.country !== profile.country;
+      const timezoneChanged = !!currentProfile && currentProfile.timezone !== profile.timezone;
+      const geoChanged = countryChanged || timezoneChanged;
+
+      // État check-in frais : y a-t-il une série de 7 jours en cours ?
+      const { data: cs } = await supabase.rpc('get_checkin_state');
+      const activeCycle = cs?.country_configured === true && cs?.cycle_status === 'active';
+
+      let savedCountry = profile.country;
+      let savedTimezone = profile.timezone;
+      let pendingRequested = false;
+
+      if (geoChanged && activeCycle) {
+        // Pendant une série active : le changement est PROGRAMMÉ (une seule fois
+        // par série) et sera appliqué à la fin de la série, après le Jour 7.
+        // La série en cours garde son pays/fuseau verrouillé : impossible de tricher.
+        const { error: pendingError } = await supabase.rpc('request_checkin_country_change', {
+          p_country: profile.country,
+          p_timezone: profile.timezone,
+        });
+        if (pendingError) {
+          if (pendingError.message.includes('DEJA_MODIFIE_PENDANT_SERIE')) {
+            return showError("Tu as déjà programmé un changement de pays pour cette série de 7 jours. Il sera appliqué après le Jour 7.");
+          }
+          if (pendingError.message.includes('AUCUNE_SERIE_ACTIVE')) {
+            // La série vient de se terminer : changement direct autorisé.
+          } else {
+            throw new Error(pendingError.message);
+          }
+        } else {
+          // Le profil garde l'ANCIEN pays/fuseau jusqu'à la fin de la série.
+          savedCountry = currentProfile!.country || profile.country;
+          savedTimezone = currentProfile!.timezone || profile.timezone;
+          pendingRequested = true;
+        }
+      }
 
       const { error: profileError } = await supabase
         .from('profiles')
@@ -85,34 +132,37 @@ const EditProfile = () => {
           full_name: profile.full_name,
           username: username,
           phone: profile.phone,
-          country: profile.country,
+          country: savedCountry,
           city: profile.city,
           avatar_url: profile.avatar_url,
-          timezone: profile.timezone,
+          timezone: savedTimezone,
           updated_at: new Date().toISOString()
         });
 
       if (profileError) throw profileError;
 
-      // Track country/timezone changes in history
-      if (currentProfile) {
-        const countryChanged = currentProfile.country !== profile.country;
-        const timezoneChanged = currentProfile.timezone !== profile.timezone;
-        
-        if (countryChanged || timezoneChanged) {
+      // Historique des changements directs. Quand le changement est programmé,
+      // c'est le serveur qui enregistre l'historique à son application (Jour 7).
+      if (currentProfile && !pendingRequested) {
+        const countryChangedNow = currentProfile.country !== savedCountry;
+        const timezoneChangedNow = currentProfile.timezone !== savedTimezone;
+
+        if (countryChangedNow || timezoneChangedNow) {
           await supabase.from('profile_history').insert({
             user_id: user.id,
-            country: profile.country,
-            timezone: profile.timezone
+            country: savedCountry,
+            timezone: savedTimezone
           });
         }
       }
 
       await supabase.auth.updateUser({
-        data: { ...profile, username: username }
+        data: { ...profile, country: savedCountry, timezone: savedTimezone, username: username }
       });
 
-      showSuccess("Profil mis à jour !");
+      showSuccess(pendingRequested
+        ? "Changement programmé ! Il sera appliqué après le Jour 7 de ta série en cours."
+        : "Profil mis à jour !");
       navigate('/profil');
     } catch (error: any) {
       showError(error.message);
@@ -122,6 +172,9 @@ const EditProfile = () => {
   };
 
   if (loading) return <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>;
+
+  const pendingCountry = checkin?.pending_country ? getCountryByCode(checkin.pending_country) : null;
+  const activeCycle = checkin?.cycle_status === 'active';
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
@@ -136,12 +189,22 @@ const EditProfile = () => {
 
         <form onSubmit={handleSave} className="space-y-6">
           <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-8 rounded-3xl space-y-5 shadow-2xl">
+            {pendingCountry && checkin?.pending_timezone && (
+              <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 flex items-center gap-2">
+                <Hourglass size={14} className="text-amber-400 shrink-0" />
+                <p className="text-[10px] text-amber-200/90 font-bold leading-relaxed">
+                  Changement déjà programmé : {pendingCountry.flag} {pendingCountry.name} • {checkin.pending_timezone}.
+                  Il sera appliqué après le Jour 7 de ta série en cours — une seule modification par série.
+                </p>
+              </div>
+            )}
+
             <div className="space-y-1.5">
               <Label htmlFor="username" className="text-xs font-gaming uppercase text-[#8888AA]">Pseudo de Joueur</Label>
               <div className="relative">
                 <AtSign className="absolute left-3 top-3 text-[#8888AA]" size={18} />
-                <Input 
-                  id="username" 
+                <Input
+                  id="username"
                   value={profile.username}
                   onChange={(e) => setProfile({...profile, username: e.target.value})}
                   className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
@@ -155,8 +218,8 @@ const EditProfile = () => {
               <Label htmlFor="name" className="text-xs font-gaming uppercase text-[#8888AA]">Nom Complet</Label>
               <div className="relative">
                 <User className="absolute left-3 top-3 text-[#8888AA]" size={18} />
-                <Input 
-                  id="name" 
+                <Input
+                  id="name"
                   value={profile.full_name}
                   onChange={(e) => setProfile({...profile, full_name: e.target.value})}
                   className="pl-10 bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium"
@@ -179,7 +242,9 @@ const EditProfile = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">Pays</Label>
+                <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">
+                  Pays <span className="text-[#A855F7]">*</span>
+                </Label>
                 <Select value={profile.country} onValueChange={(country) => setProfile({ ...profile, country, phone: setPhoneCountry(profile.phone, country), timezone: proposeTimezone(country) })}>
                   <SelectTrigger id="country" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
                     <span className="flex items-center gap-2 text-sm">
@@ -216,7 +281,7 @@ const EditProfile = () => {
 
             <div className="space-y-1.5">
               <Label htmlFor="timezone" className="text-xs font-gaming uppercase text-[#8888AA] flex items-center gap-1.5">
-                <Clock size={13} className="text-[#8A2BE2]" /> Fuseau horaire
+                <Clock size={13} className="text-[#8A2BE2]" /> Fuseau horaire <span className="text-[#A855F7]">*</span>
               </Label>
               <Select value={profile.timezone} onValueChange={(timezone) => setProfile({ ...profile, timezone })}>
                 <SelectTrigger id="timezone" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
@@ -237,22 +302,17 @@ const EditProfile = () => {
                       )}
                     </>
                   ) : (
-                    <>
-                      {Array.from(new Set([
-                        ...getTimezonesForCountry(profile.country),
-                        profile.timezone,
-                        proposeTimezone(profile.country)
-                      ])).filter((tz): tz is string => !!tz).map((tz) => (
-                        <SelectItem key={tz} value={tz} className="text-xs font-mono">
-                          {tz}
-                        </SelectItem>
-                      ))}
-                    </>
+                    <div className="px-3 py-2 text-[10px] text-[#8888AA]">
+                      Choisis d'abord ton pays : le fuseau sera proposé automatiquement.
+                    </div>
                   )}
                 </SelectContent>
               </Select>
               <p className="text-[10px] text-[#8888AA]/70">
-                Utilisé pour ton check-in quotidien (série 7 jours). Le fuseau est verrouillé au début de chaque cycle de série côté serveur. Si tu changes de fuseau pendant une série active, le changement s'appliquera uniquement à ta prochaine série.
+                Utilisé pour ton check-in quotidien (série 7 jours).
+                {activeCycle
+                  ? " Série en cours : ton changement sera programmé (une seule fois par série) et appliqué après le Jour 7."
+                  : " Hors série, le changement s'applique directement à ta prochaine série."}
               </p>
             </div>
           </div>

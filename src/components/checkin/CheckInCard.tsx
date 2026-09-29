@@ -6,6 +6,8 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useCheckIn } from "@/hooks/useCheckIn";
 import { CYCLE_TOTAL_POINTS } from "@/lib/checkin";
+import { getCountryByCode } from "@/lib/countries";
+import { Link } from "react-router-dom";
 import CheckInGrid from "./CheckInGrid";
 import PointsInfoBox from "./PointsInfoBox";
 
@@ -136,6 +138,41 @@ const CheckInCard = ({ userId }: { userId: string }) => {
 
   if (!state?.authenticated || state.profile_found === false) return null;
 
+  // Le joueur doit d'abord configurer son pays et son fuseau horaire sur son profil
+  // avant de pouvoir valider sa présence quotidienne.
+  if (state.country_configured === false) {
+    return (
+      <div className="glass-panel p-6 space-y-4">
+        <h3 className="text-sm font-gaming font-black uppercase tracking-widest text-white flex items-center gap-2">
+          <Flame size={18} className="text-orange-400" />
+          Ma série eGame
+        </h3>
+        <div className="rounded-2xl border border-[#8A2BE2]/40 bg-[#8A2BE2]/10 p-4 space-y-2 text-center">
+          <div className="mx-auto w-12 h-12 rounded-full bg-[#8A2BE2]/20 border border-[#8A2BE2]/50 flex items-center justify-center">
+            <Globe size={22} className="text-[#A855F7]" />
+          </div>
+          <p className="text-xs font-gaming font-black text-white uppercase tracking-wide">
+            Configure ton pays pour activer tes récompenses
+          </p>
+          <p className="text-[11px] text-[#8888AA] leading-relaxed">
+            Choisis ton pays africain et ton fuseau horaire dans ton profil pour
+            débloquer le check-in quotidien et tes points eGame.
+          </p>
+          <Link
+            to="/edit-profile"
+            className="inline-block mt-1 px-5 py-3 rounded-xl bg-[#8A2BE2] hover:bg-[#A855F7] text-white font-gaming font-black text-[10px] uppercase tracking-widest transition-colors"
+          >
+            ⚙️ Configurer mon profil
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const pendingCountry = state.pending_country
+    ? getCountryByCode(state.pending_country)
+    : null;
+
   const gap = state.gap_detected && !justClaimed;
 
   return (
@@ -153,6 +190,16 @@ const CheckInCard = ({ userId }: { userId: string }) => {
           <RefreshCw size={14} />
         </button>
       </div>
+
+      {pendingCountry && state.pending_timezone && (
+        <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 flex items-center gap-2">
+          <Hourglass size={14} className="text-amber-400 shrink-0" />
+          <p className="text-[10px] text-amber-200/90 font-bold leading-relaxed">
+            Changement programmé : {pendingCountry.flag} {pendingCountry.name} • {state.pending_timezone}.
+            Appliqué automatiquement après le Jour 7 de ta série en cours.
+          </p>
+        </div>
+      )}
 
       {justClaimed ? (
         <motion.div
