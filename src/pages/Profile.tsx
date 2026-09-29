@@ -11,6 +11,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { showSuccess, showError } from '@/utils/toast';
 import { requestNotificationPermission } from '@/lib/firebase';
 import CheckInCard from '@/components/checkin/CheckInCard';
+import RewardsHistory from '@/components/checkin/RewardsHistory';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
