@@ -75,10 +75,16 @@ const subscribe = (listener: () => void) => {
 
 export function usePwaInstall() {
   useSyncExternalStore(subscribe, () => version);
-  const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const mobile = ios || /Android/.test(navigator.userAgent);
+  const ua = navigator.userAgent;
+  const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  // Sur iPhone, seul Safari sait ajouter une app web à l'écran d'accueil (règle Apple).
+  // Les autres navigateurs iOS se signalent par des marqueurs UA : CriOS (Chrome),
+  // FxiOS (Firefox), OPT/OPiOS (Opera), EdgiOS (Edge), etc.
+  const iosSafari = ios && !/CriOS|FxiOS|OPT|OPiOS|EdgiOS|DuckDuckGo|GSA/.test(ua);
+  const mobile = ios || /Android/.test(ua);
   return {
     ios,
+    iosSafari,
     canPrompt: !!promptEvent,
     shouldOffer: !installed && !isStandalone() && Date.now() >= laterUntil && (mobile || !!promptEvent),
   };
