@@ -12,6 +12,7 @@ import { showSuccess, showError } from '@/utils/toast';
 import { requestNotificationPermission } from '@/lib/firebase';
 import CheckInCard from '@/components/checkin/CheckInCard';
 import RewardsHistory from '@/components/checkin/RewardsHistory';
+import DiscordConnectionCard from '@/components/DiscordConnectionCard';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
@@ -150,17 +151,19 @@ const Profile = () => {
                 <RewardsHistory userId={user.id} />
         
                 <div className="glass-panel p-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Phone size={20} className="text-[#8A2BE2]" />
-            <div>
-              <p className="text-xs font-gaming font-bold text-white">Numéro Mobile Money</p>
-              <p className="text-xs text-[#8888AA] font-mono">{phone}</p>
-            </div>
-          </div>
-          <Link to="/edit-profile" className="text-xs font-gaming font-bold text-[#A855F7] hover:underline">
-            Modifier
-          </Link>
-        </div>
+                  <div className="flex items-center gap-3">
+                    <Phone size={20} className="text-[#8A2BE2]" />
+                    <div>
+                      <p className="text-xs font-gaming font-bold text-white">Numéro Mobile Money</p>
+                      <p className="text-xs text-[#8888AA] font-mono">{phone}</p>
+                    </div>
+                  </div>
+                  <Link to="/edit-profile" className="text-xs font-gaming font-bold text-[#A855F7] hover:underline">
+                    Modifier
+                  </Link>
+                </div>
+        
+                <DiscordConnectionCard />
 
         <div className="space-y-3">
           {isAdmin && (

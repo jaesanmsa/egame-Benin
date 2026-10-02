@@ -12,6 +12,7 @@ import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatBeninDateTime } from '@/utils/datetime';
 import { getDiscordByGame } from '@/lib/discord';
+import DiscordAccessCard from '@/components/DiscordAccessCard';
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -490,6 +491,12 @@ const TournamentDetails = () => {
             </>
           )}
         </div>
+
+        {/* Accès Discord au tournoi : visible uniquement pour un joueur inscrit
+            dont le ticket est valide. Liaison Discord facultative. */}
+        {userTicket?.status === 'valide' && (
+          <DiscordAccessCard tournamentId={tournament.id} tournamentTitle={tournament.title} />
+        )}
 
         {/* Détails : Déroulement & Règlement */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
