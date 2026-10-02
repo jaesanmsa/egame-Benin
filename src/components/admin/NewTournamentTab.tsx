@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Image as ImageIcon, Calendar, Clock, CreditCard, Zap, FlaskConical } from 'lucide-react';
+import DiscordLogo from '@/components/DiscordLogo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,9 +30,12 @@ interface NewTournamentTabProps {
   newTournament: any;
   setNewTournament: (data: any) => void;
   onSubmit: (e: React.FormEvent) => void;
+  /** Création automatique de l'espace Discord privé après insertion du tournoi. */
+  createDiscordSpace: boolean;
+  setCreateDiscordSpace: (value: boolean) => void;
 }
 
-const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTournamentTabProps) => {
+const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit, createDiscordSpace, setCreateDiscordSpace }: NewTournamentTabProps) => {
   const handleGameChange = (game: string) => {
     const defaultImage = GAMES_CONFIG[game] || "";
     setNewTournament({
@@ -200,6 +204,32 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit }: NewTour
         <div className="md:col-span-2 space-y-2">
           <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Règlement</Label>
           <Textarea placeholder="Règlement du tournoi..." value={newTournament.rules} onChange={e => setNewTournament({...newTournament, rules: e.target.value})} className="bg-muted/50 border-border rounded-2xl min-h-[100px] p-4" />
+        </div>
+        <div className="md:col-span-2 rounded-2xl border border-[#5865F2]/30 bg-[#5865F2]/5 p-5 space-y-3">
+          <div className="flex items-center gap-3">
+            <Switch
+              id="discord-space"
+              checked={createDiscordSpace && !newTournament.is_test}
+              disabled={newTournament.is_test}
+              onCheckedChange={setCreateDiscordSpace}
+            />
+            <Label htmlFor="discord-space" className="text-sm font-black cursor-pointer select-none flex items-center gap-2">
+              <DiscordLogo size={17} className="text-[#5865F2]" />
+              Créer automatiquement l'espace Discord
+            </Label>
+          </div>
+          {newTournament.is_test ? (
+            <p className="text-xs text-amber-600 dark:text-amber-400 font-bold leading-relaxed">
+              Désactivé pour un tournoi d'essai : les tournois de test sont supprimés à la clôture,
+              aucun espace Discord n'est créé.
+            </p>
+          ) : (
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Après la création du tournoi, eGame crée automatiquement sur Discord : le rôle
+              « 🏆 Participant — {newTournament.title || 'titre du tournoi'} », une catégorie privée
+              et ses 5 salons (annonces, présence, matchs, preuves, aide). Aucun ID à copier/coller.
+            </p>
+          )}
         </div>
         <div className="md:col-span-2 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5 space-y-3">
           <div className="flex items-center gap-3">

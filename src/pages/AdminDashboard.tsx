@@ -6,8 +6,9 @@ import { supabase } from '@/lib/supabase';
 import { beninNowInput, beninInputToIso } from '@/utils/datetime';
 import Navbar from '@/components/Navbar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutDashboard, MessageSquareText } from 'lucide-react';
+import { LayoutDashboard, MessageSquareText, CheckCircle2, AlertTriangle, Loader2, RotateCcw, X } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
+import DiscordLogo from '@/components/DiscordLogo';
 
 // Import des composants modulaires
 import PaymentsTab from '@/components/admin/PaymentsTab';
@@ -57,6 +58,15 @@ const AdminDashboard = () => {
 
   const [editingTournament, setEditingTournament] = useState<any>(null);
 
+  // Espace Discord automatique : activé par défaut à la création d'un tournoi.
+  const [createDiscordSpace, setCreateDiscordSpace] = useState(true);
+  const [discordStatus, setDiscordStatus] = useState<null | {
+    tournamentId: string;
+    title: string;
+    status: 'creating' | 'ok' | 'failed';
+    message?: string;
+  }>(null);
+
   const [newLeader, setNewLeader] = useState({
     username: '', game_id: 'free-fire', wins: 0, avatar_url: '', rank: 1
   });
@@ -99,6 +109,31 @@ const AdminDashboard = () => {
     setAllPayments(pays ?? []);
   };
 
+  // Appelle l'Edge Function discord-create-tournament-space (idempotente) et
+  // met à jour la bannière de statut. Le tournoi n'est jamais supprimé en cas d'échec.
+  const invokeDiscordSpaceCreation = async (tournamentId: string, title: string) => {
+    setDiscordStatus({ tournamentId, title, status: 'creating' });
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('discord-create-tournament-space', {
+        body: { tournament_id: tournamentId },
+      });
+      const payload = data as any;
+      if (fnError || payload?.error) {
+        const message = payload?.error || fnError?.message || 'Erreur inconnue';
+        setDiscordStatus({ tournamentId, title, status: 'failed', message });
+        showError("⚠️ Espace Discord non créé : " + message);
+      } else {
+        setDiscordStatus({ tournamentId, title, status: 'ok' });
+        showSuccess(payload?.already_exists
+          ? "✅ Espace Discord déjà existant pour ce tournoi."
+          : "✅ Espace Discord créé : rôle, catégorie privée et 5 salons configurés.");
+      }
+    } catch (err: any) {
+      setDiscordStatus({ tournamentId, title, status: 'failed', message: err?.message || 'Erreur réseau' });
+      showError("⚠️ Espace Discord non créé : " + (err?.message || 'Erreur réseau'));
+    }
+  };
+
   const fetchData = async () => {
     const { data: tours, error } = await supabase.from('tournaments').select('*');
     if (error) showError("Impossible de charger les tournois : " + error.message);
@@ -138,6 +173,12 @@ const AdminDashboard = () => {
       }
       setTicketTournamentId(createdTournament.id);
       setActiveTab("tickets");
+
+      // Espace Discord automatique : le tournoi reste créé même si l'appel échoue.
+      // Jamais pour un tournoi d'essai (supprimé à la clôture).
+      if (createDiscordSpace && !newTournament.is_test) {
+        invokeDiscordSpaceCreation(createdTournament.id, newTournament.title);
+      }
       // Notification push à tous les joueurs abonnés (jamais pour un tournoi d'essai)
       if (!newTournament.is_test) {
         supabase.functions.invoke('send-push-notification', {
@@ -307,6 +348,80 @@ const AdminDashboard = () => {
           </button>
         </div>
         
+        {/* Bannière de statut : création automatique de l'espace Discord du tournoi */}
+        {discordStatus && (
+          <div className={`bg-card p-6 rounded-[2.5rem] border shadow-sm space-y-4 relative ${
+            discordStatus.status === 'ok' ? 'border-emerald-500/40' :
+            discordStatus.status === 'failed' ? 'border-amber-500/50' : 'border-[#5865F2]/40'
+          }`}>
+            <button
+              onClick={() => setDiscordStatus(null)}
+              aria-label="Fermer"
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <X size={14} />
+            </button>
+
+            <div className="flex items-center gap-3 pr-8">
+              <div className="w-10 h-10 rounded-xl bg-[#5865F2]/15 border border-[#5865F2]/40 flex items-center justify-center shrink-0">
+                <DiscordLogo size={20} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-black flex items-center gap-2">
+                  Espace Discord — {discordStatus.title || discordStatus.tournamentId}
+                </p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">Automatisation des tournois</p>
+              </div>
+            </div>
+
+            {discordStatus.status === 'creating' && (
+              <p className="text-xs text-muted-foreground flex items-center gap-2">
+                <Loader2 size={14} className="animate-spin text-[#5865F2]" />
+                Création de l'espace Discord en cours : rôle, catégorie privée et 5 salons…
+              </p>
+            )}
+
+            {discordStatus.status === 'ok' && (
+              <div className="space-y-2">
+                <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                  <CheckCircle2 size={14} /> Tournoi créé
+                </p>
+                <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                  <CheckCircle2 size={14} /> Espace Discord créé
+                </p>
+                <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                  <CheckCircle2 size={14} /> Automatisation des participants active
+                </p>
+                <p className="text-[10px] text-muted-foreground leading-relaxed pt-1">
+                  Rôle « 🏆 Participant — {discordStatus.title || 'tournoi'} » + catégorie privée avec
+                  annonces, présence, matchs, preuves et aide. Les joueurs inscrits reçoivent le rôle
+                  via « Activer mon accès Discord » sur la page du tournoi.
+                </p>
+              </div>
+            )}
+
+            {discordStatus.status === 'failed' && (
+              <div className="space-y-3">
+                <p className="text-sm font-black text-amber-600 dark:text-amber-400 flex items-center gap-2">
+                  <AlertTriangle size={16} /> Espace Discord non créé
+                </p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Le tournoi est bien créé et fonctionnel ; seule la création Discord a échoué
+                  {discordStatus.message ? ` (${discordStatus.message})` : ''}.
+                  Tu peux réessayer : aucune ressource ne sera dupliquée si l'espace existe déjà.
+                </p>
+                <button
+                  onClick={() => invokeDiscordSpaceCreation(discordStatus.tournamentId, discordStatus.title)}
+                  className="px-5 py-3 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white text-xs font-black uppercase tracking-wider transition-colors flex items-center gap-2"
+                >
+                  <RotateCcw size={14} />
+                  Réessayer la création Discord
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <div className="bg-muted/50 p-1.5 rounded-[25px] border border-border overflow-x-auto no-scrollbar">
             <TabsList className="flex w-full bg-transparent h-auto gap-1 min-w-max px-4">
@@ -338,10 +453,12 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="tournaments">
-            <NewTournamentTab 
-              newTournament={newTournament} 
-              setNewTournament={setNewTournament} 
-              onSubmit={handleAddTournament} 
+            <NewTournamentTab
+              newTournament={newTournament}
+              setNewTournament={setNewTournament}
+              onSubmit={handleAddTournament}
+              createDiscordSpace={createDiscordSpace}
+              setCreateDiscordSpace={setCreateDiscordSpace}
             />
           </TabsContent>
 
