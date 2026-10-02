@@ -58,6 +58,27 @@ const AdminDashboard = () => {
 
   const [editingTournament, setEditingTournament] = useState<any>(null);
 
+  // Configuration du support Discord privé (salon contact-support + panneau).
+  const [supportSetupLoading, setSupportSetupLoading] = useState(false);
+  const handleSetupDiscordSupport = async () => {
+    setSupportSetupLoading(true);
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('discord-support-setup');
+      const payload = data as any;
+      if (fnError || payload?.error) {
+        showError("Support Discord : " + (payload?.error || fnError?.message || 'échec'));
+      } else {
+        showSuccess(payload?.panel_channel?.already_posted
+          ? "✅ Support Discord déjà configuré (panneau déjà publié)."
+          : "✅ Support Discord configuré : salon contact-support + panneau publiés.");
+      }
+    } catch (err: any) {
+      showError("Support Discord : " + (err?.message || 'échec'));
+    } finally {
+      setSupportSetupLoading(false);
+    }
+  };
+
   // Espace Discord automatique : activé par défaut à la création d'un tournoi.
   const [createDiscordSpace, setCreateDiscordSpace] = useState(true);
   const [discordStatus, setDiscordStatus] = useState<null | {
@@ -339,13 +360,23 @@ const AdminDashboard = () => {
               <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Gestion de l'arène eGame Bénin</p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => setActiveTab("tickets")}
-            className="w-full sm:w-auto rounded-2xl bg-emerald-600 px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-emerald-500/20 transition-colors hover:bg-emerald-500 flex items-center justify-center gap-2"
-          >
-            <MessageSquareText size={18} /> Tickets & validation
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={() => setActiveTab("tickets")}
+              className="w-full sm:w-auto rounded-2xl bg-emerald-600 px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-emerald-500/20 transition-colors hover:bg-emerald-500 flex items-center justify-center gap-2"
+            >
+              <MessageSquareText size={18} /> Tickets & validation
+            </button>
+            <button
+              type="button"
+              onClick={handleSetupDiscordSupport}
+              disabled={supportSetupLoading}
+              className="w-full sm:w-auto rounded-2xl bg-[#5865F2] px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-[#5865F2]/20 transition-colors hover:bg-[#4752C4] flex items-center justify-center gap-2 disabled:opacity-60"
+            >
+              <DiscordLogo size={18} /> {supportSetupLoading ? "Configuration…" : "Support Discord"}
+            </button>
+          </div>
         </div>
         
         {/* Bannière de statut : création automatique de l'espace Discord du tournoi */}
