@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, MessageSquare, XCircle, RefreshCw } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { showSuccess } from '@/utils/toast';
 
@@ -26,7 +26,6 @@ const PaymentHistory = () => {
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [playerUsername, setPlayerUsername] = useState('Joueur');
-  const whatsappNumber = "2290141790790";
 
   const fetchData = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
@@ -82,11 +81,6 @@ const PaymentHistory = () => {
   }, [fetchData]);
 
   const ticketCodeFor = (payment: Payment) => ticketCodes[payment.tournament_id] || payment.validation_code;
-
-  const handleWhatsAppSend = (payment: Payment) => {
-    const message = encodeURIComponent(`eGame Bénin — ${payment.tournament_name}\nPseudo : ${playerUsername}\nMon ticket : ${ticketCodeFor(payment)}`);
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
-  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -145,7 +139,7 @@ const PaymentHistory = () => {
                   {payment.status === 'Réussi' ? (
                     <div className="space-y-3 pt-2 border-t border-[#8A2BE2]/10">
                       <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/30 p-3 text-center">
-                        <p className="text-xs font-bold text-emerald-300">Paiement reçu. Envoie maintenant ce ticket à eGame Bénin sur WhatsApp pour confirmer ta place.</p>
+                        <p className="text-xs font-bold text-emerald-300">Paiement reçu. Ta place sera confirmée après vérification de ce code par les arbitres eGame.</p>
                       </div>
                       <div className="p-4 bg-[#0A0A0F] rounded-2xl border border-[#FFD700]/30 flex items-center justify-between">
                         <div>
@@ -157,13 +151,14 @@ const PaymentHistory = () => {
                         </button>
                       </div>
 
-                      <button
-                        onClick={() => handleWhatsAppSend(payment)}
-                        className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-gaming font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
-                      >
-                        <MessageSquare size={16} />
-                        Envoyer mon ticket à eGame Bénin
-                      </button>
+                      <Link to="/contact" className="block">
+                        <button
+                          className="w-full py-3.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-xl font-gaming font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
+                        >
+                          <MessageSquare size={16} />
+                          Suivre sur Discord
+                        </button>
+                      </Link>
                     </div>
                   ) : (
                     <div className="p-3 bg-[#0A0A0F] rounded-xl text-center space-y-2">

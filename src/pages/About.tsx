@@ -38,8 +38,8 @@ const STEPS: Step[] = [
   },
   {
     icon: MessageSquare,
-    title: "Envoie ton code par WhatsApp",
-    desc: "Envoie ton pseudo et ton code de validation au support WhatsApp officiel pour confirmer ton inscription auprès des arbitres.",
+    title: "Rejoins le Discord de ton jeu",
+    desc: "Ton code de validation est vérifié par les arbitres. Rejoins le serveur Discord de ton jeu pour suivre la confirmation de ton inscription auprès d'eux.",
     highlight: true
   },
   {
@@ -148,28 +148,28 @@ const About = () => {
             ))}
           </ol>
 
-          {/* Rappel WhatsApp */}
-          <div className="bg-emerald-950/40 border border-emerald-500/40 rounded-3xl p-8 md:p-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+          {/* Rappel Discord */}
+          <div className="bg-[#5865F2]/10 border border-[#5865F2]/40 rounded-3xl p-8 md:p-10 flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
-              <div className="w-16 h-16 bg-emerald-500/15 text-emerald-400 rounded-2xl flex items-center justify-center border border-emerald-500/40 shrink-0">
+              <div className="w-16 h-16 bg-[#5865F2]/15 text-[#8B9AFF] rounded-2xl flex items-center justify-center border border-[#5865F2]/40 shrink-0">
                 <MessageSquare size={30} />
               </div>
               <div className="space-y-2">
                 <h3 className="font-gaming font-black text-lg text-white uppercase">Le réflexe à ne pas oublier</h3>
                 <p className="text-xs text-[#8888AA] leading-relaxed max-w-xl">
-                  Après chaque paiement, envoie ton <span className="text-white font-bold">pseudo</span> et ton <span className="text-emerald-400 font-bold">code de validation</span> (ex : EGB-A1B2C) par WhatsApp au support. C'est ce qui confirme officiellement ta place dans le tournoi.
+                  Après chaque paiement, ton <span className="text-white font-bold">code de validation</span> (ex : EGB-A1B2C)
+                  apparaît dans « Mes Inscriptions ». Les arbitres le vérifient pour confirmer officiellement
+                  ta place — suis la validation sur le <span className="text-[#8B9AFF] font-bold">serveur Discord de ton jeu</span>.
                 </p>
               </div>
             </div>
-            <a
-              href={`https://wa.me/2290141790790?text=${encodeURIComponent("Bonjour eGame Bénin ! Voici mon inscription au tournoi : Pseudo : | Code : ")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 bg-emerald-600 hover:bg-emerald-500 text-white font-gaming font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-2xl shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2"
+            <button
+              onClick={() => navigate('/contact')}
+              className="shrink-0 bg-[#5865F2] hover:bg-[#4752C4] text-white font-gaming font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-2xl shadow-lg shadow-[#5865F2]/20 transition-all flex items-center gap-2"
             >
               <MessageSquare size={16} />
-              Support WhatsApp
-            </a>
+              Serveurs Discord
+            </button>
           </div>
         </section>
 

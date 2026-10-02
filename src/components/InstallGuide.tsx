@@ -180,7 +180,7 @@ const InstallGuide = ({ open, onClose }: InstallGuideProps) => {
                   <ol className="space-y-4">
                     <Step n={1} icon={<Compass size={15} />} title="Ouvre eGame dans Chrome">
                       <p className="text-[11px] text-[#8888AA] leading-relaxed">
-                        Si tu es dans WhatsApp, Facebook ou Instagram, appuie sur ⋮ puis
+                        Si tu es dans Facebook ou Instagram, appuie sur ⋮ puis
                         « Ouvrir dans Chrome ».
                       </p>
                     </Step>

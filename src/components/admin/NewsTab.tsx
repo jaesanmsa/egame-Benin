@@ -60,7 +60,7 @@ const NewsTab = () => {
       {
         title: 'Guide : Comment participer à un tournoi ?',
         excerpt: 'Tout ce qu\'il faut savoir pour s\'inscrire et valider sa participation via Mobile Money.',
-        content: 'Participer à un tournoi sur eGame Bénin est simple : 1. Choisissez votre tournoi. 2. Cliquez sur S\'inscrire. 3. Payez via KKiaPay ou FedaPay. 4. Récupérez votre code de validation dans votre historique et envoyez-le au support WhatsApp. C\'est tout !',
+        content: 'Participer à un tournoi sur eGame Bénin est simple : 1. Choisissez votre tournoi. 2. Cliquez sur S\'inscrire. 3. Payez via KKiaPay ou FedaPay. 4. Récupérez votre code de validation dans votre historique : les arbitres le vérifient sur le serveur Discord de votre jeu pour confirmer votre place. C\'est tout !',
         image_url: '/games-news.webp',
         read_time: '5 min',
         is_featured: false

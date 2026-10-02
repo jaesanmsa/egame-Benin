@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, User, MessageSquare } from 'lucide-react';
+import { Users, User, Phone } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
+import { showSuccess } from '@/utils/toast';
 
 interface ParticipantsTabProps {
   activeTournaments: any[];
@@ -16,12 +17,12 @@ interface ParticipantsTabProps {
 
 const ParticipantsTab = ({ activeTournaments, fetchParticipants, selectedTournamentId, participants }: ParticipantsTabProps) => {
   
-  const handleContact = (phone: string, username: string) => {
+  const handleContact = (phone: string) => {
     if (!phone) return;
-    // Nettoyage du numéro (garde uniquement les chiffres)
+    // Copie le numéro (nettoyé) pour contacter le joueur par appel ou SMS.
     const cleanPhone = phone.replace(/\D/g, '');
-    const message = encodeURIComponent(`Bonjour ${username}, je suis l'admin de eGame Bénin. Je te contacte concernant ton inscription au tournoi.`);
-    window.open(`https://wa.me/${cleanPhone.startsWith('229') ? cleanPhone : '229' + cleanPhone}?text=${message}`, '_blank');
+    navigator.clipboard.writeText(`+${cleanPhone.startsWith('229') ? cleanPhone : '229' + cleanPhone}`);
+    showSuccess("Numéro copié ! Tu peux appeler ou envoyer un SMS au joueur.");
   };
 
   return (
@@ -70,13 +71,14 @@ const ParticipantsTab = ({ activeTournaments, fetchParticipants, selectedTournam
                       <p className="text-xs font-black text-violet-500">{p.profiles?.phone || "Pas de numéro"}</p>
                       <p className="text-[9px] text-muted-foreground font-mono mt-1">{p.validation_code}</p>
                     </div>
-                    <Button 
-                      size="icon" 
-                      onClick={() => handleContact(p.profiles?.phone, p.profiles?.username)}
+                    <Button
+                      size="icon"
+                      onClick={() => handleContact(p.profiles?.phone)}
+                      aria-label="Copier le numéro de téléphone"
                       className="bg-green-600 hover:bg-green-700 text-white rounded-xl"
                       disabled={!p.profiles?.phone}
                     >
-                      <MessageSquare size={18} />
+                      <Phone size={18} />
                     </Button>
                   </div>
                 </div>

@@ -11,9 +11,7 @@ import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatBeninDateTime } from '@/utils/datetime';
-
-// Numéro de l'IA eGame sur WhatsApp qui confirme les tickets des tournois.
-const WHATSAPP_AI_NUMBER = "2290141790790";
+import { getDiscordByGame } from '@/lib/discord';
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -207,11 +205,12 @@ const TournamentDetails = () => {
 
   const handlePendingPaymentAnswer = async (wasDebited: boolean) => {
     if (wasDebited) {
-      const message = encodeURIComponent(
-        `Bonjour eGame Bénin, j'ai été débité pour l'inscription au tournoi « ${tournament.title} » (${tournament.entry_fee} FCFA), mais mon paiement est toujours en attente. Je vais joindre ici le reçu de paiement reçu par e-mail.`
+      const subject = encodeURIComponent(`Paiement en attente — ${tournament.title}`);
+      const body = encodeURIComponent(
+        `Bonjour eGame Bénin, j'ai été débité pour l'inscription au tournoi « ${tournament.title} » (${tournament.entry_fee} FCFA), mais mon paiement est toujours en attente. Je joins le reçu de paiement reçu par e-mail.\n\nPseudo : \nReçu : `
       );
       setShowPendingPaymentDialog(false);
-      window.open(`https://wa.me/${WHATSAPP_AI_NUMBER}?text=${message}`, '_blank', 'noopener,noreferrer');
+      window.location.href = `mailto:contact@egamebenin.com?subject=${subject}&body=${body}`;
       return;
     }
 
@@ -248,7 +247,7 @@ const TournamentDetails = () => {
     }
   };
 
-  // Inscription gratuite : attribution d'un ticket pré-généré à envoyer à l'IA eGame sur WhatsApp.
+  // Inscription gratuite : attribution d'un ticket pré-généré vérifié par les arbitres.
   const handleFreeRegistration = async () => {
     setShowConfirmation(false);
     setIsPaying(true);
@@ -270,9 +269,8 @@ const TournamentDetails = () => {
     }
   };
 
-  const whatsappTicketLink = userTicket
-    ? `https://wa.me/${WHATSAPP_AI_NUMBER}?text=${encodeURIComponent(`eGame Bénin — Ticket ${tournament?.title}\nMon code : ${userTicket.code}`)}`
-    : '#';
+  // Serveur Discord de la communauté du jeu (support et suivi du tournoi).
+  const gameDiscord = getDiscordByGame(tournament?.game);
 
   if (loading) return <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>;
   if (!tournament) return null;
@@ -401,7 +399,7 @@ const TournamentDetails = () => {
                 </div>
               </div>
               
-              {/* Action d'inscription : le ticket WhatsApp reste prioritaire après un paiement réussi. */}
+              {/* Action d'inscription : le ticket reste prioritaire après un paiement réussi. */}
               {userRegistration && !userTicket ? (
                 <div className="bg-emerald-950/40 border border-emerald-500/40 p-6 rounded-2xl text-center space-y-4">
                   <div className="flex items-center justify-center gap-3 text-emerald-400">
@@ -428,14 +426,17 @@ const TournamentDetails = () => {
                     <p className={`text-[10px] font-gaming font-bold uppercase tracking-wider ${userTicket.status === 'valide' ? 'text-emerald-400' : 'text-orange-400'}`}>
                       {userTicket.status === 'valide'
                         ? '✅ Place confirmée par eGame'
-                        : "⏳ En attente : envoie ton ticket à l'IA eGame sur WhatsApp"}
+                        : "⏳ En attente de validation par les arbitres eGame"}
                     </p>
                   </div>
-                  <a href={whatsappTicketLink} target="_blank" rel="noopener noreferrer">
-                    <Button className="w-full bg-emerald-600 hover:bg-emerald-500 font-gaming font-bold text-white py-6 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
-                      Envoyer mon ticket sur WhatsApp
-                    </Button>
-                  </a>
+                  {gameDiscord && (
+                    <a href={gameDiscord.url} target="_blank" rel="noopener noreferrer">
+                      <Button className="w-full bg-[#5865F2] hover:bg-[#4752C4] font-gaming font-bold text-white py-6 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                        <Users size={16} />
+                        Rejoindre le Discord {gameDiscord.game}
+                      </Button>
+                    </a>
+                  )}
                 </div>
               ) : participantCount >= maxSlots ? (
                 <div className="rounded-2xl border-2 border-orange-400/60 bg-orange-950/40 p-6 text-center space-y-3" role="status">
@@ -569,7 +570,8 @@ const TournamentDetails = () => {
                     Oui, j'ai été débité
                   </button>
                   <p className="text-[11px] leading-relaxed text-emerald-300/90">
-                    Le support WhatsApp va s'ouvrir. Joins-y le reçu reçu par e-mail afin que eGame Bénin vérifie le paiement.
+                    Ton application e-mail va s'ouvrir : joins-y le reçu reçu par e-mail afin que
+                    eGame Bénin vérifie le paiement (contact@egamebenin.com).
                   </p>
 
                   <button
@@ -613,8 +615,8 @@ const TournamentDetails = () => {
                 {isFree ? (
                   <p className="text-xs text-[#8888AA] leading-relaxed">
                     Ce tournoi est <span className="text-emerald-400 font-bold">100% gratuit</span>. Vérifie que tu acceptes le règlement :
-                    tu recevras ensuite un <span className="text-[#FFD700] font-bold">ticket personnel</span> à envoyer à l'IA eGame sur
-                    WhatsApp pour confirmer ta place.
+                    tu recevras ensuite un <span className="text-[#FFD700] font-bold">ticket personnel</span> dont le code sera vérifié
+                    par les arbitres eGame pour confirmer ta place.
                   </p>
                 ) : (
                   <p className="text-xs text-[#8888AA] leading-relaxed">
@@ -717,8 +719,8 @@ const TournamentDetails = () => {
               <div className="space-y-2">
                 <h2 className="text-xl font-gaming font-bold text-white">Ton ticket est prêt !</h2>
                 <p className="text-xs text-[#8888AA] leading-relaxed">
-                  Envoie ce code à <span className="text-white font-bold">l'IA eGame sur WhatsApp</span> :
-                  elle confirme ton inscription en quelques secondes et ta place est réservée.
+                  Ton code est enregistré : les arbitres eGame le vérifient pour réserver ta place.
+                  Rejoins le serveur Discord de ton jeu pour suivre la confirmation et rencontrer la communauté.
                 </p>
               </div>
 
@@ -733,11 +735,14 @@ const TournamentDetails = () => {
               </div>
 
               <div className="space-y-3">
-                <a href={whatsappTicketLink} target="_blank" rel="noopener noreferrer" className="block">
-                  <Button className="w-full bg-emerald-600 hover:bg-emerald-500 font-gaming font-bold text-white py-5 rounded-xl text-xs uppercase tracking-wider">
-                    Envoyer sur WhatsApp
-                  </Button>
-                </a>
+                {gameDiscord && (
+                  <a href={gameDiscord.url} target="_blank" rel="noopener noreferrer" className="block">
+                    <Button className="w-full bg-[#5865F2] hover:bg-[#4752C4] font-gaming font-bold text-white py-5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                      <Users size={16} />
+                      Rejoindre le Discord {gameDiscord.game}
+                    </Button>
+                  </a>
+                )}
                 <button onClick={() => setShowTicketModal(false)} className="w-full text-xs font-gaming text-[#8888AA] hover:text-white py-2">
                   J'ai compris
                 </button>

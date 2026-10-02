@@ -286,7 +286,7 @@ const Index = () => {
                 <Users size={24} />
               </div>
               <h3 className="font-gaming font-bold text-sm text-white">Communautés gaming</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Un groupe WhatsApp dédié par jeu pour échanger, s'organiser et progresser ensemble.</p>
+              <p className="text-xs text-[#8888AA] leading-relaxed">Un serveur Discord dédié par jeu pour échanger, s'organiser et progresser ensemble.</p>
             </div>
 
             <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
@@ -310,7 +310,7 @@ const Index = () => {
                 <MessageSquare size={24} />
               </div>
               <h3 className="font-gaming font-bold text-sm text-white">Support disponible</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Une équipe joignable 7j/7 par WhatsApp et e-mail pour accompagner les joueurs.</p>
+              <p className="text-xs text-[#8888AA] leading-relaxed">Une équipe joignable 7j/7 sur Discord et par e-mail pour accompagner les joueurs.</p>
             </div>
 
             {hasPartners && (

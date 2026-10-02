@@ -303,7 +303,7 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab("tickets")}
             className="w-full sm:w-auto rounded-2xl bg-emerald-600 px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-emerald-500/20 transition-colors hover:bg-emerald-500 flex items-center justify-center gap-2"
           >
-            <MessageSquareText size={18} /> Tickets pour l'IA WhatsApp
+            <MessageSquareText size={18} /> Tickets & validation
           </button>
         </div>
         

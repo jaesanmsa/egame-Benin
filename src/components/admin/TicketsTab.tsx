@@ -95,7 +95,7 @@ const TicketsTab = ({ tournaments, initialTournamentId, refreshTournaments }: Ti
     return () => clearTimeout(timeout);
   }, [playerQuery, selectedPlayer]);
 
-  // Cocher / décocher un ticket validé par l'IA WhatsApp.
+  // Cocher / décocher un ticket validé par les arbitres.
   const toggleTicket = async (ticket: TicketRow, valide: boolean) => {
     setTickets((list) =>
       list.map((t) =>
@@ -286,7 +286,7 @@ const TicketsTab = ({ tournaments, initialTournamentId, refreshTournaments }: Ti
     setBusy(false);
   };
 
-  // Copier tout le stock (code + attribution) pour le transmettre à l'IA WhatsApp.
+  // Copier tout le stock (code + attribution) pour le transmettre aux arbitres.
   const copyForAI = async () => {
     if (tickets.length === 0) return;
     const lines = [
@@ -294,7 +294,7 @@ const TicketsTab = ({ tournaments, initialTournamentId, refreshTournaments }: Ti
       ...tickets.map((t) => `${t.code} — ${t.username || "Disponible"}${t.status === "valide" ? " — VALIDÉ" : ""}`)
     ];
     await navigator.clipboard.writeText(lines.join("\n"));
-    showSuccess(`${tickets.length} tickets copiés ! Colle-les à ton IA sur WhatsApp.`);
+    showSuccess(`${tickets.length} tickets copiés !`);
   };
 
   const validCount = tickets.filter((t) => t.status === "valide").length;
@@ -340,7 +340,7 @@ const TicketsTab = ({ tournaments, initialTournamentId, refreshTournaments }: Ti
           </div>
         </div>
 
-        {/* Barre d'outils : stats + copie pour l'IA WhatsApp */}
+        {/* Barre d'outils : stats + copie du stock de tickets */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-muted/40 border border-border rounded-2xl p-4">
           <div className="flex flex-wrap items-center gap-4 text-xs font-bold">
             <span className="text-foreground">{maxPlaces} places</span>
@@ -359,7 +359,7 @@ const TicketsTab = ({ tournaments, initialTournamentId, refreshTournaments }: Ti
             disabled={tickets.length === 0}
             className="bg-violet-600 hover:bg-violet-700 text-white rounded-xl py-3 px-4 text-[10px] font-black uppercase tracking-widest flex items-center gap-2"
           >
-            <Copy size={14} /> Copier pour l'IA WhatsApp
+            <Copy size={14} /> Copier le stock de tickets
           </Button>
         </div>
 

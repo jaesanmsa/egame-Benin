@@ -17,8 +17,6 @@ const PaymentSuccess = () => {
   const [playerUsername, setPlayerUsername] = useState<string>('Joueur');
   const hasProcessed = useRef(false);
 
-  const whatsappNumber = "2290141790790";
-
   useEffect(() => {
     const processPayment = async () => {
       if (hasProcessed.current) return;
@@ -83,7 +81,7 @@ const PaymentSuccess = () => {
         }
 
         // Le ticket pré-généré est attribué par la base dès que le paiement passe à « Réussi ».
-        // C'est ce code que le joueur doit envoyer à eGame Bénin sur WhatsApp.
+        // C'est ce code que les arbitres eGame vérifient pour confirmer la place.
         const { data: ticket, error: ticketError } = await supabase
           .from('tickets')
           .select('code')
@@ -104,12 +102,6 @@ const PaymentSuccess = () => {
 
     processPayment();
   }, [searchParams]);
-
-  const handleWhatsAppSend = () => {
-    if (!validationCode) return;
-    const message = encodeURIComponent(`eGame Bénin — ${tournamentName || 'Tournoi'}\nPseudo : ${playerUsername}\nMon ticket : ${validationCode}`);
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
-  };
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col">
@@ -139,8 +131,8 @@ const PaymentSuccess = () => {
 
               <div className="space-y-2">
                 <h1 className="text-2xl font-gaming font-black uppercase text-white">Paiement validé !</h1>
-                <p className="text-sm font-bold text-white">Dernière étape : envoie ton ticket à eGame Bénin sur WhatsApp.</p>
-                <p className="text-xs text-[#8888AA]">Ta place sera confirmée après vérification de ce code.</p>
+                <p className="text-sm font-bold text-white">Ton ticket est prêt.</p>
+                <p className="text-xs text-[#8888AA]">Ta place sera confirmée après vérification de ce code par les arbitres eGame.</p>
               </div>
 
               <div className="p-6 bg-[#0A0A0F] rounded-2xl border-2 border-dashed border-[#FFD700]/50 space-y-2">
@@ -154,13 +146,12 @@ const PaymentSuccess = () => {
               </div>
 
               <div className="space-y-3">
-                <button 
-                  onClick={handleWhatsAppSend}
-                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-gaming font-bold text-xs uppercase tracking-wider py-4 rounded-xl flex items-center justify-center gap-2"
-                >
-                  <MessageSquare size={18} />
-                  Envoyer mon ticket à eGame Bénin
-                </button>
+                <Link to="/contact" className="block">
+                  <button className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-gaming font-bold text-xs uppercase tracking-wider py-4 rounded-xl flex items-center justify-center gap-2">
+                    <MessageSquare size={18} />
+                    Suivre sur Discord
+                  </button>
+                </Link>
 
                 <Link to="/payments" className="block">
                   <button className="w-full bg-[#0A0A0F] border border-[#8A2BE2]/30 hover:border-[#8A2BE2] text-white font-gaming font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl flex items-center justify-center gap-2">

@@ -92,7 +92,7 @@ const BecomePartner = () => {
     if (form.full_name.trim().length < 2) e.full_name = "Indique ton nom / prénom.";
     if (form.organization.trim().length < 2) e.organization = "Indique le nom de ton entreprise, organisation, clan ou communauté.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "Adresse e-mail invalide.";
-    if (!/^[+\d][\d\s-]{7,}$/.test(form.whatsapp.trim())) e.whatsapp = "Numéro WhatsApp invalide (ex: +229 01 23 45 678).";
+    if (!/^[+\d][\d\s-]{7,}$/.test(form.whatsapp.trim())) e.whatsapp = "Numéro de téléphone invalide (ex: +229 01 23 45 678).";
     if (!form.partnership_type) e.partnership_type = "Choisis un type de partenariat.";
     if (form.contribution.trim().length < 10) e.contribution = "Décris ce que tu souhaites apporter (10 caractères minimum).";
     if (form.expectations.trim().length < 10) e.expectations = "Décris ce que tu recherches (10 caractères minimum).";
@@ -107,7 +107,7 @@ const BecomePartner = () => {
       `Nom / prénom : ${form.full_name}`,
       `Organisation / clan / communauté : ${form.organization}`,
       `E-mail : ${form.email}`,
-      `WhatsApp : ${form.whatsapp}`,
+      `Téléphone : ${form.whatsapp}`,
       `Type de partenariat : ${form.partnership_type}`,
       `Jeu concerné : ${form.game || "—"}`,
       `Lien : ${form.link || "—"}`,
@@ -271,7 +271,7 @@ const BecomePartner = () => {
                   id="organization"
                   value={form.organization}
                   onChange={(e) => set("organization", e.target.value)}
-                  placeholder="Ex: Groupe WhatsApp Free Fire Bénin"
+                  placeholder="Ex: Communauté Free Fire Bénin"
                   className={`bg-[#0A0A0F] border-[#8A2BE2]/30 focus-visible:border-[#8A2BE2] rounded-2xl h-12 text-white placeholder:text-[#8888AA]/60 ${errors.organization ? "border-red-500/70" : ""}`}
                 />
                 {errors.organization && <p className="text-[10px] text-red-400 font-bold">{errors.organization}</p>}
@@ -291,7 +291,7 @@ const BecomePartner = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="whatsapp" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Numéro WhatsApp *</Label>
+                <Label htmlFor="whatsapp" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Numéro de téléphone *</Label>
                 <Input
                   id="whatsapp"
                   type="tel"

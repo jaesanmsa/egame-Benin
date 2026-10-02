@@ -8,6 +8,7 @@ import TournamentCard from '@/components/TournamentCard';
 import { ArrowLeft, Trophy, Gamepad2, Zap, Target, MessageSquare, ChevronRight, History } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatBeninDate } from '@/utils/datetime';
+import { getDiscordBySlug } from '@/lib/discord';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from '@/components/ui/button';
 
@@ -19,71 +20,65 @@ const GameDetails = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Serveur Discord officiel de la communauté du jeu (un serveur par jeu).
+  const discord = getDiscordBySlug(id);
+
   const gameInfo = {
     'blood-strike': {
       name: 'Blood Strike',
       icon: '/blood strike.jpg',
       image: '/bloodstrike.webp',
-      desc: "FPS Battle Royale nerveux et ultra-fluide, optimisé pour tous les mobiles. Loot rapide, esquives dynamiques et visée chirurgicale pour survivre jusqu'au dernier cercle.",
-      whatsapp: "https://chat.whatsapp.com/Ihmd1xtysXz9TbRDf4LmT6?s=cl&p=i&mlu=4&ilr=4"
+      desc: "FPS Battle Royale nerveux et ultra-fluide, optimisé pour tous les mobiles. Loot rapide, esquives dynamiques et visée chirurgicale pour survivre jusqu'au dernier cercle."
     },
     'brawl-stars': {
       name: 'Brawl Stars',
       icon: '/icon brawl stars.webp',
       image: '/brawl stars.jpg',
-      desc: "Combats 3v3 frénétiques et modes compétitifs explosifs. Choisis ton Brawler, débloque ses supers et domine l'arène.",
-      whatsapp: "https://chat.whatsapp.com/INmxAExPcaPHT4DrVBIfiw?s=cl&p=i&mlu=4&ilr=4"
+      desc: "Combats 3v3 frénétiques et modes compétitifs explosifs. Choisis ton Brawler, débloque ses supers et domine l'arène."
     },
     'free-fire': {
       name: 'Free Fire',
       icon: '/icon free fire.png',
       image: '/freefire.webp',
-      desc: "Le Battle Royale mobile numéro 1 en Afrique. Domine le terrain, élimine tes adversaires et décroche le Booyah !",
-      whatsapp: "https://chat.whatsapp.com/EzIhfwTxa4DL5g7E50cAwT?s=cl&p=i&mlu=4&ilr=4"
+      desc: "Le Battle Royale mobile numéro 1 en Afrique. Domine le terrain, élimine tes adversaires et décroche le Booyah !"
     },
     'clash-royale': {
       name: 'Clash Royale',
       icon: '/icon clash royal.jpg',
       image: '/clash royal.webp',
-      desc: "Duel en temps réel, stratégie et gestion de decks. Détruis les tours royales ennemies.",
-      whatsapp: "https://chat.whatsapp.com/GIzoOiID57AB7DELQsvVgt?s=cl&p=i&mlu=4&ilr=4"
+      desc: "Duel en temps réel, stratégie et gestion de decks. Détruis les tours royales ennemies."
     },
     'clash-of-clans': {
       name: 'Clash of Clans',
       icon: '/icon clash of clans.jpg',
       image: '/clash of clans.webp',
-      desc: "Construis ton village, forme tes armées et mène ton clan à la victoire ultime.",
-      whatsapp: "https://chat.whatsapp.com/FgkUCxPU1EvEBfmWhiMB0j?mode=gi_t"
+      desc: "Construis ton village, forme tes armées et mène ton clan à la victoire ultime."
     },
     'cod-mobile': {
       name: 'COD Mobile',
       icon: '/icon cod mobile.png',
       image: '/cod mobile.webp',
-      desc: "FPS compétitif pur. Précision, réflexes et esprit d'équipe sur les cartes légendaires.",
-      whatsapp: "https://chat.whatsapp.com/CyrUEEFw6Lr2di9GbCIVv4?s=cl&p=i&mlu=4&ilr=4"
+      desc: "FPS compétitif pur. Précision, réflexes et esprit d'équipe sur les cartes légendaires."
     },
     'efootball-mobile': {
       name: 'eFootball Mobile',
       icon: '/efootball.webp',
       image: '/efootball.webp',
-      desc: "Le football compétitif signé Konami. Construis ton équipe de rêve, maîtrise tes tactiques et dispute des matchs intenses pour dominer le continent.",
-      whatsapp: "https://chat.whatsapp.com/LpvQyzOc1bD3gOHvtBMqst?s=cl&p=i&mlu=4&ilr=4"
+      desc: "Le football compétitif signé Konami. Construis ton équipe de rêve, maîtrise tes tactiques et dispute des matchs intenses pour dominer le continent."
     },
     'pubg-mobile': {
       name: 'PUBG Mobile',
       icon: '/icon pubg.png',
       image: '/pubg-mobile.webp',
-      desc: "Battle Royale ultra-réaliste. Survis à 100 joueurs et remporte le repas de poulet.",
-      whatsapp: "https://chat.whatsapp.com/EsuFIe4zeB13IJTUNO1bew?s=cl&p=i&mlu=4&ilr=4"
+      desc: "Battle Royale ultra-réaliste. Survis à 100 joueurs et remporte le repas de poulet."
     },
     'mobile-legends': {
       name: 'Mobile Legends',
       icon: '/icon mobile legend.jpg',
       image: '/mobile legend.webp',
-      desc: "MOBA 5v5 compétitif. Choisis ton héros et écrase la base ennemie.",
-      whatsapp: "https://chat.whatsapp.com/KAeZjAXJQer7ZftNOqp1dp?s=cl&p=i&mlu=4&ilr=4"
+      desc: "MOBA 5v5 compétitif. Choisis ton héros et écrase la base ennemie."
     }
-  }[id as string] || { name: id, icon: '🎮', image: '', desc: "Compétition eSport officielle.", whatsapp: "https://whatsapp.com/channel/0029Vb6qihB9MF8wGo02z93E" };
+  }[id as string] || { name: id, icon: '🎮', image: '', desc: "Compétition eSport officielle." };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -239,21 +234,23 @@ const GameDetails = () => {
           </div>
 
           <div className="space-y-8">
-            <div className="bg-[#8A2BE2] rounded-3xl p-8 space-y-6 shadow-xl shadow-[#8A2BE2]/20">
-              <div className="flex items-center gap-3 text-white">
-                <MessageSquare size={24} />
-                <h3 className="font-gaming font-bold text-base uppercase">Groupe WhatsApp</h3>
+            {discord && (
+              <div className="bg-[#5865F2] rounded-3xl p-8 space-y-6 shadow-xl shadow-[#5865F2]/20">
+                <div className="flex items-center gap-3 text-white">
+                  <MessageSquare size={24} />
+                  <h3 className="font-gaming font-bold text-base uppercase">Serveur Discord</h3>
+                </div>
+                <p className="text-xs text-white/80 leading-relaxed font-medium">
+                  Rejoins la communauté des joueurs de <span className="font-bold text-white">{gameInfo.name}</span> en Afrique.
+                </p>
+                <a href={discord.url} target="_blank" rel="noopener noreferrer" className="block">
+                  <Button className="w-full bg-white text-[#5865F2] hover:bg-gray-100 font-gaming font-bold text-xs py-6 rounded-2xl uppercase tracking-wider flex items-center justify-center gap-2">
+                    Rejoindre sur Discord
+                    <ChevronRight size={16} />
+                  </Button>
+                </a>
               </div>
-              <p className="text-xs text-white/80 leading-relaxed font-medium">
-                Rejoins la communauté des joueurs de <span className="font-bold text-white">{gameInfo.name}</span> en Afrique.
-              </p>
-              <a href={gameInfo.whatsapp} target="_blank" rel="noopener noreferrer" className="block">
-                <Button className="w-full bg-white text-[#07070C] hover:bg-gray-100 font-gaming font-bold text-xs py-6 rounded-2xl uppercase tracking-wider flex items-center justify-center gap-2">
-                  Rejoindre sur WhatsApp
-                  <ChevronRight size={16} />
-                </Button>
-              </a>
-            </div>
+            )}
           </div>
         </div>
       </main>
