@@ -5,7 +5,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
-import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Loader2, X, Globe, Share2, Ticket, Copy, FlaskConical, Medal, Star } from 'lucide-react';
+import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Loader2, X, Globe, Share2, Ticket, Copy, FlaskConical, Medal, Star, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
@@ -15,6 +15,17 @@ import { getDiscordByGame } from '@/lib/discord';
 import { fetchDiscordConnection, startDiscordConnect } from '@/lib/discordConnection';
 import DiscordAccessCard from '@/components/DiscordAccessCard';
 import DiscordLogo from '@/components/DiscordLogo';
+
+/** Champs obligatoires d'un profil complet avant inscription à un tournoi. */
+const missingProfileFields = (p: any): string[] => {
+  const missing: string[] = [];
+  if (!p?.username) missing.push('pseudo');
+  if (!p?.full_name) missing.push('nom complet');
+  if (!p?.phone) missing.push('numéro Mobile Money');
+  if (!p?.country) missing.push('pays');
+  if (!p?.timezone) missing.push('fuseau horaire');
+  return missing;
+};
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -251,6 +262,21 @@ const TournamentDetails = () => {
         navigate('/auth');
         return;
       }
+      // Profil complet obligatoire avant toute inscription : la vérification
+      // utilise la base (source de vérité), pas l'état local.
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { navigate('/auth'); return; }
+      const { data: freshProfile } = await supabase
+        .from('profiles')
+        .select('username, full_name, phone, country, timezone')
+        .eq('id', user.id)
+        .maybeSingle();
+      setUserProfile((previous: any) => ({ ...(previous || {}), ...freshProfile }));
+      const missing = missingProfileFields(freshProfile);
+      if (missing.length > 0) {
+        showError(`Complète d'abord ton profil : ${missing.join(', ')}.`);
+        return;
+      }
       // Discord obligatoire avant toute nouvelle inscription : l'espace privé du
       // tournoi (annonces, matchs, preuves) vit sur Discord.
       if (discordReady !== true) {
@@ -283,6 +309,20 @@ const TournamentDetails = () => {
     setIsPaying(true);
     try {
       if (!await checkAvailability()) return;
+      // Double garde : profil complet requis avant l'attribution du ticket.
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: prof } = await supabase
+          .from('profiles')
+          .select('username, full_name, phone, country, timezone')
+          .eq('id', user.id)
+          .maybeSingle();
+        const missing = missingProfileFields(prof);
+        if (missing.length > 0) {
+          showError(`Complète d'abord ton profil : ${missing.join(', ')}.`);
+          return;
+        }
+      }
       // Double garde : Discord doit être lié avant l'attribution du ticket.
       const conn = await fetchDiscordConnection().catch(() => null);
       setDiscordReady(!!conn);
@@ -308,6 +348,8 @@ const TournamentDetails = () => {
 
   // Serveur Discord de la communauté du jeu (support et suivi du tournoi).
   const gameDiscord = getDiscordByGame(tournament?.game);
+  // Champs du profil encore manquants (profil complet requis pour s'inscrire).
+  const profileMissing = userProfile ? missingProfileFields(userProfile) : [];
 
   if (loading) return <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>;
   if (!tournament) return null;
@@ -499,6 +541,38 @@ const TournamentDetails = () => {
                     <h3 className="font-gaming font-bold text-base uppercase">Inscriptions Closes</h3>
                   </div>
                   <p className="text-xs text-[#8888AA]">Les inscriptions se sont terminées le {formattedEndRegistration}</p>
+                </div>
+              ) : isLoggedIn && profileMissing.length > 0 ? (
+                /* Profil complet obligatoire avant toute inscription : pseudo, nom,
+                   numéro Mobile Money, pays et fuseau horaire (source : la base). */
+                <div className="rounded-2xl border border-[#8A2BE2]/50 bg-[#8A2BE2]/10 p-6 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-[#8A2BE2]/20 border border-[#8A2BE2]/50 flex items-center justify-center shrink-0">
+                      <User size={22} className="text-[#A855F7]" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-gaming font-black text-sm uppercase tracking-wider text-white">
+                        Profil à compléter pour s'inscrire
+                      </h3>
+                      <p className="text-[10px] text-[#8888AA]">
+                        Ton profil permet les récompenses, le check-in et le versement des gains
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {profileMissing.map((field) => (
+                      <span key={field} className="px-2.5 py-1 rounded-full bg-[#0A0A0F] border border-[#8A2BE2]/40 text-[10px] font-bold text-[#A855F7]">
+                        {field}
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => navigate('/edit-profile')}
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#A855F7] hover:brightness-110 text-white font-gaming font-black text-xs uppercase tracking-widest shadow-lg shadow-[#8A2BE2]/30 transition-all flex items-center justify-center gap-2"
+                  >
+                    <User size={16} />
+                    Compléter mon profil
+                  </button>
                 </div>
               ) : isLoggedIn && discordReady === false ? (
                 /* Discord obligatoire avant toute nouvelle inscription : l'espace
