@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useMemo } from 'react';
-import { Phone } from 'lucide-react';
+import { Phone, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { AFRICAN_COUNTRIES, DEFAULT_COUNTRY_CODE, getCountryByCode } from '@/lib/countries';
 
 interface PhoneCountryInputProps {
@@ -66,23 +65,21 @@ const PhoneCountryInput = ({ value, onChange, id, placeholder, defaultCountryCod
 
   return (
     <div className="flex gap-2">
-      <Select value={selected.code} onValueChange={handleCountryChange}>
-        <SelectTrigger
+      <div className="relative w-[7.5rem] shrink-0">
+        <select
           aria-label="Indicatif du pays"
-          className="w-[7.5rem] shrink-0 bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium gap-1"
+          value={selected.code}
+          onChange={(e) => handleCountryChange(e.target.value)}
+          className="w-full appearance-none bg-[#07070C] border border-[#8A2BE2]/30 rounded-xl text-white font-medium pl-3 pr-7 py-3.5 text-xs font-bold cursor-pointer focus:outline-none focus:border-[#8A2BE2]"
         >
-          <span className="flex items-center gap-1.5 text-xs font-bold whitespace-nowrap">
-            {selected.flag} +{selected.dial}
-          </span>
-        </SelectTrigger>
-        <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white max-h-80">
           {AFRICAN_COUNTRIES.map((country) => (
-            <SelectItem key={country.code} value={country.code} className="text-xs">
+            <option key={country.code} value={country.code} className="bg-[#0F0F1E] text-white">
               {country.flag} {country.name} (+{country.dial})
-            </SelectItem>
+            </option>
           ))}
-        </SelectContent>
-      </Select>
+        </select>
+        <ChevronDown size={13} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8888AA] pointer-events-none" />
+      </div>
 
       <div className="relative flex-1">
         <Phone className="absolute left-3 top-3 text-[#8888AA]" size={18} />

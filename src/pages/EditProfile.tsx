@@ -7,11 +7,10 @@ import Navbar from '@/components/Navbar';
 import SEO from '@/components/SEO';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import PhoneCountryInput, { setPhoneCountry } from '@/components/PhoneCountryInput';
 import { AFRICAN_COUNTRIES, getCountryByCode } from '@/lib/countries';
 import { getTimezonesForCountry, proposeTimezone, isValidTimezone } from '@/lib/timezones';
-import { ArrowLeft, User, Save, AtSign, MapPin, Globe, Clock, Hourglass } from 'lucide-react';
+import { ArrowLeft, User, Save, AtSign, MapPin, Globe, Clock, Hourglass, ChevronDown } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 
 const EditProfile = () => {
@@ -245,23 +244,28 @@ const EditProfile = () => {
                 <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">
                   Pays <span className="text-[#A855F7]">*</span>
                 </Label>
-                <Select value={profile.country} onValueChange={(country) => setProfile({ ...profile, country, phone: setPhoneCountry(profile.phone, country), timezone: proposeTimezone(country) })}>
-                  <SelectTrigger id="country" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
-                    <span className="flex items-center gap-2 text-sm">
-                      <Globe size={16} className="text-[#8A2BE2] shrink-0" />
-                      {getCountryByCode(profile.country)
-                        ? `${getCountryByCode(profile.country)!.flag} ${getCountryByCode(profile.country)!.name}`
-                        : '🌍 Choisis ton pays'}
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white max-h-80">
+                {/* Sélecteur NATIF : fonctionne sur tous les navigateurs et appareils
+                    (ouvre le sélecteur du système) — contrairement aux menus custom. */}
+                <div className="relative">
+                  <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A2BE2] pointer-events-none" />
+                  <select
+                    id="country"
+                    value={profile.country}
+                    onChange={(e) => {
+                      const country = e.target.value;
+                      setProfile({ ...profile, country, phone: setPhoneCountry(profile.phone, country), timezone: proposeTimezone(country) });
+                    }}
+                    className="w-full appearance-none bg-[#0A0A0F] border border-[#8A2BE2]/30 rounded-xl text-white font-medium pl-10 pr-10 py-3.5 text-sm cursor-pointer focus:outline-none focus:border-[#8A2BE2]"
+                  >
+                    {!profile.country && <option value="">🌍 Choisis ton pays</option>}
                     {AFRICAN_COUNTRIES.map((country) => (
-                      <SelectItem key={country.code} value={country.code} className="text-xs">
+                      <option key={country.code} value={country.code} className="bg-[#0F0F1E] text-white">
                         {country.flag} {country.name}
-                      </SelectItem>
+                      </option>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </select>
+                  <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8888AA] pointer-events-none" />
+                </div>
               </div>
 
               <div className="space-y-1.5">
@@ -283,31 +287,32 @@ const EditProfile = () => {
               <Label htmlFor="timezone" className="text-xs font-gaming uppercase text-[#8888AA] flex items-center gap-1.5">
                 <Clock size={13} className="text-[#8A2BE2]" /> Fuseau horaire <span className="text-[#A855F7]">*</span>
               </Label>
-              <Select value={profile.timezone} onValueChange={(timezone) => setProfile({ ...profile, timezone })}>
-                <SelectTrigger id="timezone" className="bg-[#0A0A0F] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
-                  <span className="text-xs font-mono">{profile.timezone || 'Sélectionner'}</span>
-                </SelectTrigger>
-                <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white max-h-80">
-                  {profile.country ? (
-                    <>
-                      {getTimezonesForCountry(profile.country).map((tz) => (
-                        <SelectItem key={tz} value={tz} className="text-xs font-mono">
-                          {tz}
-                        </SelectItem>
-                      ))}
-                      {profile.timezone && !getTimezonesForCountry(profile.country).includes(profile.timezone) && (
-                        <SelectItem key={profile.timezone} value={profile.timezone} className="text-xs font-mono text-orange-400">
-                          {profile.timezone} (personnalisé)
-                        </SelectItem>
-                      )}
-                    </>
-                  ) : (
-                    <div className="px-3 py-2 text-[10px] text-[#8888AA]">
-                      Choisis d'abord ton pays : le fuseau sera proposé automatiquement.
-                    </div>
+              <div className="relative">
+                <Clock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A2BE2] pointer-events-none" />
+                <select
+                  id="timezone"
+                  value={profile.timezone}
+                  onChange={(e) => setProfile({ ...profile, timezone: e.target.value })}
+                  disabled={!profile.country}
+                  className="w-full appearance-none bg-[#0A0A0F] border border-[#8A2BE2]/30 rounded-xl text-white font-medium pl-9 pr-10 py-3.5 text-xs font-mono cursor-pointer focus:outline-none focus:border-[#8A2BE2] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {!profile.timezone && <option value="">Sélectionner</option>}
+                  {getTimezonesForCountry(profile.country).map((tz) => (
+                    <option key={tz} value={tz} className="bg-[#0F0F1E] text-white">
+                      {tz}
+                    </option>
+                  ))}
+                  {profile.timezone && !getTimezonesForCountry(profile.country).includes(profile.timezone) && (
+                    <option value={profile.timezone} className="bg-[#0F0F1E] text-white">
+                      {profile.timezone} (personnalisé)
+                    </option>
                   )}
-                </SelectContent>
-              </Select>
+                </select>
+                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8888AA] pointer-events-none" />
+              </div>
+              {!profile.country && (
+                <p className="text-[10px] text-[#8888AA]/70">Choisis d'abord ton pays : le fuseau sera proposé automatiquement.</p>
+              )}
               <p className="text-[10px] text-[#8888AA]/70">
                 Utilisé pour ton check-in quotidien (série 7 jours).
                 {activeCycle

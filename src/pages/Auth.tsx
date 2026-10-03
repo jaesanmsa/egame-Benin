@@ -5,10 +5,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import PhoneCountryInput, { setPhoneCountry } from '@/components/PhoneCountryInput';
 import { AFRICAN_COUNTRIES, getCountryByCode } from '@/lib/countries';
-import { Mail, Lock, UserPlus, LogIn, AtSign, ArrowLeft, Globe, Zap } from 'lucide-react';
+import { Mail, Lock, UserPlus, LogIn, AtSign, ArrowLeft, Globe, Zap, ChevronDown } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Logo from '@/components/Logo';
 
@@ -194,23 +193,22 @@ const Auth = () => {
             {!isLogin && (
               <div className="space-y-1.5">
                 <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">Pays</Label>
-                <Select value={country} onValueChange={handleCountryChange}>
-                  <SelectTrigger id="country" className="bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium">
-                    <span className="flex items-center gap-2 text-sm w-full">
-                      <Globe size={16} className="text-[#8A2BE2] shrink-0" />
-                      {getCountryByCode(country)
-                        ? `${getCountryByCode(country)!.flag} ${getCountryByCode(country)!.name}`
-                        : '🌍 Choisis ton pays'}
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white max-h-80">
+                <div className="relative">
+                  <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A2BE2] pointer-events-none" />
+                  <select
+                    id="country"
+                    value={country}
+                    onChange={(e) => handleCountryChange(e.target.value)}
+                    className="w-full appearance-none bg-[#07070C] border border-[#8A2BE2]/30 rounded-xl text-white font-medium pl-10 pr-10 py-3.5 text-sm cursor-pointer focus:outline-none focus:border-[#8A2BE2]"
+                  >
                     {AFRICAN_COUNTRIES.map((c) => (
-                      <SelectItem key={c.code} value={c.code} className="text-xs">
+                      <option key={c.code} value={c.code} className="bg-[#0F0F1E] text-white">
                         {c.flag} {c.name}
-                      </SelectItem>
+                      </option>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </select>
+                  <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8888AA] pointer-events-none" />
+                </div>
               </div>
             )}
 
