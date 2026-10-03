@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Flame, Zap, Hourglass, Coins, CheckCircle2, PartyPopper, HeartCrack, Globe, RefreshCw,
+  Flame, Zap, CheckCircle2, PartyPopper, HeartCrack, Globe, RefreshCw, ChevronDown,
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 import { useCheckIn } from "@/hooks/useCheckIn";
 import { CYCLE_TOTAL_POINTS } from "@/lib/checkin";
 import { getCountryByCode } from "@/lib/countries";
@@ -11,26 +10,11 @@ import { Link } from "react-router-dom";
 import CheckInGrid from "./CheckInGrid";
 import PointsInfoBox from "./PointsInfoBox";
 
-interface HistoryEvent {
-  kind: "checkin" | "completed" | "broken";
-  label: string;
-  detail: string;
-  date: string;
-  color: string;
-}
-
-const formatDate = (iso: string) => {
-  try {
-    return new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
-  } catch {
-    return "";
-  }
-};
-
 /**
- * Carte permanente « Ma série eGame » affichée dans le profil du joueur :
- * progression du cycle, réclamation de la présence du jour, compte à rebours
- * jusqu'au prochain minuit LOCAL du joueur, fuseau horaire et historique.
+ * Carte « Ma série eGame » — version compacte : une seule ligne résume la
+ * progression (jour, points en attente, solde) avec le bouton de réclamation
+ * intégré. Le détail (grille 7 jours, fuseau, barème) se déplie via la flèche.
+ * L'historique complet vit dans « Historique des récompenses » juste en dessous.
  */
 const CheckInCard = ({ userId }: { userId: string }) => {
   const { state, loading, claiming, claim, canClaim, timeRemaining, refresh } = useCheckIn(userId);
@@ -40,67 +24,8 @@ const CheckInCard = ({ userId }: { userId: string }) => {
     completed: boolean;
     credited: number;
   }>(null);
-  const [history, setHistory] = useState<HistoryEvent[]>([]);
   const [claimError, setClaimError] = useState<string | null>(null);
-
-  const loadHistory = useCallback(async () => {
-    const [checkinsRes, cyclesRes] = await Promise.all([
-      supabase
-        .from("daily_checkins")
-        .select("streak_day, points_for_day, credited_points, claimed_at")
-        .eq("user_id", userId)
-        .order("claimed_at", { ascending: false })
-        .limit(6),
-      supabase
-        .from("checkin_cycles")
-        .select("status, ended_at, pending_points")
-        .eq("user_id", userId)
-        .in("status", ["completed", "broken"])
-        .order("ended_at", { ascending: false })
-        .limit(3),
-    ]);
-
-    const events: HistoryEvent[] = [];
-
-    (checkinsRes.data || []).forEach((c: any) => {
-      if (c.credited_points > 0) {
-        events.push({
-          kind: "completed",
-          label: "Cycle terminé 🎉",
-          detail: `+${c.credited_points} points validés`,
-          date: c.claimed_at,
-          color: "text-[#FFD700]",
-        });
-      } else {
-        events.push({
-          kind: "checkin",
-          label: `Check-in Jour ${c.streak_day}`,
-          detail: `+${c.points_for_day} point${c.points_for_day > 1 ? "s" : ""} en attente`,
-          date: c.claimed_at,
-          color: "text-[#A855F7]",
-        });
-      }
-    });
-
-    (cyclesRes.data || []).forEach((c: any) => {
-      if (c.status === "broken") {
-        events.push({
-          kind: "broken",
-          label: "Série interrompue",
-          detail: c.pending_points > 0 ? `${c.pending_points} points en attente perdus` : "0 point reçu",
-          date: c.ended_at,
-          color: "text-red-400",
-        });
-      }
-    });
-
-    events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    setHistory(events.slice(0, 6));
-  }, [userId]);
-
-  useEffect(() => {
-    loadHistory();
-  }, [loadHistory, state?.streak_day, state?.pending_points, state?.balance]);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     setJustClaimed(null);
@@ -130,8 +55,8 @@ const CheckInCard = ({ userId }: { userId: string }) => {
 
   if (loading && !state) {
     return (
-      <div className="glass-panel p-6 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" />
+      <div className="glass-panel p-4 flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -142,25 +67,21 @@ const CheckInCard = ({ userId }: { userId: string }) => {
   // avant de pouvoir valider sa présence quotidienne.
   if (state.country_configured === false) {
     return (
-      <div className="glass-panel p-6 space-y-4">
+      <div className="glass-panel p-5 space-y-3">
         <h3 className="text-sm font-gaming font-black uppercase tracking-widest text-white flex items-center gap-2">
-          <Flame size={18} className="text-orange-400" />
+          <Flame size={16} className="text-orange-400" />
           Ma série eGame
         </h3>
         <div className="rounded-2xl border border-[#8A2BE2]/40 bg-[#8A2BE2]/10 p-4 space-y-2 text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-[#8A2BE2]/20 border border-[#8A2BE2]/50 flex items-center justify-center">
-            <Globe size={22} className="text-[#A855F7]" />
+          <div className="mx-auto w-11 h-11 rounded-full bg-[#8A2BE2]/20 border border-[#8A2BE2]/50 flex items-center justify-center">
+            <Globe size={20} className="text-[#A855F7]" />
           </div>
           <p className="text-xs font-gaming font-black text-white uppercase tracking-wide">
             Configure ton pays pour activer tes récompenses
           </p>
-          <p className="text-[11px] text-[#8888AA] leading-relaxed">
-            Choisis ton pays africain et ton fuseau horaire dans ton profil pour
-            débloquer le check-in quotidien et tes points eGame.
-          </p>
           <Link
             to="/edit-profile"
-            className="inline-block mt-1 px-5 py-3 rounded-xl bg-[#8A2BE2] hover:bg-[#A855F7] text-white font-gaming font-black text-[10px] uppercase tracking-widest transition-colors"
+            className="inline-block mt-1 px-5 py-2.5 rounded-xl bg-[#8A2BE2] hover:bg-[#A855F7] text-white font-gaming font-black text-[10px] uppercase tracking-widest transition-colors"
           >
             ⚙️ Configurer mon profil
           </Link>
@@ -172,162 +93,113 @@ const CheckInCard = ({ userId }: { userId: string }) => {
   const pendingCountry = state.pending_country
     ? getCountryByCode(state.pending_country)
     : null;
-
   const gap = state.gap_detected && !justClaimed;
 
   return (
-    <div className="glass-panel p-6 space-y-5">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-gaming font-black uppercase tracking-widest text-white flex items-center gap-2">
-          <Flame size={18} className="text-orange-400" />
-          Ma série eGame
-        </h3>
+    <div className="glass-panel p-4 space-y-3">
+      {/* ===== Ligne principale compacte ===== */}
+      <div className="flex items-center gap-2.5 flex-wrap">
         <button
-          onClick={() => { refresh(); loadHistory(); }}
-          className="p-2 rounded-full border border-white/10 text-[#8888AA] hover:text-white hover:border-[#8A2BE2]/60 transition-colors"
+          onClick={() => setExpanded((v) => !v)}
+          className="flex items-center gap-2 min-w-0 flex-1 text-left group"
+          aria-label={expanded ? "Replier le détail de la série" : "Déplier le détail de la série"}
+        >
+          <Flame size={16} className="text-orange-400 shrink-0" />
+          <span className="text-xs font-gaming font-black uppercase tracking-widest text-white">
+            Série {state.streak_day}/7
+          </span>
+          <span className="text-[11px] font-bold text-[#A855F7]">· {state.pending_points} en attente</span>
+          <span className="text-[11px] font-bold text-[#FFD700]">· {state.balance} pts</span>
+          <ChevronDown
+            size={14}
+            className={`text-[#8888AA] shrink-0 ml-auto transition-transform group-hover:text-white ${expanded ? "rotate-180" : ""}`}
+          />
+        </button>
+        <button
+          onClick={() => refresh()}
+          className="p-1.5 rounded-full border border-white/10 text-[#8888AA] hover:text-white hover:border-[#8A2BE2]/60 transition-colors"
           aria-label="Actualiser"
         >
-          <RefreshCw size={14} />
+          <RefreshCw size={12} />
         </button>
       </div>
 
+      {/* ===== Changement de pays programmé (compact) ===== */}
       {pendingCountry && state.pending_timezone && (
-        <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 flex items-center gap-2">
-          <Hourglass size={14} className="text-amber-400 shrink-0" />
-          <p className="text-[10px] text-amber-200/90 font-bold leading-relaxed">
-            Changement programmé : {pendingCountry.flag} {pendingCountry.name} • {state.pending_timezone}.
-            Appliqué automatiquement après le Jour 7 de ta série en cours.
+        <p className="text-[10px] text-amber-200/90 font-bold leading-relaxed flex items-center gap-1.5">
+          <Zap size={11} className="text-amber-400 shrink-0" />
+          Changement programmé : {pendingCountry.flag} {pendingCountry.name} — appliqué après le Jour 7.
+        </p>
+      )}
+
+      {/* ===== Bandeaux transitoires ===== */}
+      {justClaimed && (
+        <motion.div
+          initial={{ scale: 0.98, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-center"
+        >
+          <p className="text-[11px] font-gaming font-black text-emerald-400">
+            {justClaimed.completed
+              ? `🎉 Série terminée ! +${justClaimed.credited} points crédités`
+              : `✅ Présence validée ! +${justClaimed.points} point${justClaimed.points > 1 ? "s" : ""} en attente`}
+          </p>
+        </motion.div>
+      )}
+      {!justClaimed && gap && (
+        <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2">
+          <p className="text-[11px] font-bold text-red-400 flex items-center gap-1.5">
+            <HeartCrack size={12} /> Série interrompue — {state.points_to_lose} points en attente perdus, reprise au Jour 1.
           </p>
         </div>
       )}
 
-      {justClaimed ? (
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-center space-y-2"
-        >
-          {justClaimed.completed ? (
-            <>
-              <p className="text-sm font-gaming font-black text-[#FFD700] flex items-center justify-center gap-2">
-                <PartyPopper size={16} /> 🎉 Série de 7 jours terminée !
-              </p>
-              <p className="text-xs font-bold text-white">
-                +{justClaimed.credited} points eGame ajoutés à ton compte.
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="text-sm font-gaming font-black text-emerald-400 flex items-center justify-center gap-2">
-                <CheckCircle2 size={16} /> ✅ Présence validée !
-              </p>
-              <p className="text-xs font-bold text-white">
-                +{justClaimed.points} point{justClaimed.points > 1 ? "s" : ""} ajouté
-                {justClaimed.points > 1 ? "s" : ""} à ta cagnotte en attente.
-              </p>
-            </>
-          )}
-          <p className="text-[11px] text-[#8888AA]">
-            Continue ta série jusqu'au Jour 7 pour récupérer tous tes points !
-          </p>
-        </motion.div>
-      ) : gap ? (
-        <div className="rounded-2xl border border-red-500/40 bg-red-500/10 p-4 space-y-1">
-          <p className="text-sm font-gaming font-black text-red-400 flex items-center gap-2">
-            <HeartCrack size={15} /> Série interrompue
-          </p>
-          <p className="text-[11px] text-[#8888AA] font-medium leading-relaxed">
-            Tu as manqué une journée : tes{" "}
-            <span className="text-red-400 font-bold">{state.points_to_lose} points en attente</span> sont
-            perdus et ta série repart au Jour 1 aujourd'hui. Tes points déjà validés sont conservés.
-          </p>
-        </div>
-      ) : null}
+      {claimError && <p className="text-[11px] font-bold text-red-400 text-center">{claimError}</p>}
 
-      <CheckInGrid streakDay={state.streak_day} claimedToday={state.already_claimed_today} />
-
-      <div className="grid grid-cols-3 gap-2 text-center">
-        <div className="rounded-xl bg-[#0A0A0F] border border-white/10 p-3 space-y-1">
-          <p className="text-[9px] font-gaming font-bold uppercase tracking-wider text-[#8888AA] flex items-center justify-center gap-1">
-            <Flame size={10} className="text-orange-400" /> Série
-          </p>
-          <p className="text-sm font-gaming font-black text-white">{state.streak_day} / 7 jours</p>
-        </div>
-        <div className="rounded-xl bg-[#0A0A0F] border border-white/10 p-3 space-y-1">
-          <p className="text-[9px] font-gaming font-bold uppercase tracking-wider text-[#8888AA] flex items-center justify-center gap-1">
-            <Hourglass size={10} className="text-[#A855F7]" /> En attente
-          </p>
-          <p className="text-sm font-gaming font-black text-[#A855F7]">{state.pending_points}</p>
-        </div>
-        <div className="rounded-xl bg-[#0A0A0F] border border-white/10 p-3 space-y-1">
-          <p className="text-[9px] font-gaming font-bold uppercase tracking-wider text-[#8888AA] flex items-center justify-center gap-1">
-            <Coins size={10} className="text-[#FFD700]" /> Solde
-          </p>
-          <p className="text-sm font-gaming font-black text-[#FFD700]">{state.balance}</p>
-        </div>
-      </div>
-
-      {claimError && <p className="text-xs font-bold text-red-400 text-center">{claimError}</p>}
-
+      {/* ===== Réclamation compacte ===== */}
       {state.already_claimed_today ? (
-        <div className="space-y-2">
-          <button
-            disabled
-            className="w-full py-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-gaming font-black text-xs uppercase tracking-widest cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            <CheckCircle2 size={15} /> Présence du jour validée
-          </button>
+        <div className="flex items-center justify-between gap-2 rounded-xl bg-[#0A0A0F] border border-white/10 px-3 py-2.5">
+          <p className="text-[11px] font-gaming font-black text-emerald-400 flex items-center gap-1.5">
+            <CheckCircle2 size={13} /> Jour validé
+          </p>
           {timeRemaining && (
-            <div className="rounded-xl bg-[#0A0A0F] border border-white/10 p-3 flex items-center justify-center gap-2">
-              <Zap size={13} className="text-[#A855F7]" />
-              <p className="text-xs font-gaming font-bold text-white">
-                Prochaine récompense dans :{" "}
-                <span className="text-[#A855F7]">{timeRemaining.label}</span>
-              </p>
-            </div>
+            <p className="text-[10px] font-bold text-[#8888AA]">
+              Prochaine : <span className="text-[#A855F7]">{timeRemaining.label}</span>
+            </p>
           )}
         </div>
       ) : (
         <button
           onClick={handleClaim}
           disabled={claiming || !canClaim}
-          className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#A855F7] hover:brightness-110 disabled:opacity-60 text-white font-gaming font-black text-xs uppercase tracking-widest shadow-lg shadow-[#8A2BE2]/30 transition-all"
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-[#8A2BE2] to-[#A855F7] hover:brightness-110 disabled:opacity-60 text-white font-gaming font-black text-[11px] uppercase tracking-widest shadow-lg shadow-[#8A2BE2]/30 transition-all"
         >
-          {claiming ? "Validation en cours..." : "✅ Réclamer ma présence"}
+          {claiming ? "Validation..." : `✅ Réclamer ma présence · J${Math.min(state.streak_day + 1, 7)}/7`}
         </button>
       )}
 
-      <p className="text-[10px] text-[#8888AA]/80 font-medium flex items-center gap-1.5">
-        <Globe size={11} className="text-[#8A2BE2]" />
-        Fuseau horaire : <span className="text-white/90 font-mono">{state.timezone}</span>
-        {" "}• Cycle complet : +{CYCLE_TOTAL_POINTS} points
-      </p>
+      {/* ===== Détail repliable ===== */}
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="overflow-hidden space-y-4"
+          >
+            <CheckInGrid streakDay={state.streak_day} claimedToday={state.already_claimed_today} />
 
-      {history.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#8888AA]">
-            Historique récent
-          </p>
-          <div className="space-y-1.5">
-            {history.map((event, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between rounded-xl bg-[#0A0A0F] border border-white/5 px-3 py-2"
-              >
-                <div className="min-w-0">
-                  <p className="text-[11px] font-bold text-white truncate">{event.label}</p>
-                  <p className={`text-[10px] font-bold ${event.color}`}>{event.detail}</p>
-                </div>
-                <p className="text-[10px] text-[#8888AA] font-medium shrink-0 ml-2">
-                  {formatDate(event.date)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+            <p className="text-[10px] text-[#8888AA]/80 font-medium flex items-center gap-1.5">
+              <Globe size={11} className="text-[#8A2BE2]" />
+              Fuseau : <span className="text-white/90 font-mono">{state.timezone}</span>
+              {" "}• Cycle complet : +{CYCLE_TOTAL_POINTS} points
+            </p>
 
-      <PointsInfoBox />
+            <PointsInfoBox />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

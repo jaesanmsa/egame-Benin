@@ -8,6 +8,9 @@ export interface DiscordServer {
   url: string;
 }
 
+/** Invitation du serveur Discord principal eGame Bénin (support + communauté). */
+export const MAIN_DISCORD_INVITE = 'https://discord.gg/NH545jPQ6';
+
 export const DISCORD_SERVERS: DiscordServer[] = [
   { game: 'Blood Strike', slug: 'blood-strike', url: 'https://discord.gg/qgjnG2mUxx' },
   { game: 'Brawl Stars', slug: 'brawl-stars', url: 'https://discord.gg/x3f763g8GX' },

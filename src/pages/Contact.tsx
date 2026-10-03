@@ -6,7 +6,7 @@ import SEO from '@/components/SEO';
 import { ArrowLeft, Mail, HelpCircle, Facebook, Users, MessageSquare, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { DISCORD_SERVERS } from '@/lib/discord';
+import { DISCORD_SERVERS, MAIN_DISCORD_INVITE } from '@/lib/discord';
 
 const Contact = () => {
   const navigate = useNavigate();
@@ -36,15 +36,17 @@ const Contact = () => {
 
         <div className="grid grid-cols-2 gap-4">
           <a
-            href="#discord"
+            href={MAIN_DISCORD_INVITE}
+            target="_blank"
+            rel="noopener noreferrer"
             className="p-6 bg-[#0F0F1E] border border-[#5865F2]/40 hover:border-[#5865F2] rounded-3xl text-center space-y-3 transition-all"
           >
             <div className="w-12 h-12 bg-[#5865F2]/20 text-[#8B9AFF] rounded-2xl flex items-center justify-center mx-auto">
               <MessageSquare size={24} />
             </div>
             <div>
-              <p className="font-gaming font-bold text-xs text-white">Serveurs Discord</p>
-              <p className="text-[10px] text-[#8888AA] uppercase">Un serveur par jeu</p>
+              <p className="font-gaming font-bold text-xs text-white">Serveur Discord</p>
+              <p className="text-[10px] text-[#8888AA] uppercase">Rejoindre maintenant</p>
             </div>
           </a>
 
@@ -88,14 +90,31 @@ const Contact = () => {
           </button>
         </div>
 
-        {/* Serveurs Discord officiels — un serveur par jeu */}
+        {/* Serveurs Discord officiels — serveur principal + un serveur par jeu */}
         <div id="discord" className="space-y-4 scroll-mt-24">
           <h2 className="text-xl font-gaming font-bold text-white uppercase flex items-center gap-2">
             <MessageSquare className="text-[#5865F2]" size={20} /> Nos serveurs Discord
           </h2>
+          <a
+            href={MAIN_DISCORD_INVITE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center justify-between gap-3 bg-[#5865F2] rounded-2xl px-5 py-4 shadow-lg shadow-[#5865F2]/20 transition-all hover:bg-[#4752C4]"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-white/15 border border-white/30 flex items-center justify-center shrink-0">
+                <MessageSquare size={15} className="text-white" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-gaming font-black text-white truncate">Serveur principal eGame Bénin</p>
+                <p className="text-[10px] text-white/80">Support, annonces et communauté</p>
+              </div>
+            </div>
+            <ChevronRight size={16} className="text-white shrink-0 transition-transform group-hover:translate-x-0.5" />
+          </a>
           <p className="text-xs text-[#8888AA] leading-relaxed">
-            Toute la communauté eGame Bénin vit sur Discord : rejoins le serveur de ton jeu pour
-            échanger avec les joueurs, suivre tes tournois et trouver les arbitres.
+            Puis rejoins le serveur de ton jeu pour échanger avec les joueurs, suivre tes tournois
+            et trouver les arbitres.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {DISCORD_SERVERS.map((server) => (
