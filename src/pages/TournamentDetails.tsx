@@ -12,7 +12,9 @@ import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatBeninDateTime } from '@/utils/datetime';
 import { getDiscordByGame } from '@/lib/discord';
+import { fetchDiscordConnection, startDiscordConnect } from '@/lib/discordConnection';
 import DiscordAccessCard from '@/components/DiscordAccessCard';
+import DiscordLogo from '@/components/DiscordLogo';
 
 const TournamentDetails = () => {
   const { id } = useParams();
@@ -33,6 +35,9 @@ const TournamentDetails = () => {
   const [showPendingPaymentDialog, setShowPendingPaymentDialog] = useState(false);
   const [pendingGateway, setPendingGateway] = useState<'fedapay' | 'kkiapay' | null>(null);
   const [isResolvingPending, setIsResolvingPending] = useState(false);
+  // Liaison Discord obligatoire avant TOUTE nouvelle inscription : l'espace privé
+  // du tournoi (annonces, matchs, preuves) vit sur Discord. null = vérification en cours.
+  const [discordReady, setDiscordReady] = useState<boolean | null>(null);
 
   const fetchParticipants = useCallback(async () => {
     try {
@@ -88,6 +93,10 @@ const TournamentDetails = () => {
         supabase.from('profiles').select('*').eq('id', session.user.id).single().then(({ data }) => {
           if (data) setUserProfile(data);
         });
+        // Liaison Discord requise pour toute nouvelle inscription.
+        fetchDiscordConnection().then(conn => setDiscordReady(!!conn)).catch(() => setDiscordReady(false));
+      } else {
+        setDiscordReady(false);
       }
     });
 
@@ -242,9 +251,29 @@ const TournamentDetails = () => {
         navigate('/auth');
         return;
       }
+      // Discord obligatoire avant toute nouvelle inscription : l'espace privé du
+      // tournoi (annonces, matchs, preuves) vit sur Discord.
+      if (discordReady !== true) {
+        const conn = await fetchDiscordConnection().catch(() => null);
+        setDiscordReady(!!conn);
+        if (!conn) {
+          showError("Connecte d'abord ton Discord pour t'inscrire à ce tournoi.");
+          return;
+        }
+      }
       setShowConfirmation(true);
     } finally {
       setIsPaying(false);
+    }
+  };
+
+  // Connexion Discord depuis la porte d'inscription (retour OAuth sur cette page).
+  const handleConnectDiscord = async () => {
+    try {
+      const authorizationUrl = await startDiscordConnect(window.location.href);
+      window.location.href = authorizationUrl;
+    } catch (err: any) {
+      showError(err?.message || "Impossible de démarrer la connexion Discord. Réessaie.");
     }
   };
 
@@ -254,6 +283,13 @@ const TournamentDetails = () => {
     setIsPaying(true);
     try {
       if (!await checkAvailability()) return;
+      // Double garde : Discord doit être lié avant l'attribution du ticket.
+      const conn = await fetchDiscordConnection().catch(() => null);
+      setDiscordReady(!!conn);
+      if (!conn) {
+        showError("Connecte d'abord ton Discord pour t'inscrire à ce tournoi.");
+        return;
+      }
       const { data, error } = await supabase.rpc('claim_tournament_ticket', { p_tournament_id: id });
 
       if (error) {
@@ -464,14 +500,43 @@ const TournamentDetails = () => {
                   </div>
                   <p className="text-xs text-[#8888AA]">Les inscriptions se sont terminées le {formattedEndRegistration}</p>
                 </div>
+              ) : isLoggedIn && discordReady === false ? (
+                /* Discord obligatoire avant toute nouvelle inscription : l'espace
+                   privé du tournoi (annonces, matchs, preuves) vit sur Discord. */
+                <div className="rounded-2xl border border-[#5865F2]/50 bg-[#5865F2]/10 p-6 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-[#5865F2]/20 border border-[#5865F2]/50 flex items-center justify-center shrink-0">
+                      <DiscordLogo size={22} />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-gaming font-black text-sm uppercase tracking-wider text-white">
+                        Discord requis pour s'inscrire
+                      </h3>
+                      <p className="text-[10px] text-[#8888AA]">
+                        Annonces, matchs et preuves du tournoi se déroulent sur Discord
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-[#8888AA] leading-relaxed">
+                    Connecte ton compte Discord pour t'inscrire : tu recevras automatiquement
+                    l'accès à l'espace privé du tournoi dès ton inscription validée.
+                  </p>
+                  <button
+                    onClick={handleConnectDiscord}
+                    className="w-full py-4 rounded-2xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-gaming font-black text-xs uppercase tracking-widest shadow-lg shadow-[#5865F2]/30 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <DiscordLogo size={16} className="text-white" />
+                    Connecter mon Discord
+                  </button>
+                </div>
               ) : (
                 <div className="space-y-3">
                   <button
                     onClick={handleStartRegistration}
-                    disabled={isPaying}
+                    disabled={isPaying || (isLoggedIn && discordReady === null)}
                     className="w-full border-2 border-violet-400 bg-violet-700 hover:bg-violet-600 text-white px-4 py-5 rounded-2xl text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-violet-500/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F0F1E] disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    {isPaying ? (
+                    {isPaying || (isLoggedIn && discordReady === null) ? (
                       <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Préparation...</>
                     ) : isFree ? (
                       "S'inscrire Gratuitement • Ticket"

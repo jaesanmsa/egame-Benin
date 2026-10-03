@@ -6,7 +6,9 @@ type InstallPrompt = Event & {
 };
 
 const INSTALLED_KEY = 'egame:pwa-installed';
-const LATER_KEY = 'egame:pwa-later';
+// « Plus tard » ne masque la carte que pour la SESSION en cours : le rappel
+// revient à la prochaine visite/connexion du joueur.
+const SESSION_POSTPONE_KEY = 'egame:pwa-postponed-session';
 const listeners = new Set<() => void>();
 const standalone = window.matchMedia('(display-mode: standalone)');
 const isStandalone = () => standalone.matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
@@ -16,12 +18,19 @@ const read = (key: string) => {
 const save = (key: string, value: string) => {
   try { localStorage.setItem(key, value); } catch { /* Private browsing can disable storage. */ }
 };
+const isPostponedThisSession = () => {
+  try { return sessionStorage.getItem(SESSION_POSTPONE_KEY) === '1'; } catch { return false; }
+};
 let installed = isStandalone() || read(INSTALLED_KEY) === 'true';
-let laterUntil = Number(read(LATER_KEY)) || 0;
+// Nettoyage de l'ancien report de 7 jours pour les joueurs qui l'avaient utilisé.
+if (read('egame:pwa-later')) {
+  try { localStorage.removeItem('egame:pwa-later'); } catch { /* ignoré */ }
+}
 let promptEvent: InstallPrompt | null = null;
 let version = 0;
 const notify = () => { version += 1; listeners.forEach(listener => listener()); };
 
+/** Marque l'app comme installée : le rappel ne réapparaîtra plus sur cet appareil. */
 export function markPwaInstalled() {
   installed = true;
   promptEvent = null;
@@ -29,9 +38,9 @@ export function markPwaInstalled() {
   notify();
 }
 
+/** « Plus tard » : masque le rappel pour cette session uniquement (revient à la prochaine visite). */
 export function postponePwaInstall() {
-  laterUntil = Date.now() + 7 * 24 * 60 * 60 * 1000;
-  save(LATER_KEY, String(laterUntil));
+  try { sessionStorage.setItem(SESSION_POSTPONE_KEY, '1'); } catch { /* ignoré */ }
   notify();
 }
 
@@ -46,9 +55,8 @@ standalone.addEventListener('change', () => {
   if (isStandalone()) markPwaInstalled();
 });
 window.addEventListener('storage', event => {
-  if (event.key === INSTALLED_KEY || event.key === LATER_KEY || event.key === null) {
+  if (event.key === INSTALLED_KEY || event.key === null) {
     installed = isStandalone() || read(INSTALLED_KEY) === 'true';
-    laterUntil = Number(read(LATER_KEY)) || 0;
     notify();
   }
 });
@@ -86,6 +94,8 @@ export function usePwaInstall() {
     ios,
     iosSafari,
     canPrompt: !!promptEvent,
-    shouldOffer: !installed && !isStandalone() && Date.now() >= laterUntil && (mobile || !!promptEvent),
+    // Offre le rappel si : app non installée + pas en mode app + pas reporté
+    // pendant cette session (mobile, ou desktop avec invite native disponible).
+    shouldOffer: !installed && !isStandalone() && !isPostponedThisSession() && (mobile || !!promptEvent),
   };
 }
