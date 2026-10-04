@@ -262,29 +262,32 @@ const TournamentDetails = () => {
         navigate('/auth');
         return;
       }
-      // Profil complet obligatoire avant toute inscription : la vérification
-      // utilise la base (source de vérité), pas l'état local.
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { navigate('/auth'); return; }
-      const { data: freshProfile } = await supabase
-        .from('profiles')
-        .select('username, full_name, phone, country, timezone')
-        .eq('id', user.id)
-        .maybeSingle();
-      setUserProfile((previous: any) => ({ ...(previous || {}), ...freshProfile }));
-      const missing = missingProfileFields(freshProfile);
-      if (missing.length > 0) {
-        showError(`Complète d'abord ton profil : ${missing.join(', ')}.`);
-        return;
-      }
-      // Discord obligatoire avant toute nouvelle inscription : l'espace privé du
-      // tournoi (annonces, matchs, preuves) vit sur Discord.
-      if (discordReady !== true) {
-        const conn = await fetchDiscordConnection().catch(() => null);
-        setDiscordReady(!!conn);
-        if (!conn) {
-          showError("Connecte d'abord ton Discord pour t'inscrire à ce tournoi.");
+      // Tournoi d'essai + admin : portes profil/Discord dispensées (test des paiements).
+      if (!waiveGates) {
+        // Profil complet obligatoire avant toute inscription : la vérification
+        // utilise la base (source de vérité), pas l'état local.
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { navigate('/auth'); return; }
+        const { data: freshProfile } = await supabase
+          .from('profiles')
+          .select('username, full_name, phone, country, timezone')
+          .eq('id', user.id)
+          .maybeSingle();
+        setUserProfile((previous: any) => ({ ...(previous || {}), ...freshProfile }));
+        const missing = missingProfileFields(freshProfile);
+        if (missing.length > 0) {
+          showError(`Complète d'abord ton profil : ${missing.join(', ')}.`);
           return;
+        }
+        // Discord obligatoire avant toute nouvelle inscription : l'espace privé du
+        // tournoi (annonces, matchs, preuves) vit sur Discord.
+        if (discordReady !== true) {
+          const conn = await fetchDiscordConnection().catch(() => null);
+          setDiscordReady(!!conn);
+          if (!conn) {
+            showError("Connecte d'abord ton Discord pour t'inscrire à ce tournoi.");
+            return;
+          }
         }
       }
       setShowConfirmation(true);
@@ -309,26 +312,29 @@ const TournamentDetails = () => {
     setIsPaying(true);
     try {
       if (!await checkAvailability()) return;
-      // Double garde : profil complet requis avant l'attribution du ticket.
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: prof } = await supabase
-          .from('profiles')
-          .select('username, full_name, phone, country, timezone')
-          .eq('id', user.id)
-          .maybeSingle();
-        const missing = missingProfileFields(prof);
-        if (missing.length > 0) {
-          showError(`Complète d'abord ton profil : ${missing.join(', ')}.`);
+      // Tournoi d'essai + admin : portes profil/Discord dispensées.
+      if (!waiveGates) {
+        // Double garde : profil complet requis avant l'attribution du ticket.
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: prof } = await supabase
+            .from('profiles')
+            .select('username, full_name, phone, country, timezone')
+            .eq('id', user.id)
+            .maybeSingle();
+          const missing = missingProfileFields(prof);
+          if (missing.length > 0) {
+            showError(`Complète d'abord ton profil : ${missing.join(', ')}.`);
+            return;
+          }
+        }
+        // Double garde : Discord doit être lié avant l'attribution du ticket.
+        const conn = await fetchDiscordConnection().catch(() => null);
+        setDiscordReady(!!conn);
+        if (!conn) {
+          showError("Connecte d'abord ton Discord pour t'inscrire à ce tournoi.");
           return;
         }
-      }
-      // Double garde : Discord doit être lié avant l'attribution du ticket.
-      const conn = await fetchDiscordConnection().catch(() => null);
-      setDiscordReady(!!conn);
-      if (!conn) {
-        showError("Connecte d'abord ton Discord pour t'inscrire à ce tournoi.");
-        return;
       }
       const { data, error } = await supabase.rpc('claim_tournament_ticket', { p_tournament_id: id });
 
@@ -350,6 +356,10 @@ const TournamentDetails = () => {
   const gameDiscord = getDiscordByGame(tournament?.game);
   // Champs du profil encore manquants (profil complet requis pour s'inscrire).
   const profileMissing = userProfile ? missingProfileFields(userProfile) : [];
+  // Tournoi d'essai : l'admin teste les paiements sans passer par les portes
+  // profil/Discord — pour lui c'est différent, et tout est supprimé à la clôture.
+  const isAdmin = !!currentUser && (currentUser.email || '').toLowerCase() === 'egamebenin@gmail.com';
+  const waiveGates = !!tournament?.is_test && isAdmin;
 
   if (loading) return <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>;
   if (!tournament) return null;
@@ -542,7 +552,7 @@ const TournamentDetails = () => {
                   </div>
                   <p className="text-xs text-[#8888AA]">Les inscriptions se sont terminées le {formattedEndRegistration}</p>
                 </div>
-              ) : isLoggedIn && profileMissing.length > 0 ? (
+              ) : isLoggedIn && profileMissing.length > 0 && !waiveGates ? (
                 /* Profil complet obligatoire avant toute inscription : pseudo, nom,
                    numéro Mobile Money, pays et fuseau horaire (source : la base). */
                 <div className="rounded-2xl border border-[#8A2BE2]/50 bg-[#8A2BE2]/10 p-6 space-y-4">
@@ -574,7 +584,7 @@ const TournamentDetails = () => {
                     Compléter mon profil
                   </button>
                 </div>
-              ) : isLoggedIn && discordReady === false ? (
+              ) : isLoggedIn && discordReady === false && !waiveGates ? (
                 /* Discord obligatoire avant toute nouvelle inscription : l'espace
                    privé du tournoi (annonces, matchs, preuves) vit sur Discord. */
                 <div className="rounded-2xl border border-[#5865F2]/50 bg-[#5865F2]/10 p-6 space-y-4">
@@ -607,10 +617,10 @@ const TournamentDetails = () => {
                 <div className="space-y-3">
                   <button
                     onClick={handleStartRegistration}
-                    disabled={isPaying || (isLoggedIn && discordReady === null)}
+                    disabled={isPaying || (isLoggedIn && discordReady === null && !waiveGates)}
                     className="w-full border-2 border-violet-400 bg-violet-700 hover:bg-violet-600 text-white px-4 py-5 rounded-2xl text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-violet-500/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F0F1E] disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    {isPaying || (isLoggedIn && discordReady === null) ? (
+                    {isPaying || (isLoggedIn && discordReady === null && !waiveGates) ? (
                       <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Préparation...</>
                     ) : isFree ? (
                       "S'inscrire Gratuitement • Ticket"
