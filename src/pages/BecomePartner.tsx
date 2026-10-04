@@ -11,12 +11,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import {
-  Handshake, CheckCircle2, Send, Download, FileText, Mail, ArrowRight, AlertTriangle, Clock,
+  Handshake, CheckCircle2, Send, Mail, ArrowRight, AlertTriangle, Clock,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 const CONTACT_EMAIL = "contact@egamebenin.com";
-const DOSSIER_URL = "/dossier-sponsoring-egame-benin.pdf";
 
 const PARTNERSHIP_TYPES = [
   "Sponsor financier",
@@ -176,19 +175,10 @@ const BecomePartner = () => {
             construisons ensemble des collaborations utiles et durables.
           </p>
           <p className="text-xs text-[#8888AA] max-w-2xl mx-auto leading-relaxed">
-            Tout est détaillé dans notre dossier officiel : niveaux de sponsoring, contreparties,
-            partenariats techniques, médias et communautaires.
+            Présentez-nous votre projet directement : notre équipe vous répondra personnellement
+            avec les informations adaptées à votre proposition.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href={DOSSIER_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-glow-border w-full sm:w-auto px-8 py-4 text-xs tracking-widest uppercase flex items-center justify-center gap-3"
-            >
-              <FileText size={16} />
-              Consulter le dossier partenariat
-            </a>
             <button
               onClick={scrollToForm}
               className="w-full sm:w-auto px-8 py-4 border border-[#8A2BE2]/50 hover:border-[#8A2BE2] bg-[#0F0F1E]/80 hover:bg-[#8A2BE2]/10 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all flex items-center justify-center gap-3"
@@ -231,9 +221,9 @@ const BecomePartner = () => {
                   Retour à l'accueil
                 </Button>
               </Link>
-              <a href={DOSSIER_URL} target="_blank" rel="noopener noreferrer">
+              <a href={`mailto:${CONTACT_EMAIL}`}>
                 <Button className="btn-gold rounded-2xl font-gaming font-bold text-xs uppercase tracking-wider px-6 flex items-center gap-2">
-                  <Download size={14} /> Le dossier partenariat
+                  <Mail size={14} /> Contacter l'équipe
                 </Button>
               </a>
             </div>
@@ -458,18 +448,9 @@ const BecomePartner = () => {
           >
             <Mail size={16} /> {CONTACT_EMAIL}
           </a>
-          <div className="pt-2 w-full flex justify-center">
-            <a
-              href={DOSSIER_URL}
-              download="eGame-Benin-Dossier-Sponsoring-Partenariats-2026.pdf"
-              className="w-full sm:w-auto inline-flex justify-center max-w-full"
-            >
-              <Button className="btn-gold rounded-2xl font-gaming font-bold text-xs uppercase tracking-wider px-6 py-5 flex items-center justify-center gap-2 w-full sm:w-auto whitespace-normal text-center h-auto leading-snug">
-                <Download size={16} className="shrink-0" />
-                Télécharger le dossier Sponsoring & Partenariats
-              </Button>
-            </a>
-          </div>
+          <p className="text-xs text-[#8888AA] leading-relaxed max-w-xl mx-auto">
+            Contactez-nous directement pour recevoir les informations et documents adaptés à votre projet.
+          </p>
         </div>
       </section>
     </div>
