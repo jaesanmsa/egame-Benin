@@ -250,17 +250,20 @@ const EditProfile = () => {
                   <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A2BE2] pointer-events-none" />
                   <select
                     id="country"
+                    name="country"
+                    aria-label="Pays de résidence"
+                    autoComplete="country"
                     value={profile.country}
                     onChange={(e) => {
                       const country = e.target.value;
                       setProfile({ ...profile, country, phone: setPhoneCountry(profile.phone, country), timezone: proposeTimezone(country) });
                     }}
-                    className="w-full appearance-none bg-[#0A0A0F] border border-[#8A2BE2]/30 rounded-xl text-white font-medium pl-10 pr-10 py-3.5 text-sm cursor-pointer focus:outline-none focus:border-[#8A2BE2]"
+                    className="relative z-10 w-full min-h-12 appearance-none bg-[#0A0A0F] border border-[#8A2BE2]/30 rounded-xl text-white font-medium pl-10 pr-10 py-3.5 text-sm cursor-pointer focus:outline-none focus:border-[#8A2BE2]"
                   >
-                    {!profile.country && <option value="">🌍 Choisis ton pays</option>}
+                    {!profile.country && <option value="">Choisis ton pays</option>}
                     {AFRICAN_COUNTRIES.map((country) => (
                       <option key={country.code} value={country.code} className="bg-[#0F0F1E] text-white">
-                        {country.flag} {country.name}
+                        {country.name} (+{country.dial})
                       </option>
                     ))}
                   </select>

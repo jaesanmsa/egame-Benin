@@ -74,8 +74,8 @@ const PhoneCountryInput = ({ value, onChange, id, placeholder, defaultCountryCod
         >
           {AFRICAN_COUNTRIES.map((country) => (
             <option key={country.code} value={country.code} className="bg-[#0F0F1E] text-white">
-              {country.flag} {country.name} (+{country.dial})
-            </option>
+                {country.name} (+{country.dial})
+              </option>
           ))}
         </select>
         <ChevronDown size={13} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8888AA] pointer-events-none" />

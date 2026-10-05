@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import PhoneCountryInput, { setPhoneCountry } from '@/components/PhoneCountryInput';
-import { AFRICAN_COUNTRIES, getCountryByCode } from '@/lib/countries';
+import { AFRICAN_COUNTRIES } from '@/lib/countries';
 import { Mail, Lock, UserPlus, LogIn, AtSign, ArrowLeft, Globe, Zap, ChevronDown } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Logo from '@/components/Logo';
@@ -74,8 +74,13 @@ const Auth = () => {
         setLoading(false);
         return;
       }
+      if (!AFRICAN_COUNTRIES.some((item) => item.code === country)) {
+        showError("Sélectionne ton pays pour créer ton compte.");
+        setLoading(false);
+        return;
+      }
 
-      const { error, data } = await supabase.auth.signUp({ 
+      const { error, data } = await supabase.auth.signUp({
         email: cleanEmail, 
         password,
         options: {
@@ -197,13 +202,16 @@ const Auth = () => {
                   <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A2BE2] pointer-events-none" />
                   <select
                     id="country"
+                    name="country"
+                    aria-label="Pays de résidence"
+                    autoComplete="country"
                     value={country}
                     onChange={(e) => handleCountryChange(e.target.value)}
-                    className="w-full appearance-none bg-[#07070C] border border-[#8A2BE2]/30 rounded-xl text-white font-medium pl-10 pr-10 py-3.5 text-sm cursor-pointer focus:outline-none focus:border-[#8A2BE2]"
+                    className="relative z-10 w-full min-h-12 appearance-none bg-[#07070C] border border-[#8A2BE2]/30 rounded-xl text-white font-medium pl-10 pr-10 py-3.5 text-sm cursor-pointer focus:outline-none focus:border-[#8A2BE2]"
                   >
                     {AFRICAN_COUNTRIES.map((c) => (
                       <option key={c.code} value={c.code} className="bg-[#0F0F1E] text-white">
-                        {c.flag} {c.name}
+                        {c.name} (+{c.dial})
                       </option>
                     ))}
                   </select>
