@@ -3,7 +3,10 @@
 @tailwind utilities;
 
 @layer base {
-  * {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
     border-color: rgba(138, 43, 226, 0.18);
   }
   body {
@@ -11,11 +14,30 @@
     color: #FFFFFF;
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
+    overflow-wrap: break-word;
+  }
+
+  img, svg, video, canvas {
+    max-width: 100%;
+  }
+
+  button, [role="button"] {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  a {
+    min-width: 0;
+    overflow-wrap: break-word;
   }
   
   h1, h2, h3 {
     font-family: 'Orbitron', sans-serif;
     letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
   }
 
   h4, h5, h6 {
@@ -93,6 +115,19 @@
 .text-glow-gold {
   color: #FFD700;
   text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+
+/* Responsive safety helpers */
+.safe-wrap {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.safe-row {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 /* Scrollbar Custom */

@@ -393,12 +393,12 @@ const AdminDashboard = () => {
               <X size={14} />
             </button>
 
-            <div className="flex items-center gap-3 pr-8">
+            <div className="flex items-center gap-3 pr-8 min-w-0">
               <div className="w-10 h-10 rounded-xl bg-[#5865F2]/15 border border-[#5865F2]/40 flex items-center justify-center shrink-0">
                 <DiscordLogo size={20} />
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-black flex items-center gap-2">
+                <p className="text-sm font-black break-words">
                   Espace Discord — {discordStatus.title || discordStatus.tournamentId}
                 </p>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">Automatisation des tournois</p>

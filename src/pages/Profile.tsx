@@ -94,7 +94,7 @@ const Profile = () => {
       <SEO title={`Profil de ${username}`} noindex />
       <Navbar />
       <main className="max-w-3xl mx-auto px-6 space-y-8">
-        <div className="glass-panel p-8 text-center space-y-4 relative overflow-hidden">
+        <div className="glass-panel min-w-0 p-5 sm:p-8 text-center space-y-4 relative overflow-hidden">
           <div className="relative inline-block mx-auto">
             <div className="w-28 h-28 rounded-full border-4 border-[#8A2BE2] overflow-hidden bg-[#07070C] shadow-2xl mx-auto">
               <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
@@ -105,8 +105,8 @@ const Profile = () => {
           </div>
 
           <div className="space-y-1">
-            <h1 className="text-2xl font-gaming font-black text-white">{username}</h1>
-            <p className="text-xs font-bold text-[#8888AA] flex items-center justify-center gap-1">
+            <h1 className="max-w-full text-xl sm:text-2xl font-gaming font-black text-white break-words">{username}</h1>
+            <p className="max-w-full text-xs font-bold text-[#8888AA] flex flex-wrap items-center justify-center gap-1 break-words">
               <MapPin size={14} className="text-[#8A2BE2]" /> {country ? `${country.flag} ` : ''}{location}
             </p>
           </div>
@@ -121,8 +121,8 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="glass-panel p-5 text-center space-y-1">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+          <div className="glass-panel min-w-0 p-3 sm:p-5 text-center space-y-1">
             <Activity className="mx-auto text-[#8A2BE2]" size={22} />
             <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase">Tournois</p>
             <p className="text-xl font-gaming font-black text-white">{tournamentCount}</p>
@@ -150,9 +150,9 @@ const Profile = () => {
         <CheckInCard userId={user.id} />
                 <RewardsHistory userId={user.id} />
         
-                <div className="glass-panel p-6 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Phone size={20} className="text-[#8A2BE2]" />
+                <div className="glass-panel p-4 sm:p-6 flex flex-wrap items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <Phone size={20} className="text-[#8A2BE2] shrink-0" />
                     <div>
                       <p className="text-xs font-gaming font-bold text-white">Numéro Mobile Money</p>
                       <p className="text-xs text-[#8888AA] font-mono">{phone}</p>

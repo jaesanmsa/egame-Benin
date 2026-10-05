@@ -29,7 +29,7 @@ export default function InstallAndProfileReminder() {
 
   return (
     <>
-      <aside aria-label="Installer eGame Bénin" className="fixed bottom-28 left-4 right-4 z-40 mx-auto max-h-[65dvh] max-w-md overflow-y-auto rounded-3xl border border-violet-400/50 bg-violet-950 p-5 text-white shadow-2xl md:bottom-auto md:left-auto md:right-6 md:top-24 md:mx-0">
+      <aside aria-label="Installer eGame Bénin" className="fixed bottom-28 left-3 right-3 z-40 mx-auto max-h-[65dvh] max-w-md overflow-y-auto rounded-3xl border border-violet-400/50 bg-violet-950 p-4 sm:p-5 text-white shadow-2xl md:bottom-auto md:left-auto md:right-6 md:top-24 md:mx-0">
         <button onClick={postponePwaInstall} aria-label="Masquer pour cette session" className="absolute right-3 top-3 rounded-full p-2 text-violet-100 hover:bg-violet-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"><X size={16} /></button>
         <div className="flex items-center gap-3 pr-7">
           <img src="/favicon-192.png" alt="" className="h-12 w-12 rounded-2xl" />

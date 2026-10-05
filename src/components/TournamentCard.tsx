@@ -45,7 +45,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
     <motion.div 
       whileHover={{ y: -6 }}
       onClick={handleClick}
-      className={`group relative glass-panel overflow-hidden cursor-pointer ${
+      className={`group relative glass-panel min-w-0 overflow-hidden cursor-pointer ${
         status === 'finished' ? 'opacity-70 grayscale-[0.2]' : ''
       }`}
     >
@@ -98,37 +98,37 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
       </div>
 
       {/* Contenu */}
-      <div className="p-6 space-y-4">
-        <div>
-          <p className="text-[10px] font-extrabold text-[#A855F7] uppercase tracking-[0.2em] font-gaming mb-1 flex items-center gap-1.5">
+      <div className="min-w-0 p-4 sm:p-6 space-y-3 sm:space-y-4">
+        <div className="min-w-0">
+          <p className="text-[10px] font-extrabold text-[#A855F7] uppercase tracking-[0.2em] font-gaming mb-1 flex flex-wrap items-center gap-1.5">
             <Zap size={12} className="text-[#FFD700]" />
             {game}
           </p>
-          <h3 className="font-gaming font-extrabold text-lg text-white group-hover:text-[#A855F7] transition-colors line-clamp-1">
+          <h3 className="font-gaming font-extrabold text-base sm:text-lg text-white group-hover:text-[#A855F7] transition-colors line-clamp-2 break-words">
             {title}
           </h3>
         </div>
 
         {/* Cash Prize */}
-        <div className="bg-[#07070C] border border-[#FFD700]/40 p-3.5 rounded-2xl flex items-center justify-between shadow-inner">
-          <div className="flex items-center gap-2">
+        <div className="bg-[#07070C] border border-[#FFD700]/40 p-3 rounded-2xl flex flex-wrap items-center justify-between gap-2 shadow-inner">
+          <div className="flex items-center gap-2 min-w-0">
             <Trophy className="text-[#FFD700]" size={20} />
             <span className="text-[10px] font-bold text-[#8888AA] uppercase tracking-wider">Cash Prize</span>
           </div>
-          <span className="text-xl font-gaming font-black text-[#FFD700] text-glow-gold">
+          <span className="max-w-full text-right text-base sm:text-xl font-gaming font-black text-[#FFD700] text-glow-gold break-words">
             {prizePool || <span className="text-sm text-[#8888AA] font-bold">À annoncer</span>}
           </span>
         </div>
 
         {/* Metadonnées */}
-        <div className="flex items-center justify-between text-xs font-semibold text-[#8888AA] pt-2 border-t border-[#8A2BE2]/15">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-[#8888AA] pt-2 border-t border-[#8A2BE2]/15">
           <div className="flex items-center gap-1.5">
             <Calendar size={13} className="text-[#8A2BE2]" />
-            <span>{date}</span>
+            <span className="break-words">{date}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Users size={13} className="text-[#8A2BE2]" />
-            <span>{participants}</span>
+            <span className="break-words">{participants}</span>
           </div>
         </div>
 

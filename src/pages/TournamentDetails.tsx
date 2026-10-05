@@ -412,13 +412,13 @@ const TournamentDetails = () => {
                 <Zap size={14} className="text-[#FFD700]" />
                 <p className="text-[#A855F7] font-gaming font-extrabold uppercase tracking-[0.2em] text-xs">{tournament.game}</p>
               </div>
-              <h1 className="text-2xl md:text-4xl font-gaming font-black text-white">{tournament.title}</h1>
+              <h1 className="max-w-full text-2xl md:text-4xl font-gaming font-black text-white break-words">{tournament.title}</h1>
             </div>
 
             {/* Cash Prize Géant en Or */}
-            <div className="bg-[#0A0A0F] border-2 border-[#FFD700]/50 px-6 py-4 rounded-2xl text-center shadow-xl shadow-[#FFD700]/10">
+            <div className="max-w-full bg-[#0A0A0F] border-2 border-[#FFD700]/50 px-4 sm:px-6 py-4 rounded-2xl text-center shadow-xl shadow-[#FFD700]/10">
               <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase tracking-widest">Cash Prize</p>
-              <p className="text-2xl md:text-3xl font-gaming font-black text-[#FFD700] text-glow-gold">{tournament.prize_pool || "À annoncer"}</p>
+              <p className="max-w-full text-xl md:text-3xl font-gaming font-black text-[#FFD700] text-glow-gold break-words">{tournament.prize_pool || "À annoncer"}</p>
             </div>
           </div>
 
@@ -427,7 +427,7 @@ const TournamentDetails = () => {
               <div className="bg-[#FFD700]/10 border border-[#FFD700]/40 p-6 rounded-2xl text-center space-y-2">
                 <Trophy className="text-[#FFD700] mx-auto" size={36} />
                 <p className="text-[10px] font-gaming font-bold uppercase tracking-widest text-[#FFD700]">Champion Officiel — 1ère place</p>
-                <h3 className="text-xl font-gaming font-black text-white">{tournament.winner_name}</h3>
+                <h3 className="text-xl font-gaming font-black text-white break-words">{tournament.winner_name}</h3>
               </div>
               {(tournament.second_place || tournament.third_place || tournament.mvp_name) && (
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -458,18 +458,18 @@ const TournamentDetails = () => {
           ) : (
             <>
               {/* Caractéristiques */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="bg-[#0A0A0F] p-4 rounded-2xl border border-[#8A2BE2]/20 text-center space-y-1">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+                <div className="min-w-0 bg-[#0A0A0F] p-3 sm:p-4 rounded-2xl border border-[#8A2BE2]/20 text-center space-y-1">
                   <Calendar className="text-[#8A2BE2] mx-auto" size={18} />
-                  <p className="font-gaming font-bold text-[10px] uppercase text-white tracking-wider">{formattedDateTime}</p>
+                  <p className="font-gaming font-bold text-[10px] uppercase text-white tracking-wider break-words">{formattedDateTime}</p>
                 </div>
                 <div className="bg-[#0A0A0F] p-4 rounded-2xl border border-[#8A2BE2]/20 text-center space-y-1">
                   <Users className="text-[#8A2BE2] mx-auto" size={18} />
-                  <p className="font-gaming font-bold text-[10px] uppercase text-white tracking-wider">{participantCount} / {maxSlots} Joueurs</p>
+                  <p className="font-gaming font-bold text-[10px] uppercase text-white tracking-wider break-words">{participantCount} / {maxSlots} Joueurs</p>
                 </div>
                 <div className="bg-[#0A0A0F] p-4 rounded-2xl border border-[#8A2BE2]/20 text-center space-y-1">
                   <Globe className="text-[#8A2BE2] mx-auto" size={18} />
-                  <p className="font-gaming font-bold text-[10px] uppercase text-white tracking-wider">{tournament.type}</p>
+                  <p className="font-gaming font-bold text-[10px] uppercase text-white tracking-wider break-words">{tournament.type}</p>
                 </div>
                 <div className="bg-[#0A0A0F] p-4 rounded-2xl border border-[#8A2BE2]/20 text-center space-y-1">
                   <Shield className="text-[#8A2BE2] mx-auto" size={18} />
@@ -542,7 +542,7 @@ const TournamentDetails = () => {
                     <Clock size={22} />
                     <h3 className="font-gaming font-bold text-base uppercase">Inscriptions bientôt ouvertes</h3>
                   </div>
-                  <p className="text-xs text-[#8888AA]">Les inscriptions ouvrent le {formattedStartRegistration} (heure du tournoi, GMT+1)</p>
+                  <p className="text-xs text-[#8888AA] break-words">Les inscriptions ouvrent le {formattedStartRegistration} (heure du tournoi, GMT+1)</p>
                 </div>
               ) : isRegistrationClosed ? (
                 <div className="bg-orange-950/40 border border-orange-500/40 p-6 rounded-2xl text-center space-y-2">
@@ -550,7 +550,7 @@ const TournamentDetails = () => {
                     <Clock size={22} />
                     <h3 className="font-gaming font-bold text-base uppercase">Inscriptions Closes</h3>
                   </div>
-                  <p className="text-xs text-[#8888AA]">Les inscriptions se sont terminées le {formattedEndRegistration}</p>
+                  <p className="text-xs text-[#8888AA] break-words">Les inscriptions se sont terminées le {formattedEndRegistration}</p>
                 </div>
               ) : isLoggedIn && profileMissing.length > 0 && !waiveGates ? (
                 /* Profil complet obligatoire avant toute inscription : pseudo, nom,
