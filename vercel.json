@@ -1,5 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/news/coc-rules",
+      "destination": "/news",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

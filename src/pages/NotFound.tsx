@@ -1,5 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import SEO from "@/components/SEO";
 
 const NotFound = () => {
   const location = useLocation();
@@ -13,6 +14,7 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
+      <SEO title="Page introuvable" noindex />
       <div className="text-center p-8 bg-card rounded-[2.5rem] border border-border shadow-2xl">
         <h1 className="text-6xl font-black mb-4 text-violet-500">404</h1>
         <p className="text-xl text-muted-foreground mb-8">Oups ! Cette page n'existe pas.</p>
