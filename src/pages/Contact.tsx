@@ -7,6 +7,7 @@ import { ArrowLeft, Mail, HelpCircle, Facebook, Users, MessageSquare, ChevronRig
 import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { DISCORD_SERVERS, MAIN_DISCORD_INVITE } from '@/lib/discord';
+import TikTokLogo from '@/components/TikTokLogo';
 
 const Contact = () => {
   const navigate = useNavigate();
@@ -76,18 +77,21 @@ const Contact = () => {
             </div>
           </button>
 
-          <button
-            onClick={() => navigate('/classement')}
-            className="p-6 bg-[#0F0F1E] border border-[#FFD700]/30 hover:border-[#FFD700] rounded-3xl text-center space-y-3 transition-all"
+          <a
+            href="https://tiktok.com/@egamebnin"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Suivre eGame Bénin sur TikTok"
+            className="p-6 bg-[#0F0F1E] border border-[#8A2BE2]/30 hover:border-[#A855F7] rounded-3xl text-center space-y-3 transition-all"
           >
-            <div className="w-12 h-12 bg-[#FFD700]/15 text-[#FFD700] rounded-2xl flex items-center justify-center mx-auto">
-              <Users size={24} />
+            <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#A855F7] rounded-2xl flex items-center justify-center mx-auto">
+              <TikTokLogo size={24} />
             </div>
             <div>
-              <p className="font-gaming font-bold text-xs text-white">Communauté</p>
-              <p className="text-[10px] text-[#8888AA] uppercase">Classement joueurs</p>
+              <p className="font-gaming font-bold text-xs text-white">Suivez eGame Bénin</p>
+              <p className="text-[10px] text-[#8888AA] uppercase">TikTok officiel</p>
             </div>
-          </button>
+          </a>
         </div>
 
         {/* Serveurs Discord officiels — serveur principal + un serveur par jeu */}

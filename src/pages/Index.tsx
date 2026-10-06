@@ -12,6 +12,7 @@ import PartnersSection from '@/components/PartnersSection';
 import SponsorCta from '@/components/SponsorCta';
 import { motion } from 'framer-motion';
 import { Trophy, ArrowRight, Users, Sparkles, User, ScrollText, TrendingUp, MessageSquare, Handshake, BadgeCheck } from 'lucide-react';
+import TikTokLogo from '@/components/TikTokLogo';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { formatBeninShort } from '@/utils/datetime';
@@ -341,6 +342,22 @@ const Index = () => {
           <Link to="/contact" className="hover:text-white">Contact</Link>
           <Link to="/mentions-legales" className="hover:text-white">Mentions légales</Link>
           <Link to="/classement" className="hover:text-white">Classement</Link>
+        </div>
+        <div className="flex flex-col items-center gap-3 px-4">
+          <p className="text-sm font-gaming font-black uppercase tracking-wider text-white">Suivez eGame Bénin</p>
+          <p className="max-w-xl text-xs text-[#8888AA] leading-relaxed">
+            Retrouvez nos conseils gaming, actualités, tournois et contenus eGame Academy sur TikTok.
+          </p>
+          <a
+            href="https://tiktok.com/@egamebnin"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Suivre eGame Bénin sur TikTok"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#8A2BE2]/40 bg-[#0F0F1E] px-5 py-2.5 text-[10px] font-gaming font-black uppercase tracking-widest text-white transition-colors hover:border-[#A855F7] hover:bg-[#8A2BE2]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A855F7]"
+          >
+            <TikTokLogo size={16} className="text-[#A855F7]" />
+            Suivre sur TikTok
+          </a>
         </div>
         <p className="text-[10px] text-[#8888AA]/50 font-gaming uppercase tracking-widest">
           © 2026 eGame Bénin — RCCM : <span className="font-mono normal-case">RB/ABC/26 A 138238</span> | IFU : <span className="font-mono normal-case">0202398541260</span> | <Link to="/privacy" className="hover:text-[#8A2BE2] transition-colors">Politique de confidentialité</Link>
