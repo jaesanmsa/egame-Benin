@@ -19,6 +19,7 @@ const ResetPassword = React.lazy(() => import("./pages/ResetPassword"));
 const AdminDashboard = React.lazy(() => import("./pages/AdminDashboard"));
 const PaymentHistory = React.lazy(() => import("./pages/PaymentHistory"));
 const PaymentSuccess = React.lazy(() => import("./pages/PaymentSuccess"));
+const MonerooCallback = React.lazy(() => import("./pages/MonerooCallback"));
 const Contact = React.lazy(() => import("./pages/Contact"));
 const Leaderboard = React.lazy(() => import("./pages/Leaderboard"));
 const Privacy = React.lazy(() => import("./pages/Privacy"));
@@ -65,6 +66,7 @@ const App = () => (
               <Route path="/avatar-maker" element={<AvatarMaker />} />
               <Route path="/payments" element={<PaymentHistory />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route path="/payment/moneroo/callback" element={<MonerooCallback />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/classement" element={<Leaderboard />} />
               <Route path="/privacy" element={<Privacy />} />

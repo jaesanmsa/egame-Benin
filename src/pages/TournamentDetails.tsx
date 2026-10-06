@@ -149,6 +149,33 @@ const TournamentDetails = () => {
     return data;
   };
 
+  // Moneroo : la création, le statut et le ticket restent entièrement côté serveur.
+  const handleMoneroo = async () => {
+    setShowPaymentMethods(false);
+    setIsPaying(true);
+    try {
+      if (!await checkAvailability()) return;
+      const { data, error } = await supabase.functions.invoke('moneroo-create-payment', {
+        body: {
+          tournament_id: tournament.id,
+          return_url: `${window.location.origin}/payment/moneroo/callback`,
+        },
+      });
+      if (error) {
+        const details = await error.context?.json?.().catch(() => null);
+        throw new Error(details?.error || error.message || "Impossible de démarrer le paiement Moneroo.");
+      }
+      if (!data?.checkout_url) throw new Error(data?.error || "Lien de paiement Moneroo introuvable.");
+      if (data.payment_id && data.payment_attempt_id) {
+        sessionStorage.setItem(`moneroo_attempt:${data.payment_id}`, data.payment_attempt_id);
+      }
+      window.location.href = data.checkout_url;
+    } catch (err: any) {
+      showError(err?.message || "Erreur lors du lancement de Moneroo.");
+      setIsPaying(false);
+    }
+  };
+
   const handleFedaPay = async () => {
     setShowPaymentMethods(false);
     setIsPaying(true);
@@ -787,6 +814,7 @@ const TournamentDetails = () => {
                     if (isFree) handleFreeRegistration();
                     else if (paymentGateway === 'kkiapay') handleKKiaPay();
                     else if (paymentGateway === 'fedapay') handleFedaPay();
+                    else if (paymentGateway === 'moneroo') handleMoneroo();
                     else setShowPaymentMethods(true);
                   }}
                   className="w-full btn-glow-border py-4 text-xs tracking-widest uppercase"
@@ -797,6 +825,8 @@ const TournamentDetails = () => {
                     ? "J'accepte, payer avec KKiaPay"
                     : paymentGateway === 'fedapay'
                     ? "J'accepte, payer avec FedaPay"
+                    : paymentGateway === 'moneroo'
+                    ? "J'accepte, payer avec Moneroo"
                     : "J'accepte, choisir le paiement"}
                 </button>
                 <button onClick={() => setShowConfirmation(false)} className="w-full text-xs font-gaming text-[#8888AA] hover:text-white py-2">
@@ -821,11 +851,11 @@ const TournamentDetails = () => {
                   <CreditCard size={24} />
                 </div>
                 <h2 className="text-xl font-gaming font-bold text-white">Choix du Paiement</h2>
-                <p className="text-xs text-[#8888AA]">Sélectionne ton moyen Mobile Money préféré</p>
+                <p className="text-xs text-[#8888AA]">Sélectionne ton moyen de paiement préféré</p>
               </div>
 
               <div className="space-y-3">
-                {paymentGateway !== 'fedapay' && (
+                {(paymentGateway === 'both' || paymentGateway === 'all' || !['kkiapay', 'fedapay', 'moneroo'].includes(paymentGateway)) && (
                   <button
                     onClick={handleKKiaPay}
                     className="w-full p-4 bg-[#0A0A0F] hover:bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 hover:border-[#8A2BE2] rounded-2xl text-left transition-all flex items-center justify-between group"
@@ -838,16 +868,30 @@ const TournamentDetails = () => {
                   </button>
                 )}
 
-                {paymentGateway !== 'kkiapay' && (
+                {(paymentGateway === 'both' || paymentGateway === 'all' || paymentGateway === 'fedapay' || !['kkiapay', 'fedapay', 'moneroo'].includes(paymentGateway)) && (
                   <button
                     onClick={handleFedaPay}
-                    className="w-full p-4 bg-[#0A0A0F] hover:bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 hover:border-[#8A2BE2] rounded-2xl text-left transition-all flex items-center justify-between group"
+                    className="w-full min-w-0 p-4 bg-[#0A0A0F] hover:bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 hover:border-[#8A2BE2] rounded-2xl text-left transition-all flex items-center justify-between gap-3 group"
                   >
-                    <div>
+                    <div className="min-w-0">
                       <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">FedaPay</h3>
-                      <p className="text-[10px] text-[#8888AA]">MTN, Moov Money, Cartes Bancaires VISA/Mastercard</p>
+                      <p className="text-[10px] text-[#8888AA] break-words">MTN, Moov Money, Cartes Bancaires VISA/Mastercard</p>
                     </div>
-                    <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white" />
+                    <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white shrink-0" />
+                  </button>
+                )}
+
+                {(paymentGateway === 'all' || paymentGateway === 'moneroo') && (
+                  <button
+                    onClick={handleMoneroo}
+                    disabled={isPaying}
+                    className="w-full min-w-0 p-4 bg-[#0A0A0F] hover:bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 hover:border-[#8A2BE2] rounded-2xl text-left transition-all flex items-center justify-between gap-3 group disabled:opacity-60"
+                  >
+                    <div className="min-w-0">
+                      <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">Mobile Money &amp; Carte</h3>
+                      <p className="text-[10px] text-[#8888AA] break-words">Paiement sécurisé via Moneroo</p>
+                    </div>
+                    <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white shrink-0" />
                   </button>
                 )}
               </div>

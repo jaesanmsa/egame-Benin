@@ -92,9 +92,12 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit, createDis
               </div>
             </SelectTrigger>
             <SelectContent className="bg-card border-border">
-              <SelectItem value="kkiapay" className="font-bold">KKiaPay (MTN, Moov, Celtiis)</SelectItem>
-              <SelectItem value="fedapay" className="font-bold">FedaPay (MTN, Moov, Cartes)</SelectItem>
-              <SelectItem value="maketou" className="font-bold">Maketou (MTN, Moov, Celtiis)</SelectItem>
+              <SelectItem value="kkiapay" className="font-bold">KKiaPay</SelectItem>
+              <SelectItem value="fedapay" className="font-bold">FedaPay</SelectItem>
+              <SelectItem value="moneroo" className="font-bold">Moneroo</SelectItem>
+              <SelectItem value="both" className="font-bold">KKiaPay + FedaPay</SelectItem>
+              <SelectItem value="all" className="font-bold">Toutes les solutions (KKiaPay + FedaPay + Moneroo)</SelectItem>
+              <SelectItem value="maketou" className="font-bold">Maketou</SelectItem>
             </SelectContent>
           </Select>
         </div>
