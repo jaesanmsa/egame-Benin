@@ -40,7 +40,7 @@ const GameDetails = () => {
       name: 'Free Fire',
       icon: '/icon free fire.png',
       image: '/freefire.webp',
-      desc: "Le Battle Royale mobile numéro 1 en Afrique. Domine le terrain, élimine tes adversaires et décroche le Booyah !"
+      desc: "Un Battle Royale mobile dynamique. Domine le terrain, élimine tes adversaires et décroche le Booyah !"
     },
     'clash-royale': {
       name: 'Clash Royale',
@@ -110,7 +110,7 @@ const GameDetails = () => {
     <div className="min-h-screen bg-[#07070C] text-white pb-32">
       <SEO
         title={`${gameInfo.name} — Tournois eSport`}
-        description={`Tournois ${gameInfo.name} sur eGame Bénin : inscris-toi aux compétitions, consulte les tournois ouverts et l'historique, et rejoins la communauté ${gameInfo.name} en Afrique.`}
+        description={`Découvre les tournois ${gameInfo.name} annoncés sur eGame Bénin, consulte les résultats et rejoins la communauté du jeu.`}
       />
       <Navbar />
       
@@ -138,7 +138,7 @@ const GameDetails = () => {
             </div>
             <div>
               <h1 className="text-3xl md:text-5xl font-gaming font-black uppercase text-white tracking-wide">{gameInfo.name}</h1>
-              <p className="text-[#A855F7] text-xs font-gaming font-bold uppercase tracking-widest mt-2">Discipline Officielle eGame Bénin</p>
+              <p className="text-[#A855F7] text-xs font-gaming font-bold uppercase tracking-widest mt-2">Jeu de la communauté</p>
             </div>
           </div>
         </div>
@@ -158,9 +158,9 @@ const GameDetails = () => {
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <h2 className="text-2xl font-gaming font-black uppercase text-white flex items-center gap-3">
                   {showHistory ? (
-                    <><History size={24} className="text-[#A855F7]" /> Historique des Tournois</>
+                    <><History size={24} className="text-[#A855F7]" /> Historique / Résultats</>
                   ) : (
-                    <><Zap size={24} className="text-[#FFD700]" /> Tournois Ouverts</>
+                    <><Zap size={24} className="text-[#FFD700]" /> Tournois en cours</>
                   )}
                 </h2>
 
@@ -209,7 +209,7 @@ const GameDetails = () => {
                 ) : tournaments.length === 0 ? (
                   <div className="col-span-full py-12 text-center glass-panel">
                     <Gamepad2 size={40} className="mx-auto text-[#8888AA] mb-3 opacity-40" />
-                    <p className="text-sm font-gaming text-[#8888AA]">Aucun tournoi actif pour ce jeu.</p>
+                    <p className="text-sm font-gaming text-[#8888AA]">Aucun tournoi annoncé pour ce jeu pour le moment.</p>
                   </div>
                 ) : (
                   tournaments.map((t) => (
@@ -241,7 +241,7 @@ const GameDetails = () => {
                   <h3 className="font-gaming font-bold text-base uppercase">Serveur Discord</h3>
                 </div>
                 <p className="text-xs text-white/80 leading-relaxed font-medium">
-                  Rejoins la communauté des joueurs de <span className="font-bold text-white">{gameInfo.name}</span> en Afrique.
+                  Rejoins la communauté eGame Bénin de <span className="font-bold text-white">{gameInfo.name}</span>.
                 </p>
                 <a href={discord.url} target="_blank" rel="noopener noreferrer" className="block">
                   <Button className="w-full bg-white text-[#5865F2] hover:bg-gray-100 font-gaming font-bold text-xs py-6 rounded-2xl uppercase tracking-wider flex items-center justify-center gap-2">

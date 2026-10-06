@@ -89,7 +89,7 @@ const Leaderboard = () => {
 
   return (
     <div className="min-h-screen bg-[#07070C] text-white pb-32 pt-28">
-      <SEO title="Classement eSport Panafricain" description="Le Hall of Fame des meilleurs joueurs de jeux vidéo d'Afrique." />
+      <SEO title="Classement eSport eGame Bénin" description="Consulte les classements réels des joueurs eGame Bénin par jeu." />
       <Navbar />
       <main className="max-w-3xl mx-auto px-6 space-y-10">
         <button 
@@ -107,7 +107,7 @@ const Leaderboard = () => {
             {selectedGame ? DEFAULT_GAMES.find(g => g.id === selectedGame)?.name : "Classement Continental"}
           </h1>
           <p className="text-xs text-[#8888AA] font-esport uppercase tracking-widest">
-            Hall of Fame Panafricain
+            Classement des joueurs eGame Bénin
           </p>
         </div>
 
@@ -152,10 +152,10 @@ const Leaderboard = () => {
                   <div className="w-10 h-10 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin mx-auto" />
                 </div>
               ) : rankings.length === 0 ? (
-                <div className="text-center py-16 glass-panel space-y-3">
-                  <Trophy size={40} className="mx-auto text-[#FFD700] opacity-40" />
-                  <p className="text-sm font-gaming font-bold text-[#8888AA]">Aucun champion encore sur ce jeu.</p>
-                  <p className="text-xs text-[#8888AA]/70">Sois le premier à écrire ton nom au sommet du classement !</p>
+                <div className="rounded-2xl border border-[#8A2BE2]/20 bg-[#0F0F1E] px-5 py-7 text-center space-y-2">
+                  <Trophy size={28} className="mx-auto text-[#A855F7] opacity-70" />
+                  <p className="text-sm font-gaming font-bold text-white">Pas encore de classement réel pour ce jeu.</p>
+                  <p className="text-xs text-[#8888AA]">Le classement apparaîtra dès que des résultats confirmés seront disponibles.</p>
                 </div>
               ) : (
                 <>

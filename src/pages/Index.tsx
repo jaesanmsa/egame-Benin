@@ -6,18 +6,18 @@ import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import VSBackground from '@/components/VSBackground';
 import TournamentCard from '@/components/TournamentCard';
-import CommunityGrowth from '@/components/CommunityGrowth';
 import PlatformStats from '@/components/PlatformStats';
 import PartnersSection from '@/components/PartnersSection';
-import SponsorCta from '@/components/SponsorCta';
-import { motion } from 'framer-motion';
-import { Trophy, ArrowRight, Users, Sparkles, User, ScrollText, TrendingUp, MessageSquare, Handshake, BadgeCheck } from 'lucide-react';
 import TikTokLogo from '@/components/TikTokLogo';
+import DiscordLogo from '@/components/DiscordLogo';
+import { motion } from 'framer-motion';
+import { Trophy, ArrowRight, Sparkles, User, Gamepad2, CreditCard, Hash } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { formatBeninShort } from '@/utils/datetime';
+import { MAIN_DISCORD_INVITE } from '@/lib/discord';
 
-const ALL_GAMES = [
+const GAMES = [
   { id: 'blood-strike', name: 'Blood Strike', image: '/blood strike.jpg' },
   { id: 'brawl-stars', name: 'Brawl Stars', image: '/brawl stars.jpg' },
   { id: 'clash-of-clans', name: 'Clash of Clans', image: '/clash of clans.webp' },
@@ -26,7 +26,14 @@ const ALL_GAMES = [
   { id: 'efootball-mobile', name: 'eFootball Mobile', image: '/efootball.webp' },
   { id: 'free-fire', name: 'Free Fire', image: '/freefire.webp' },
   { id: 'mobile-legends', name: 'Mobile Legends', image: '/mobile legend.webp' },
-  { id: 'pubg-mobile', name: 'PUBG Mobile', image: '/pubg-mobile.webp' }
+  { id: 'pubg-mobile', name: 'PUBG Mobile', image: '/pubg-mobile.webp' },
+];
+
+const HOW_IT_WORKS = [
+  { icon: User, title: 'Crée ton compte', text: 'Inscris-toi et complète ton profil joueur.' },
+  { icon: Trophy, title: 'Choisis un tournoi', text: 'Consulte les tournois ouverts et leurs conditions.' },
+  { icon: CreditCard, title: 'Confirme ton inscription', text: 'Choisis un moyen de paiement disponible pour le tournoi.' },
+  { icon: Hash, title: 'Rejoins la compétition', text: 'Suis les informations du tournoi et joue à l’heure prévue.' },
 ];
 
 const Index = () => {
@@ -38,330 +45,194 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsLoggedIn(!!session);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session);
-    });
-
+    supabase.auth.getSession().then(({ data: { session } }) => setIsLoggedIn(!!session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setIsLoggedIn(!!session));
     return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      // 1. Récupération des tournois actifs
-      const { data: tours } = await supabase
-        .from('tournaments')
-        .select('*')
-        .eq('status', 'active')
-        .order('created_at', { ascending: false });
-      
-      if (tours) {
-        setActiveTournaments(tours);
-        const activeSet = new Set<string>();
-        tours.forEach(t => {
-          const matched = ALL_GAMES.find(g => t.game.toLowerCase().includes(g.name.toLowerCase()));
-          if (matched) activeSet.add(matched.id);
-        });
-        setActiveGames(activeSet);
-      }
+      const [{ data: tours }, { count: partnerCount }] = await Promise.all([
+        supabase.from('tournaments').select('*').eq('status', 'active').eq('is_test', false).order('start_date', { ascending: true }),
+        supabase.from('partners').select('id', { count: 'exact', head: true }).eq('visible', true).eq('is_official', true),
+      ]);
 
-      // 2. Partenaires publics visibles (pour la carte de confiance)
-      const { count: partnerCount } = await supabase.from('partners').select('id', { count: 'exact', head: true }).eq('visible', true);
+      const tournaments = tours ?? [];
+      setActiveTournaments(tournaments);
+      const activeSet = new Set<string>();
+      tournaments.forEach((t: any) => {
+        const matched = GAMES.find(g => t.game?.toLowerCase().includes(g.name.toLowerCase()));
+        if (matched) activeSet.add(matched.id);
+      });
+      setActiveGames(activeSet);
       setHasPartners((partnerCount ?? 0) > 0);
-
       setLoading(false);
     };
-
     fetchData();
   }, []);
 
+  const now = Date.now();
+  const upcomingTournaments = activeTournaments
+    .filter((t) => !t.start_date || new Date(t.start_date).getTime() >= now)
+    .slice(0, 3);
+  const liveTournaments = activeTournaments
+    .filter((t) => t.start_date && new Date(t.start_date).getTime() < now)
+    .slice(0, 3);
+  const featuredTournaments = upcomingTournaments.length ? upcomingTournaments : liveTournaments;
+  const tournamentSectionTitle = upcomingTournaments.length ? 'Tournois en cours et à venir' : 'Tournois en cours';
+
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white pb-32">
-      <SEO />
+      <SEO
+        title="eGame Bénin | Tournois gaming"
+        description="Participe à des tournois gaming, affronte d’autres joueurs et construis ton parcours sur eGame Bénin."
+      />
       <Navbar />
-      
-      {/* 1. HERO SECTION */}
-      <section className="relative min-h-[85vh] flex flex-col justify-center items-center pt-24 pb-16 overflow-hidden">
-        {/* Vidéo de fond : fond uni pendant son chargement, sans image intermédiaire */}
+
+      {/* Hero */}
+      <section className="relative min-h-[68vh] flex flex-col justify-center items-center pt-24 pb-16 overflow-hidden">
         <div className="absolute inset-0 z-0 bg-[#0A0A0F]">
           <video autoPlay loop muted playsInline preload="auto" className="w-full h-full object-cover opacity-25">
             <source src="/hero-video.webm" type="video/webm" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0F]/60 via-[#0A0A0F]/80 to-[#0A0A0F]" />
         </div>
-
-        {/* Effets de grille et lumière violets */}
-        <div className="absolute inset-0 z-10 pointer-events-none">
-          <VSBackground />
-        </div>
-
-        {/* Logo d'en-tête */}
-        <div className="relative z-20 max-w-7xl mx-auto px-6 w-full text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 text-[#A855F7] text-xs font-gaming font-extrabold tracking-widest uppercase mb-6 shadow-lg shadow-[#8A2BE2]/20">
-            <Sparkles size={14} className="text-[#FFD700]" />
-            L'Arène Élite d'Afrique
+        <div className="absolute inset-0 z-10 pointer-events-none"><VSBackground /></div>
+        <div className="relative z-20 max-w-4xl mx-auto px-5 sm:px-6 text-center space-y-6 sm:space-y-8">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 text-[#A855F7] text-[10px] sm:text-xs font-gaming font-extrabold tracking-widest uppercase shadow-lg shadow-[#8A2BE2]/20">
+            <Sparkles size={14} className="text-[#FFD700]" /> eGame Bénin
           </div>
-        </div>
-
-        {/* Contenu principal du Héros */}
-        <div className="relative z-20 max-w-4xl mx-auto px-6 text-center space-y-8 my-auto">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
             className="text-4xl sm:text-6xl md:text-7xl font-gaming font-black leading-tight tracking-tight uppercase"
           >
-            Domine le jeu. <br />
-            <span className="text-[#FFD700] text-glow-gold">
-              Encaisse la victoire.
-            </span>
+            Entre dans la <span className="text-[#FFD700] text-glow-gold">compétition.</span>
           </motion.h1>
-
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-[#8888AA] text-base md:text-xl font-medium max-w-2xl mx-auto font-esport tracking-wide"
+          <motion.p
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-[#B1B1C4] font-medium leading-relaxed"
           >
-            Une plateforme eSport pensée pour connecter les gamers africains. Participe à des tournois officiels, affronte d'autres passionnés et retire tes gains directement par Mobile Money.
+            Participe à des tournois gaming, affronte d’autres joueurs et construis ton parcours sur eGame Bénin.
           </motion.p>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+          <motion.div
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 pt-2"
           >
-            <button 
-              onClick={() => navigate('/jeux')}
-              className="w-full sm:w-auto btn-glow-border px-8 py-4 text-xs tracking-widest uppercase flex items-center justify-center gap-3"
-            >
-              Explorer les tournois
-              <ArrowRight size={16} />
+            <button onClick={() => navigate('/jeux')} className="w-full sm:w-auto min-h-12 btn-glow-border px-7 py-3.5 text-xs tracking-widest uppercase flex items-center justify-center gap-3">
+              Voir les tournois <ArrowRight size={16} />
             </button>
-
-            {isLoggedIn ? (
-              <button
-                onClick={() => navigate('/profil')}
-                className="w-full sm:w-auto px-8 py-4 border border-[#8A2BE2]/50 hover:border-[#8A2BE2] bg-[#0F0F1E]/80 hover:bg-[#8A2BE2]/10 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all flex items-center justify-center gap-3"
-              >
-                <User size={16} />
-                Mon Profil
-              </button>
-            ) : (
-              <button
-                onClick={() => navigate('/auth')}
-                className="w-full sm:w-auto px-8 py-4 border border-[#8A2BE2]/50 hover:border-[#8A2BE2] bg-[#0F0F1E]/80 hover:bg-[#8A2BE2]/10 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all"
-              >
-                S'inscrire
-              </button>
-            )}
+            <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto min-h-12 px-7 py-3.5 border border-[#5865F2]/60 hover:border-[#5865F2] bg-[#0F0F1E]/80 hover:bg-[#5865F2]/15 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all flex items-center justify-center gap-3">
+              <DiscordLogo size={16} /> Rejoindre Discord
+            </a>
           </motion.div>
+          {!isLoggedIn && (
+            <button onClick={() => navigate('/auth')} className="text-xs text-[#B1B1C4] hover:text-white underline underline-offset-4">Créer un compte eGame</button>
+          )}
         </div>
       </section>
 
-      {/* 1.5 PREUVE SOCIALE — LA COMMUNAUTÉ GRANDIT (juste sous S'inscrire) */}
-      <CommunityGrowth />
-
-      {/* 2. SECTION TOURNOIS ACTIFS */}
-      <section className="max-w-7xl mx-auto px-6 py-16 space-y-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-3 h-3 rounded-full bg-emerald-500 animate-ping" />
-            <h2 className="text-2xl font-gaming font-black uppercase text-white tracking-wide">
-              Tournois <span className="text-[#8A2BE2]">Actifs</span>
-            </h2>
+      {/* Tournois actuels et à venir. L'historique reste accessible depuis les pages des jeux. */}
+      <section className="max-w-7xl mx-auto px-5 sm:px-6 py-12 sm:py-16 space-y-7">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">Compétition</p>
+            <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white mt-1">{tournamentSectionTitle}</h2>
           </div>
-          <Link to="/jeux" className="text-xs font-gaming font-bold text-[#A855F7] hover:underline uppercase tracking-wider">
-            Tout voir →
-          </Link>
+          <Link to="/jeux" className="text-xs font-gaming font-bold text-[#A855F7] hover:underline uppercase tracking-wider">Tous les tournois →</Link>
         </div>
-
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="aspect-[16/10] bg-[#0F0F1E] rounded-3xl animate-pulse border border-[#8A2BE2]/20" />
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {Array.from({ length: 3 }).map((_, i) => <div key={i} className="aspect-[16/10] bg-[#0F0F1E] rounded-3xl animate-pulse border border-[#8A2BE2]/20" />)}
           </div>
-        ) : activeTournaments.length === 0 ? (
-          <div className="text-center py-16 bg-[#0F0F1E] rounded-3xl border border-[#8A2BE2]/20">
-            <Trophy size={48} className="mx-auto text-[#8888AA] mb-4 opacity-40" />
-            <p className="text-[#8888AA] font-gaming font-bold">Aucun tournoi actif en ce moment.</p>
-            <p className="text-xs text-[#8888AA]/70 mt-1">Reviens très vite pour de nouveaux affrontements !</p>
+        ) : featuredTournaments.length === 0 ? (
+          <div className="rounded-3xl border border-[#8A2BE2]/20 bg-[#0F0F1E] px-5 py-10 text-center">
+            <Trophy size={36} className="mx-auto text-[#A855F7] mb-3 opacity-70" />
+            <p className="text-sm font-gaming font-bold text-white">Aucun tournoi annoncé pour le moment.</p>
+            <p className="text-xs text-[#8888AA] mt-2">Les résultats des événements passés restent consultables dans l’historique.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activeTournaments.map((t) => (
-              <TournamentCard 
-                key={t.id}
-                id={t.id}
-                title={t.title}
-                game={t.game}
-                image={t.image_url}
-                date={formatBeninShort(t.start_date)}
-                participants={`${t.max_participants} places`}
-                entryFee={t.entry_fee.toString()}
-                prizePool={t.prize_pool}
-                type={t.type as any}
-                status="active"
-                isTest={t.is_test}
-              />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {featuredTournaments.map((t: any) => (
+              <TournamentCard key={t.id} id={t.id} title={t.title} game={t.game} image={t.image_url}
+                date={formatBeninShort(t.start_date)} participants={`${t.max_participants} places`}
+                entryFee={t.entry_fee.toString()} prizePool={t.prize_pool} type={t.type as any}
+                status="active" isTest={false} />
             ))}
           </div>
         )}
       </section>
 
-      {/* 3. SECTION JEUX DISPONIBLES */}
-      <section className="max-w-7xl mx-auto px-6 py-16 space-y-8">
+      {/* Comment ça marche */}
+      <section className="max-w-7xl mx-auto px-5 sm:px-6 py-12 sm:py-16 space-y-7">
         <div className="text-center space-y-2">
-          <h2 className="text-3xl font-gaming font-black uppercase text-white">
-            Jeux <span className="text-[#8A2BE2]">Disponibles</span>
-          </h2>
-          <p className="text-sm text-[#8888AA] font-esport">Sélectionne ta discipline et entre dans l'arène</p>
+          <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">Simple et accessible</p>
+          <h2 className="text-2xl sm:text-3xl font-gaming font-black uppercase text-white">Comment ça marche</h2>
         </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-9 gap-4">
-          {ALL_GAMES.map((game) => {
-            const hasActive = activeGames.has(game.id);
-            return (
-              <Link key={game.id} to={`/game/${game.id}`}>
-                <motion.div 
-                  whileHover={{ y: -6, scale: 1.02 }}
-                  className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#8A2BE2]/20 hover:border-[#8A2BE2] shadow-xl bg-[#0F0F1E] cursor-pointer"
-                >
-                  <img
-                    src={game.image}
-                    alt={game.name}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent" />
-                  
-                  {/* Point Vert Animé si tournoi actif */}
-                  {hasActive && (
-                    <div className="absolute top-3 right-3 bg-emerald-500/90 w-3 h-3 rounded-full animate-ping border-2 border-white" />
-                  )}
-
-                  <div className="absolute bottom-3 left-3 right-3 text-center">
-                    <p className="font-gaming font-extrabold text-xs text-white uppercase group-hover:text-[#A855F7] transition-colors">
-                      {game.name}
-                    </p>
-                  </div>
-                </motion.div>
-              </Link>
-            );
-          })}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {HOW_IT_WORKS.map((step, index) => (
+            <div key={step.title} className="rounded-2xl border border-[#8A2BE2]/20 bg-[#0F0F1E] p-5 space-y-3">
+              <div className="flex items-center justify-between"><span className="text-2xl font-gaming font-black text-[#8A2BE2]/50">0{index + 1}</span><step.icon size={20} className="text-[#A855F7]" /></div>
+              <h3 className="text-sm font-gaming font-bold uppercase text-white">{step.title}</h3>
+              <p className="text-xs text-[#8888AA] leading-relaxed">{step.text}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* 3.6 NOS PARTENAIRES & COMMUNAUTÉS */}
-      <PartnersSection />
-
-      {/* 4. SECTION CONFIANCE — CE QU'OFFRE EGAME BÉNIN */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-3xl p-8 md:p-12 space-y-12 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#8A2BE2]/10 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl font-gaming font-black uppercase text-white">
-              Ce qu'offre <span className="text-[#FFD700]">eGame Bénin</span>
-            </h2>
-            <p className="text-sm text-[#8888AA]">Une plateforme pensée pour les joueurs et les communautés gaming</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
-              <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
-                <Trophy size={24} />
-              </div>
-              <h3 className="font-gaming font-bold text-sm text-white">Compétitions eSport</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Des tournois en ligne réguliers sur les jeux mobiles les plus compétitifs du moment.</p>
-            </div>
-
-            <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
-              <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
-                <Users size={24} />
-              </div>
-              <h3 className="font-gaming font-bold text-sm text-white">Communautés gaming</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Un serveur Discord dédié par jeu pour échanger, s'organiser et progresser ensemble.</p>
-            </div>
-
-            <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
-              <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
-                <ScrollText size={24} />
-              </div>
-              <h3 className="font-gaming font-bold text-sm text-white">Règles claires et publiées</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Chaque tournoi affiche son règlement officiel : format, horaires et conditions de participation.</p>
-            </div>
-
-            <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
-              <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
-                <TrendingUp size={24} />
-              </div>
-              <h3 className="font-gaming font-bold text-sm text-white">Suivi des performances</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Profil joueur, points, badges et classement pour suivre ta progression.</p>
-            </div>
-
-            <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-[#8A2BE2]/20 space-y-3 text-center">
-              <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
-                <MessageSquare size={24} />
-              </div>
-              <h3 className="font-gaming font-bold text-sm text-white">Support disponible</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">Une équipe joignable 7j/7 sur Discord et par e-mail pour accompagner les joueurs.</p>
-            </div>
-
-            {hasPartners && (
-              <div className="bg-[#0A0A0F] p-6 rounded-2xl border border-emerald-500/25 space-y-3 text-center">
-                <div className="w-12 h-12 bg-emerald-500/15 text-emerald-400 rounded-xl flex items-center justify-center mx-auto">
-                  <BadgeCheck size={24} />
-                </div>
-                <h3 className="font-gaming font-bold text-sm text-white">Partenaires officiels</h3>
-                <p className="text-xs text-[#8888AA] leading-relaxed">Des marques, médias et communautés collaborent officiellement avec eGame Bénin.</p>
-              </div>
-            )}
-          </div>
+      {/* Présentation des jeux sans promettre un tournoi pour chacun */}
+      <section className="max-w-7xl mx-auto px-5 sm:px-6 py-12 sm:py-16 space-y-7">
+        <div className="text-center space-y-2">
+          <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">Jeux pris en charge</p>
+          <h2 className="text-2xl sm:text-3xl font-gaming font-black uppercase text-white">Jeux de la communauté</h2>
+          <p className="text-sm text-[#8888AA]">Les tournois disponibles sont annoncés séparément selon leur calendrier.</p>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+          {GAMES.map((game) => (
+            <Link key={game.id} to={`/game/${game.id}`} className="group relative aspect-[4/3] min-w-0 rounded-2xl overflow-hidden border border-[#8A2BE2]/20 hover:border-[#8A2BE2] bg-[#0F0F1E]">
+              <img src={game.image} alt={game.name} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#07070C]/95 via-[#07070C]/20 to-transparent" />
+              {activeGames.has(game.id) && <span className="absolute top-2 right-2 rounded-full bg-emerald-950/90 border border-emerald-500/50 px-2 py-1 text-[8px] font-gaming font-black uppercase text-emerald-300">Tournoi actif</span>}
+              <span className="absolute bottom-3 left-3 right-3 text-center text-[10px] sm:text-xs font-gaming font-black uppercase leading-tight text-white break-words">{game.name}</span>
+            </Link>
+          ))}
         </div>
       </section>
 
-      {/* 4.5 RÉSULTATS RÉELS DE LA PLATEFORME */}
+      {/* Statistiques calculées uniquement à partir de données réelles */}
       <PlatformStats />
 
-      {/* 4.7 BLOC SPONSORS / DEVENIR PARTENAIRE */}
-      <SponsorCta />
+      {/* Communauté officielle */}
+      <section className="max-w-7xl mx-auto px-5 sm:px-6 py-12 sm:py-16">
+        <div className="rounded-3xl border border-[#5865F2]/30 bg-[#0F0F1E] p-6 sm:p-9 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div className="space-y-3">
+            <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">Communauté officielle</p>
+            <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white">Joue. Affronte. Gagne.</h2>
+            <p className="text-sm text-[#8888AA] leading-relaxed">eGame Bénin développe le gaming compétitif au Bénin et ambitionne de connecter progressivement les joueurs à travers l’Afrique.</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 md:justify-end">
+            <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="min-h-12 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] px-5 py-3 text-xs font-gaming font-black uppercase tracking-wider text-white flex items-center justify-center gap-2"><DiscordLogo size={17} /> Rejoindre Discord</a>
+            <a href="https://tiktok.com/@egamebnin" target="_blank" rel="noopener noreferrer" className="min-h-12 rounded-xl border border-[#8A2BE2]/40 bg-[#07070C] hover:bg-[#8A2BE2]/10 px-5 py-3 text-xs font-gaming font-black uppercase tracking-wider text-white flex items-center justify-center gap-2"><TikTokLogo size={17} className="text-[#A855F7]" /> Suivre sur TikTok</a>
+          </div>
+        </div>
+      </section>
 
-      {/* PIED DE PAGE */}
-      <footer className="border-t border-[#8A2BE2]/20 pt-16 pb-12 text-center space-y-6">
+      {/* Partenaires publics et officiellement confirmés uniquement. */}
+      {hasPartners && <PartnersSection />}
+
+      <footer className="border-t border-[#8A2BE2]/20 pt-10 sm:pt-12 pb-8 text-center space-y-5">
         <Logo size="md" className="justify-center" />
-        <div className="flex flex-wrap justify-center gap-6 text-xs text-[#8888AA] font-bold uppercase tracking-wider">
+        <div className="flex flex-wrap justify-center gap-x-5 gap-y-3 px-4 text-[10px] sm:text-xs text-[#8888AA] font-bold uppercase tracking-wider">
           <Link to="/about" className="hover:text-white">À propos</Link>
           <Link to="/devenir-partenaire" className="hover:text-white">Devenir partenaire</Link>
           <Link to="/contact" className="hover:text-white">Contact</Link>
           <Link to="/mentions-legales" className="hover:text-white">Mentions légales</Link>
+          <Link to="/privacy" className="hover:text-white">Confidentialité & conditions</Link>
           <Link to="/classement" className="hover:text-white">Classement</Link>
         </div>
-        <div className="flex flex-col items-center gap-3 px-4">
-          <p className="text-sm font-gaming font-black uppercase tracking-wider text-white">Suivez eGame Bénin</p>
-          <p className="max-w-xl text-xs text-[#8888AA] leading-relaxed">
-            Retrouvez nos conseils gaming, actualités, tournois et contenus eGame Academy sur TikTok.
-          </p>
-          <a
-            href="https://tiktok.com/@egamebnin"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Suivre eGame Bénin sur TikTok"
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#8A2BE2]/40 bg-[#0F0F1E] px-5 py-2.5 text-[10px] font-gaming font-black uppercase tracking-widest text-white transition-colors hover:border-[#A855F7] hover:bg-[#8A2BE2]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A855F7]"
-          >
-            <TikTokLogo size={16} className="text-[#A855F7]" />
-            Suivre sur TikTok
-          </a>
-        </div>
-        <p className="text-[10px] text-[#8888AA]/50 font-gaming uppercase tracking-widest">
-          © 2026 eGame Bénin — RCCM : <span className="font-mono normal-case">RB/ABC/26 A 138238</span> | IFU : <span className="font-mono normal-case">0202398541260</span> | <Link to="/privacy" className="hover:text-[#8A2BE2] transition-colors">Politique de confidentialité</Link>
-        </p>
+        <p className="px-4 text-[9px] sm:text-[10px] text-[#8888AA]/60 font-gaming uppercase tracking-wider sm:tracking-widest break-words">© 2026 eGame Bénin — <Link to="/privacy" className="hover:text-[#8A2BE2] transition-colors">Informations légales et conditions</Link></p>
       </footer>
     </div>
   );

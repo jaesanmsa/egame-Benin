@@ -54,7 +54,7 @@ const Games = () => {
 
   return (
     <div className="min-h-screen bg-[#07070C] text-white pb-32 pt-28">
-      <SEO title="Catalogue des Jeux eSport" description="Tous les jeux compétitifs disponibles en Afrique : Blood Strike, Free Fire, COD Mobile, Clash Royale, PUBG Mobile." />
+      <SEO title="Jeux pris en charge" description="Découvrez les jeux de la communauté eGame Bénin. Les tournois disponibles sont annoncés séparément selon leur calendrier." />
       <Navbar />
       <main className="max-w-6xl mx-auto px-6 space-y-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -63,8 +63,8 @@ const Games = () => {
               <Gamepad2 size={26} />
             </div>
             <div>
-              <h1 className="text-3xl font-gaming font-black uppercase text-white">Catalogue des Jeux</h1>
-              <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider mt-1">Sélectionne ta discipline eSport</p>
+              <h1 className="text-3xl font-gaming font-black uppercase text-white">Jeux pris en charge</h1>
+              <p className="text-xs text-[#8888AA] font-esport tracking-wider mt-1">Les tournois sont annoncés séparément selon leur disponibilité.</p>
             </div>
           </div>
 

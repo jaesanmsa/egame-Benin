@@ -42,25 +42,25 @@ const NewsTab = () => {
     setIsRestoring(true);
     const defaultNews = [
       {
-        title: 'Grand Tournoi Clash of Clans : 50.000 FCFA à gagner !',
-        excerpt: 'Préparez vos troupes ! Le plus grand tournoi CoC du mois arrive sur eGame Bénin.',
-        content: 'Le tournoi Clash of Clans est enfin là. Avec un cash prize de 50.000 FCFA, c\'est l\'occasion de montrer votre talent de stratège. Inscriptions ouvertes jusqu\'au 15 Mars. Format : Guerre de clans 1vs1. Les règles détaillées sont disponibles dans la section tournois.',
+        title: 'Tournoi Clash of Clans — informations et inscriptions',
+        excerpt: 'Consultez les informations du tournoi Clash of Clans et vérifiez les inscriptions disponibles.',
+        content: 'Les tournois Clash of Clans sont annoncés sur eGame Bénin selon leur calendrier. Consultez la page du tournoi pour connaître les dates, les frais éventuels, les règles et les conditions de participation. Les récompenses sont versées après validation définitive des résultats, selon les conditions du tournoi.',
         image_url: '/coc-tournament.webp',
         read_time: '4 min',
         is_featured: true
       },
       {
         title: 'Bienvenue sur l\'Arène eGame Bénin !',
-        excerpt: 'Découvrez la plateforme eSport eGame Bénin. Tournois, cash prizes et communauté.',
-        content: 'Bienvenue sur eGame Bénin, votre nouvelle destination pour la compétition de haut niveau. Notre mission est de professionnaliser le gaming au Bénin en offrant des tournois réguliers avec des récompenses réelles. Que vous soyez fan de Clash Royale, Free Fire ou COD, il y a une place pour vous dans l\'arène.',
+        excerpt: 'Découvrez eGame Bénin, les tournois gaming et la communauté.',
+        content: 'eGame Bénin est une plateforme numérique de gaming compétitif qui permet aux joueurs de participer à des tournois, suivre leur progression et rejoindre une communauté structurée. Notre mission est de développer l’e-sport au Bénin et de connecter progressivement les gamers africains autour de compétitions accessibles et organisées.',
         image_url: '/news-hero.png',
         read_time: '3 min',
         is_featured: false
       },
       {
         title: 'Guide : Comment participer à un tournoi ?',
-        excerpt: 'Tout ce qu\'il faut savoir pour s\'inscrire et valider sa participation via Mobile Money.',
-        content: 'Participer à un tournoi sur eGame Bénin est simple : 1. Choisissez votre tournoi. 2. Cliquez sur S\'inscrire. 3. Payez via KKiaPay ou FedaPay. 4. Récupérez votre code de validation dans votre historique : les arbitres le vérifient sur le serveur Discord de votre jeu pour confirmer votre place. C\'est tout !',
+        excerpt: 'Les étapes pour s\'inscrire à un tournoi et confirmer sa participation.',
+        content: 'Participer à un tournoi sur eGame Bénin : 1. Consultez les tournois ouverts. 2. Complétez votre profil et liez votre compte Discord. 3. Suivez les étapes d’inscription et choisissez un moyen de paiement disponible pour ce tournoi. 4. Consultez vos inscriptions et les informations partagées sur le serveur Discord concerné.',
         image_url: '/games-news.webp',
         read_time: '5 min',
         is_featured: false

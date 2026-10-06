@@ -48,7 +48,7 @@ const Privacy = () => {
           <div className="w-20 h-20 bg-violet-600/10 rounded-3xl flex items-center justify-center text-violet-500 mx-auto mb-6">
             <Shield size={40} />
           </div>
-          <h1 className="text-3xl font-black mb-2">Privacy</h1>
+          <h1 className="text-3xl font-black mb-2">Conditions, confidentialité & remboursements</h1>
           <p className="text-muted-foreground">Conditions Générales & Protection des Données • v1.1</p>
           <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">Dernière mise à jour : 4 Mars 2026</p>
         </motion.div>
@@ -126,7 +126,7 @@ const Privacy = () => {
 
               <div>
                 <h3 className="font-bold text-foreground mb-2">Sécurité des paiements</h3>
-                <p>Les transactions financières sont gérées par nos partenaires certifiés KKiaPay et FedaPay. eGame Bénin n'a jamais accès à vos codes PIN ou informations de carte bancaire.</p>
+                <p>Les paiements sont traités par des prestataires de paiement sécurisés. Les moyens disponibles peuvent varier selon le tournoi. eGame Bénin n'a jamais accès à vos codes PIN ou informations de carte bancaire.</p>
               </div>
 
               <div>
@@ -145,7 +145,7 @@ const Privacy = () => {
             <div className="bg-card border border-border p-8 rounded-[2rem] space-y-4 text-sm text-muted-foreground leading-relaxed shadow-sm">
               <p>• Les frais d'inscription sont définitifs et non remboursables une fois le tournoi commencé.</p>
               <p>• En cas d'annulation d'un tournoi par l'administration, les participants seront intégralement remboursés ou crédités pour un futur événement.</p>
-              <p>• Les cash prizes sont versés dans un délai de 24h à 72h après la fin officielle du tournoi.</p>
+              <p>• Les récompenses sont versées après validation définitive des résultats, selon les conditions du tournoi.</p>
             </div>
           </motion.section>
         </motion.div>

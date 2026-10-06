@@ -108,7 +108,7 @@ const LegalNotice = () => {
             </p>
             <div className="flex items-start gap-3">
               <Globe className="text-violet-500 shrink-0 mt-0.5" size={16} />
-              <p className="min-w-0">Les paiements en ligne sont traités par nos partenaires agréés KKiaPay et FedaPay (Mobile Money et cartes bancaires).</p>
+              <p className="min-w-0">Les paiements sont traités par des prestataires de paiement sécurisés.</p>
             </div>
             <div className="flex items-start gap-3">
               <Mail className="text-violet-500 shrink-0 mt-0.5" size={16} />

@@ -29,12 +29,12 @@ const STEPS: Step[] = [
   {
     icon: CreditCard,
     title: "Paie tes frais d'inscription",
-    desc: "Accepte le règlement du tournoi puis paie par Mobile Money (MTN, Moov, Celtiis) ou carte bancaire via KKiaPay ou FedaPay."
+    desc: "Accepte le règlement du tournoi puis paie avec les moyens disponibles pour cette compétition : Mobile Money et carte bancaire selon disponibilité."
   },
   {
     icon: Hash,
-    title: "Reçois ton code de validation",
-    desc: "Dès que ton paiement est validé, un code unique (ex : EGB-A1B2C) t'est remis. Tu le retrouves aussi dans « Mes Inscriptions » sur ton profil."
+    title: "Suis ton inscription",
+    desc: "Retrouve le statut et les informations de ton inscription dans « Mes Inscriptions » sur ton profil."
   },
   {
     icon: MessageSquare,
@@ -44,8 +44,8 @@ const STEPS: Step[] = [
   },
   {
     icon: Trophy,
-    title: "Joue et encaisse",
-    desc: "Rejoins la salle de jeu à l'heure indiquée, domine tes adversaires et reçois ton Cash Prize directement par Mobile Money."
+    title: "Joue et reçois tes récompenses",
+    desc: "Rejoins la compétition à l'heure indiquée. Les récompenses sont versées après validation définitive des résultats, selon les conditions du tournoi."
   }
 ];
 
@@ -54,7 +54,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
-      <SEO title="À propos de eGame Bénin" description="La vision et la mission de eGame Bénin : une plateforme eSport pensée pour connecter les gamers africains." />
+      <SEO title="À propos de eGame Bénin" description="eGame Bénin développe le gaming compétitif au Bénin et ambitionne de connecter progressivement les joueurs à travers l’Afrique." />
       <Navbar />
       <main className="max-w-4xl mx-auto px-6 space-y-16">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#8888AA] hover:text-white transition-colors text-xs font-gaming font-bold uppercase tracking-widest">
@@ -73,7 +73,7 @@ const About = () => {
               <p className="text-xs font-bold text-[#A855F7] uppercase tracking-wider">Fondateur de eGame Bénin</p>
             </div>
             <p className="text-sm text-[#8888AA] leading-relaxed">
-              Passionné de gaming et d’eSport, Moussa a créé eGame Bénin avec l’ambition de rassembler les joueurs, développer la compétition et contribuer à la structuration de l’eSport au Bénin et progressivement à travers l’Afrique.
+              Passionné de gaming et d’eSport, Moussa a créé eGame Bénin pour développer la compétition au Bénin et connecter progressivement les joueurs autour de tournois accessibles et organisés.
             </p>
           </div>
         </div>
@@ -81,10 +81,10 @@ const About = () => {
         <div className="text-center space-y-6">
           <Logo size="lg" className="justify-center" />
           <h1 className="text-4xl md:text-5xl font-gaming font-black uppercase text-white tracking-tight">
-            L'Arène des Champions
+            Joue. Affronte. Gagne.
           </h1>
           <p className="text-base text-[#8888AA] max-w-2xl mx-auto leading-relaxed font-medium">
-            eGame Bénin est une plateforme eSport où les joueurs s'inscrivent à des tournois, paient les frais d'inscription prévus pour la compétition, affrontent d'autres joueurs et peuvent remporter des récompenses en argent. Une partie des frais d'inscription sert notamment à constituer les cash prizes du tournoi.
+            eGame Bénin est une plateforme numérique de gaming compétitif qui permet aux joueurs de participer à des tournois, suivre leur progression et rejoindre une communauté structurée. Notre mission est de développer l’e-sport au Bénin et de connecter progressivement les gamers africains autour de compétitions accessibles et organisées.
           </p>
         </div>
 
@@ -93,7 +93,7 @@ const About = () => {
             <Target className="text-[#8A2BE2]" size={36} />
             <h2 className="text-xl font-gaming font-bold uppercase text-white">Notre Mission</h2>
             <p className="text-sm text-[#8888AA] leading-relaxed">
-              Professionnaliser la scène eSport africaine en offrant une infrastructure moderne, des règles strictes, des prix attractifs et des paiements instantanés.
+              Développer le gaming compétitif au Bénin avec des tournois accessibles, des règles claires et une communauté structurée.
             </p>
           </div>
 
@@ -101,7 +101,7 @@ const About = () => {
             <Users className="text-[#8A2BE2]" size={36} />
             <h2 className="text-xl font-gaming font-bold uppercase text-white">La Communauté</h2>
             <p className="text-sm text-[#8888AA] leading-relaxed">
-              Rassembler les gamers de tout le continent, de Dakar à Nairobi et de Casablanca à Johannesburg, autour du fair-play, de la passion du jeu et de la compétition de haut niveau.
+              Rassembler progressivement les joueurs autour du fair-play, de la passion du jeu et de compétitions organisées au Bénin, avec l’ambition de connecter les gamers africains.
             </p>
           </div>
         </div>
@@ -117,7 +117,7 @@ const About = () => {
               Comment <span className="text-[#8A2BE2]">participer</span> à un tournoi ?
             </h2>
             <p className="text-sm text-[#8888AA] max-w-2xl mx-auto font-medium">
-              De l'inscription jusqu'au Cash Prize, tout se fait en 6 étapes simples. Suis le guide !
+              De la création du compte jusqu'à la compétition, découvre les étapes pour participer.
             </p>
           </div>
 
@@ -174,22 +174,22 @@ const About = () => {
         </section>
 
         <div className="bg-[#0F0F1E] border border-[#FFD700]/30 rounded-3xl p-10 text-center space-y-8">
-          <h2 className="text-2xl font-gaming font-black uppercase text-white">Pourquoi nous faire confiance ?</h2>
+          <h2 className="text-2xl font-gaming font-black uppercase text-white">Une compétition organisée</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             <div className="space-y-2">
               <Shield className="text-[#8A2BE2] mx-auto" size={32} />
-              <h3 className="font-gaming font-bold text-sm text-white">100% Sécurisé</h3>
-              <p className="text-xs text-[#8888AA]">Paiements certifiés via KKiaPay & FedaPay.</p>
+              <h3 className="font-gaming font-bold text-sm text-white">Règles publiées</h3>
+              <p className="text-xs text-[#8888AA]">Chaque tournoi présente ses règles et conditions.</p>
             </div>
             <div className="space-y-2">
               <Trophy className="text-[#FFD700] mx-auto" size={32} />
-              <h3 className="font-gaming font-bold text-sm text-white">Cash Prizes Garantie</h3>
-              <p className="text-xs text-[#8888AA]">Gains distribués à la fin des tournois.</p>
+              <h3 className="font-gaming font-bold text-sm text-white">Résultats validés</h3>
+              <p className="text-xs text-[#8888AA]">Les récompenses suivent la validation définitive des résultats et les conditions du tournoi.</p>
             </div>
             <div className="space-y-2">
               <Users className="text-[#8A2BE2] mx-auto" size={32} />
-              <h3 className="font-gaming font-bold text-sm text-white">Support 24/7</h3>
-              <p className="text-xs text-[#8888AA]">Une équipe d'arbitres toujours à l'écoute.</p>
+              <h3 className="font-gaming font-bold text-sm text-white">Communauté eGame</h3>
+              <p className="text-xs text-[#8888AA]">Retrouve les joueurs et l'équipe sur Discord.</p>
             </div>
           </div>
         </div>
