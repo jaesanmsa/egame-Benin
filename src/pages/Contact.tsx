@@ -18,7 +18,7 @@ const Contact = () => {
     { q: "Comment s'inscrire à un tournoi ?", a: "Ouvre un tournoi avec les inscriptions disponibles, complète ton profil, lie ton compte Discord et suis les étapes d'inscription. Les moyens de paiement proposés dépendent du tournoi." },
     { q: "Comment sont versées les récompenses ?", a: "Les récompenses sont versées après validation définitive des résultats, selon les conditions du tournoi." },
     { q: "Que faire en cas de litige pendant un match ?", a: "Prends une capture d'écran de l'écran de fin de partie et contacte les arbitres sur le serveur Discord du jeu concerné." },
-    { q: "Où les tournois sont-ils organisés ?", a: "eGame Bénin développe le gaming compétitif au Bénin et ambitionne de connecter progressivement les joueurs à travers l’Afrique." },
+    { q: "Où les tournois sont-ils organisés ?", a: "eGame Bénin développe le gaming compétitif au Bénin avec l’ambition de s’étendre progressivement à travers l’Afrique." },
     { q: "Quels moyens de paiement sont proposés ?", a: "Les paiements sont traités par des prestataires de paiement sécurisés. Les moyens proposés varient selon le tournoi et les options disponibles au moment de l'inscription." }
   ];
 

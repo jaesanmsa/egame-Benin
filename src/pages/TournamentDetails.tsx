@@ -862,7 +862,7 @@ const TournamentDetails = () => {
                   >
                     <div>
                       <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">KKiaPay</h3>
-                      <p className="text-[10px] text-[#8888AA]">MTN Mobile Money, Moov Money, Celtiis Cash</p>
+                      <p className="text-[10px] text-[#8888AA]">Mobile Money et carte bancaire selon les moyens disponibles</p>
                     </div>
                     <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white" />
                   </button>
@@ -875,7 +875,7 @@ const TournamentDetails = () => {
                   >
                     <div className="min-w-0">
                       <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">FedaPay</h3>
-                      <p className="text-[10px] text-[#8888AA] break-words">MTN, Moov Money, Cartes Bancaires VISA/Mastercard</p>
+                      <p className="text-[10px] text-[#8888AA] break-words">Mobile Money et carte bancaire selon les moyens disponibles</p>
                     </div>
                     <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white shrink-0" />
                   </button>

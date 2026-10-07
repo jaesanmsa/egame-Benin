@@ -411,7 +411,7 @@ const BecomePartner = () => {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
               <p className="flex items-center gap-2 text-[10px] text-[#8888AA]">
                 <Clock size={12} />
-                Réponse sous 72h depuis {CONTACT_EMAIL}
+                Notre équipe vous répondra depuis {CONTACT_EMAIL}
               </p>
               <Button
                 type="submit"

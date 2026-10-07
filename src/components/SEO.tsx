@@ -13,8 +13,8 @@ interface SEOProps {
 }
 
 const SEO = ({
-  title = "eGame Bénin | Tournois eSport et communauté gaming en Afrique",
-  description = "Rejoignez eGame Bénin, la plateforme dédiée aux compétitions eSport et aux communautés gaming. Créez votre profil, découvrez les tournois et affrontez d'autres joueurs.",
+  title = "eGame Bénin | Gaming compétitif, tournois & e-sport",
+  description = "eGame Bénin est une plateforme de gaming compétitif permettant aux joueurs de participer à des tournois, rejoindre une communauté et suivre leur progression. Nous développons l’e-sport au Bénin avec l’ambition de nous étendre progressivement en Afrique et d’organiser également des événements gaming physiques.",
   image = "https://ajbpdaxtynkazdrzyopd.supabase.co/storage/v1/object/public/assets/og-image.jpg",
   url,
   type = "website",

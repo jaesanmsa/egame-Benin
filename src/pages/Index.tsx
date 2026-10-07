@@ -84,8 +84,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white pb-32">
       <SEO
-        title="eGame Bénin | Tournois gaming"
-        description="Participe à des tournois gaming, affronte d’autres joueurs et construis ton parcours sur eGame Bénin."
+        title="eGame Bénin | Gaming compétitif, tournois & e-sport"
+        description="eGame Bénin est une plateforme de gaming compétitif permettant aux joueurs de participer à des tournois, rejoindre une communauté et suivre leur progression. Nous développons l’e-sport au Bénin avec l’ambition de nous étendre progressivement en Afrique et d’organiser également des événements gaming physiques."
       />
       <Navbar />
 
@@ -128,19 +128,12 @@ const Index = () => {
               <DiscordLogo size={16} /> Rejoindre Discord
             </a>
           </motion.div>
-          {!isLoggedIn ? (
+          {!isLoggedIn && (
             <button
               onClick={() => navigate('/auth?mode=signup')}
               className="mx-auto inline-flex min-h-11 items-center justify-center rounded-xl border border-[#A855F7]/60 bg-[#8A2BE2]/15 px-6 py-3 text-[11px] font-gaming font-black uppercase tracking-widest text-white shadow-lg shadow-[#8A2BE2]/15 transition-all hover:border-[#A855F7] hover:bg-[#8A2BE2]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A855F7]"
             >
               Créer un compte eGame
-            </button>
-          ) : (
-            <button
-              onClick={() => navigate('/profil')}
-              className="mx-auto inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#A855F7]/60 bg-[#8A2BE2]/15 px-6 py-3 text-[11px] font-gaming font-black uppercase tracking-widest text-white transition-all hover:border-[#A855F7] hover:bg-[#8A2BE2]/30"
-            >
-              <User size={15} /> Mon profil eGame
             </button>
           )}
         </div>
@@ -230,7 +223,7 @@ const Index = () => {
           <div className="space-y-3">
             <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">Communauté officielle</p>
             <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white">Joue. Affronte. Gagne.</h2>
-            <p className="text-sm text-[#8888AA] leading-relaxed">eGame Bénin développe le gaming compétitif au Bénin et ambitionne de connecter progressivement les joueurs à travers l’Afrique.</p>
+            <p className="text-sm text-[#8888AA] leading-relaxed">eGame Bénin développe le gaming compétitif au Bénin avec l’ambition de s’étendre progressivement à travers l’Afrique.</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 md:justify-end">
             <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="min-h-12 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] px-5 py-3 text-xs font-gaming font-black uppercase tracking-wider text-white flex items-center justify-center gap-2"><DiscordLogo size={17} /> Rejoindre Discord</a>

@@ -54,7 +54,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white pb-32 pt-24">
-      <SEO title="À propos de eGame Bénin" description="eGame Bénin développe le gaming compétitif au Bénin et ambitionne de connecter progressivement les joueurs à travers l’Afrique." />
+      <SEO title="À propos de eGame Bénin" description="Plateforme numérique de compétition, communauté gaming et futurs événements e-sport physiques au Bénin." />
       <Navbar />
       <main className="max-w-4xl mx-auto px-6 space-y-16">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#8888AA] hover:text-white transition-colors text-xs font-gaming font-bold uppercase tracking-widest">
@@ -73,7 +73,7 @@ const About = () => {
               <p className="text-xs font-bold text-[#A855F7] uppercase tracking-wider">Fondateur de eGame Bénin</p>
             </div>
             <p className="text-sm text-[#8888AA] leading-relaxed">
-              Passionné de gaming et d’eSport, Moussa a créé eGame Bénin pour développer la compétition au Bénin et connecter progressivement les joueurs autour de tournois accessibles et organisés.
+              Passionné de gaming et d’eSport, Moussa a créé eGame Bénin pour développer le gaming compétitif au Bénin : une plateforme numérique de compétition, une communauté gaming structurée et, progressivement, des événements e-sport physiques.
             </p>
           </div>
         </div>
@@ -84,25 +84,25 @@ const About = () => {
             Joue. Affronte. Gagne.
           </h1>
           <p className="text-base text-[#8888AA] max-w-2xl mx-auto leading-relaxed font-medium">
-            eGame Bénin est une plateforme numérique de gaming compétitif qui permet aux joueurs de participer à des tournois, suivre leur progression et rejoindre une communauté structurée. Notre mission est de développer l’e-sport au Bénin et de connecter progressivement les gamers africains autour de compétitions accessibles et organisées.
+            eGame Bénin est une plateforme numérique de gaming compétitif qui permet aux joueurs de participer à des tournois, suivre leur progression et rejoindre une communauté structurée. Notre mission est de développer l’e-sport au Bénin et de connecter progressivement les gamers africains autour de compétitions accessibles et organisées. Au-delà des compétitions en ligne, eGame Bénin ambitionne d’organiser progressivement des événements gaming et e-sport physiques, réunissant joueurs, communautés, marques et passionnés.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-8 rounded-3xl space-y-4">
-            <Target className="text-[#8A2BE2]" size={36} />
-            <h2 className="text-xl font-gaming font-bold uppercase text-white">Notre Mission</h2>
-            <p className="text-sm text-[#8888AA] leading-relaxed">
-              Développer le gaming compétitif au Bénin avec des tournois accessibles, des règles claires et une communauté structurée.
-            </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-6 sm:p-8 rounded-3xl space-y-4">
+            <Target className="text-[#8A2BE2]" size={32} />
+            <h2 className="text-lg font-gaming font-bold uppercase text-white">Plateforme de compétition</h2>
+            <p className="text-sm text-[#8888AA] leading-relaxed">Des outils numériques pour participer aux tournois et suivre sa progression.</p>
           </div>
-
-          <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-8 rounded-3xl space-y-4">
-            <Users className="text-[#8A2BE2]" size={36} />
-            <h2 className="text-xl font-gaming font-bold uppercase text-white">La Communauté</h2>
-            <p className="text-sm text-[#8888AA] leading-relaxed">
-              Rassembler progressivement les joueurs autour du fair-play, de la passion du jeu et de compétitions organisées au Bénin, avec l’ambition de connecter les gamers africains.
-            </p>
+          <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-6 sm:p-8 rounded-3xl space-y-4">
+            <Users className="text-[#8A2BE2]" size={32} />
+            <h2 className="text-lg font-gaming font-bold uppercase text-white">Communauté gaming</h2>
+            <p className="text-sm text-[#8888AA] leading-relaxed">Des joueurs et communautés réunis autour du fair-play et de compétitions organisées.</p>
+          </div>
+          <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-6 sm:p-8 rounded-3xl space-y-4">
+            <Gamepad2 className="text-[#FFD700]" size={32} />
+            <h2 className="text-lg font-gaming font-bold uppercase text-white">Événements physiques</h2>
+            <p className="text-sm text-[#8888AA] leading-relaxed">Nous ambitionnons d’organiser progressivement des événements gaming et e-sport au Bénin.</p>
           </div>
         </div>
 

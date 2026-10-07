@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { User, Home, Trophy, Users, Newspaper, LogIn, ChevronDown, CreditCard, Settings, LogOut } from 'lucide-react';
+import { User, Home, Trophy, Newspaper, LogIn, ChevronDown, CreditCard, Settings, LogOut } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Logo from './Logo';
 import InstallAndProfileReminder from './InstallAndProfileReminder';
-import { MAIN_DISCORD_INVITE } from '@/lib/discord';
 
 const Navbar = () => {
   const location = useLocation();
@@ -68,7 +67,6 @@ const Navbar = () => {
           <Link to="/" className={linkClass('/')}>Accueil</Link>
           <Link to="/jeux" className={linkClass('/jeux')}>Tournois</Link>
           <Link to="/classement" className={linkClass('/classement')}>Classement</Link>
-          <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest font-gaming text-[#8888AA] hover:text-white transition-all">Communauté</a>
           <Link to="/news" className={linkClass('/news')}>Actualités</Link>
         </nav>
         <div className="shrink-0">
@@ -88,7 +86,6 @@ const Navbar = () => {
           <Link to="/" className={linkClass('/')}>Accueil</Link>
           <Link to="/jeux" className={linkClass('/jeux')}>Tournois</Link>
           <Link to="/classement" className={linkClass('/classement')}>Classement</Link>
-          <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="text-[10px] font-gaming font-bold uppercase text-[#8888AA] hover:text-white">Communauté</a>
           <Link to="/news" className={linkClass('/news')}>Actualités</Link>
         </nav>
         <div className="shrink-0">{isLoggedIn ? accountMenu : <Link to="/auth" className="btn-neon px-4 py-2 rounded-full text-[10px] font-bold uppercase">Connexion</Link>}</div>
@@ -100,7 +97,6 @@ const Navbar = () => {
           <Link to="/" className="flex min-w-0 flex-1 flex-col items-center gap-1"><Home size={19} className={isActive('/') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Accueil</span></Link>
           <Link to="/jeux" className="flex min-w-0 flex-1 flex-col items-center gap-1"><Trophy size={19} className={isActive('/jeux') || isActive('/game') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/jeux') || isActive('/game') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Tournois</span></Link>
           <Link to="/classement" className="flex min-w-0 flex-1 flex-col items-center gap-1"><Trophy size={19} className={isActive('/classement') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/classement') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Classement</span></Link>
-          <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="flex min-w-0 flex-1 flex-col items-center gap-1"><Users size={19} className="text-[#8888AA]" /><span className="text-[8px] font-bold uppercase tracking-wide text-[#8888AA]">Communauté</span></a>
           <Link to="/news" className="flex min-w-0 flex-1 flex-col items-center gap-1"><Newspaper size={19} className={isActive('/news') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/news') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Actualités</span></Link>
           {isLoggedIn ? (
             <button onClick={() => navigate('/profil')} className="flex min-w-0 flex-1 flex-col items-center gap-1"><User size={19} className={isActive('/profil') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/profil') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Compte</span></button>

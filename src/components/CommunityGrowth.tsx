@@ -144,7 +144,7 @@ const CommunityGrowth = () => {
                 </h2>
               </div>
               <p className="text-[11px] md:text-xs text-[#8888AA] font-esport">
-                Rejoins les joueurs qui construisent la nouvelle génération eSport au Bénin et en Afrique.
+                Rejoins la communauté eGame Bénin et participe au développement du gaming compétitif local.
               </p>
               <p className="text-[10px] text-[#A855F7]/80 font-esport italic">
                 Et le prochain joueur, c'est peut-être toi.
