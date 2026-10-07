@@ -128,8 +128,20 @@ const Index = () => {
               <DiscordLogo size={16} /> Rejoindre Discord
             </a>
           </motion.div>
-          {!isLoggedIn && (
-            <button onClick={() => navigate('/auth')} className="text-xs text-[#B1B1C4] hover:text-white underline underline-offset-4">Créer un compte eGame</button>
+          {!isLoggedIn ? (
+            <button
+              onClick={() => navigate('/auth?mode=signup')}
+              className="mx-auto inline-flex min-h-11 items-center justify-center rounded-xl border border-[#A855F7]/60 bg-[#8A2BE2]/15 px-6 py-3 text-[11px] font-gaming font-black uppercase tracking-widest text-white shadow-lg shadow-[#8A2BE2]/15 transition-all hover:border-[#A855F7] hover:bg-[#8A2BE2]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A855F7]"
+            >
+              Créer un compte eGame
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/profil')}
+              className="mx-auto inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#A855F7]/60 bg-[#8A2BE2]/15 px-6 py-3 text-[11px] font-gaming font-black uppercase tracking-widest text-white transition-all hover:border-[#A855F7] hover:bg-[#8A2BE2]/30"
+            >
+              <User size={15} /> Mon profil eGame
+            </button>
           )}
         </div>
       </section>
@@ -165,18 +177,26 @@ const Index = () => {
         )}
       </section>
 
-      {/* Comment ça marche */}
-      <section className="max-w-7xl mx-auto px-5 sm:px-6 py-12 sm:py-16 space-y-7">
-        <div className="text-center space-y-2">
-          <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">Simple et accessible</p>
-          <h2 className="text-2xl sm:text-3xl font-gaming font-black uppercase text-white">Comment ça marche</h2>
+      {/* Comment ça marche — résumé compact en quatre étapes */}
+      <section className="max-w-7xl mx-auto px-5 sm:px-6 py-8 sm:py-10 space-y-5">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">Simple et accessible</p>
+            <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white mt-1">Comment ça marche</h2>
+          </div>
+          <Link to="/about" className="text-[10px] sm:text-xs font-gaming font-bold text-[#A855F7] hover:underline uppercase tracking-wider">En savoir plus →</Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
           {HOW_IT_WORKS.map((step, index) => (
-            <div key={step.title} className="rounded-2xl border border-[#8A2BE2]/20 bg-[#0F0F1E] p-5 space-y-3">
-              <div className="flex items-center justify-between"><span className="text-2xl font-gaming font-black text-[#8A2BE2]/50">0{index + 1}</span><step.icon size={20} className="text-[#A855F7]" /></div>
-              <h3 className="text-sm font-gaming font-bold uppercase text-white">{step.title}</h3>
-              <p className="text-xs text-[#8888AA] leading-relaxed">{step.text}</p>
+            <div key={step.title} className="min-w-0 rounded-xl border border-[#8A2BE2]/20 bg-[#0F0F1E] p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#8A2BE2]/15 flex items-center justify-center shrink-0">
+                <step.icon size={16} className="text-[#A855F7]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[8px] sm:text-[9px] font-gaming font-black uppercase tracking-wider text-[#A855F7]">Étape {index + 1}</p>
+                <h3 className="text-[10px] sm:text-xs font-gaming font-bold uppercase leading-tight text-white break-words">{step.title}</h3>
+                <p className="hidden sm:block text-[10px] text-[#8888AA] leading-snug mt-1">{step.text}</p>
+              </div>
             </div>
           ))}
         </div>
