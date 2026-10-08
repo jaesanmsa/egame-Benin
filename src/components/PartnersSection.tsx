@@ -5,12 +5,6 @@ import { motion } from "framer-motion";
 import { ExternalLink, BadgeCheck, Gamepad2, MoveHorizontal } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-const CATEGORY_LABELS: Record<string, string> = {
-  sponsor: "Sponsor financier",
-  technique: "Partenaire technique",
-  media: "Média & institutionnel",
-  communautaire: "Communauté eSport",
-};
 
 interface Partner {
   id: string;
@@ -35,6 +29,7 @@ const PartnersSection = () => {
       .from("partners")
       .select("id, name, logo_url, category, game, description, link_url, is_official")
       .eq("visible", true)
+      .eq("is_official", true)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true })
       .then(({ data }) => {
@@ -79,10 +74,10 @@ const PartnersSection = () => {
     <section id="partenaires" className="max-w-7xl mx-auto px-6 py-12 space-y-6 scroll-mt-24">
       <div className="text-center space-y-2">
         <h2 className="text-2xl md:text-3xl font-gaming font-black uppercase text-white">
-          Nos partenaires <span className="text-[#8A2BE2]">& communautés</span>
+          Partenaires
         </h2>
         <p className="text-sm text-[#8888AA] font-esport">
-          Les organisations qui accompagnent le développement de l'eSport avec eGame Bénin.
+          Les organisations officiellement partenaires d’eGame Bénin.
         </p>
         <p className="flex items-center justify-center gap-2 text-[10px] font-gaming font-bold uppercase tracking-widest text-[#A855F7]">
           <MoveHorizontal size={14} /> Fais glisser pour tous les découvrir
@@ -129,9 +124,6 @@ const PartnersSection = () => {
               <h4 className="font-gaming font-bold text-sm text-white leading-tight break-words pr-8">{p.name}</h4>
 
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[9px] font-gaming font-bold uppercase tracking-wider text-[#A855F7] bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 px-2.5 py-1 rounded-full">
-                  {CATEGORY_LABELS[p.category] ?? p.category}
-                </span>
                 {p.game && (
                   <span className="inline-flex items-center gap-1 text-[9px] font-gaming font-bold uppercase tracking-wider text-white/70 bg-[#0A0A0F] border border-[#8A2BE2]/25 px-2.5 py-1 rounded-full">
                     <Gamepad2 size={10} /> {p.game}

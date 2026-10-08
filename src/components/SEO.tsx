@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from 'react';
+import { toEnglishPath, toFrenchPath } from '@/lib/languageRouting';
 
 interface SEOProps {
   title?: string;
@@ -23,6 +24,7 @@ const SEO = ({
   const siteTitle = title.includes("eGame Bénin") ? title : `${title} | eGame Bénin`;
   // URL canonique propre : page courante sans paramètres de suivi (évite le contenu dupliqué).
   const canonicalUrl = url || `https://www.egamebenin.com${window.location.pathname}`;
+  const isEnglish = typeof window !== "undefined" && (window.location.pathname === "/en" || window.location.pathname.startsWith("/en/"));
 
   useEffect(() => {
     document.title = siteTitle;
@@ -45,6 +47,7 @@ const SEO = ({
     setMeta('og:image', image, 'property');
     setMeta('og:url', canonicalUrl, 'property');
     setMeta('og:site_name', 'eGame Bénin', 'property');
+    setMeta('og:locale', isEnglish ? 'en_US' : 'fr_FR', 'property');
     setMeta('twitter:card', 'summary_large_image');
     setMeta('twitter:title', siteTitle);
     setMeta('twitter:description', description);
@@ -57,7 +60,22 @@ const SEO = ({
       document.head.appendChild(canonical);
     }
     canonical.setAttribute('href', canonicalUrl);
-  }, [siteTitle, description, image, canonicalUrl, type, noindex]);
+
+    const languages = [
+      { lang: 'fr', href: `https://www.egamebenin.com${isEnglish ? toFrenchPath(window.location.pathname) : window.location.pathname}` },
+      { lang: 'en', href: `https://www.egamebenin.com${isEnglish ? window.location.pathname : toEnglishPath(window.location.pathname)}` },
+      { lang: 'x-default', href: `https://www.egamebenin.com${isEnglish ? toFrenchPath(window.location.pathname) : window.location.pathname}` },
+    ];
+    document.querySelectorAll('link[data-egame-hreflang="true"]').forEach((el) => el.remove());
+    languages.forEach(({ lang, href }) => {
+      const alternate = document.createElement('link');
+      alternate.rel = 'alternate';
+      alternate.hreflang = lang;
+      alternate.href = href;
+      alternate.setAttribute('data-egame-hreflang', 'true');
+      document.head.appendChild(alternate);
+    });
+  }, [siteTitle, description, image, canonicalUrl, type, noindex, isEnglish]);
 
   return null;
 };

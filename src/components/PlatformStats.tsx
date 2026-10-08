@@ -8,7 +8,6 @@ import { supabase } from "@/lib/supabase";
 interface PlatformStatsRow {
   total_players: number | null;
   tournaments_organized: number | null;
-  partner_communities: number | null;
   competition_players: number | null;
 }
 
@@ -16,29 +15,30 @@ const formatNumber = (n: number) => n.toLocaleString("fr-FR");
 
 const PlatformStats = () => {
   const [row, setRow] = useState<PlatformStatsRow | null>(null);
+  const [partnerCount, setPartnerCount] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
-  // Vue publique sécurisée : agrégats réels calculés par la base, aucune donnée personnelle.
+  // Les statistiques agrégées viennent de la vue publique ; le compteur partenaires
+  // est compté directement sur les seules entrées visibles et officiellement confirmées.
   useEffect(() => {
-    supabase
-      .from("public_platform_stats")
-      .select("*")
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data) setRow(data as PlatformStatsRow);
-        setLoaded(true);
-      });
+    Promise.all([
+      supabase.from("public_platform_stats").select("total_players,tournaments_organized,competition_players").maybeSingle(),
+      supabase.from("partners").select("id", { count: "exact", head: true }).eq("visible", true).eq("is_official", true),
+    ]).then(([statsResult, partnersResult]) => {
+      if (statsResult.data) setRow(statsResult.data as PlatformStatsRow);
+      setPartnerCount(partnersResult.count ?? 0);
+      setLoaded(true);
+    });
   }, []);
 
   if (!loaded || !row) return null;
 
-  // Un indicateur ne s'affiche que si la donnée réelle existe.
   const stats = [
     { icon: Users, value: row.total_players, label: "Joueurs inscrits", color: "text-[#A855F7]" },
     { icon: Trophy, value: row.tournaments_organized, label: "Compétitions organisées", color: "text-[#FFD700]" },
-    { icon: UsersRound, value: row.partner_communities, label: "Communautés partenaires", color: "text-emerald-400" },
+    { icon: UsersRound, value: partnerCount, label: "Partenaires", color: "text-emerald-400", alwaysShow: true },
     { icon: Swords, value: row.competition_players, label: "Participants aux compétitions", color: "text-cyan-400" },
-  ].filter((s) => typeof s.value === "number" && (s.value as number) > 0);
+  ].filter((s) => typeof s.value === "number" && ((s.value as number) > 0 || s.alwaysShow));
 
   if (stats.length < 2) return null;
 

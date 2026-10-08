@@ -31,6 +31,7 @@ const NewsDetail = React.lazy(() => import("./pages/NewsDetail"));
 const About = React.lazy(() => import("./pages/About"));
 const BecomePartner = React.lazy(() => import("./pages/BecomePartner"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
+const EnglishSite = React.lazy(() => import("./pages/EnglishSite"));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-[#07070C] flex items-center justify-center">
@@ -55,6 +56,7 @@ const App = () => (
       <BrowserRouter>
         <Suspense fallback={<PageLoader />}>
           <Routes>
+              <Route path="/en/*" element={<EnglishSite />} />
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
