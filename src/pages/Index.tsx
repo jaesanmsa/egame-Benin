@@ -234,6 +234,14 @@ const Index = () => {
 
       {/* Partenaires publics et officiellement confirmés uniquement. */}
       {hasPartners && <PartnersSection />}
+      <div className="flex justify-center px-5 pb-10">
+        <Link
+          to="/devenir-partenaire"
+          className="inline-flex min-h-10 items-center justify-center rounded-xl border border-[#FFD700]/70 bg-[#FFD700]/10 px-5 py-2.5 text-[10px] font-gaming font-black uppercase tracking-widest text-[#FFD700] transition-colors hover:bg-[#FFD700]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#FFD700]"
+        >
+          Devenir partenaire
+        </Link>
+      </div>
 
       <footer className="border-t border-[#8A2BE2]/20 pt-10 sm:pt-12 pb-8 text-center space-y-5">
         <Logo size="md" className="justify-center" />
