@@ -94,6 +94,9 @@ const CheckInCard = ({ userId }: { userId: string }) => {
     ? getCountryByCode(state.pending_country)
     : null;
   const gap = state.gap_detected && !justClaimed;
+  // Une journée manquée casse la série précédente : le prochain check-in est J1,
+  // même si l'ancien cycle affiche encore son dernier streak_day avant la réclamation.
+  const displayStreakDay = gap ? 0 : state.streak_day;
 
   return (
     <div className="glass-panel p-4 space-y-3">
@@ -106,9 +109,9 @@ const CheckInCard = ({ userId }: { userId: string }) => {
         >
           <Flame size={16} className="text-orange-400 shrink-0" />
           <span className="text-xs font-gaming font-black uppercase tracking-widest text-white">
-            Série {state.streak_day}/7
+            Série {displayStreakDay}/7
           </span>
-          <span className="text-[11px] font-bold text-[#A855F7]">· {state.pending_points} en attente</span>
+          <span className="text-[11px] font-bold text-[#A855F7]">· {gap ? 0 : state.pending_points} en attente</span>
           <span className="text-[11px] font-bold text-[#FFD700]">· {state.balance} pts</span>
           <ChevronDown
             size={14}
@@ -157,7 +160,7 @@ const CheckInCard = ({ userId }: { userId: string }) => {
       {claimError && <p className="text-[11px] font-bold text-red-400 text-center">{claimError}</p>}
 
       {/* ===== Réclamation compacte ===== */}
-      {state.already_claimed_today ? (
+      {state.already_claimed_today && !gap ? (
         <div className="flex items-center justify-between gap-2 rounded-xl bg-[#0A0A0F] border border-white/10 px-3 py-2.5">
           <p className="text-[11px] font-gaming font-black text-emerald-400 flex items-center gap-1.5">
             <CheckCircle2 size={13} /> Jour validé
@@ -171,10 +174,10 @@ const CheckInCard = ({ userId }: { userId: string }) => {
       ) : (
         <button
           onClick={handleClaim}
-          disabled={claiming || !canClaim}
+          disabled={claiming || (!canClaim && !gap)}
           className="w-full py-3 rounded-xl bg-gradient-to-r from-[#8A2BE2] to-[#A855F7] hover:brightness-110 disabled:opacity-60 text-white font-gaming font-black text-[11px] uppercase tracking-widest shadow-lg shadow-[#8A2BE2]/30 transition-all"
         >
-          {claiming ? "Validation..." : `✅ Réclamer ma présence · J${Math.min(state.streak_day + 1, 7)}/7`}
+          {claiming ? "Validation..." : `✅ Réclamer ma présence · J${gap ? 1 : Math.min(state.streak_day + 1, 7)}/7`}
         </button>
       )}
 
@@ -188,7 +191,7 @@ const CheckInCard = ({ userId }: { userId: string }) => {
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="overflow-hidden space-y-4"
           >
-            <CheckInGrid streakDay={state.streak_day} claimedToday={state.already_claimed_today} />
+            <CheckInGrid streakDay={state.streak_day} claimedToday={state.already_claimed_today} gapDetected={gap} />
 
             <p className="text-[10px] text-[#8888AA]/80 font-medium flex items-center gap-1.5">
               <Globe size={11} className="text-[#8A2BE2]" />

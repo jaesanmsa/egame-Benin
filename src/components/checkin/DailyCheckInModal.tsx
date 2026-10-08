@@ -72,7 +72,9 @@ const DailyCheckInModal = () => {
     }
   };
 
-  const nextPoints = CHECKIN_LADDER[Math.min(state?.streak_day ?? 0, 6)] ?? 1;
+  const gapDetected = !!state?.gap_detected;
+  const nextPoints = CHECKIN_LADDER[gapDetected ? 0 : Math.min(state?.streak_day ?? 0, 6)] ?? 1;
+  const nextDay = gapDetected ? 1 : (state?.streak_day ?? 0) + 1;
 
   const visible = open && state?.authenticated && !dismissed;
 
@@ -111,7 +113,7 @@ const DailyCheckInModal = () => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-gaming font-black text-white leading-snug">
-                    Récompense quotidienne · Jour {(state?.streak_day ?? 0) + 1}/7
+                    {gapDetected ? "Série reprise · Jour 1/7" : `Récompense quotidienne · Jour ${nextDay}/7`}
                   </p>
                   <p className="text-[10px] text-[#8888AA]">+{nextPoints} point{nextPoints > 1 ? "s" : ""} à réclamer maintenant</p>
                 </div>

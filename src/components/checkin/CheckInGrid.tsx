@@ -7,6 +7,8 @@ interface CheckInGridProps {
   streakDay: number;
   /** La présence du jour est-elle déjà réclamée ? */
   claimedToday: boolean;
+  /** Le jour précédent a été manqué : la prochaine réclamation démarre au Jour 1. */
+  gapDetected?: boolean;
   size?: "sm" | "lg";
 }
 
@@ -14,8 +16,9 @@ interface CheckInGridProps {
  * Grille visuelle des 7 jours du cycle :
  * ✅ jour réclamé — 🎯 jour à réclamer aujourd'hui — 🔒 jour à venir — 🎁 Jour 7.
  */
-const CheckInGrid = ({ streakDay, claimedToday, size = "sm" }: CheckInGridProps) => {
-  const currentDay = claimedToday ? -1 : streakDay + 1;
+const CheckInGrid = ({ streakDay, claimedToday, gapDetected = false, size = "sm" }: CheckInGridProps) => {
+  const visibleStreakDay = gapDetected ? 0 : streakDay;
+  const currentDay = claimedToday && !gapDetected ? -1 : visibleStreakDay + 1;
   const cell = size === "lg" ? "p-4 space-y-2" : "p-3 space-y-1.5";
   const iconSize = size === "lg" ? 22 : 18;
   const labelSize = size === "lg" ? "text-sm" : "text-xs";
@@ -25,7 +28,7 @@ const CheckInGrid = ({ streakDay, claimedToday, size = "sm" }: CheckInGridProps)
       {CHECKIN_LADDER.map((points, index) => {
         const day = index + 1;
         const isDay7 = day === 7;
-        const done = day <= streakDay;
+        const done = day <= visibleStreakDay;
         const isCurrent = day === currentDay;
 
         let wrapper =
