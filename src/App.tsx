@@ -32,6 +32,9 @@ const About = React.lazy(() => import("./pages/About"));
 const BecomePartner = React.lazy(() => import("./pages/BecomePartner"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 const EnglishSite = React.lazy(() => import("./pages/EnglishSite"));
+const OrganizerApplicationPage = React.lazy(() => import("./pages/OrganizerApplication"));
+const OrganizerDashboard = React.lazy(() => import("./pages/OrganizerDashboard"));
+const OrganizerAdmin = React.lazy(() => import("./pages/OrganizerAdmin"));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-[#07070C] flex items-center justify-center">
@@ -62,6 +65,12 @@ const App = () => (
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/organizers" element={<OrganizerAdmin />} />
+              <Route path="/devenir-organisateur" element={<OrganizerApplicationPage />} />
+              <Route path="/organizer" element={<OrganizerDashboard />} />
+              <Route path="/en/organizer-application" element={<OrganizerApplicationPage />} />
+              <Route path="/en/organizer" element={<OrganizerDashboard />} />
+              <Route path="/en/admin/organizers" element={<OrganizerAdmin />} />
               <Route path="/tournament/:id" element={<TournamentDetails />} />
               <Route path="/profil" element={<Profile />} />
               <Route path="/edit-profile" element={<EditProfile />} />

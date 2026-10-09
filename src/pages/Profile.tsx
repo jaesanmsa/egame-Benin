@@ -13,6 +13,7 @@ import { requestNotificationPermission } from '@/lib/firebase';
 import CheckInCard from '@/components/checkin/CheckInCard';
 import RewardsHistory from '@/components/checkin/RewardsHistory';
 import DiscordConnectionCard from '@/components/DiscordConnectionCard';
+import OrganizerProfileCard from '@/components/OrganizerProfileCard';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
@@ -164,6 +165,7 @@ const Profile = () => {
                 </div>
         
                 <DiscordConnectionCard />
+                <OrganizerProfileCard />
 
         <div className="space-y-3">
           {isAdmin && (

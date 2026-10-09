@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { beninNowInput, beninInputToIso } from '@/utils/datetime';
 import Navbar from '@/components/Navbar';
@@ -368,9 +368,15 @@ const AdminDashboard = () => {
             >
               <MessageSquareText size={18} /> Tickets & validation
             </button>
-            <button
-              type="button"
-              onClick={handleSetupDiscordSupport}
+            <Link
+            to="/admin/organizers"
+            className="w-full sm:w-auto rounded-2xl border border-[#8A2BE2]/40 bg-[#0F0F1E] px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white transition-colors hover:border-[#A855F7] hover:bg-[#8A2BE2]/10 flex items-center justify-center gap-2"
+          >
+            Organisateurs V2
+          </Link>
+          <button
+            type="button"
+            onClick={handleSetupDiscordSupport}
               disabled={supportSetupLoading}
               className="w-full sm:w-auto rounded-2xl bg-[#5865F2] px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-[#5865F2]/20 transition-colors hover:bg-[#4752C4] flex items-center justify-center gap-2 disabled:opacity-60"
             >

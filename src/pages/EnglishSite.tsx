@@ -9,6 +9,9 @@ import DiscordLogo from "@/components/DiscordLogo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { MAIN_DISCORD_INVITE, DISCORD_SERVERS } from "@/lib/discord";
 import { toFrenchPath } from "@/lib/languageRouting";
+import OrganizerApplicationPage from "@/pages/OrganizerApplication";
+import OrganizerDashboard from "@/pages/OrganizerDashboard";
+import OrganizerAdmin from "@/pages/OrganizerAdmin";
 import { formatBeninShort } from "@/utils/datetime";
 
 const GAMES = [
@@ -80,6 +83,9 @@ const EnglishSite = () => {
   else if (section === "leaderboard") pageTitle = "Player rankings";
   else if (section === "game" && game) pageTitle = `${game.name} community`;
   else if (section === "tournament") pageTitle = "Tournament details";
+  else if (section === "organizer-application") pageTitle = "Become an organizer";
+  else if (section === "organizer") pageTitle = "Organizer dashboard";
+  else if (section === "admin") pageTitle = "Organizer administration";
 
   const Header = () => (
     <header className="fixed left-3 right-3 top-3 z-50 mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border border-[#8A2BE2]/30 bg-[#0F0F1E]/95 px-3 py-3 shadow-xl backdrop-blur-2xl sm:left-4 sm:right-4 sm:px-5 lg:left-6 lg:right-6 lg:top-4 lg:rounded-full">
@@ -143,7 +149,13 @@ const EnglishSite = () => {
   );
 
   let content;
-  if (section === "home") {
+  if (section === "organizer-application") {
+    content = <OrganizerApplicationPage />;
+  } else if (section === "organizer") {
+    content = <OrganizerDashboard />;
+  } else if (section === "admin" && parts[1] === "organizers") {
+    content = <OrganizerAdmin />;
+  } else if (section === "home") {
     content = (
       <>
         <section className="relative flex min-h-[62vh] flex-col items-center justify-center overflow-hidden px-5 pb-14 pt-28 text-center sm:min-h-[68vh] sm:px-6">
