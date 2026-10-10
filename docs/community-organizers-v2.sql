@@ -1,7 +1,7 @@
--- eGame Bénin V2 — Phases B et C : organisateurs et communautés privées
--- PRÉPARATION / REVIEW UNIQUEMENT. NE PAS exécuter sans autorisation explicite.
--- Pas de DROP, reset, modification des données existantes ou modification des paiements/tickets/tournois.
--- Prérequis existant : public.is_egame_admin(), auth.users, profils eGame.
+-- eGame Bénin V2 — Phase B/C: organisateurs et communautés privées
+-- Migration PRÉPARÉE UNIQUEMENT. Projet Supabase actuellement lié = production.
+-- NE PAS exécuter sans projet de développement isolé et autorisation expresse.
+-- N'effectue aucun DROP/reset et ne modifie pas les tables paiements/tickets/tournois.
 
 BEGIN;
 
@@ -11,8 +11,6 @@ CREATE TABLE IF NOT EXISTS public.organizer_applications (
   legal_name text NOT NULL,
   country text NOT NULL,
   professional_contact text NOT NULL,
-  community_size text,
-  terms_accepted_at timestamptz NOT NULL,
   status text NOT NULL DEFAULT 'submitted'
     CHECK (status IN ('draft','submitted','under_review','more_info_requested','approved','rejected','suspended')),
   kyc_status text NOT NULL DEFAULT 'disabled_pending_vendor'
@@ -21,6 +19,7 @@ CREATE TABLE IF NOT EXISTS public.organizer_applications (
   reviewed_by uuid REFERENCES auth.users(id) ON DELETE SET NULL,
   reviewed_at timestamptz,
   submitted_at timestamptz,
+  terms_accepted_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -35,8 +34,7 @@ CREATE TABLE IF NOT EXISTS public.organizer_application_communities (
   community_size text,
   public_url text NOT NULL,
   responsibility_proof_url text NOT NULL,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE(application_id, game_key)
+  created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS organizer_application_communities_application_idx ON public.organizer_application_communities(application_id);
 
@@ -53,15 +51,16 @@ CREATE TABLE IF NOT EXISTS public.gaming_communities (
   suspended_by uuid REFERENCES auth.users(id) ON DELETE SET NULL,
   suspension_reason text,
   created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE(organizer_user_id, game_key)
+  updated_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS gaming_communities_owner_idx ON public.gaming_communities(organizer_user_id, status);
+CREATE INDEX IF NOT EXISTS gaming_communities_game_idx ON public.gaming_communities(game_key, status);
 
 CREATE TABLE IF NOT EXISTS public.community_memberships (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   community_id uuid NOT NULL REFERENCES public.gaming_communities(id) ON DELETE CASCADE,
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  CONSTRAINT community_memberships_profile_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id) ON DELETE CASCADE,
   status text NOT NULL DEFAULT 'active' CHECK (status IN ('active','removed','left')),
   invited_by uuid REFERENCES auth.users(id) ON DELETE SET NULL,
   joined_at timestamptz NOT NULL DEFAULT now(),
@@ -86,6 +85,7 @@ CREATE TABLE IF NOT EXISTS public.community_invitations (
 CREATE UNIQUE INDEX IF NOT EXISTS community_invitations_pending_unique
   ON public.community_invitations(community_id, invited_user_id) WHERE status = 'pending';
 CREATE INDEX IF NOT EXISTS community_invitations_recipient_idx ON public.community_invitations(invited_user_id, status, created_at DESC);
+CREATE INDEX IF NOT EXISTS community_invitations_organizer_idx ON public.community_invitations(invited_by, status, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS public.organizer_decision_history (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -111,8 +111,10 @@ CREATE TABLE IF NOT EXISTS public.organizer_notifications (
 );
 CREATE INDEX IF NOT EXISTS organizer_notifications_user_idx ON public.organizer_notifications(user_id, created_at DESC);
 
--- Aucun accès anon. Authenticated reçoit uniquement SELECT : toutes les écritures
--- passent par les RPC SECURITY DEFINER ci-dessous. Service role reste serveur uniquement.
+-- Fail closed: no direct REST writes or anon access. Writes use scoped SECURITY DEFINER RPCs.
+REVOKE ALL ON public.organizer_applications, public.organizer_application_communities,
+  public.gaming_communities, public.community_memberships, public.community_invitations,
+  public.organizer_decision_history, public.organizer_notifications FROM anon, authenticated;
 GRANT SELECT ON public.organizer_applications, public.organizer_application_communities,
   public.gaming_communities, public.community_memberships, public.community_invitations,
   public.organizer_decision_history, public.organizer_notifications TO authenticated;
@@ -129,40 +131,67 @@ ALTER TABLE public.community_invitations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.organizer_decision_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.organizer_notifications ENABLE ROW LEVEL SECURITY;
 
+-- SECURITY DEFINER membership/ownership helpers prevent recursive RLS policy evaluation.
+CREATE OR REPLACE FUNCTION public.organizer_v2_is_community_member(p_community_id uuid)
+RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $function$
+  SELECT EXISTS (
+    SELECT 1 FROM public.community_memberships m
+    WHERE m.community_id = p_community_id AND m.user_id = auth.uid() AND m.status = 'active'
+  );
+$function$;
+CREATE OR REPLACE FUNCTION public.organizer_v2_owns_community(p_community_id uuid)
+RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $function$
+  SELECT EXISTS (
+    SELECT 1 FROM public.gaming_communities c
+    WHERE c.id = p_community_id AND c.organizer_user_id = auth.uid()
+  );
+$function$;
+CREATE OR REPLACE FUNCTION public.organizer_v2_owns_application(p_application_id uuid)
+RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $function$
+  SELECT EXISTS (
+    SELECT 1 FROM public.organizer_applications a
+    WHERE a.id = p_application_id AND a.user_id = auth.uid()
+  );
+$function$;
+REVOKE ALL ON FUNCTION public.organizer_v2_is_community_member(uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.organizer_v2_owns_community(uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.organizer_v2_owns_application(uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.organizer_v2_is_community_member(uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.organizer_v2_owns_community(uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.organizer_v2_owns_application(uuid) TO authenticated, service_role;
+
 DROP POLICY IF EXISTS organizer_applications_read_scoped ON public.organizer_applications;
 CREATE POLICY organizer_applications_read_scoped ON public.organizer_applications
   FOR SELECT TO authenticated USING (user_id = (SELECT auth.uid()) OR public.is_egame_admin());
 DROP POLICY IF EXISTS application_communities_read_scoped ON public.organizer_application_communities;
 CREATE POLICY application_communities_read_scoped ON public.organizer_application_communities
-  FOR SELECT TO authenticated USING (public.is_egame_admin() OR EXISTS (
-    SELECT 1 FROM public.organizer_applications a WHERE a.id = application_id AND a.user_id = (SELECT auth.uid())
-  ));
+  FOR SELECT TO authenticated USING (public.is_egame_admin() OR public.organizer_v2_owns_application(application_id));
 DROP POLICY IF EXISTS gaming_communities_read_scoped ON public.gaming_communities;
 CREATE POLICY gaming_communities_read_scoped ON public.gaming_communities
-  FOR SELECT TO authenticated USING (public.is_egame_admin() OR organizer_user_id = (SELECT auth.uid()) OR EXISTS (
-    SELECT 1 FROM public.community_memberships m WHERE m.community_id = id AND m.user_id = (SELECT auth.uid()) AND m.status = 'active'
-  ));
+  FOR SELECT TO authenticated USING (
+    public.is_egame_admin() OR organizer_user_id = (SELECT auth.uid()) OR public.organizer_v2_is_community_member(id)
+  );
 DROP POLICY IF EXISTS community_memberships_read_scoped ON public.community_memberships;
 CREATE POLICY community_memberships_read_scoped ON public.community_memberships
-  FOR SELECT TO authenticated USING (public.is_egame_admin() OR user_id = (SELECT auth.uid()) OR EXISTS (
-    SELECT 1 FROM public.gaming_communities c WHERE c.id = community_id AND c.organizer_user_id = (SELECT auth.uid())
-  ));
+  FOR SELECT TO authenticated USING (
+    public.is_egame_admin() OR user_id = (SELECT auth.uid()) OR public.organizer_v2_owns_community(community_id)
+  );
 DROP POLICY IF EXISTS community_invitations_read_scoped ON public.community_invitations;
 CREATE POLICY community_invitations_read_scoped ON public.community_invitations
-  FOR SELECT TO authenticated USING (public.is_egame_admin() OR invited_user_id = (SELECT auth.uid()) OR EXISTS (
-    SELECT 1 FROM public.gaming_communities c WHERE c.id = community_id AND c.organizer_user_id = (SELECT auth.uid())
-  ));
+  FOR SELECT TO authenticated USING (
+    public.is_egame_admin() OR invited_user_id = (SELECT auth.uid()) OR invited_by = (SELECT auth.uid())
+  );
 DROP POLICY IF EXISTS organizer_decision_history_read_scoped ON public.organizer_decision_history;
 CREATE POLICY organizer_decision_history_read_scoped ON public.organizer_decision_history
-  FOR SELECT TO authenticated USING (public.is_egame_admin() OR EXISTS (
-    SELECT 1 FROM public.organizer_applications a WHERE a.id = application_id AND a.user_id = (SELECT auth.uid())
-  ));
+  FOR SELECT TO authenticated USING (public.is_egame_admin() OR public.organizer_v2_owns_application(application_id));
 DROP POLICY IF EXISTS organizer_notifications_read_own ON public.organizer_notifications;
 CREATE POLICY organizer_notifications_read_own ON public.organizer_notifications
   FOR SELECT TO authenticated USING (user_id = (SELECT auth.uid()));
+DROP POLICY IF EXISTS organizer_notifications_mark_read_own ON public.organizer_notifications;
+CREATE POLICY organizer_notifications_mark_read_own ON public.organizer_notifications
+  FOR UPDATE TO authenticated USING (user_id = (SELECT auth.uid())) WITH CHECK (user_id = (SELECT auth.uid()));
 
--- Maximum 2 active communities per organizer, enforced server-side and serialized
--- to prevent two simultaneous create requests from exceeding the limit.
+-- Atomic cap: lock per organizer before counting/creating/updating active communities.
 CREATE OR REPLACE FUNCTION public.enforce_organizer_community_limit()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $function$
 DECLARE v_count integer;
@@ -178,12 +207,11 @@ BEGIN
   RETURN NEW;
 END;
 $function$;
+REVOKE ALL ON FUNCTION public.enforce_organizer_community_limit() FROM PUBLIC, anon, authenticated;
 DROP TRIGGER IF EXISTS gaming_communities_enforce_limit ON public.gaming_communities;
 CREATE TRIGGER gaming_communities_enforce_limit BEFORE INSERT OR UPDATE OF organizer_user_id,status
 ON public.gaming_communities FOR EACH ROW EXECUTE FUNCTION public.enforce_organizer_community_limit();
 
--- The JSON array accepts 1-2 requested communities. Proofs are URLs only; no KYC
--- documents/selfies are accepted until a secure provider is approved.
 CREATE OR REPLACE FUNCTION public.submit_organizer_application(
   p_legal_name text, p_country text, p_professional_contact text, p_communities jsonb,
   p_terms_accepted boolean, p_submit boolean DEFAULT true
@@ -198,8 +226,10 @@ BEGIN
   IF jsonb_typeof(p_communities) <> 'array' THEN RAISE EXCEPTION 'COMMUNITIES_REQUIRED'; END IF;
   v_count := jsonb_array_length(p_communities);
   IF v_count < 1 OR v_count > 2 THEN RAISE EXCEPTION 'MAX_TWO_COMMUNITIES'; END IF;
+  IF EXISTS (SELECT 1 FROM public.organizer_applications a WHERE a.user_id=auth.uid() AND a.status NOT IN ('rejected')) THEN
+    RAISE EXCEPTION 'APPLICATION_ALREADY_EXISTS';
+  END IF;
   v_status := CASE WHEN p_submit THEN 'submitted' ELSE 'draft' END;
-
   INSERT INTO public.organizer_applications(user_id,legal_name,country,professional_contact,terms_accepted_at,status,kyc_status,submitted_at)
   VALUES(auth.uid(),btrim(p_legal_name),upper(btrim(p_country)),btrim(p_professional_contact),now(),v_status,'disabled_pending_vendor',CASE WHEN p_submit THEN now() ELSE NULL END)
   RETURNING id INTO v_app_id;
@@ -215,6 +245,7 @@ BEGIN
   RETURN v_app_id;
 END;
 $function$;
+REVOKE ALL ON FUNCTION public.submit_organizer_application(text,text,text,jsonb,boolean,boolean) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.submit_organizer_application(text,text,text,jsonb,boolean,boolean) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.review_organizer_application(p_application_id uuid,p_status text,p_note text DEFAULT NULL)
@@ -231,8 +262,7 @@ BEGIN
   IF p_status='approved' THEN
     FOR v_community IN SELECT * FROM public.organizer_application_communities WHERE application_id=p_application_id LOOP
       INSERT INTO public.gaming_communities(application_id,organizer_user_id,name,game_key,status)
-      VALUES(p_application_id,v_app.user_id,v_community.name,v_community.game_key,'active')
-      ON CONFLICT(organizer_user_id,game_key) DO NOTHING;
+      VALUES(p_application_id,v_app.user_id,v_community.name,v_community.game_key,'active');
     END LOOP;
   ELSIF p_status='suspended' THEN
     UPDATE public.gaming_communities SET status='suspended',suspended_at=now(),suspended_by=auth.uid(),suspension_reason=p_note,updated_at=now()
@@ -243,6 +273,7 @@ BEGIN
   RETURN jsonb_build_object('ok',true,'status',p_status);
 END;
 $function$;
+REVOKE ALL ON FUNCTION public.review_organizer_application(uuid,text,text) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.review_organizer_application(uuid,text,text) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.create_gaming_community(p_name text,p_game_key text,p_description text DEFAULT NULL)
@@ -256,6 +287,7 @@ BEGIN
   RETURN v_id;
 END;
 $function$;
+REVOKE ALL ON FUNCTION public.create_gaming_community(text,text,text) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.create_gaming_community(text,text,text) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.invite_community_member(p_community_id uuid,p_username text)
@@ -277,6 +309,7 @@ BEGIN
   RETURN v_invite;
 END;
 $function$;
+REVOKE ALL ON FUNCTION public.invite_community_member(uuid,text) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.invite_community_member(uuid,text) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.respond_community_invitation(p_invitation_id uuid,p_accept boolean)
@@ -295,6 +328,7 @@ BEGIN
   RETURN jsonb_build_object('ok',true,'status',CASE WHEN p_accept THEN 'accepted' ELSE 'declined' END);
 END;
 $function$;
+REVOKE ALL ON FUNCTION public.respond_community_invitation(uuid,boolean) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.respond_community_invitation(uuid,boolean) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.remove_community_member(p_membership_id uuid,p_reason text DEFAULT NULL)
@@ -309,6 +343,27 @@ BEGIN
   RETURN jsonb_build_object('ok',true);
 END;
 $function$;
+REVOKE ALL ON FUNCTION public.remove_community_member(uuid,text) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.remove_community_member(uuid,text) TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.set_organizer_community_status(p_community_id uuid,p_status text,p_reason text DEFAULT NULL)
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $function$
+DECLARE v_community public.gaming_communities%ROWTYPE;
+BEGIN
+  IF auth.uid() IS NULL OR NOT public.is_egame_admin() THEN RAISE EXCEPTION 'FORBIDDEN'; END IF;
+  IF p_status NOT IN ('active','suspended','archived') THEN RAISE EXCEPTION 'INVALID_COMMUNITY_STATUS'; END IF;
+  SELECT * INTO v_community FROM public.gaming_communities WHERE id=p_community_id FOR UPDATE;
+  IF NOT FOUND THEN RAISE EXCEPTION 'COMMUNITY_NOT_FOUND'; END IF;
+  UPDATE public.gaming_communities SET status=p_status,
+    suspended_at=CASE WHEN p_status='suspended' THEN now() ELSE NULL END,
+    suspended_by=CASE WHEN p_status='suspended' THEN auth.uid() ELSE NULL END,
+    suspension_reason=CASE WHEN p_status='suspended' THEN p_reason ELSE NULL END,
+    updated_at=now()
+  WHERE id=p_community_id;
+  RETURN jsonb_build_object('ok',true,'status',p_status);
+END;
+$function$;
+REVOKE ALL ON FUNCTION public.set_organizer_community_status(uuid,text,text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.set_organizer_community_status(uuid,text,text) TO authenticated;
 
 COMMIT;

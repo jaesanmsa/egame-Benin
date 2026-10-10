@@ -14,7 +14,7 @@ export interface RequestedCommunity {
 export interface OrganizerDecision {
   status: OrganizerStatus;
   note: string;
-  actor: string;
+  actorUserId: string | null;
   createdAt: string;
 }
 
@@ -29,7 +29,7 @@ export interface OrganizerApplication {
   termsAccepted: boolean;
   status: OrganizerStatus;
   adminNote: string;
-  kycStatus: "disabled_pending_vendor";
+  kycStatus: "disabled_pending_vendor" | "not_started" | "pending" | "verified" | "rejected";
   createdAt: string;
   updatedAt: string;
   decisions: OrganizerDecision[];
@@ -56,13 +56,6 @@ export interface CommunityInvitation {
   status: InvitationStatus;
   createdAt: string;
   updatedAt: string;
-  history: Array<{ status: InvitationStatus; at: string; actorUserId: string }>;
-}
-
-export interface OrganizerDemoState {
-  applications: OrganizerApplication[];
-  communities: GamingCommunity[];
-  invitations: CommunityInvitation[];
 }
 
 export const ORGANIZER_GAMES = [
@@ -79,31 +72,3 @@ export const ORGANIZER_STATUS_LABELS: Record<OrganizerStatus, { fr: string; en: 
   rejected: { fr: "Refusée", en: "Rejected" },
   suspended: { fr: "Suspendue", en: "Suspended" },
 };
-
-const STORAGE_KEY = "egame:organizer-v2-local-preview";
-const emptyState = (): OrganizerDemoState => ({ applications: [], communities: [], invitations: [] });
-
-/** Prototype local seulement. À remplacer par Supabase après autorisation de migration. */
-export function loadOrganizerDemoState(): OrganizerDemoState {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return emptyState();
-    const value = JSON.parse(raw);
-    return {
-      applications: Array.isArray(value.applications) ? value.applications : [],
-      communities: Array.isArray(value.communities) ? value.communities : [],
-      invitations: Array.isArray(value.invitations) ? value.invitations : [],
-    };
-  } catch {
-    return emptyState();
-  }
-}
-
-export function saveOrganizerDemoState(state: OrganizerDemoState): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  window.dispatchEvent(new Event("egame-organizer-demo-updated"));
-}
-
-export function organizerId(prefix: string): string {
-  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-}
