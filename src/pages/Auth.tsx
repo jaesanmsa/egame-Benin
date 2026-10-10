@@ -120,7 +120,7 @@ const Auth = () => {
             <Mail size={40} />
           </div>
           <h1 className="text-2xl font-gaming font-black">{t("Vérifiez vos mails")}</h1>
-          <p className="text-[#8888AA] text-sm leading-relaxed">Un lien de confirmation a été envoyé à <span className="text-white font-bold">{email}</span>.</p>
+          <p className="text-[#8888AA] text-sm leading-relaxed">{t("Un lien de confirmation a été envoyé à")} <span className="text-white font-bold">{email}</span>.</p>
           <p className="text-[10px] text-[#8888AA]/70 leading-relaxed">
             Pense à vérifier aussi les dossiers spam et promotions.
           </p>
@@ -257,7 +257,7 @@ const Auth = () => {
             </div>
 
             <button type="submit" disabled={loading} className="w-full btn-neon py-4 text-xs tracking-widest uppercase flex items-center justify-center gap-2">
-              {loading ? "Chargement..." : (isLogin ? <><LogIn size={18} /> Se connecter</> : <><UserPlus size={18} /> S'inscrire</>)}
+              {loading ? "Chargement..." : (isLogin ? <><LogIn size={18} /> {t("Se connecter")}</> : <><UserPlus size={18} /> {t("S'inscrire")}</>)}
             </button>
           </form>
         </div>
@@ -265,7 +265,7 @@ const Auth = () => {
         <p className="text-center text-[#8888AA] text-xs font-esport">
           {isLogin ? "Pas encore de compte ?" : "Déjà inscrit ?"}
           <button onClick={() => setIsLogin(!isLogin)} className="text-[#FFD700] font-bold hover:underline ml-1">
-            {isLogin ? "Créer un compte" : "Se connecter"}
+            {isLogin ? t("Créer un compte") : t("Se connecter")}
           </button>
         </p>
       </div>
