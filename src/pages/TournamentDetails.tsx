@@ -31,6 +31,7 @@ const TournamentDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [tournament, setTournament] = useState<any>(null);
+  const [teamSize, setTeamSize] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPaying, setIsPaying] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -88,6 +89,9 @@ const TournamentDetails = () => {
     const fetchTournament = async () => {
       const { data } = await supabase.from('tournaments').select('*').eq('id', id).single();
       if (data) setTournament(data);
+      const { data: teamConfig } = await supabase.from('team_tournament_settings')
+        .select('team_size').eq('tournament_id', id).eq('enabled', true).maybeSingle();
+      setTeamSize(teamConfig?.team_size ?? null);
       setLoading(false);
     };
 
@@ -422,6 +426,15 @@ const TournamentDetails = () => {
       </div>
 
       <main className="max-w-4xl mx-auto px-6 -mt-24 relative z-10 space-y-8">
+        {teamSize && Number(tournament.entry_fee) === 0 && (
+          <section className="rounded-2xl border border-[#8A2BE2]/40 bg-[#0F0F1E] p-5">
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#A855F7]">Inscription collective</p>
+            <h2 className="mt-2 font-gaming text-lg font-black">Tournoi par équipes de {teamSize} joueurs</h2>
+            <p className="mt-2 text-sm text-[#AAAACC]">Crée ton équipe ou rejoins celle de ton capitaine. L'inscription collective reste soumise à validation administrative, sans ticket automatique.</p>
+            <button onClick={() => navigate('/mes-equipes')} className="mt-4 rounded-xl bg-[#8A2BE2] px-5 py-3 text-xs font-black text-white">Gérer mon équipe et demander l'inscription</button>
+          </section>
+        )}
+
         {/* Bandeau tournoi d'essai : visible uniquement par l'administration */}
         {tournament.is_test && (
           <div className="bg-amber-500/10 border border-amber-500/40 rounded-3xl p-4 flex items-center gap-3">
