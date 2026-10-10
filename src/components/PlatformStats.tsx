@@ -50,7 +50,7 @@ const PlatformStats = () => {
     <section className="max-w-7xl mx-auto px-6 py-16 space-y-8">
       <div className="text-center space-y-2">
         <h2 className="text-2xl md:text-3xl font-gaming font-black uppercase text-white">
-          Nos <span className="text-[#FFD700]">{t("résultats")}</span> en chiffres
+          {t("Nos")} <span className="text-[#FFD700]">{t("résultats")}</span> {t("en chiffres")}
         </h2>
         <p className="text-sm text-[#8888AA] font-esport">{t("Des indicateurs issus directement des données réelles de la plateforme.")}</p>
       </div>
