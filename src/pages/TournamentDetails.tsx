@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
 import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Loader2, X, Globe, Share2, Ticket, Copy, FlaskConical, Medal, Star, User } from 'lucide-react';
@@ -29,6 +29,7 @@ const missingProfileFields = (p: any): string[] => {
 };
 
 const TournamentDetails = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const lp = (path: string) => language === "en" ? "/en" + path : path;
@@ -539,7 +540,7 @@ const TournamentDetails = () => {
                     <CheckCircle2 size={24} />
                     <h3 className="font-gaming font-bold text-base uppercase">{t("Inscription Validée !")}</h3>
                   </div>
-                  <Link to="/payments">
+                  <Link to={localizedLinkPath("/payments")}>
                     <Button className="w-full bg-emerald-600 hover:bg-emerald-500 font-gaming font-bold text-white py-6 rounded-xl text-xs uppercase tracking-wider">
                       Voir mon ticket & code sur le profil
                     </Button>
@@ -621,7 +622,7 @@ const TournamentDetails = () => {
                     ))}
                   </div>
                   <button
-                    onClick={() => navigate('/edit-profile')}
+                    onClick={() => navigate(localizedLinkPath("/edit-profile"))}
                     className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#A855F7] hover:brightness-110 text-white font-gaming font-black text-xs uppercase tracking-widest shadow-lg shadow-[#8A2BE2]/30 transition-all flex items-center justify-center gap-2"
                   >
                     <User size={16} />
