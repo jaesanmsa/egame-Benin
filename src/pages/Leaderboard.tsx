@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import PlayerBadge from '@/components/PlayerBadge';
 import SEO from '@/components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,6 +23,7 @@ const DEFAULT_GAMES = [
 ];
 
 const Leaderboard = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const navigate = useNavigate();
