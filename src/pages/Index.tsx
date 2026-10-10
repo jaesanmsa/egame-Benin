@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import VSBackground from '@/components/VSBackground';
@@ -37,6 +38,9 @@ const HOW_IT_WORKS = [
 ];
 
 const Index = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localPath = (fr: string, en: string) => language === "en" ? en : fr;
   const [activeTournaments, setActiveTournaments] = useState<any[]>([]);
   const [activeGames, setActiveGames] = useState<Set<string>>(new Set());
   const [hasPartners, setHasPartners] = useState(false);
@@ -121,7 +125,7 @@ const Index = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 pt-2"
           >
-            <button onClick={() => navigate('/jeux')} className="w-full sm:w-auto min-h-12 btn-glow-border px-7 py-3.5 text-xs tracking-widest uppercase flex items-center justify-center gap-3">
+            <button onClick={() => navigate(localPath('/jeux', '/en/games'))} className="w-full sm:w-auto min-h-12 btn-glow-border px-7 py-3.5 text-xs tracking-widest uppercase flex items-center justify-center gap-3">
               Voir les tournois <ArrowRight size={16} />
             </button>
             <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto min-h-12 px-7 py-3.5 border border-[#5865F2]/60 hover:border-[#5865F2] bg-[#0F0F1E]/80 hover:bg-[#5865F2]/15 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all flex items-center justify-center gap-3">
@@ -143,10 +147,10 @@ const Index = () => {
       <section className="max-w-7xl mx-auto px-5 sm:px-6 py-12 sm:py-16 space-y-7">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">Compétition</p>
+            <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">{t("Compétition")}</p>
             <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white mt-1">{tournamentSectionTitle}</h2>
           </div>
-          <Link to="/jeux" className="text-xs font-gaming font-bold text-[#A855F7] hover:underline uppercase tracking-wider">Tous les tournois →</Link>
+          <Link to={localPath("/jeux", "/en/games")} className="text-xs font-gaming font-bold text-[#A855F7] hover:underline uppercase tracking-wider">{t("Tous les tournois →")}</Link>
         </div>
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -155,8 +159,8 @@ const Index = () => {
         ) : featuredTournaments.length === 0 ? (
           <div className="rounded-3xl border border-[#8A2BE2]/20 bg-[#0F0F1E] px-5 py-10 text-center">
             <Trophy size={36} className="mx-auto text-[#A855F7] mb-3 opacity-70" />
-            <p className="text-sm font-gaming font-bold text-white">Aucun tournoi annoncé pour le moment.</p>
-            <p className="text-xs text-[#8888AA] mt-2">Les résultats des événements passés restent consultables dans l’historique.</p>
+            <p className="text-sm font-gaming font-bold text-white">{t("Aucun tournoi annoncé pour le moment.")}</p>
+            <p className="text-xs text-[#8888AA] mt-2">{t("Les résultats des événements passés restent consultables dans l’historique.")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -174,21 +178,21 @@ const Index = () => {
       <section className="max-w-7xl mx-auto px-5 sm:px-6 py-8 sm:py-10 space-y-5">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
-            <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">Simple et accessible</p>
-            <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white mt-1">Comment ça marche</h2>
+            <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">{t("Simple et accessible")}</p>
+            <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white mt-1">{t("Comment ça marche")}</h2>
           </div>
-          <Link to="/about" className="text-[10px] sm:text-xs font-gaming font-bold text-[#A855F7] hover:underline uppercase tracking-wider">En savoir plus →</Link>
+          <Link to={localPath("/about", "/en/about")} className="text-[10px] sm:text-xs font-gaming font-bold text-[#A855F7] hover:underline uppercase tracking-wider">{t("En savoir plus →")}</Link>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
           {HOW_IT_WORKS.map((step, index) => (
-            <div key={step.title} className="min-w-0 rounded-xl border border-[#8A2BE2]/20 bg-[#0F0F1E] p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3">
+            <div key={t(step.title)} className="min-w-0 rounded-xl border border-[#8A2BE2]/20 bg-[#0F0F1E] p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3">
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#8A2BE2]/15 flex items-center justify-center shrink-0">
                 <step.icon size={16} className="text-[#A855F7]" />
               </div>
               <div className="min-w-0">
                 <p className="text-[8px] sm:text-[9px] font-gaming font-black uppercase tracking-wider text-[#A855F7]">Étape {index + 1}</p>
                 <h3 className="text-[10px] sm:text-xs font-gaming font-bold uppercase leading-tight text-white break-words">{step.title}</h3>
-                <p className="hidden sm:block text-[10px] text-[#8888AA] leading-snug mt-1">{step.text}</p>
+                <p className="hidden sm:block text-[10px] text-[#8888AA] leading-snug mt-1">{t(step.text)}</p>
               </div>
             </div>
           ))}
@@ -198,16 +202,16 @@ const Index = () => {
       {/* Présentation des jeux sans promettre un tournoi pour chacun */}
       <section className="max-w-7xl mx-auto px-5 sm:px-6 py-12 sm:py-16 space-y-7">
         <div className="text-center space-y-2">
-          <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">Jeux pris en charge</p>
-          <h2 className="text-2xl sm:text-3xl font-gaming font-black uppercase text-white">Jeux de la communauté</h2>
-          <p className="text-sm text-[#8888AA]">Les tournois disponibles sont annoncés séparément selon leur calendrier.</p>
+          <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">{t("Jeux pris en charge")}</p>
+          <h2 className="text-2xl sm:text-3xl font-gaming font-black uppercase text-white">{t("Jeux de la communauté")}</h2>
+          <p className="text-sm text-[#8888AA]">{t("Les tournois disponibles sont annoncés séparément selon leur calendrier.")}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {GAMES.map((game) => (
-            <Link key={game.id} to={`/game/${game.id}`} className="group relative aspect-[4/3] min-w-0 rounded-2xl overflow-hidden border border-[#8A2BE2]/20 hover:border-[#8A2BE2] bg-[#0F0F1E]">
+            <Link key={game.id} to={localPath(`/game/${game.id}`, `/en/game/${game.id}`)} className="group relative aspect-[4/3] min-w-0 rounded-2xl overflow-hidden border border-[#8A2BE2]/20 hover:border-[#8A2BE2] bg-[#0F0F1E]">
               <img src={game.image} alt={game.name} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#07070C]/95 via-[#07070C]/20 to-transparent" />
-              {activeGames.has(game.id) && <span className="absolute top-2 right-2 rounded-full bg-emerald-950/90 border border-emerald-500/50 px-2 py-1 text-[8px] font-gaming font-black uppercase text-emerald-300">Tournoi actif</span>}
+              {activeGames.has(game.id) && <span className="absolute top-2 right-2 rounded-full bg-emerald-950/90 border border-emerald-500/50 px-2 py-1 text-[8px] font-gaming font-black uppercase text-emerald-300">{t("Tournoi actif")}</span>}
               <span className="absolute bottom-3 left-3 right-3 text-center text-[10px] sm:text-xs font-gaming font-black uppercase leading-tight text-white break-words">{game.name}</span>
             </Link>
           ))}
@@ -221,8 +225,8 @@ const Index = () => {
       <section className="max-w-7xl mx-auto px-5 sm:px-6 py-12 sm:py-16">
         <div className="rounded-3xl border border-[#5865F2]/30 bg-[#0F0F1E] p-6 sm:p-9 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
           <div className="space-y-3">
-            <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">Communauté officielle</p>
-            <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white">Joue. Affronte. Gagne.</h2>
+            <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">{t("Communauté officielle")}</p>
+            <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white">{t("Joue. Affronte. Gagne.")}</h2>
             <p className="text-sm text-[#8888AA] leading-relaxed">eGame Bénin développe le gaming compétitif au Bénin avec l’ambition de s’étendre progressivement à travers l’Afrique.</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 md:justify-end">
@@ -236,7 +240,7 @@ const Index = () => {
       {hasPartners && <PartnersSection />}
       <div className="flex justify-center px-5 pb-10">
         <Link
-          to="/devenir-partenaire"
+          to={localPath("/devenir-partenaire", "/en/partners")}
           className="inline-flex min-h-10 items-center justify-center rounded-xl border border-[#FFD700]/70 bg-[#FFD700]/10 px-5 py-2.5 text-[10px] font-gaming font-black uppercase tracking-widest text-[#FFD700] transition-colors hover:bg-[#FFD700]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#FFD700]"
         >
           Devenir partenaire
@@ -246,14 +250,14 @@ const Index = () => {
       <footer className="border-t border-[#8A2BE2]/20 pt-10 sm:pt-12 pb-8 text-center space-y-5">
         <Logo size="md" className="justify-center" />
         <div className="flex flex-wrap justify-center gap-x-5 gap-y-3 px-4 text-[10px] sm:text-xs text-[#8888AA] font-bold uppercase tracking-wider">
-          <Link to="/about" className="hover:text-white">À propos</Link>
-          <Link to="/devenir-partenaire" className="hover:text-white">Devenir partenaire</Link>
-          <Link to="/contact" className="hover:text-white">Contact</Link>
-          <Link to="/mentions-legales" className="hover:text-white">Mentions légales</Link>
-          <Link to="/privacy" className="hover:text-white">Confidentialité & conditions</Link>
-          <Link to="/classement" className="hover:text-white">Classement</Link>
+          <Link to="/about" className="hover:text-white">{t("À propos")}</Link>
+          <Link to="/devenir-partenaire" className="hover:text-white">{t("Devenir partenaire")}</Link>
+          <Link to={localPath("/contact", "/en/contact")} className="hover:text-white">Contact</Link>
+          <Link to="/mentions-legales" className="hover:text-white">{t("Mentions légales")}</Link>
+          <Link to="/privacy" className="hover:text-white">{t("Confidentialité & conditions")}</Link>
+          <Link to={localPath("/classement", "/en/leaderboard")} className="hover:text-white">{t("Classement")}</Link>
         </div>
-        <p className="px-4 text-[9px] sm:text-[10px] text-[#8888AA]/60 font-gaming uppercase tracking-wider sm:tracking-widest break-words">© 2026 eGame Bénin — <Link to="/privacy" className="hover:text-[#8A2BE2] transition-colors">Informations légales et conditions</Link></p>
+        <p className="px-4 text-[9px] sm:text-[10px] text-[#8888AA]/60 font-gaming uppercase tracking-wider sm:tracking-widest break-words">© 2026 eGame Bénin — <Link to="/privacy" className="hover:text-[#8A2BE2] transition-colors">{t("Informations légales et conditions")}</Link></p>
       </footer>
     </div>
   );
