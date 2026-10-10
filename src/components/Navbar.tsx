@@ -32,7 +32,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setMenuOpen(false);
-    navigate('/');
+    navigate(localPath('/','/en'));
   };
 
   const linkClass = (path: string) => `text-xs font-bold uppercase tracking-widest font-gaming transition-all ${
@@ -52,10 +52,10 @@ const Navbar = () => {
       </button>
       {menuOpen && (
         <div role="menu" className="absolute right-0 top-full z-[70] mt-3 w-56 rounded-2xl border border-[#8A2BE2]/40 bg-[#0F0F1E] p-2 shadow-2xl">
-          <Link role="menuitem" to="/profil" className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><User size={15} className="text-[#A855F7]" /> Mon profil</Link>
-          <Link role="menuitem" to="/payments" className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><CreditCard size={15} className="text-[#A855F7]" /> Mes inscriptions</Link>
+          <Link role="menuitem" to={localPath("/profil", "/en/profil")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><User size={15} className="text-[#A855F7]" /> Mon profil</Link>
+          <Link role="menuitem" to={localPath("/payments", "/en/payments")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><CreditCard size={15} className="text-[#A855F7]" /> Mes inscriptions</Link>
           <Link role="menuitem" to="/profil#recompenses" className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><Trophy size={15} className="text-[#A855F7]" /> Mes points</Link>
-          <Link role="menuitem" to="/edit-profile" className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><Settings size={15} className="text-[#A855F7]" /> Paramètres</Link>
+          <Link role="menuitem" to={localPath("/edit-profile", "/en/edit-profile")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><Settings size={15} className="text-[#A855F7]" /> Paramètres</Link>
           <button role="menuitem" onClick={handleLogout} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-red-400 hover:bg-red-500/10"><LogOut size={15} /> Déconnexion</button>
         </div>
       )}
@@ -111,7 +111,7 @@ const Navbar = () => {
           <Link to={localPath("/classement", "/en/leaderboard")} className="flex min-w-0 flex-1 flex-col items-center gap-1"><Trophy size={19} className={isActive('/classement') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/classement') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>{t("Classement")}</span></Link>
           <Link to={localPath("/news", "/en/news")} className="flex min-w-0 flex-1 flex-col items-center gap-1"><Newspaper size={19} className={isActive('/news') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/news') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>{t("Actualités")}</span></Link>
           {isLoggedIn ? (
-            <button onClick={() => navigate('/profil')} className="flex min-w-0 flex-1 flex-col items-center gap-1"><User size={19} className={isActive('/profil') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/profil') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>{t("Compte")}</span></button>
+            <button onClick={() => navigate(localPath('/profil','/en/profil'))} className="flex min-w-0 flex-1 flex-col items-center gap-1"><User size={19} className={isActive('/profil') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/profil') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>{t("Compte")}</span></button>
           ) : (
             <Link to="/auth" className="flex min-w-0 flex-1 flex-col items-center gap-1"><LogIn size={19} className={isActive('/auth') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/auth') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>{t("Connexion")}</span></Link>
           )}
