@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Navbar from '@/components/Navbar';
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import { ArrowLeft, Mail, HelpCircle, Facebook, Users, MessageSquare, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { DISCORD_SERVERS, MAIN_DISCORD_INVITE } from '@/lib/discord';
 import TikTokLogo from '@/components/TikTokLogo';
 
 const Contact = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const navigate = useNavigate();
