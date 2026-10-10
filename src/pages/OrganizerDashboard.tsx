@@ -1,3 +1,4 @@
+import OrganizerTournamentDrafts from "@/components/OrganizerTournamentDrafts";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, CalendarDays, Gamepad2, Hash, ShieldCheck, Users, UserRoundPlus, RotateCw } from "lucide-react";
@@ -117,6 +118,7 @@ const OrganizerDashboard = () => {
             <section className="space-y-3"><h2 className="text-lg font-gaming font-black uppercase">Mes communautés ({activeCommunities.length}/2 actives)</h2>{ownedCommunities.length === 0 ? <Empty message="Aucune communauté active ne t’est attribuée pour le moment." /> : <div className="grid gap-4 lg:grid-cols-2">{ownedCommunities.map((community) => <CommunityPanel key={community.id} community={community} memberships={memberships.filter((membership) => membership.community_id === community.id)} query={usernameQueries[community.id] || ""} error={errors[community.id] || ""} disabled={backendUnavailable || community.status !== "active"} onQuery={(value) => setQuery(community.id, value)} onInvite={() => void invite(community.id)} onRemove={(membershipId) => void removeMember(membershipId)} />)}</div>}</section>
           </>
         )}
+        {approved && <OrganizerTournamentDrafts communities={ownedCommunities} />}
         <section className="space-y-3"><h2 className="text-lg font-gaming font-black uppercase">Outils organisateur</h2><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><FutureCard icon={CalendarDays} title="Mes tournois" /><FutureCard icon={Gamepad2} title="Créer un tournoi" /><FutureCard icon={Users} title="Mes équipes" /><FutureCard icon={Hash} title="Inscriptions et tickets" /><FutureCard icon={ShieldCheck} title="Résultats et contestations" /></div></section>
       </main>
     </div>
