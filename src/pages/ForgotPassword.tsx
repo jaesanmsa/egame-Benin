@@ -12,24 +12,37 @@ import { showError, showSuccess } from '@/utils/toast';
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [failure, setFailure] = useState('');
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    // On s'assure que l'URL est propre et absolue
-    const redirectUrl = `${window.location.origin}/reset-password`;
-    
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: redirectUrl,
-    });
-    
-    if (error) {
-      showError(error.message);
-    } else {
-      showSuccess("Email de récupération envoyé !");
+    setFailure('');
+    try {
+      const redirectUrl = `${window.location.origin}/reset-password`;
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+        redirectTo: redirectUrl,
+      });
+      if (error) {
+        const message = /rate limit|too many|security purposes/i.test(error.message)
+          ? "Trop de demandes. Réessaie plus tard et vérifie tes spams."
+          : /redirect|not allowed/i.test(error.message)
+          ? "Configuration du lien de récupération incorrecte. Contacte le support eGame Bénin."
+          : /email|smtp|sending/i.test(error.message)
+          ? "L'envoi du courriel a échoué. Réessaie plus tard ou contacte le support."
+          : error.message;
+        setFailure(message);
+        showError(message);
+        return;
+      }
+      setSent(true);
+      showSuccess("Si ce compte existe, les instructions de récupération ont été envoyées.");
+    } catch {
+      setFailure("Impossible de contacter le service de récupération. Réessaie dans un instant.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -45,6 +58,8 @@ const ForgotPassword = () => {
           <p className="text-muted-foreground mt-2">Entrez votre email pour recevoir un lien de réinitialisation</p>
         </div>
 
+        {sent && <p role="status" className="rounded-xl border border-green-500/30 bg-green-500/10 p-4 text-sm">Si cette adresse correspond à un compte, tu recevras un lien. Vérifie aussi les spams. Le lien peut prendre quelques minutes.</p>}
+        {failure && <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">{failure} <a href="mailto:contact@egamebenin.com" className="underline">Contacter le support</a></p>}
         <form onSubmit={handleReset} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
