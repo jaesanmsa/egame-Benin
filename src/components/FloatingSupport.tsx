@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React from 'react';
@@ -6,10 +7,13 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const FloatingSupport = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const navigate = useNavigate();
 
   // Le support passe par la page Contact : serveurs Discord par jeu + e-mail officiel.
-  const handleSupport = () => navigate('/contact');
+  const handleSupport = () => navigate(localizedLinkPath('/contact'));
 
   return (
     <motion.button
@@ -18,7 +22,7 @@ const FloatingSupport = () => {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={handleSupport}
-      aria-label="Besoin d'aide ? Contacte le support eGame Bénin"
+      aria-label={t("Besoin d'aide ? Contacte le support eGame Bénin")}
       className="fixed bottom-24 right-6 z-[40] w-14 h-14 bg-violet-600 text-white rounded-full shadow-2xl shadow-violet-500/40 flex items-center justify-center md:bottom-8"
     >
       <LifeBuoy size={24} />
