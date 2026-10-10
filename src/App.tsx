@@ -72,6 +72,22 @@ const App = () => (
         <Suspense fallback={<PageLoader />}>
           <Routes>
               <Route path="/en" element={<Index />} />
+              <Route path="/en/auth" element={<Auth />} />
+              <Route path="/en/choisir-profil" element={<AccountChoice />} />
+              <Route path="/en/mes-equipes" element={<Teams />} />
+              <Route path="/en/admin/team-tournaments" element={<TeamTournamentAdmin />} />
+              <Route path="/en/forgot-password" element={<ForgotPassword />} />
+              <Route path="/en/reset-password" element={<ResetPassword />} />
+              <Route path="/en/admin" element={<AdminDashboard />} />
+              <Route path="/en/profil" element={<Profile />} />
+              <Route path="/en/edit-profile" element={<EditProfile />} />
+              <Route path="/en/avatar-maker" element={<AvatarMaker />} />
+              <Route path="/en/payments" element={<PaymentHistory />} />
+              <Route path="/en/payment-success" element={<PaymentSuccess />} />
+              <Route path="/en/payment/moneroo/callback" element={<MonerooCallback />} />
+              <Route path="/en/privacy" element={<Privacy />} />
+              <Route path="/en/mentions-legales" element={<LegalNotice />} />
+
               <Route path="/en/games" element={<Games />} />
               <Route path="/en/leaderboard" element={<Leaderboard />} />
               <Route path="/en/game/:id" element={<GameDetails />} />
