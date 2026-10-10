@@ -4,6 +4,8 @@ import { ArrowRight, Calendar, CreditCard, Gamepad2, Hash, Mail, Newspaper, Trop
 import { supabase } from "@/lib/supabase";
 import SEO from "@/components/SEO";
 import Logo from "@/components/Logo";
+import PartnersSection from "@/components/PartnersSection";
+import { User as AccountIcon, ChevronDown, LogOut, Settings } from "lucide-react";
 import TikTokLogo from "@/components/TikTokLogo";
 import DiscordLogo from "@/components/DiscordLogo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -48,6 +50,14 @@ const EnglishSite = () => {
   const [partners, setPartners] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setCurrentUser(session?.user ?? null));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setCurrentUser(session?.user ?? null));
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -99,22 +109,30 @@ const EnglishSite = () => {
       </nav>
       <div className="flex shrink-0 items-center gap-2">
         <LanguageSwitcher />
-        <Link to="/auth" className="rounded-full bg-[#8A2BE2] px-3 py-2 text-[10px] font-bold uppercase text-white sm:px-4">Sign in</Link>
+        {currentUser ? <div className="relative"><button type="button" onClick={() => setAccountMenuOpen(v => !v)} className="flex items-center gap-2 rounded-full bg-[#8A2BE2] px-3 py-2 text-[10px] font-bold uppercase text-white sm:px-4"><AccountIcon size={14} /> My account <ChevronDown size={12} /></button>{accountMenuOpen && <div className="absolute right-0 top-full z-[70] mt-2 w-48 space-y-1 rounded-xl border border-[#8A2BE2]/40 bg-[#0F0F1E] p-2 shadow-xl"><Link to="/profil" className="block rounded-lg px-3 py-2 text-xs hover:bg-white/10">My profile</Link><Link to="/payments" className="block rounded-lg px-3 py-2 text-xs hover:bg-white/10">My registrations</Link><Link to="/edit-profile" className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs hover:bg-white/10"><Settings size={13}/>Settings</Link><button onClick={() => void supabase.auth.signOut().then(() => setAccountMenuOpen(false))} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs text-red-300 hover:bg-white/10"><LogOut size={13}/>Sign out</button></div>}</div> : <div className="flex items-center gap-2"><Link to="/auth" className="px-2 py-2 text-[10px] font-bold uppercase text-[#C5B4D8]">Sign in</Link><Link to="/auth?mode=signup" className="rounded-full bg-[#8A2BE2] px-3 py-2 text-[10px] font-bold uppercase text-white sm:px-4">Create account</Link></div>}
       </div>
     </header>
   );
 
   const Footer = () => (
-    <footer className="mt-12 border-t border-[#8A2BE2]/20 px-4 py-8 text-center">
+    <footer className="mt-12 space-y-5 border-t border-[#8A2BE2]/20 px-4 py-10 text-center">
       <Logo size="md" className="justify-center" />
-      <div className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-3 text-[10px] font-bold uppercase tracking-wider text-[#8888AA]">
+      <div className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-[10px] font-bold uppercase tracking-wider text-[#8888AA]">
         <Link to="/en/about" className="hover:text-white">About</Link>
-        <Link to="/en/partners" className="hover:text-white">Partners</Link>
+        <Link to="/en/partners" className="hover:text-white">Become a partner</Link>
         <Link to="/en/contact" className="hover:text-white">Contact</Link>
+        <Link to="/en/contact#community" className="hover:text-white">Community</Link>
+        <Link to="/en/leaderboard" className="hover:text-white">Rankings</Link>
         <Link to="/mentions-legales" className="hover:text-white">Legal notice</Link>
         <Link to="/privacy" className="hover:text-white">Privacy &amp; terms</Link>
+        <Link to="/auth" className="hover:text-white">Sign in</Link>
+        <Link to="/auth?mode=signup" className="hover:text-white">Create account</Link>
       </div>
-      <p className="mt-5 text-[9px] text-[#8888AA]/60">© 2026 eGame Bénin</p>
+      <div className="flex items-center justify-center gap-4">
+        <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" aria-label="Join Discord" className="text-[#A5A8FF] hover:text-white"><DiscordLogo size={23}/></a>
+        <a href="https://tiktok.com/@egamebnin" target="_blank" rel="noopener noreferrer" aria-label="Follow eGame Bénin on TikTok" className="text-[#A855F7] hover:text-white"><TikTokLogo size={23}/></a>
+      </div>
+      <p className="text-[9px] text-[#8888AA]/60">© 2026 eGame Bénin — Legal information and terms</p>
     </footer>
   );
 
@@ -169,7 +187,7 @@ const EnglishSite = () => {
               <Link to="/en/games" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#8A2BE2] px-7 py-3.5 text-xs font-gaming font-black uppercase tracking-widest text-white hover:bg-[#9B4DEB]">View tournaments <ArrowRight size={15} /></Link>
               <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-3 rounded-2xl border border-[#5865F2]/60 bg-[#0F0F1E]/80 px-7 py-3.5 text-xs font-gaming font-bold uppercase tracking-widest text-white hover:bg-[#5865F2]/15"><DiscordLogo size={16} />Join Discord</a>
             </div>
-            <Link to="/auth?mode=signup" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#A855F7]/60 bg-[#8A2BE2]/15 px-6 py-3 text-[11px] font-gaming font-black uppercase tracking-widest text-white hover:bg-[#8A2BE2]/30">Create an eGame account</Link>
+            {!currentUser && <Link to="/auth?mode=signup" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#A855F7]/60 bg-[#8A2BE2]/15 px-6 py-3 text-[11px] font-gaming font-black uppercase tracking-widest text-white hover:bg-[#8A2BE2]/30">Create an eGame account</Link>}
           </div>
         </section>
         <section className="mx-auto max-w-7xl space-y-5 px-5 py-10 sm:px-6 sm:py-14">
@@ -186,7 +204,10 @@ const EnglishSite = () => {
         </section>
         {stats && <section className="mx-auto max-w-7xl px-5 py-8 sm:px-6"><h2 className="mb-4 text-center text-xl font-gaming font-black uppercase text-white">eGame in numbers</h2><div className="grid grid-cols-2 gap-3 md:grid-cols-4">{[["Players",stats.total_players], ["Tournaments",stats.tournaments_organized], ["Partners",partners.length], ["Competition players",stats.competition_players]].filter(([label, value]) => label === "Partners" || (typeof value === "number" && value > 0)).map(([label, value]) => <div key={String(label)} className="rounded-2xl border border-[#8A2BE2]/20 bg-[#0F0F1E] p-4 text-center"><p className="text-2xl font-gaming font-black text-white">{Number(value || 0).toLocaleString("en-US")}</p><p className="mt-1 text-[9px] font-gaming font-bold uppercase text-[#8888AA]">{label}</p></div>)}</div></section>}
         <section className="mx-auto max-w-7xl px-5 py-10 sm:px-6"><CommunityLinks /></section>
-        {partners.length > 0 && <section className="mx-auto max-w-7xl space-y-4 px-5 py-8 sm:px-6"><h2 className="text-center text-xl font-gaming font-black uppercase text-white">Partners</h2><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{partners.map((p) => <div key={p.id} className="rounded-2xl border border-[#8A2BE2]/25 bg-[#0F0F1E] p-5">{p.logo_url && <img src={p.logo_url} alt="" className="mb-3 h-12 w-12 object-contain" />}<h3 className="font-gaming font-bold text-white">{p.name}</h3></div>)}</div></section>}
+        <PartnersSection language="en" />
+        <div className="flex justify-center px-5 pb-10">
+          <Link to="/devenir-partenaire" className="inline-flex min-h-10 items-center justify-center rounded-xl border border-[#FFD700]/70 bg-[#FFD700]/10 px-5 py-2.5 text-[10px] font-gaming font-black uppercase tracking-widest text-[#FFD700] hover:bg-[#FFD700]/20">Become a partner</Link>
+        </div>
       </>
     );
   } else if (section === "about") {
