@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, MessageSquare, XCircle, RefreshCw } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -21,6 +21,7 @@ interface Payment {
 }
 
 const PaymentHistory = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const navigate = useNavigate();
@@ -154,7 +155,7 @@ const PaymentHistory = () => {
                         </button>
                       </div>
 
-                      <Link to="/contact" className="block">
+                      <Link to={localizedLinkPath("/contact")} className="block">
                         <button
                           className="w-full py-3.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-xl font-gaming font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
                         >
