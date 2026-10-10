@@ -374,6 +374,9 @@ const AdminDashboard = () => {
           >
             Organisateurs V2
           </Link>
+          <Link to="/admin/team-tournaments" className="w-full sm:w-auto rounded-2xl border border-[#8A2BE2]/40 bg-[#0F0F1E] px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white transition-colors hover:border-[#A855F7] hover:bg-[#8A2BE2]/10 flex items-center justify-center gap-2">
+            Équipes & inscriptions
+          </Link>
           <button
             type="button"
             onClick={handleSetupDiscordSupport}
