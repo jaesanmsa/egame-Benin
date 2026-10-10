@@ -34,7 +34,7 @@ const NewsDetail = React.lazy(() => import("./pages/NewsDetail"));
 const About = React.lazy(() => import("./pages/About"));
 const BecomePartner = React.lazy(() => import("./pages/BecomePartner"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
-const EnglishSite = React.lazy(() => import("./pages/EnglishSite"));
+// FR and EN now use the same page components, not a separate EnglishSite.
 const OrganizerApplicationPage = React.lazy(() => import("./pages/OrganizerApplication"));
 const OrganizerDashboard = React.lazy(() => import("./pages/OrganizerDashboard"));
 const OrganizerAdmin = React.lazy(() => import("./pages/OrganizerAdmin"));
@@ -71,7 +71,19 @@ const App = () => (
       <BrowserRouter>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-              <Route path="/en/*" element={<EnglishSite />} />
+              <Route path="/en" element={<Index />} />
+              <Route path="/en/games" element={<Games />} />
+              <Route path="/en/leaderboard" element={<Leaderboard />} />
+              <Route path="/en/game/:id" element={<GameDetails />} />
+              <Route path="/en/tournament/:id" element={<TournamentDetails />} />
+              <Route path="/en/news" element={<News />} />
+              <Route path="/en/news/:id" element={<NewsDetail />} />
+              <Route path="/en/about" element={<About />} />
+              <Route path="/en/contact" element={<Contact />} />
+              <Route path="/en/partners" element={<BecomePartner />} />
+              <Route path="/en/organizer-application" element={<OrganizerApplicationPage />} />
+              <Route path="/en/organizer" element={<OrganizerDashboard />} />
+              <Route path="/en/admin/organizers" element={<OrganizerAdmin />} />
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/choisir-profil" element={<AccountChoice />} />
