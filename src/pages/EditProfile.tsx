@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -14,6 +15,9 @@ import { ArrowLeft, User, Save, AtSign, MapPin, Globe, Clock, Hourglass, Chevron
 import { showError, showSuccess } from '@/utils/toast';
 
 const EditProfile = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -184,7 +188,7 @@ const EditProfile = () => {
           <ArrowLeft size={16} /> Retour
         </button>
 
-        <h1 className="text-3xl font-gaming font-black uppercase text-white">Modifier le profil</h1>
+        <h1 className="text-3xl font-gaming font-black uppercase text-white">{t("Modifier le profil")}</h1>
 
         <form onSubmit={handleSave} className="space-y-6">
           <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-8 rounded-3xl space-y-5 shadow-2xl">
@@ -199,7 +203,7 @@ const EditProfile = () => {
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="username" className="text-xs font-gaming uppercase text-[#8888AA]">Pseudo de Joueur</Label>
+              <Label htmlFor="username" className="text-xs font-gaming uppercase text-[#8888AA]">{t("Pseudo de Joueur")}</Label>
               <div className="relative">
                 <AtSign className="absolute left-3 top-3 text-[#8888AA]" size={18} />
                 <Input
@@ -214,7 +218,7 @@ const EditProfile = () => {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="name" className="text-xs font-gaming uppercase text-[#8888AA]">Nom Complet</Label>
+              <Label htmlFor="name" className="text-xs font-gaming uppercase text-[#8888AA]">{t("Nom Complet")}</Label>
               <div className="relative">
                 <User className="absolute left-3 top-3 text-[#8888AA]" size={18} />
                 <Input
@@ -229,7 +233,7 @@ const EditProfile = () => {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="phone" className="text-xs font-gaming uppercase text-[#8888AA]">Numéro Mobile Money</Label>
+              <Label htmlFor="phone" className="text-xs font-gaming uppercase text-[#8888AA]">{t("Numéro Mobile Money")}</Label>
               <PhoneCountryInput
                 id="phone"
                 value={profile.phone}
@@ -260,7 +264,7 @@ const EditProfile = () => {
                     }}
                     className="relative z-10 w-full min-h-12 appearance-none bg-[#0A0A0F] border border-[#8A2BE2]/30 rounded-xl text-white font-medium pl-10 pr-10 py-3.5 text-sm cursor-pointer focus:outline-none focus:border-[#8A2BE2]"
                   >
-                    {!profile.country && <option value="">Choisis ton pays</option>}
+                    {!profile.country && <option value="">{t("Choisis ton pays")}</option>}
                     {AFRICAN_COUNTRIES.map((country) => (
                       <option key={country.code} value={country.code} className="bg-[#0F0F1E] text-white">
                         {country.name} (+{country.dial})
@@ -272,7 +276,7 @@ const EditProfile = () => {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="city" className="text-xs font-gaming uppercase text-[#8888AA]">Ville</Label>
+                <Label htmlFor="city" className="text-xs font-gaming uppercase text-[#8888AA]">{t("Ville")}</Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-3 text-[#8888AA]" size={18} />
                   <Input
@@ -299,7 +303,7 @@ const EditProfile = () => {
                   disabled={!profile.country}
                   className="w-full appearance-none bg-[#0A0A0F] border border-[#8A2BE2]/30 rounded-xl text-white font-medium pl-9 pr-10 py-3.5 text-xs font-mono cursor-pointer focus:outline-none focus:border-[#8A2BE2] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {!profile.timezone && <option value="">Sélectionner</option>}
+                  {!profile.timezone && <option value="">{t("Sélectionner")}</option>}
                   {getTimezonesForCountry(profile.country).map((tz) => (
                     <option key={tz} value={tz} className="bg-[#0F0F1E] text-white">
                       {tz}
