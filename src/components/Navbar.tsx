@@ -56,8 +56,8 @@ const Navbar = () => {
           <Link role="menuitem" to={localPath("/profil", "/en/profil")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><User size={15} className="text-[#A855F7]" /> Mon profil</Link>
           <Link role="menuitem" to={localPath("/payments", "/en/payments")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><CreditCard size={15} className="text-[#A855F7]" /> Mes inscriptions</Link>
           <Link role="menuitem" to={localizedLinkPath("/profil#recompenses")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><Trophy size={15} className="text-[#A855F7]" /> Mes points</Link>
-          <Link role="menuitem" to={localPath("/edit-profile", "/en/edit-profile")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><Settings size={15} className="text-[#A855F7]" /> Paramètres</Link>
-          <button role="menuitem" onClick={handleLogout} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-red-400 hover:bg-red-500/10"><LogOut size={15} /> Déconnexion</button>
+          <Link role="menuitem" to={localPath("/edit-profile", "/en/edit-profile")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><Settings size={15} className="text-[#A855F7]" /> {t("Paramètres")}</Link>
+          <button role="menuitem" onClick={handleLogout} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-red-400 hover:bg-red-500/10"><LogOut size={15} /> {t("Déconnexion")}</button>
         </div>
       )}
     </div>
