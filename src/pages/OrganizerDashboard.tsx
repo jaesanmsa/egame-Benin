@@ -4,8 +4,7 @@ import { ArrowRight, CalendarDays, Gamepad2, Hash, ShieldCheck, Users, UserRound
 import Navbar from "@/components/Navbar";
 import SEO from "@/components/SEO";
 import { supabase } from "@/lib/supabase";
-import { OrganizerBackendUnavailable, getCommunityInvitations, getCommunityMemberships, getOrganizerCommunities, inviteCommunityMember, removeCommunityMember, respondCommunityInvitation, CommunityInvitation, GamingCommunity } from "@/lib/organizerService";
-import { loadOrganizerDemoState } from "@/lib/organizerV2";
+import { OrganizerBackendUnavailable, getCommunityInvitations, getCommunityMemberships, getOrganizerCommunities, getMyOrganizerApplication, inviteCommunityMember, removeCommunityMember, respondCommunityInvitation, CommunityInvitation, GamingCommunity } from "@/lib/organizerService";
 
 const OrganizerDashboard = () => {
   const [user, setUser] = useState<any>(null);
@@ -23,18 +22,18 @@ const OrganizerDashboard = () => {
   const refresh = async (userId: string) => {
     setRefreshing(true);
     try {
-      const [communityRows, invitationRows, membershipRows] = await Promise.all([
-        getOrganizerCommunities(), getCommunityInvitations(), getCommunityMemberships(),
+      const [communityRows, invitationRows, membershipRows, application] = await Promise.all([
+        getOrganizerCommunities(), getCommunityInvitations(), getCommunityMemberships(), getMyOrganizerApplication(),
       ]);
       setCommunities(communityRows);
       setInvitations(invitationRows);
       setMemberships(membershipRows);
+      setApplicationStatus(application?.status ?? null);
       setBackendUnavailable(false);
     } catch (error) {
       if (error instanceof OrganizerBackendUnavailable) setBackendUnavailable(true);
       else setNotice(error instanceof Error ? error.message : "Impossible de charger les données organisateur.");
-      const demoApplication = loadOrganizerDemoState().applications.find((item) => item.userId === userId);
-      setApplicationStatus(demoApplication?.status ?? null);
+      setApplicationStatus(null);
     } finally {
       setRefreshing(false);
       setLoading(false);
@@ -48,8 +47,6 @@ const OrganizerDashboard = () => {
       if (!active) return;
       setUser(current);
       if (!current) { setLoading(false); return; }
-      const demoApplication = loadOrganizerDemoState().applications.find((item) => item.userId === current.id);
-      setApplicationStatus(demoApplication?.status ?? null);
       await refresh(current.id);
     };
     void init();
@@ -60,7 +57,7 @@ const OrganizerDashboard = () => {
   const receivedInvitations = useMemo(() => invitations.filter((invitation) => invitation.invitedUserId === user?.id && invitation.status === "pending"), [invitations, user?.id]);
   const organizerInvitations = useMemo(() => invitations.filter((invitation) => invitation.organizerUserId === user?.id), [invitations, user?.id]);
   const activeCommunities = ownedCommunities.filter((community) => community.status === "active");
-  const approved = applicationStatus === "approved" || (ownedCommunities.length > 0 && !backendUnavailable);
+  const approved = !backendUnavailable && applicationStatus === "approved";
   const suspended = applicationStatus === "suspended";
 
   const setQuery = (id: string, value: string) => setUsernameQueries((current) => ({ ...current, [id]: value }));
