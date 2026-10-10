@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import PlayerBadge from '@/components/PlayerBadge';
 import { Calendar, Users, Trophy, Shield, ArrowLeft, Clock, CheckCircle2, Info, ChevronRight, CreditCard, Zap, AlertTriangle, FileText, Loader2, X, Globe, Share2, Ticket, Copy, FlaskConical, Medal, Star, User } from 'lucide-react';
@@ -28,6 +29,9 @@ const missingProfileFields = (p: any): string[] => {
 };
 
 const TournamentDetails = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const lp = (path: string) => language === "en" ? "/en" + path : path;
   const { id } = useParams();
   const navigate = useNavigate();
   const [tournament, setTournament] = useState<any>(null);
@@ -290,7 +294,7 @@ const TournamentDetails = () => {
     try {
       if (!await checkAvailability()) return;
       if (!isLoggedIn) {
-        navigate('/auth');
+        navigate(lp('/auth'));
         return;
       }
       // Tournoi d'essai + admin : portes profil/Discord dispensées (test des paiements).
@@ -298,7 +302,7 @@ const TournamentDetails = () => {
         // Profil complet obligatoire avant toute inscription : la vérification
         // utilise la base (source de vérité), pas l'état local.
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) { navigate('/auth'); return; }
+        if (!user) { navigate(lp('/auth')); return; }
         const { data: freshProfile } = await supabase
           .from('profiles')
           .select('username, full_name, phone, country, timezone')
@@ -428,10 +432,10 @@ const TournamentDetails = () => {
       <main className="max-w-4xl mx-auto px-6 -mt-24 relative z-10 space-y-8">
         {teamSize && Number(tournament.entry_fee) === 0 && (
           <section className="rounded-2xl border border-[#8A2BE2]/40 bg-[#0F0F1E] p-5">
-            <p className="text-[10px] font-black uppercase tracking-wider text-[#A855F7]">Inscription collective</p>
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#A855F7]">{t("Inscription collective")}</p>
             <h2 className="mt-2 font-gaming text-lg font-black">Tournoi par équipes de {teamSize} joueurs</h2>
             <p className="mt-2 text-sm text-[#AAAACC]">Crée ton équipe ou rejoins celle de ton capitaine. L'inscription collective reste soumise à validation administrative, sans ticket automatique.</p>
-            <button onClick={() => navigate('/mes-equipes')} className="mt-4 rounded-xl bg-[#8A2BE2] px-5 py-3 text-xs font-black text-white">Gérer mon équipe et demander l'inscription</button>
+            <button onClick={() => navigate(lp('/mes-equipes'))} className="mt-4 rounded-xl bg-[#8A2BE2] px-5 py-3 text-xs font-black text-white">{t("Gérer mon équipe et demander l'inscription")}</button>
           </section>
         )}
 
@@ -466,7 +470,7 @@ const TournamentDetails = () => {
             <div className="space-y-3">
               <div className="bg-[#FFD700]/10 border border-[#FFD700]/40 p-6 rounded-2xl text-center space-y-2">
                 <Trophy className="text-[#FFD700] mx-auto" size={36} />
-                <p className="text-[10px] font-gaming font-bold uppercase tracking-widest text-[#FFD700]">Champion Officiel — 1ère place</p>
+                <p className="text-[10px] font-gaming font-bold uppercase tracking-widest text-[#FFD700]">{t("Champion Officiel — 1ère place")}</p>
                 <h3 className="text-xl font-gaming font-black text-white break-words">{tournament.winner_name}</h3>
               </div>
               {(tournament.second_place || tournament.third_place || tournament.mvp_name) && (
@@ -474,21 +478,21 @@ const TournamentDetails = () => {
                   {tournament.second_place && (
                     <div className="bg-slate-500/10 border border-slate-400/40 p-4 rounded-2xl text-center space-y-1">
                       <Medal className="text-slate-300 mx-auto" size={22} />
-                      <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-slate-300">2ème place</p>
+                      <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-slate-300">{t("2ème place")}</p>
                       <p className="text-sm font-gaming font-black text-white">{tournament.second_place}</p>
                     </div>
                   )}
                   {tournament.third_place && (
                     <div className="bg-orange-500/10 border border-orange-400/40 p-4 rounded-2xl text-center space-y-1">
                       <Medal className="text-orange-400 mx-auto" size={22} />
-                      <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-orange-400">3ème place</p>
+                      <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-orange-400">{t("3ème place")}</p>
                       <p className="text-sm font-gaming font-black text-white">{tournament.third_place}</p>
                     </div>
                   )}
                   {tournament.mvp_name && (
                     <div className="bg-violet-500/10 border border-violet-400/40 p-4 rounded-2xl text-center space-y-1">
                       <Star className="text-violet-400 mx-auto" size={22} />
-                      <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-violet-400">MVP du tournoi</p>
+                      <p className="text-[9px] font-gaming font-bold uppercase tracking-widest text-violet-400">{t("MVP du tournoi")}</p>
                       <p className="text-sm font-gaming font-black text-white">{tournament.mvp_name}</p>
                     </div>
                   )}
@@ -520,7 +524,7 @@ const TournamentDetails = () => {
               {/* Barre de progression des places */}
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px] font-gaming font-bold uppercase tracking-widest text-[#8888AA]">
-                  <span>Remplissage du tournoi</span>
+                  <span>{t("Remplissage du tournoi")}</span>
                   <span className="text-[#A855F7]">{participantCount} / {maxSlots} ({Math.round(progress)}%)</span>
                 </div>
                 <div className="w-full bg-[#0A0A0F] h-3 rounded-full overflow-hidden p-0.5 border border-[#8A2BE2]/30">
@@ -533,7 +537,7 @@ const TournamentDetails = () => {
                 <div className="bg-emerald-950/40 border border-emerald-500/40 p-6 rounded-2xl text-center space-y-4">
                   <div className="flex items-center justify-center gap-3 text-emerald-400">
                     <CheckCircle2 size={24} />
-                    <h3 className="font-gaming font-bold text-base uppercase">Inscription Validée !</h3>
+                    <h3 className="font-gaming font-bold text-base uppercase">{t("Inscription Validée !")}</h3>
                   </div>
                   <Link to="/payments">
                     <Button className="w-full bg-emerald-600 hover:bg-emerald-500 font-gaming font-bold text-white py-6 rounded-xl text-xs uppercase tracking-wider">
@@ -545,7 +549,7 @@ const TournamentDetails = () => {
                 <div className="bg-emerald-950/40 border border-emerald-500/40 p-6 rounded-2xl space-y-4">
                   <div className="flex items-center justify-center gap-3 text-emerald-400">
                     <CheckCircle2 size={24} />
-                    <h3 className="font-gaming font-bold text-base uppercase">Inscription Validée !</h3>
+                    <h3 className="font-gaming font-bold text-base uppercase">{t("Inscription Validée !")}</h3>
                   </div>
                   <div className="bg-[#0A0A0F] border border-emerald-500/30 rounded-2xl p-5 text-center space-y-2">
                     <p className="text-[10px] font-gaming font-bold uppercase tracking-widest text-[#8888AA] flex items-center justify-center gap-1.5">
@@ -570,7 +574,7 @@ const TournamentDetails = () => {
               ) : participantCount >= maxSlots ? (
                 <div className="rounded-2xl border-2 border-orange-400/60 bg-orange-950/40 p-6 text-center space-y-3" role="status">
                   <Users className="mx-auto text-orange-300" size={26} />
-                  <h3 className="font-gaming font-bold text-orange-200 uppercase">Tournoi complet</h3>
+                  <h3 className="font-gaming font-bold text-orange-200 uppercase">{t("Tournoi complet")}</h3>
                   <p className="text-sm text-orange-100">Toutes les places sont prises ({participantCount}/{maxSlots}). Les inscriptions sont fermées.</p>
                   <Button disabled className="w-full rounded-2xl border border-orange-300/40 bg-orange-900 text-white py-5 disabled:opacity-80">
                     Aucune place disponible
@@ -580,7 +584,7 @@ const TournamentDetails = () => {
                 <div className="bg-violet-950/40 border border-violet-500/40 p-6 rounded-2xl text-center space-y-2">
                   <div className="flex items-center justify-center gap-2 text-violet-300">
                     <Clock size={22} />
-                    <h3 className="font-gaming font-bold text-base uppercase">Inscriptions bientôt ouvertes</h3>
+                    <h3 className="font-gaming font-bold text-base uppercase">{t("Inscriptions bientôt ouvertes")}</h3>
                   </div>
                   <p className="text-xs text-[#8888AA] break-words">Les inscriptions ouvrent le {formattedStartRegistration} (heure du tournoi, GMT+1)</p>
                 </div>
@@ -588,7 +592,7 @@ const TournamentDetails = () => {
                 <div className="bg-orange-950/40 border border-orange-500/40 p-6 rounded-2xl text-center space-y-2">
                   <div className="flex items-center justify-center gap-2 text-orange-400">
                     <Clock size={22} />
-                    <h3 className="font-gaming font-bold text-base uppercase">Inscriptions Closes</h3>
+                    <h3 className="font-gaming font-bold text-base uppercase">{t("Inscriptions Closes")}</h3>
                   </div>
                   <p className="text-xs text-[#8888AA] break-words">Les inscriptions se sont terminées le {formattedEndRegistration}</p>
                 </div>
@@ -749,8 +753,8 @@ const TournamentDetails = () => {
                   <AlertTriangle size={32} />
                 </div>
                 <div className="space-y-3">
-                  <h2 className="text-xl font-gaming font-black text-white">Un paiement est déjà en cours</h2>
-                  <p className="text-sm font-bold text-white">As-tu été débité pour cette tentative ?</p>
+                  <h2 className="text-xl font-gaming font-black text-white">{t("Un paiement est déjà en cours")}</h2>
+                  <p className="text-sm font-bold text-white">{t("As-tu été débité pour cette tentative ?")}</p>
                   <p className="text-xs leading-relaxed text-[#A0A0B8]">
                     Vérifie ton solde Mobile Money, tes SMS et ton e-mail avant de répondre. Ne relance pas le paiement si le montant a été débité.
                   </p>
@@ -807,11 +811,11 @@ const TournamentDetails = () => {
                 <AlertTriangle size={32} />
               </div>
               <div className="space-y-2">
-                <h2 className="text-xl font-gaming font-bold text-white">Avant de continuer</h2>
+                <h2 className="text-xl font-gaming font-bold text-white">{t("Avant de continuer")}</h2>
                 {isFree ? (
                   <p className="text-xs text-[#8888AA] leading-relaxed">
-                    Ce tournoi est <span className="text-emerald-400 font-bold">100% gratuit</span>. Vérifie que tu acceptes le règlement :
-                    tu recevras ensuite un <span className="text-[#FFD700] font-bold">ticket personnel</span> dont le code sera vérifié
+                    Ce tournoi est <span className="text-emerald-400 font-bold">{t("100% gratuit")}</span>. Vérifie que tu acceptes le règlement :
+                    tu recevras ensuite un <span className="text-[#FFD700] font-bold">{t("ticket personnel")}</span> dont le code sera vérifié
                     par les arbitres eGame pour confirmer ta place.
                   </p>
                 ) : (
@@ -863,8 +867,8 @@ const TournamentDetails = () => {
                 <div className="w-12 h-12 bg-[#8A2BE2]/20 text-[#8A2BE2] rounded-xl flex items-center justify-center mx-auto">
                   <CreditCard size={24} />
                 </div>
-                <h2 className="text-xl font-gaming font-bold text-white">Choix du Paiement</h2>
-                <p className="text-xs text-[#8888AA]">Sélectionne ton moyen de paiement préféré</p>
+                <h2 className="text-xl font-gaming font-bold text-white">{t("Choix du Paiement")}</h2>
+                <p className="text-xs text-[#8888AA]">{t("Sélectionne ton moyen de paiement préféré")}</p>
               </div>
 
               <div className="space-y-3">
@@ -875,7 +879,7 @@ const TournamentDetails = () => {
                   >
                     <div>
                       <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">KKiaPay</h3>
-                      <p className="text-[10px] text-[#8888AA]">Mobile Money et carte bancaire selon les moyens disponibles</p>
+                      <p className="text-[10px] text-[#8888AA]">{t("Mobile Money et carte bancaire selon les moyens disponibles")}</p>
                     </div>
                     <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white" />
                   </button>
@@ -888,7 +892,7 @@ const TournamentDetails = () => {
                   >
                     <div className="min-w-0">
                       <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">FedaPay</h3>
-                      <p className="text-[10px] text-[#8888AA] break-words">Mobile Money et carte bancaire selon les moyens disponibles</p>
+                      <p className="text-[10px] text-[#8888AA] break-words">{t("Mobile Money et carte bancaire selon les moyens disponibles")}</p>
                     </div>
                     <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white shrink-0" />
                   </button>
@@ -902,7 +906,7 @@ const TournamentDetails = () => {
                   >
                     <div className="min-w-0">
                       <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">Mobile Money &amp; Carte</h3>
-                      <p className="text-[10px] text-[#8888AA] break-words">Paiement sécurisé via Moneroo</p>
+                      <p className="text-[10px] text-[#8888AA] break-words">{t("Paiement sécurisé via Moneroo")}</p>
                     </div>
                     <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white shrink-0" />
                   </button>
@@ -930,7 +934,7 @@ const TournamentDetails = () => {
               </div>
 
               <div className="space-y-2">
-                <h2 className="text-xl font-gaming font-bold text-white">Ton ticket est prêt !</h2>
+                <h2 className="text-xl font-gaming font-bold text-white">{t("Ton ticket est prêt !")}</h2>
                 <p className="text-xs text-[#8888AA] leading-relaxed">
                   Ton code est enregistré : les arbitres eGame le vérifient pour réserver ta place.
                   Rejoins le serveur Discord de ton jeu pour suivre la confirmation et rencontrer la communauté.
