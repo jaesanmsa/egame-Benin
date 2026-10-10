@@ -365,6 +365,8 @@ const EN: Record<string, string> = {
   "Tournois en cours": "Current tournaments",
   "Participe à des tournois gaming, affronte d’autres joueurs et construis ton parcours sur eGame Bénin.": "Join gaming tournaments, compete against other players and build your journey on eGame Bénin.",
   "eGame Bénin développe le gaming compétitif au Bénin avec l’ambition de s’étendre progressivement à travers l’Afrique.": "eGame Bénin develops competitive gaming in Benin with the ambition to gradually expand across Africa.",
+  "Un lien de confirmation a été envoyé à": "A confirmation link was sent to",
+  "Se connecter": "Sign in", "S'inscrire": "Sign up",
   "Partenaires": "Partners",
   "Check-ins": "Check-ins",
   "Partenaires": "Partners", "Étape": "Step",
