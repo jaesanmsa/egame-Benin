@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import PlayerBadge from '@/components/PlayerBadge';
 import SEO from '@/components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,6 +23,8 @@ const DEFAULT_GAMES = [
 ];
 
 const Leaderboard = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const navigate = useNavigate();
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   const [rankings, setRankings] = useState<any[]>([]);
@@ -132,7 +135,7 @@ const Leaderboard = () => {
                     </div> 
                     <div className="text-left">
                       <p className="font-gaming font-bold text-sm text-white">{game.name}</p>
-                      <p className="text-[10px] text-[#8888AA] uppercase tracking-wider">Voir les champions</p>
+                      <p className="text-[10px] text-[#8888AA] uppercase tracking-wider">{t("Voir les champions")}</p>
                     </div>
                   </div>
                   <ChevronRight className="text-[#8888AA] group-hover:text-[#8A2BE2] transition-colors" size={20} />
@@ -154,8 +157,8 @@ const Leaderboard = () => {
               ) : rankings.length === 0 ? (
                 <div className="rounded-2xl border border-[#8A2BE2]/20 bg-[#0F0F1E] px-5 py-7 text-center space-y-2">
                   <Trophy size={28} className="mx-auto text-[#A855F7] opacity-70" />
-                  <p className="text-sm font-gaming font-bold text-white">Pas encore de classement réel pour ce jeu.</p>
-                  <p className="text-xs text-[#8888AA]">Le classement apparaîtra dès que des résultats confirmés seront disponibles.</p>
+                  <p className="text-sm font-gaming font-bold text-white">{t("Pas encore de classement réel pour ce jeu.")}</p>
+                  <p className="text-xs text-[#8888AA]">{t("Le classement apparaîtra dès que des résultats confirmés seront disponibles.")}</p>
                 </div>
               ) : (
                 <>
