@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import Logo from '@/components/Logo';
 import SEO from '@/components/SEO';
 import VSBackground from '@/components/VSBackground';
@@ -38,6 +38,7 @@ const HOW_IT_WORKS = [
 ];
 
 const Index = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const localPath = (fr: string, en: string) => language === "en" ? en : fr;
@@ -134,7 +135,7 @@ const Index = () => {
           </motion.div>
           {!isLoggedIn && (
             <button
-              onClick={() => navigate('/auth?mode=signup')}
+              onClick={() => navigate(localizedLinkPath("/auth?mode=signup"))}
               className="mx-auto inline-flex min-h-11 items-center justify-center rounded-xl border border-[#A855F7]/60 bg-[#8A2BE2]/15 px-6 py-3 text-[11px] font-gaming font-black uppercase tracking-widest text-white shadow-lg shadow-[#8A2BE2]/15 transition-all hover:border-[#A855F7] hover:bg-[#8A2BE2]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A855F7]"
             >
               Créer un compte eGame
@@ -250,14 +251,14 @@ const Index = () => {
       <footer className="border-t border-[#8A2BE2]/20 pt-10 sm:pt-12 pb-8 text-center space-y-5">
         <Logo size="md" className="justify-center" />
         <div className="flex flex-wrap justify-center gap-x-5 gap-y-3 px-4 text-[10px] sm:text-xs text-[#8888AA] font-bold uppercase tracking-wider">
-          <Link to="/about" className="hover:text-white">{t("À propos")}</Link>
-          <Link to="/devenir-partenaire" className="hover:text-white">{t("Devenir partenaire")}</Link>
+          <Link to={localizedLinkPath("/about")} className="hover:text-white">{t("À propos")}</Link>
+          <Link to={localizedLinkPath("/devenir-partenaire")} className="hover:text-white">{t("Devenir partenaire")}</Link>
           <Link to={localPath("/contact", "/en/contact")} className="hover:text-white">Contact</Link>
-          <Link to="/mentions-legales" className="hover:text-white">{t("Mentions légales")}</Link>
-          <Link to="/privacy" className="hover:text-white">{t("Confidentialité & conditions")}</Link>
+          <Link to={localizedLinkPath("/mentions-legales")} className="hover:text-white">{t("Mentions légales")}</Link>
+          <Link to={localizedLinkPath("/privacy")} className="hover:text-white">{t("Confidentialité & conditions")}</Link>
           <Link to={localPath("/classement", "/en/leaderboard")} className="hover:text-white">{t("Classement")}</Link>
         </div>
-        <p className="px-4 text-[9px] sm:text-[10px] text-[#8888AA]/60 font-gaming uppercase tracking-wider sm:tracking-widest break-words">© 2026 eGame Bénin — <Link to="/privacy" className="hover:text-[#8A2BE2] transition-colors">{t("Informations légales et conditions")}</Link></p>
+        <p className="px-4 text-[9px] sm:text-[10px] text-[#8888AA]/60 font-gaming uppercase tracking-wider sm:tracking-widest break-words">© 2026 eGame Bénin — <Link to={localizedLinkPath("/privacy")} className="hover:text-[#8A2BE2] transition-colors">{t("Informations légales et conditions")}</Link></p>
       </footer>
     </div>
   );
