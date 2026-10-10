@@ -112,14 +112,14 @@ const Index = () => {
             transition={{ duration: 0.7 }}
             className="text-4xl sm:text-6xl md:text-7xl font-gaming font-black leading-tight tracking-tight uppercase"
           >
-            Entre dans la <span className="text-[#FFD700] text-glow-gold">compétition.</span>
+            {t("Entre dans la")} <span className="text-[#FFD700] text-glow-gold">{t("compétition.")}</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
             className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-[#B1B1C4] font-medium leading-relaxed"
           >
-            Participe à des tournois gaming, affronte d’autres joueurs et construis ton parcours sur eGame Bénin.
+            {t("Participe à des tournois gaming, affronte d’autres joueurs et construis ton parcours sur eGame Bénin.")}
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
@@ -130,7 +130,7 @@ const Index = () => {
               Voir les tournois <ArrowRight size={16} />
             </button>
             <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto min-h-12 px-7 py-3.5 border border-[#5865F2]/60 hover:border-[#5865F2] bg-[#0F0F1E]/80 hover:bg-[#5865F2]/15 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all flex items-center justify-center gap-3">
-              <DiscordLogo size={16} /> Rejoindre Discord
+              <DiscordLogo size={16} /> {t("Rejoindre Discord")}
             </a>
           </motion.div>
           {!isLoggedIn && (
@@ -149,7 +149,7 @@ const Index = () => {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">{t("Compétition")}</p>
-            <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white mt-1">{tournamentSectionTitle}</h2>
+            <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white mt-1">{t(tournamentSectionTitle)}</h2>
           </div>
           <Link to={localPath("/jeux", "/en/games")} className="text-xs font-gaming font-bold text-[#A855F7] hover:underline uppercase tracking-wider">{t("Tous les tournois →")}</Link>
         </div>
@@ -167,7 +167,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {featuredTournaments.map((t: any) => (
               <TournamentCard key={t.id} id={t.id} title={t.title} game={t.game} image={t.image_url}
-                date={formatBeninShort(t.start_date)} participants={`${t.max_participants} places`}
+                date={formatBeninShort(t.start_date)} participants={`${t.max_participants} ${language === "en" ? "spots" : "places"}`}
                 entryFee={t.entry_fee.toString()} prizePool={t.prize_pool} type={t.type as any}
                 status="active" isTest={false} />
             ))}
@@ -191,7 +191,7 @@ const Index = () => {
                 <step.icon size={16} className="text-[#A855F7]" />
               </div>
               <div className="min-w-0">
-                <p className="text-[8px] sm:text-[9px] font-gaming font-black uppercase tracking-wider text-[#A855F7]">Étape {index + 1}</p>
+                <p className="text-[8px] sm:text-[9px] font-gaming font-black uppercase tracking-wider text-[#A855F7]">{t("Étape")} {index + 1}</p>
                 <h3 className="text-[10px] sm:text-xs font-gaming font-bold uppercase leading-tight text-white break-words">{step.title}</h3>
                 <p className="hidden sm:block text-[10px] text-[#8888AA] leading-snug mt-1">{t(step.text)}</p>
               </div>
@@ -228,11 +228,11 @@ const Index = () => {
           <div className="space-y-3">
             <p className="text-[10px] font-gaming font-bold uppercase tracking-[0.2em] text-[#A855F7]">{t("Communauté officielle")}</p>
             <h2 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white">{t("Joue. Affronte. Gagne.")}</h2>
-            <p className="text-sm text-[#8888AA] leading-relaxed">eGame Bénin développe le gaming compétitif au Bénin avec l’ambition de s’étendre progressivement à travers l’Afrique.</p>
+            <p className="text-sm text-[#8888AA] leading-relaxed">{t("eGame Bénin développe le gaming compétitif au Bénin avec l’ambition de s’étendre progressivement à travers l’Afrique.")}</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 md:justify-end">
-            <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="min-h-12 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] px-5 py-3 text-xs font-gaming font-black uppercase tracking-wider text-white flex items-center justify-center gap-2"><DiscordLogo size={17} /> Rejoindre Discord</a>
-            <a href="https://tiktok.com/@egamebnin" target="_blank" rel="noopener noreferrer" className="min-h-12 rounded-xl border border-[#8A2BE2]/40 bg-[#07070C] hover:bg-[#8A2BE2]/10 px-5 py-3 text-xs font-gaming font-black uppercase tracking-wider text-white flex items-center justify-center gap-2"><TikTokLogo size={17} className="text-[#A855F7]" /> Suivre sur TikTok</a>
+            <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="min-h-12 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] px-5 py-3 text-xs font-gaming font-black uppercase tracking-wider text-white flex items-center justify-center gap-2"><DiscordLogo size={17} /> {t("Rejoindre Discord")}</a>
+            <a href="https://tiktok.com/@egamebnin" target="_blank" rel="noopener noreferrer" className="min-h-12 rounded-xl border border-[#8A2BE2]/40 bg-[#07070C] hover:bg-[#8A2BE2]/10 px-5 py-3 text-xs font-gaming font-black uppercase tracking-wider text-white flex items-center justify-center gap-2"><TikTokLogo size={17} className="text-[#A855F7]" /> {t("Suivre sur TikTok")}</a>
           </div>
         </div>
       </section>
