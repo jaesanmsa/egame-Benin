@@ -6,7 +6,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import Logo from './Logo';
 import InstallAndProfileReminder from './InstallAndProfileReminder';
-import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar = () => {
   const location = useLocation();
@@ -71,7 +70,7 @@ const Navbar = () => {
           <Link to="/news" className={linkClass('/news')}>Actualités</Link>
         </nav>
         <div className="flex shrink-0 items-center gap-2">
-          <LanguageSwitcher />
+          
           {isLoggedIn ? accountMenu : (
             <div className="flex items-center gap-2">
               <Link to="/auth" className="text-xs font-gaming font-bold uppercase tracking-wider text-[#8888AA] hover:text-white px-3 py-2">Connexion</Link>
@@ -91,15 +90,13 @@ const Navbar = () => {
           <Link to="/news" className={linkClass('/news')}>Actualités</Link>
         </nav>
         <div className="flex shrink-0 items-center gap-2">
-          <LanguageSwitcher />
+          
           {isLoggedIn ? accountMenu : <Link to="/auth" className="btn-neon px-4 py-2 rounded-full text-[10px] font-bold uppercase">Connexion</Link>}
         </div>
       </header>
 
       {/* Sélecteur de langue + navigation mobile */}
-      <div className="md:hidden fixed top-3 right-3 z-50 rounded-full border border-[#8A2BE2]/30 bg-[#0F0F1E]/90 p-1 backdrop-blur-xl">
-        <LanguageSwitcher />
-      </div>
+
       <nav className="md:hidden fixed bottom-4 left-3 right-3 z-50 rounded-[28px] border border-[#8A2BE2]/40 bg-[#0F0F1E]/95 px-2 py-3 shadow-2xl shadow-black/90 backdrop-blur-2xl">
         <div className="flex items-center justify-between gap-1">
           <Link to="/" className="flex min-w-0 flex-1 flex-col items-center gap-1"><Home size={19} className={isActive('/') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Accueil</span></Link>
