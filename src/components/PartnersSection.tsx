@@ -17,7 +17,7 @@ interface Partner {
   is_official: boolean;
 }
 
-const PartnersSection = () => {
+const PartnersSection = ({ language = "fr" }: { language?: "fr" | "en" }) => {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loaded, setLoaded] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -74,13 +74,13 @@ const PartnersSection = () => {
     <section id="partenaires" className="max-w-7xl mx-auto px-6 py-12 space-y-6 scroll-mt-24">
       <div className="text-center space-y-2">
         <h2 className="text-2xl md:text-3xl font-gaming font-black uppercase text-white">
-          Partenaires
+          {language === "en" ? "Partners" : "Partenaires"}
         </h2>
         <p className="text-sm text-[#8888AA] font-esport">
-          Les organisations officiellement partenaires d’eGame Bénin.
+          {language === "en" ? "Official eGame Bénin partners." : "Les organisations officiellement partenaires d’eGame Bénin."}
         </p>
         <p className="flex items-center justify-center gap-2 text-[10px] font-gaming font-bold uppercase tracking-widest text-[#A855F7]">
-          <MoveHorizontal size={14} /> Fais glisser pour tous les découvrir
+          <MoveHorizontal size={14} /> {language === "en" ? "Swipe to discover more" : "Fais glisser pour tous les découvrir"}
         </p>
       </div>
 
@@ -109,7 +109,7 @@ const PartnersSection = () => {
             >
               {p.is_official && (
                 <span className="absolute top-3 right-3 inline-flex items-center gap-0.5 text-[7px] font-gaming font-black uppercase tracking-normal text-emerald-300 bg-emerald-950/60 border border-emerald-500/40 px-1.5 py-0.5 rounded-full">
-                  <BadgeCheck size={8} className="shrink-0" /> Officiel
+                  <BadgeCheck size={8} className="shrink-0" /> {language === "en" ? "Official" : "Officiel"}
                 </span>
               )}
 
@@ -142,7 +142,7 @@ const PartnersSection = () => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-[10px] font-gaming font-bold uppercase tracking-wider text-white/70 hover:text-[#A855F7] transition-colors"
                 >
-                  Visiter <ExternalLink size={12} />
+                  {language === "en" ? "Visit" : "Visiter"} <ExternalLink size={12} />
                 </a>
               )}
             </div>
