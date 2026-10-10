@@ -13,8 +13,6 @@ CREATE TABLE IF NOT EXISTS public.organizer_applications (
   professional_contact text NOT NULL,
   status text NOT NULL DEFAULT 'submitted'
     CHECK (status IN ('draft','submitted','under_review','more_info_requested','approved','rejected','suspended')),
-  kyc_status text NOT NULL DEFAULT 'disabled_pending_vendor'
-    CHECK (kyc_status IN ('disabled_pending_vendor','not_started','pending','verified','rejected')),
   admin_note text,
   reviewed_by uuid REFERENCES auth.users(id) ON DELETE SET NULL,
   reviewed_at timestamptz,
@@ -234,8 +232,8 @@ BEGIN
   END IF;
   v_status := CASE WHEN p_submit THEN 'submitted' ELSE 'draft' END;
   IF v_app_id IS NULL THEN
-    INSERT INTO public.organizer_applications(user_id,legal_name,country,professional_contact,terms_accepted_at,status,kyc_status,submitted_at)
-    VALUES(auth.uid(),btrim(p_legal_name),btrim(p_country),btrim(p_professional_contact),now(),v_status,'disabled_pending_vendor',CASE WHEN p_submit THEN now() ELSE NULL END)
+    INSERT INTO public.organizer_applications(user_id,legal_name,country,professional_contact,terms_accepted_at,status,submitted_at)
+    VALUES(auth.uid(),btrim(p_legal_name),btrim(p_country),btrim(p_professional_contact),now(),v_status,CASE WHEN p_submit THEN now() ELSE NULL END)
     RETURNING id INTO v_app_id;
   ELSE
     UPDATE public.organizer_applications SET legal_name=btrim(p_legal_name),country=btrim(p_country),
