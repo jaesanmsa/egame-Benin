@@ -434,7 +434,7 @@ const TournamentDetails = () => {
           <section className="rounded-2xl border border-[#8A2BE2]/40 bg-[#0F0F1E] p-5">
             <p className="text-[10px] font-black uppercase tracking-wider text-[#A855F7]">{t("Inscription collective")}</p>
             <h2 className="mt-2 font-gaming text-lg font-black">Tournoi par équipes de {teamSize} joueurs</h2>
-            <p className="mt-2 text-sm text-[#AAAACC]">Crée ton équipe ou rejoins celle de ton capitaine. L'inscription collective reste soumise à validation administrative, sans ticket automatique.</p>
+            <p className="mt-2 text-sm text-[#AAAACC]">{t("Crée ton équipe ou rejoins celle de ton capitaine. L'inscription collective reste soumise à validation administrative, sans ticket automatique.")}</p>
             <button onClick={() => navigate(lp('/mes-equipes'))} className="mt-4 rounded-xl bg-[#8A2BE2] px-5 py-3 text-xs font-black text-white">{t("Gérer mon équipe et demander l'inscription")}</button>
           </section>
         )}
@@ -905,7 +905,7 @@ const TournamentDetails = () => {
                     className="w-full min-w-0 p-4 bg-[#0A0A0F] hover:bg-[#8A2BE2]/10 border border-[#8A2BE2]/30 hover:border-[#8A2BE2] rounded-2xl text-left transition-all flex items-center justify-between gap-3 group disabled:opacity-60"
                   >
                     <div className="min-w-0">
-                      <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">Mobile Money &amp; Carte</h3>
+                      <h3 className="font-gaming font-bold text-sm text-white group-hover:text-[#A855F7]">{t("Mobile Money &amp; Carte")}</h3>
                       <p className="text-[10px] text-[#8888AA] break-words">{t("Paiement sécurisé via Moneroo")}</p>
                     </div>
                     <ChevronRight size={18} className="text-[#8888AA] group-hover:text-white shrink-0" />
