@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import TournamentCard from '@/components/TournamentCard';
 import { ArrowLeft, Trophy, Gamepad2, Zap, Target, MessageSquare, ChevronRight, History } from 'lucide-react';
@@ -13,6 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from '@/components/ui/button';
 
 const GameDetails = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const { id } = useParams();
   const navigate = useNavigate();
   const [tournaments, setTournaments] = useState<any[]>([]);
@@ -138,7 +141,7 @@ const GameDetails = () => {
             </div>
             <div>
               <h1 className="text-3xl md:text-5xl font-gaming font-black uppercase text-white tracking-wide">{gameInfo.name}</h1>
-              <p className="text-[#A855F7] text-xs font-gaming font-bold uppercase tracking-widest mt-2">Jeu de la communauté</p>
+              <p className="text-[#A855F7] text-xs font-gaming font-bold uppercase tracking-widest mt-2">{t("Jeu de la communauté")}</p>
             </div>
           </div>
         </div>
@@ -209,7 +212,7 @@ const GameDetails = () => {
                 ) : tournaments.length === 0 ? (
                   <div className="col-span-full py-12 text-center glass-panel">
                     <Gamepad2 size={40} className="mx-auto text-[#8888AA] mb-3 opacity-40" />
-                    <p className="text-sm font-gaming text-[#8888AA]">Aucun tournoi annoncé pour ce jeu pour le moment.</p>
+                    <p className="text-sm font-gaming text-[#8888AA]">{t("Aucun tournoi annoncé pour ce jeu pour le moment.")}</p>
                   </div>
                 ) : (
                   tournaments.map((t) => (
@@ -238,7 +241,7 @@ const GameDetails = () => {
               <div className="bg-[#5865F2] rounded-3xl p-8 space-y-6 shadow-xl shadow-[#5865F2]/20">
                 <div className="flex items-center gap-3 text-white">
                   <MessageSquare size={24} />
-                  <h3 className="font-gaming font-bold text-base uppercase">Serveur Discord</h3>
+                  <h3 className="font-gaming font-bold text-base uppercase">{t("Serveur Discord")}</h3>
                 </div>
                 <p className="text-xs text-white/80 leading-relaxed font-medium">
                   Rejoins la communauté eGame Bénin de <span className="font-bold text-white">{gameInfo.name}</span>.
