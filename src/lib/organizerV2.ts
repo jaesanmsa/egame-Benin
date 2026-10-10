@@ -29,7 +29,6 @@ export interface OrganizerApplication {
   termsAccepted: boolean;
   status: OrganizerStatus;
   adminNote: string;
-  kycStatus: "disabled_pending_vendor" | "not_started" | "pending" | "verified" | "rejected";
   createdAt: string;
   updatedAt: string;
   decisions: OrganizerDecision[];
