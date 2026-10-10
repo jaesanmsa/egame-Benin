@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { AlertCircle, CheckCircle2, Clock3, Copy, Loader2, RefreshCw } from "lucide-react";
@@ -9,6 +10,9 @@ import { showSuccess } from "@/utils/toast";
 type PaymentState = "checking" | "pending" | "success" | "failed" | "cancelled" | "error";
 
 const MonerooCallback = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<PaymentState>("checking");
   const [message, setMessage] = useState("");
@@ -132,13 +136,13 @@ const MonerooCallback = () => {
           {status === "checking" ? (
             <div className="py-8 space-y-4">
               <Loader2 size={42} className="text-[#8A2BE2] animate-spin mx-auto" />
-              <h1 className="text-lg sm:text-xl font-gaming font-bold">Vérification sécurisée du paiement…</h1>
-              <p className="text-xs text-[#8888AA]">Nous confirmons la transaction auprès du serveur.</p>
+              <h1 className="text-lg sm:text-xl font-gaming font-bold">{t("Vérification sécurisée du paiement…")}</h1>
+              <p className="text-xs text-[#8888AA]">{t("Nous confirmons la transaction auprès du serveur.")}</p>
             </div>
           ) : status === "pending" ? (
             <>
               <Clock3 size={42} className="text-amber-400 mx-auto" />
-              <h1 className="text-xl font-gaming font-black text-white">Vérification du paiement en cours…</h1>
+              <h1 className="text-xl font-gaming font-black text-white">{t("Vérification du paiement en cours…")}</h1>
               <p className="text-xs text-[#8888AA] leading-relaxed">{message}</p>
               <button
                 onClick={() => void verifyPayment(true)}
@@ -148,19 +152,19 @@ const MonerooCallback = () => {
                 {checkingAgain ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />}
                 Vérifier à nouveau
               </button>
-              <p className="text-[10px] text-amber-200/80">Ne paie pas une deuxième fois pendant la vérification.</p>
+              <p className="text-[10px] text-amber-200/80">{t("Ne paie pas une deuxième fois pendant la vérification.")}</p>
             </>
           ) : status === "success" ? (
             <>
               <div className="w-16 h-16 bg-emerald-500/15 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/40">
                 <CheckCircle2 size={38} />
               </div>
-              <h1 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white">Paiement confirmé ✅</h1>
-              <p className="text-sm font-bold text-white">Ton inscription au tournoi est validée.</p>
+              <h1 className="text-xl sm:text-2xl font-gaming font-black uppercase text-white">{t("Paiement confirmé ✅")}</h1>
+              <p className="text-sm font-bold text-white">{t("Ton inscription au tournoi est validée.")}</p>
               {tournamentTitle && <p className="text-xs text-[#8888AA] break-words">{tournamentTitle}</p>}
               {validationCode && (
                 <div className="p-4 sm:p-6 bg-[#0A0A0F] rounded-2xl border-2 border-dashed border-[#FFD700]/50 space-y-2">
-                  <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase tracking-widest">Ton ticket eGame Bénin</p>
+                  <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase tracking-widest">{t("Ton ticket eGame Bénin")}</p>
                   <div className="flex flex-wrap items-center justify-center gap-3">
                     <span className="max-w-full break-all text-[#FFD700] font-gaming font-black text-xl sm:text-2xl tracking-widest">{validationCode}</span>
                     <button onClick={() => void copyCode()} aria-label="Copier le code" className="text-[#8888AA] hover:text-white p-2">
@@ -169,9 +173,9 @@ const MonerooCallback = () => {
                   </div>
                 </div>
               )}
-              <p className="text-xs text-[#8888AA]">Le paiement a été confirmé côté serveur. Les données de ton inscription ont été actualisées.</p>
+              <p className="text-xs text-[#8888AA]">{t("Le paiement a été confirmé côté serveur. Les données de ton inscription ont été actualisées.")}</p>
               <div className="space-y-3">
-                <Link to="/payments" className="block">
+                <Link to={localizedLinkPath("/payments")} className="block">
                   <button className="w-full min-h-12 bg-[#5865F2] hover:bg-[#4752C4] text-white font-gaming font-bold text-xs uppercase tracking-wider px-3 py-3 rounded-xl flex items-center justify-center gap-2">
                     Voir mes inscriptions
                   </button>
@@ -197,7 +201,7 @@ const MonerooCallback = () => {
                   </button>
                 </Link>
               )}
-              <Link to="/contact" className="block text-xs text-[#A855F7] hover:underline">Contacter le support</Link>
+              <Link to={localizedLinkPath("/contact")} className="block text-xs text-[#A855F7] hover:underline">{t("Contacter le support")}</Link>
             </>
           )}
         </section>
