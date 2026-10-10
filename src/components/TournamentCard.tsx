@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React from 'react';
@@ -22,23 +23,26 @@ interface TournamentProps {
 }
 
 const TournamentCard = ({ id, title, game, image, date, participants, entryFee, prizePool, type, status = 'active', isTest = false }: TournamentProps) => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const navigate = useNavigate();
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const url = `${window.location.origin}/tournament/${id}`;
+    const url = `${window.location.origin}${localizedLinkPath(`/tournament/${id}`)}`;
     if (navigator.share) {
       navigator.share({ title, text: `Rejoins le tournoi ${game} sur eGame Bénin !`, url });
     } else {
       navigator.clipboard.writeText(url);
-      showSuccess("Lien copié dans le presse-papier !");
+      showSuccess(t("Lien copié dans le presse-papier !"));
     }
   };
 
   // Découverte ouverte : tout le monde peut consulter la page du tournoi,
   // l'inscription redirige vers la connexion si nécessaire.
   const handleClick = () => {
-    navigate(`/tournament/${id}`);
+    navigate(localizedLinkPath(`/tournament/${id}`));
   };
 
   return (
@@ -64,16 +68,16 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
         <div className="absolute top-3 left-3 flex items-center gap-2 flex-wrap">
           <Badge className="bg-[#07070C]/80 backdrop-blur-md text-white border border-[#8A2BE2]/40 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider py-1 px-3 rounded-full">
             {type === 'Online' ? <Globe size={12} className="text-cyan-400" /> : <MapPin size={12} className="text-orange-400" />}
-            {type === 'Online' ? 'En ligne' : 'Présentiel'}
+            {type === 'Online' ? t('En ligne') : t('Présentiel')}
           </Badge>
           {entryFee === "0" && (
             <Badge className="bg-emerald-950/80 backdrop-blur-md text-emerald-300 border border-emerald-500/50 text-[10px] font-bold uppercase tracking-wider py-1 px-3 rounded-full">
-              Gratuit
+              {t("Gratuit")}
             </Badge>
           )}
           {isTest && (
             <Badge className="bg-amber-950/80 backdrop-blur-md text-amber-300 border border-amber-500/50 text-[10px] font-bold uppercase tracking-wider py-1 px-3 rounded-full">
-              Essai
+              {t("Essai")}
             </Badge>
           )}
         </div>
@@ -85,7 +89,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
             </span>
-            <span className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-widest font-gaming">Ouvert</span>
+            <span className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-widest font-gaming">{t("Ouvert")}</span>
           </div>
         )}
 
@@ -116,7 +120,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
             <span className="text-[10px] font-bold text-[#8888AA] uppercase tracking-wider">Cash Prize</span>
           </div>
           <span className="max-w-full text-right text-base sm:text-xl font-gaming font-black text-[#FFD700] text-glow-gold break-words">
-            {prizePool || <span className="text-sm text-[#8888AA] font-bold">À annoncer</span>}
+            {prizePool || <span className="text-sm text-[#8888AA] font-bold">{t("À annoncer")}</span>}
           </span>
         </div>
 
