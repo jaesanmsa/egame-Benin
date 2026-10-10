@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Navbar from '@/components/Navbar';
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import { Target, Users, Shield, ArrowLeft, Trophy, UserPlus, Gamepad2, CreditCard, Hash, MessageSquare, Zap } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -50,6 +51,8 @@ const STEPS: Step[] = [
 ];
 
 const About = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const navigate = useNavigate();
 
   return (
@@ -70,7 +73,7 @@ const About = () => {
           <div className="space-y-3">
             <div>
               <h2 className="text-xl font-gaming font-bold text-white">Moussa Jae San Thierry</h2>
-              <p className="text-xs font-bold text-[#A855F7] uppercase tracking-wider">Fondateur de eGame Bénin</p>
+              <p className="text-xs font-bold text-[#A855F7] uppercase tracking-wider">{t("Fondateur de eGame Bénin")}</p>
             </div>
             <p className="text-sm text-[#8888AA] leading-relaxed">
               Passionné de gaming et d’eSport, Moussa a créé eGame Bénin pour développer le gaming compétitif au Bénin : une plateforme numérique de compétition, une communauté gaming structurée et, progressivement, des événements e-sport physiques.
@@ -91,18 +94,18 @@ const About = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-6 sm:p-8 rounded-3xl space-y-4">
             <Target className="text-[#8A2BE2]" size={32} />
-            <h2 className="text-lg font-gaming font-bold uppercase text-white">Plateforme de compétition</h2>
-            <p className="text-sm text-[#8888AA] leading-relaxed">Des outils numériques pour participer aux tournois et suivre sa progression.</p>
+            <h2 className="text-lg font-gaming font-bold uppercase text-white">{t("Plateforme de compétition")}</h2>
+            <p className="text-sm text-[#8888AA] leading-relaxed">{t("Des outils numériques pour participer aux tournois et suivre sa progression.")}</p>
           </div>
           <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-6 sm:p-8 rounded-3xl space-y-4">
             <Users className="text-[#8A2BE2]" size={32} />
-            <h2 className="text-lg font-gaming font-bold uppercase text-white">Communauté gaming</h2>
-            <p className="text-sm text-[#8888AA] leading-relaxed">Des joueurs et communautés réunis autour du fair-play et de compétitions organisées.</p>
+            <h2 className="text-lg font-gaming font-bold uppercase text-white">{t("Communauté gaming")}</h2>
+            <p className="text-sm text-[#8888AA] leading-relaxed">{t("Des joueurs et communautés réunis autour du fair-play et de compétitions organisées.")}</p>
           </div>
           <div className="bg-[#0F0F1E] border border-[#8A2BE2]/30 p-6 sm:p-8 rounded-3xl space-y-4">
             <Gamepad2 className="text-[#FFD700]" size={32} />
-            <h2 className="text-lg font-gaming font-bold uppercase text-white">Événements physiques</h2>
-            <p className="text-sm text-[#8888AA] leading-relaxed">Nous ambitionnons d’organiser progressivement des événements gaming et e-sport au Bénin.</p>
+            <h2 className="text-lg font-gaming font-bold uppercase text-white">{t("Événements physiques")}</h2>
+            <p className="text-sm text-[#8888AA] leading-relaxed">{t("Nous ambitionnons d’organiser progressivement des événements gaming et e-sport au Bénin.")}</p>
           </div>
         </div>
 
@@ -174,22 +177,22 @@ const About = () => {
         </section>
 
         <div className="bg-[#0F0F1E] border border-[#FFD700]/30 rounded-3xl p-10 text-center space-y-8">
-          <h2 className="text-2xl font-gaming font-black uppercase text-white">Une compétition organisée</h2>
+          <h2 className="text-2xl font-gaming font-black uppercase text-white">{t("Une compétition organisée")}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             <div className="space-y-2">
               <Shield className="text-[#8A2BE2] mx-auto" size={32} />
-              <h3 className="font-gaming font-bold text-sm text-white">Règles publiées</h3>
-              <p className="text-xs text-[#8888AA]">Chaque tournoi présente ses règles et conditions.</p>
+              <h3 className="font-gaming font-bold text-sm text-white">{t("Règles publiées")}</h3>
+              <p className="text-xs text-[#8888AA]">{t("Chaque tournoi présente ses règles et conditions.")}</p>
             </div>
             <div className="space-y-2">
               <Trophy className="text-[#FFD700] mx-auto" size={32} />
-              <h3 className="font-gaming font-bold text-sm text-white">Résultats validés</h3>
+              <h3 className="font-gaming font-bold text-sm text-white">{t("Résultats validés")}</h3>
               <p className="text-xs text-[#8888AA]">Les récompenses suivent la validation définitive des résultats et les conditions du tournoi.</p>
             </div>
             <div className="space-y-2">
               <Users className="text-[#8A2BE2] mx-auto" size={32} />
-              <h3 className="font-gaming font-bold text-sm text-white">Communauté eGame</h3>
-              <p className="text-xs text-[#8888AA]">Retrouve les joueurs et l'équipe sur Discord.</p>
+              <h3 className="font-gaming font-bold text-sm text-white">{t("Communauté eGame")}</h3>
+              <p className="text-xs text-[#8888AA]">{t("Retrouve les joueurs et l'équipe sur Discord.")}</p>
             </div>
           </div>
         </div>
