@@ -1,9 +1,13 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { Lock } from "lucide-react";
 
 const ResetPassword = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [ready, setReady] = useState(false);
@@ -81,9 +85,9 @@ const ResetPassword = () => {
 
   return <div className="min-h-screen bg-[#07070C] text-white flex items-center justify-center p-6">
     <main className="w-full max-w-md rounded-3xl border border-[#8A2BE2]/40 bg-[#0F0F1E] p-7 space-y-5">
-      <h1 className="font-gaming text-2xl font-black">Nouveau mot de passe</h1>
-      <p className="text-sm text-[#AAAACC]">Choisis un nouveau mot de passe pour ton compte eGame Bénin.</p>
-      {checking ? <p role="status">Vérification du lien de récupération…</p> : null}
+      <h1 className="font-gaming text-2xl font-black">{t("Nouveau mot de passe")}</h1>
+      <p className="text-sm text-[#AAAACC]">{t("Choisis un nouveau mot de passe pour ton compte eGame Bénin.")}</p>
+      {checking ? <p role="status">{t("Vérification du lien de récupération…")}</p> : null}
       {error && <p role="alert" className="rounded-xl bg-red-900/30 p-3 text-sm text-red-200">{error}</p>}
       {ready && !checking && <form onSubmit={save} className="space-y-4">
         <label className="block space-y-2 text-sm">Nouveau mot de passe
@@ -94,7 +98,7 @@ const ResetPassword = () => {
         </label>
         <button type="submit" disabled={loading} className="w-full rounded-xl bg-[#8A2BE2] p-3 font-bold disabled:opacity-50">{loading ? "Enregistrement…" : "Changer mon mot de passe"}</button>
       </form>}
-      <Link to="/forgot-password" className="block text-center text-sm text-[#C5A2FF] underline">Demander un nouveau lien</Link>
+      <Link to={localizedLinkPath("/forgot-password")} className="block text-center text-sm text-[#C5A2FF] underline">{t("Demander un nouveau lien")}</Link>
     </main>
   </div>;
 };
