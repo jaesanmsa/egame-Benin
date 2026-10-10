@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { Newspaper, ArrowRight, Clock, SearchX } from 'lucide-react';
@@ -11,6 +11,7 @@ import { supabase } from '@/lib/supabase';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const News = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const [news, setNews] = useState<any[]>([]);
