@@ -29,6 +29,12 @@ const EN: Record<string, string> = {
   "À propos": "About", "Contact": "Contact", "Mentions légales": "Legal notice",
   "Confidentialité & conditions": "Privacy & terms", "Informations légales et conditions": "Legal information and terms",
   "Partenaires": "Partners", "Étape": "Step",
+  "Les tournois sont annoncés séparément selon leur disponibilité.": "Tournaments are announced separately based on availability.",
+  "Filtrer par jeu": "Filter by game", "Tous les jeux": "All games",
+  "Aucun jeu correspondant.": "No matching games.", "Actif": "Active",
+  "Voir les champions": "See champions",
+  "Pas encore de classement réel pour ce jeu.": "No confirmed rankings for this game yet.",
+  "Le classement apparaîtra dès que des résultats confirmés seront disponibles.": "Rankings will appear as soon as confirmed results are available.",
 };
 export function translate(text: string, language: "fr" | "en"): string {
   return language === "en" ? EN[text] ?? text : text;
