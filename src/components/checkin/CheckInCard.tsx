@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -17,6 +18,8 @@ import PointsInfoBox from "./PointsInfoBox";
  * L'historique complet vit dans « Historique des récompenses » juste en dessous.
  */
 const CheckInCard = ({ userId }: { userId: string }) => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const { state, loading, claiming, claim, canClaim, timeRemaining, refresh } = useCheckIn(userId);
   const [justClaimed, setJustClaimed] = useState<null | {
     day: number;
@@ -44,9 +47,9 @@ const CheckInCard = ({ userId }: { userId: string }) => {
           credited: result.credited_points ?? 0,
         });
       } else if (result?.reason === "ALREADY_CLAIMED") {
-        setClaimError("Présence du jour déjà validée. Reviens demain !");
+        setClaimError(t("Présence du jour déjà validée. Reviens demain !"));
       } else {
-        setClaimError("Impossible de valider ta présence pour le moment. Réessaie.");
+        setClaimError(t("Impossible de valider ta présence pour le moment. Réessaie."));
       }
     } catch (err: any) {
       setClaimError(err?.message || "Erreur inattendue. Réessaie.");
@@ -105,7 +108,7 @@ const CheckInCard = ({ userId }: { userId: string }) => {
         <button
           onClick={() => setExpanded((v) => !v)}
           className="flex items-center gap-2 min-w-0 flex-1 text-left group"
-          aria-label={expanded ? "Replier le détail de la série" : "Déplier le détail de la série"}
+          aria-label={expanded ? t("Replier le détail de la série") : t("Déplier le détail de la série")}
         >
           <Flame size={16} className="text-orange-400 shrink-0" />
           <span className="text-xs font-gaming font-black uppercase tracking-widest text-white">
