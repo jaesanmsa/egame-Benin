@@ -2,30 +2,38 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, Building2, ShieldCheck } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { loadOrganizerDemoState, OrganizerStatus, ORGANIZER_STATUS_LABELS } from "@/lib/organizerV2";
+import { OrganizerStatus, ORGANIZER_STATUS_LABELS } from "@/lib/organizerV2";
+import { getMyOrganizerApplication, OrganizerBackendUnavailable } from "@/lib/organizerService";
 
 const OrganizerProfileCard = () => {
   const { pathname } = useLocation();
   const english = pathname.startsWith("/en/");
   const [status, setStatus] = useState<OrganizerStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [backendUnavailable, setBackendUnavailable] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const application = loadOrganizerDemoState().applications.find((item) => item.userId === user.id);
-        setStatus(application?.status ?? null);
+        try {
+          const application = await getMyOrganizerApplication();
+          setStatus(application?.status ?? null);
+          setBackendUnavailable(false);
+        } catch (error) {
+          setBackendUnavailable(error instanceof OrganizerBackendUnavailable);
+          setStatus(null);
+        }
       }
       setLoading(false);
     };
     void load();
     const refresh = () => void load();
-    window.addEventListener("egame-organizer-demo-updated", refresh);
-    return () => window.removeEventListener("egame-organizer-demo-updated", refresh);
+    window.addEventListener("focus", refresh);
+    return () => window.removeEventListener("focus", refresh);
   }, []);
 
-  if (loading) return null;
+  if (loading || backendUnavailable) return null;
   const approved = status === "approved";
   const suspended = status === "suspended";
   const href = english
