@@ -1,6 +1,6 @@
 -- eGame Bénin V2 — Phase B/C: organisateurs et communautés privées
--- Migration PRÉPARÉE UNIQUEMENT. Projet Supabase actuellement lié = production.
--- NE PAS exécuter sans projet de développement isolé et autorisation expresse.
+-- Migration additive pour la version officielle, à appliquer après validation des prérequis.
+-- Elle n'efface aucune donnée et ne remplace pas les systèmes de paiement existants.
 -- N'effectue aucun DROP/reset et ne modifie pas les tables paiements/tickets/tournois.
 
 BEGIN;
@@ -220,7 +220,7 @@ DECLARE v_app_id uuid; v_community jsonb; v_count integer; v_status text;
 BEGIN
   IF auth.uid() IS NULL THEN RAISE EXCEPTION 'AUTH_REQUIRED'; END IF;
   IF length(btrim(coalesce(p_legal_name,''))) < 3 THEN RAISE EXCEPTION 'LEGAL_NAME_REQUIRED'; END IF;
-  IF length(btrim(coalesce(p_country,''))) <> 2 THEN RAISE EXCEPTION 'COUNTRY_REQUIRED'; END IF;
+  IF length(btrim(coalesce(p_country,''))) < 2 OR length(btrim(p_country)) > 100 THEN RAISE EXCEPTION 'COUNTRY_REQUIRED'; END IF;
   IF length(btrim(coalesce(p_professional_contact,''))) < 5 THEN RAISE EXCEPTION 'CONTACT_REQUIRED'; END IF;
   IF NOT coalesce(p_terms_accepted,false) THEN RAISE EXCEPTION 'TERMS_REQUIRED'; END IF;
   IF jsonb_typeof(p_communities) <> 'array' THEN RAISE EXCEPTION 'COMMUNITIES_REQUIRED'; END IF;
@@ -261,8 +261,10 @@ BEGIN
   VALUES(p_application_id,auth.uid(),v_app.status,p_status,p_note);
   IF p_status='approved' THEN
     FOR v_community IN SELECT * FROM public.organizer_application_communities WHERE application_id=p_application_id LOOP
-      INSERT INTO public.gaming_communities(application_id,organizer_user_id,name,game_key,status)
-      VALUES(p_application_id,v_app.user_id,v_community.name,v_community.game_key,'active');
+      IF NOT EXISTS (SELECT 1 FROM public.gaming_communities c WHERE c.application_id=p_application_id AND c.name=v_community.name AND c.game_key=v_community.game_key) THEN
+        INSERT INTO public.gaming_communities(application_id,organizer_user_id,name,game_key,status)
+        VALUES(p_application_id,v_app.user_id,v_community.name,v_community.game_key,'active');
+      END IF;
     END LOOP;
   ELSIF p_status='suspended' THEN
     UPDATE public.gaming_communities SET status='suspended',suspended_at=now(),suspended_by=auth.uid(),suspension_reason=p_note,updated_at=now()
@@ -321,6 +323,7 @@ BEGIN
   IF NOT FOUND THEN RAISE EXCEPTION 'INVITATION_NOT_FOUND'; END IF;
   UPDATE public.community_invitations SET status=CASE WHEN p_accept THEN 'accepted' ELSE 'declined' END,responded_at=now(),updated_at=now() WHERE id=p_invitation_id;
   IF p_accept THEN
+    IF NOT EXISTS (SELECT 1 FROM public.gaming_communities c WHERE c.id=v_inv.community_id AND c.status='active') THEN RAISE EXCEPTION 'COMMUNITY_INACTIVE'; END IF;
     INSERT INTO public.community_memberships(community_id,user_id,invited_by,status)
     VALUES(v_inv.community_id,auth.uid(),v_inv.invited_by,'active')
     ON CONFLICT(community_id,user_id) DO UPDATE SET status='active',joined_at=now(),ended_at=NULL,ended_by=NULL;
