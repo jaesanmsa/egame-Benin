@@ -3,12 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, Building2, ShieldCheck } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { OrganizerStatus, ORGANIZER_STATUS_LABELS } from "@/lib/organizerV2";
-import { getMyOrganizerApplication, OrganizerBackendUnavailable } from "@/lib/organizerService";
+import { getMyOrganizerApplication, getCommunityInvitations, OrganizerBackendUnavailable } from "@/lib/organizerService";
 
 const OrganizerProfileCard = () => {
   const { pathname } = useLocation();
   const english = pathname.startsWith("/en/");
   const [status, setStatus] = useState<OrganizerStatus | null>(null);
+  const [pendingInvitations, setPendingInvitations] = useState(0);
   const [loading, setLoading] = useState(true);
   const [backendUnavailable, setBackendUnavailable] = useState(false);
 
@@ -19,6 +20,8 @@ const OrganizerProfileCard = () => {
         try {
           const application = await getMyOrganizerApplication();
           setStatus(application?.status ?? null);
+          const invitations = await getCommunityInvitations();
+          setPendingInvitations(invitations.filter((invitation) => invitation.invitedUserId === user.id && invitation.status === "pending").length);
           setBackendUnavailable(false);
         } catch (error) {
           setBackendUnavailable(error instanceof OrganizerBackendUnavailable);
@@ -37,13 +40,17 @@ const OrganizerProfileCard = () => {
   const approved = status === "approved";
   const suspended = status === "suspended";
   const href = english
-    ? (approved ? "/en/organizer" : "/en/organizer-application")
-    : (approved ? "/organizer" : "/devenir-organisateur");
-  const title = approved
+    ? (approved || pendingInvitations > 0 ? "/en/organizer" : "/en/organizer-application")
+    : (approved || pendingInvitations > 0 ? "/organizer" : "/devenir-organisateur");
+  const title = pendingInvitations > 0 && !approved
+    ? (english ? "Community invitation" : "Invitation communautaire")
+    : approved
     ? (english ? "Organizer dashboard" : "Espace organisateur")
     : (english ? "Become an organizer" : "Devenir organisateur");
   const statusLabel = status ? ORGANIZER_STATUS_LABELS[status][english ? "en" : "fr"] : "";
-  const description = suspended
+  const description = pendingInvitations > 0 && !approved
+    ? (english ? `${pendingInvitations} invitation(s) to review.` : `${pendingInvitations} invitation(s) à accepter ou refuser.`)
+    : suspended
     ? (english ? `Organizer access suspended — ${statusLabel}.` : `Accès organisateur suspendu — ${statusLabel}.`)
     : approved
       ? (english ? "Manage your communities, members and invitations." : "Gère tes communautés, membres et invitations.")
