@@ -53,7 +53,7 @@ const Privacy = () => {
           </div>
           <h1 className="text-3xl font-black mb-2">{t("Conditions, confidentialité & remboursements")}</h1>
           <p className="text-muted-foreground">{t("Conditions Générales & Protection des Données • v1.1")}</p>
-          <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">Dernière mise à jour : 4 Mars 2026</p>
+          <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">{t("Dernière mise à jour : 4 Mars 2026")}</p>
         </motion.div>
 
         <motion.div 
@@ -71,22 +71,22 @@ const Privacy = () => {
             <div className="bg-card border border-border p-8 rounded-[2rem] space-y-6 text-sm text-muted-foreground leading-relaxed shadow-sm">
               <div>
                 <h3 className="font-bold text-foreground mb-2">{t("Acceptation des conditions")}</h3>
-                <p>En accédant à l'application eGame Bénin, vous acceptez d'être lié par les présentes conditions, toutes les lois et réglementations applicables au Bénin, et acceptez que vous êtes responsable du respect des lois locales applicables.</p>
+                <p>{t("En accédant à l'application eGame Bénin, vous acceptez d'être lié par les présentes conditions, toutes les lois et réglementations applicables au Bénin, et acceptez que vous êtes responsable du respect des lois locales applicables.")}</p>
               </div>
               
               <div>
                 <h3 className="font-bold text-foreground mb-2">{t("Description du service")}</h3>
-                <p>eGame Bénin est une plateforme d'organisation de tournois de jeux vidéo. Nous fournissons l'infrastructure pour l'inscription, le paiement des frais de participation et la gestion des classements.</p>
+                <p>{t("eGame Bénin est une plateforme d'organisation de tournois de jeux vidéo. Nous fournissons l'infrastructure pour l'inscription, le paiement des frais de participation et la gestion des classements.")}</p>
               </div>
 
               <div>
                 <h3 className="font-bold text-foreground mb-2">{t("Responsabilité de l'utilisateur")}</h3>
-                <p>Vous êtes responsable du maintien de la confidentialité de votre compte et de votre mot de passe. Vous acceptez de ne pas utiliser la plateforme pour des activités illégales ou frauduleuses.</p>
+                <p>{t("Vous êtes responsable du maintien de la confidentialité de votre compte et de votre mot de passe. Vous acceptez de ne pas utiliser la plateforme pour des activités illégales ou frauduleuses.")}</p>
               </div>
 
               <div>
                 <h3 className="font-bold text-foreground mb-2">{t("Propriété intellectuelle")}</h3>
-                <p>Le contenu, le logo, les graphismes et le code de l'application sont la propriété exclusive de eGame Bénin. Toute reproduction sans autorisation est interdite.</p>
+                <p>{t("Le contenu, le logo, les graphismes et le code de l'application sont la propriété exclusive de eGame Bénin. Toute reproduction sans autorisation est interdite.")}</p>
               </div>
             </div>
           </motion.section>
@@ -100,15 +100,15 @@ const Privacy = () => {
             <div className="bg-card border border-border p-8 rounded-[2rem] space-y-4 text-sm text-muted-foreground leading-relaxed shadow-sm">
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center text-violet-500 shrink-0 font-bold">1</div>
-                <p><strong>Fair-Play :</strong> Respect absolu envers les adversaires et les administrateurs. Les insultes mènent au bannissement.</p>
+                <p><strong>{t("Fair-Play :")}</strong> Respect absolu envers les adversaires et les administrateurs. Les insultes mènent au bannissement.</p>
               </div>
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center text-violet-500 shrink-0 font-bold">2</div>
-                <p><strong>Anti-Triche :</strong> L'usage de hacks, scripts ou exploitation de bugs entraîne une disqualification immédiate et définitive.</p>
+                <p><strong>{t("Anti-Triche :")}</strong> L'usage de hacks, scripts ou exploitation de bugs entraîne une disqualification immédiate et définitive.</p>
               </div>
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center text-violet-500 shrink-0 font-bold">3</div>
-                <p><strong>Ponctualité :</strong> Un retard de plus de 10 minutes lors d'un match programmé entraîne un forfait automatique.</p>
+                <p><strong>{t("Ponctualité :")}</strong> Un retard de plus de 10 minutes lors d'un match programmé entraîne un forfait automatique.</p>
               </div>
             </div>
           </motion.section>
@@ -124,17 +124,17 @@ const Privacy = () => {
               
               <div>
                 <h3 className="font-bold text-foreground mb-2">{t("Données collectées")}</h3>
-                <p>Nous collectons uniquement les informations nécessaires au fonctionnement du service : Email (authentification), Pseudo (affichage), et Numéro de téléphone (contact pour les prix et support).</p>
+                <p>{t("Nous collectons uniquement les informations nécessaires au fonctionnement du service : Email (authentification), Pseudo (affichage), et Numéro de téléphone (contact pour les prix et support).")}</p>
               </div>
 
               <div>
                 <h3 className="font-bold text-foreground mb-2">{t("Sécurité des paiements")}</h3>
-                <p>Les paiements sont traités par des prestataires de paiement sécurisés. Les moyens disponibles peuvent varier selon le tournoi. eGame Bénin n'a jamais accès à vos codes PIN ou informations de carte bancaire.</p>
+                <p>{t("Les paiements sont traités par des prestataires de paiement sécurisés. Les moyens disponibles peuvent varier selon le tournoi. eGame Bénin n'a jamais accès à vos codes PIN ou informations de carte bancaire.")}</p>
               </div>
 
               <div>
                 <h3 className="font-bold text-foreground mb-2">{t("Vos droits")}</h3>
-                <p>Conformément à la législation sur la protection des données, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles via les paramètres de votre profil.</p>
+                <p>{t("Conformément à la législation sur la protection des données, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles via les paramètres de votre profil.")}</p>
               </div>
             </div>
           </motion.section>
@@ -146,9 +146,9 @@ const Privacy = () => {
               <h2 className="text-xl font-bold">{t("4. Inscriptions & Remboursements")}</h2>
             </div>
             <div className="bg-card border border-border p-8 rounded-[2rem] space-y-4 text-sm text-muted-foreground leading-relaxed shadow-sm">
-              <p>• Les frais d'inscription sont définitifs et non remboursables une fois le tournoi commencé.</p>
-              <p>• En cas d'annulation d'un tournoi par l'administration, les participants seront intégralement remboursés ou crédités pour un futur événement.</p>
-              <p>• Les récompenses sont versées après validation définitive des résultats, selon les conditions du tournoi.</p>
+              <p>{t("• Les frais d'inscription sont définitifs et non remboursables une fois le tournoi commencé.")}</p>
+              <p>{t("• En cas d'annulation d'un tournoi par l'administration, les participants seront intégralement remboursés ou crédités pour un futur événement.")}</p>
+              <p>{t("• Les récompenses sont versées après validation définitive des résultats, selon les conditions du tournoi.")}</p>
             </div>
           </motion.section>
         </motion.div>
