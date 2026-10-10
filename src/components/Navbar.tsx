@@ -7,8 +7,12 @@ import { supabase } from '@/lib/supabase';
 import Logo from './Logo';
 import InstallAndProfileReminder from './InstallAndProfileReminder';
 import LanguageSwitcher from './LanguageSwitcher';
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 
 const Navbar = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localPath = (fr: string, en: string) => language === 'en' ? en : fr;
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
@@ -44,7 +48,7 @@ const Navbar = () => {
         aria-haspopup="menu"
         className="flex items-center gap-2 rounded-full border border-[#8A2BE2]/50 bg-[#8A2BE2]/20 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-[#8A2BE2]/20 transition-all hover:bg-[#8A2BE2]"
       >
-        <User size={15} /><span>Mon compte</span><ChevronDown size={14} />
+        <User size={15} /><span>{t("Mon compte")}</span><ChevronDown size={14} />
       </button>
       {menuOpen && (
         <div role="menu" className="absolute right-0 top-full z-[70] mt-3 w-56 rounded-2xl border border-[#8A2BE2]/40 bg-[#0F0F1E] p-2 shadow-2xl">
@@ -63,19 +67,19 @@ const Navbar = () => {
       <InstallAndProfileReminder />
       {/* NAVBAR DESKTOP */}
       <header className="hidden lg:flex fixed top-4 left-6 right-6 z-50 max-w-6xl mx-auto items-center justify-between gap-5 bg-[#0F0F1E]/90 backdrop-blur-2xl border border-[#8A2BE2]/30 px-6 xl:px-8 py-3.5 rounded-full shadow-2xl shadow-[#8A2BE2]/10">
-        <Link to="/" className="flex items-center gap-3 shrink-0"><Logo size="sm" showText /></Link>
+        <Link to={localPath("/", "/en")} className="flex items-center gap-3 shrink-0"><Logo size="sm" showText /></Link>
         <nav className="flex min-w-0 items-center justify-center gap-5 xl:gap-7">
-          <Link to="/" className={linkClass('/')}>Accueil</Link>
-          <Link to="/jeux" className={linkClass('/jeux')}>Tournois</Link>
-          <Link to="/classement" className={linkClass('/classement')}>Classement</Link>
-          <Link to="/news" className={linkClass('/news')}>Actualités</Link>
+          <Link to={localPath("/", "/en")} className={linkClass('/')}>{t("Accueil")}</Link>
+          <Link to={localPath("/jeux", "/en/games")} className={linkClass('/jeux')}>{t("Tournois")}</Link>
+          <Link to={localPath("/classement", "/en/leaderboard")} className={linkClass('/classement')}>{t("Classement")}</Link>
+          <Link to={localPath("/news", "/en/news")} className={linkClass('/news')}>{t("Actualités")}</Link>
         </nav>
         <div className="flex shrink-0 items-center gap-2">
           <LanguageSwitcher />
           {isLoggedIn ? accountMenu : (
             <div className="flex items-center gap-2">
-              <Link to="/auth" className="text-xs font-gaming font-bold uppercase tracking-wider text-[#8888AA] hover:text-white px-3 py-2">Connexion</Link>
-              <Link to="/auth?mode=signup" className="btn-neon px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider">Créer un compte</Link>
+              <Link to="/auth" className="text-xs font-gaming font-bold uppercase tracking-wider text-[#8888AA] hover:text-white px-3 py-2">{t("Connexion")}</Link>
+              <Link to="/auth?mode=signup" className="btn-neon px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider">{t("Créer un compte")}</Link>
             </div>
           )}
         </div>
@@ -83,16 +87,16 @@ const Navbar = () => {
 
       {/* NAVBAR TABLETTE */}
       <header className="hidden md:flex lg:hidden fixed top-3 left-4 right-4 z-50 items-center justify-between gap-3 bg-[#0F0F1E]/90 backdrop-blur-2xl border border-[#8A2BE2]/30 px-4 py-3 rounded-2xl shadow-xl">
-        <Link to="/" className="shrink-0"><Logo size="sm" showText={false} /></Link>
+        <Link to={localPath("/", "/en")} className="shrink-0"><Logo size="sm" showText={false} /></Link>
         <nav className="flex min-w-0 items-center gap-3">
-          <Link to="/" className={linkClass('/')}>Accueil</Link>
-          <Link to="/jeux" className={linkClass('/jeux')}>Tournois</Link>
-          <Link to="/classement" className={linkClass('/classement')}>Classement</Link>
-          <Link to="/news" className={linkClass('/news')}>Actualités</Link>
+          <Link to={localPath("/", "/en")} className={linkClass('/')}>{t("Accueil")}</Link>
+          <Link to={localPath("/jeux", "/en/games")} className={linkClass('/jeux')}>{t("Tournois")}</Link>
+          <Link to={localPath("/classement", "/en/leaderboard")} className={linkClass('/classement')}>{t("Classement")}</Link>
+          <Link to={localPath("/news", "/en/news")} className={linkClass('/news')}>{t("Actualités")}</Link>
         </nav>
         <div className="flex shrink-0 items-center gap-2">
           <LanguageSwitcher />
-          {isLoggedIn ? accountMenu : <Link to="/auth" className="btn-neon px-4 py-2 rounded-full text-[10px] font-bold uppercase">Connexion</Link>}
+          {isLoggedIn ? accountMenu : <Link to="/auth" className="btn-neon px-4 py-2 rounded-full text-[10px] font-bold uppercase">{t("Connexion")}</Link>}
         </div>
       </header>
 
@@ -102,14 +106,14 @@ const Navbar = () => {
       </div>
       <nav className="md:hidden fixed bottom-4 left-3 right-3 z-50 rounded-[28px] border border-[#8A2BE2]/40 bg-[#0F0F1E]/95 px-2 py-3 shadow-2xl shadow-black/90 backdrop-blur-2xl">
         <div className="flex items-center justify-between gap-1">
-          <Link to="/" className="flex min-w-0 flex-1 flex-col items-center gap-1"><Home size={19} className={isActive('/') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Accueil</span></Link>
-          <Link to="/jeux" className="flex min-w-0 flex-1 flex-col items-center gap-1"><Trophy size={19} className={isActive('/jeux') || isActive('/game') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/jeux') || isActive('/game') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Tournois</span></Link>
-          <Link to="/classement" className="flex min-w-0 flex-1 flex-col items-center gap-1"><Trophy size={19} className={isActive('/classement') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/classement') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Classement</span></Link>
-          <Link to="/news" className="flex min-w-0 flex-1 flex-col items-center gap-1"><Newspaper size={19} className={isActive('/news') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/news') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Actualités</span></Link>
+          <Link to={localPath("/", "/en")} className="flex min-w-0 flex-1 flex-col items-center gap-1"><Home size={19} className={isActive('/') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>{t("Accueil")}</span></Link>
+          <Link to={localPath("/jeux", "/en/games")} className="flex min-w-0 flex-1 flex-col items-center gap-1"><Trophy size={19} className={isActive('/jeux') || isActive('/game') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/jeux') || isActive('/game') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>{t("Tournois")}</span></Link>
+          <Link to={localPath("/classement", "/en/leaderboard")} className="flex min-w-0 flex-1 flex-col items-center gap-1"><Trophy size={19} className={isActive('/classement') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/classement') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>{t("Classement")}</span></Link>
+          <Link to={localPath("/news", "/en/news")} className="flex min-w-0 flex-1 flex-col items-center gap-1"><Newspaper size={19} className={isActive('/news') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/news') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>{t("Actualités")}</span></Link>
           {isLoggedIn ? (
-            <button onClick={() => navigate('/profil')} className="flex min-w-0 flex-1 flex-col items-center gap-1"><User size={19} className={isActive('/profil') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/profil') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Compte</span></button>
+            <button onClick={() => navigate('/profil')} className="flex min-w-0 flex-1 flex-col items-center gap-1"><User size={19} className={isActive('/profil') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/profil') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>{t("Compte")}</span></button>
           ) : (
-            <Link to="/auth" className="flex min-w-0 flex-1 flex-col items-center gap-1"><LogIn size={19} className={isActive('/auth') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/auth') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>Connexion</span></Link>
+            <Link to="/auth" className="flex min-w-0 flex-1 flex-col items-center gap-1"><LogIn size={19} className={isActive('/auth') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'} /><span className={`text-[8px] font-bold uppercase tracking-wide ${isActive('/auth') ? 'text-[#8A2BE2]' : 'text-[#8888AA]'}`}>{t("Connexion")}</span></Link>
           )}
         </div>
       </nav>
