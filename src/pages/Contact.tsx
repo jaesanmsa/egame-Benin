@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Navbar from '@/components/Navbar';
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import { ArrowLeft, Mail, HelpCircle, Facebook, Users, MessageSquare, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +11,8 @@ import { DISCORD_SERVERS, MAIN_DISCORD_INVITE } from '@/lib/discord';
 import TikTokLogo from '@/components/TikTokLogo';
 
 const Contact = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const navigate = useNavigate();
   const email = "contact@egamebenin.com";
   const facebookUrl = "https://www.facebook.com/profile.php?id=61588439640775";
@@ -33,7 +36,7 @@ const Contact = () => {
 
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-gaming font-black uppercase text-white">Contact & Support</h1>
-          <p className="text-xs text-[#8888AA]">L'équipe eGame Bénin répond à toutes tes questions 7j/7</p>
+          <p className="text-xs text-[#8888AA]">{t("L'équipe eGame Bénin répond à toutes tes questions 7j/7")}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -47,8 +50,8 @@ const Contact = () => {
               <MessageSquare size={24} />
             </div>
             <div>
-              <p className="font-gaming font-bold text-xs text-white">Serveur Discord</p>
-              <p className="text-[10px] text-[#8888AA] uppercase">Rejoindre maintenant</p>
+              <p className="font-gaming font-bold text-xs text-white">{t("Serveur Discord")}</p>
+              <p className="text-[10px] text-[#8888AA] uppercase">{t("Rejoindre maintenant")}</p>
             </div>
           </a>
 
@@ -60,8 +63,8 @@ const Contact = () => {
               <Mail size={24} />
             </div>
             <div>
-              <p className="font-gaming font-bold text-xs text-white">Support E-mail</p>
-              <p className="text-[10px] text-[#8888AA] uppercase">Officiel</p>
+              <p className="font-gaming font-bold text-xs text-white">{t("Support E-mail")}</p>
+              <p className="text-[10px] text-[#8888AA] uppercase">{t("Officiel")}</p>
             </div>
           </button>
 
@@ -73,8 +76,8 @@ const Contact = () => {
               <Facebook size={24} />
             </div>
             <div>
-              <p className="font-gaming font-bold text-xs text-white">Page Facebook</p>
-              <p className="text-[10px] text-[#8888AA] uppercase">Actualités</p>
+              <p className="font-gaming font-bold text-xs text-white">{t("Page Facebook")}</p>
+              <p className="text-[10px] text-[#8888AA] uppercase">{t("Actualités")}</p>
             </div>
           </button>
 
@@ -89,8 +92,8 @@ const Contact = () => {
               <TikTokLogo size={24} />
             </div>
             <div>
-              <p className="font-gaming font-bold text-xs text-white">Suivez eGame Bénin</p>
-              <p className="text-[10px] text-[#8888AA] uppercase">TikTok officiel</p>
+              <p className="font-gaming font-bold text-xs text-white">{t("Suivez eGame Bénin")}</p>
+              <p className="text-[10px] text-[#8888AA] uppercase">{t("TikTok officiel")}</p>
             </div>
           </a>
         </div>
@@ -111,8 +114,8 @@ const Contact = () => {
                 <MessageSquare size={15} className="text-white" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-gaming font-black text-white truncate">Serveur principal eGame Bénin</p>
-                <p className="text-[10px] text-white/80">Support, annonces et communauté</p>
+                <p className="text-xs font-gaming font-black text-white truncate">{t("Serveur principal eGame Bénin")}</p>
+                <p className="text-[10px] text-white/80">{t("Support, annonces et communauté")}</p>
               </div>
             </div>
             <ChevronRight size={16} className="text-white shrink-0 transition-transform group-hover:translate-x-0.5" />
