@@ -33,7 +33,6 @@ const mapApplication = (row: any, communities: any[], decisions: any[], email = 
   termsAccepted: !!row.terms_accepted_at,
   status: row.status,
   adminNote: row.admin_note || "",
-  kycStatus: row.kyc_status || "disabled_pending_vendor",
   createdAt: row.created_at,
   updatedAt: row.updated_at,
   decisions: decisions.map((decision): OrganizerDecision => ({ status: decision.to_status, note: decision.note || "", actorUserId: decision.actor_user_id, createdAt: decision.created_at })),
