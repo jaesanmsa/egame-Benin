@@ -226,13 +226,23 @@ BEGIN
   IF jsonb_typeof(p_communities) <> 'array' THEN RAISE EXCEPTION 'COMMUNITIES_REQUIRED'; END IF;
   v_count := jsonb_array_length(p_communities);
   IF v_count < 1 OR v_count > 2 THEN RAISE EXCEPTION 'MAX_TWO_COMMUNITIES'; END IF;
-  IF EXISTS (SELECT 1 FROM public.organizer_applications a WHERE a.user_id=auth.uid() AND a.status NOT IN ('rejected')) THEN
+  -- Existing drafts are edited atomically rather than duplicated. Other statuses remain protected.
+  SELECT id INTO v_app_id FROM public.organizer_applications
+  WHERE user_id=auth.uid() AND status='draft' ORDER BY created_at DESC LIMIT 1 FOR UPDATE;
+  IF EXISTS (SELECT 1 FROM public.organizer_applications a WHERE a.user_id=auth.uid() AND a.status NOT IN ('draft','rejected')) THEN
     RAISE EXCEPTION 'APPLICATION_ALREADY_EXISTS';
   END IF;
   v_status := CASE WHEN p_submit THEN 'submitted' ELSE 'draft' END;
-  INSERT INTO public.organizer_applications(user_id,legal_name,country,professional_contact,terms_accepted_at,status,kyc_status,submitted_at)
-  VALUES(auth.uid(),btrim(p_legal_name),upper(btrim(p_country)),btrim(p_professional_contact),now(),v_status,'disabled_pending_vendor',CASE WHEN p_submit THEN now() ELSE NULL END)
-  RETURNING id INTO v_app_id;
+  IF v_app_id IS NULL THEN
+    INSERT INTO public.organizer_applications(user_id,legal_name,country,professional_contact,terms_accepted_at,status,kyc_status,submitted_at)
+    VALUES(auth.uid(),btrim(p_legal_name),btrim(p_country),btrim(p_professional_contact),now(),v_status,'disabled_pending_vendor',CASE WHEN p_submit THEN now() ELSE NULL END)
+    RETURNING id INTO v_app_id;
+  ELSE
+    UPDATE public.organizer_applications SET legal_name=btrim(p_legal_name),country=btrim(p_country),
+      professional_contact=btrim(p_professional_contact),status=v_status,updated_at=now(),
+      submitted_at=CASE WHEN p_submit THEN now() ELSE NULL END WHERE id=v_app_id;
+    DELETE FROM public.organizer_application_communities WHERE application_id=v_app_id;
+  END IF;
   FOR v_community IN SELECT value FROM jsonb_array_elements(p_communities) LOOP
     IF nullif(btrim(v_community->>'name'),'') IS NULL OR nullif(btrim(v_community->>'game_key'),'') IS NULL
        OR nullif(btrim(v_community->>'public_url'),'') IS NULL OR nullif(btrim(v_community->>'responsibility_proof_url'),'') IS NULL
