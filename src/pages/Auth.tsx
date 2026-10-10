@@ -10,8 +10,12 @@ import { AFRICAN_COUNTRIES } from '@/lib/countries';
 import { Mail, Lock, UserPlus, LogIn, AtSign, ArrowLeft, Globe, Zap, ChevronDown } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Logo from '@/components/Logo';
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 
 const Auth = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const lp = (path: string) => language === "en" ? "/en" + (path === "/" ? "" : path) : path;
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,7 +40,7 @@ const Auth = () => {
       options: { emailRedirectTo: `${getRedirectUrl()}/choisir-profil` }
     });
     if (resendError) showError(resendError.message);
-    else showSuccess("Nouveau lien de confirmation envoyé !");
+    else showSuccess(t("Nouveau lien de confirmation envoyé !"));
     setResending(false);
   };
 
@@ -64,18 +68,18 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
       if (error) showError(error.message);
       else {
-        showSuccess("Connexion réussie !");
-        navigate('/');
+        showSuccess(t("Connexion réussie !"));
+        navigate(lp('/'));
       }
     } else {
       const cleanUsername = username.trim();
       if (cleanUsername.length < 3) {
-        showError("Le pseudo doit faire au moins 3 caractères.");
+        showError(t("Le pseudo doit faire au moins 3 caractères."));
         setLoading(false);
         return;
       }
       if (!AFRICAN_COUNTRIES.some((item) => item.code === country)) {
-        showError("Sélectionne ton pays pour créer ton compte.");
+        showError(t("Sélectionne ton pays pour créer ton compte."));
         setLoading(false);
         return;
       }
@@ -93,15 +97,15 @@ const Auth = () => {
       else if (data.user && data.session === null) {
         if (data.user.email_confirmed_at) {
           // Un compte confirmé existe déjà avec cet e-mail : aucun lien n'est envoyé par Supabase.
-          showSuccess("Un compte existe déjà avec cet e-mail. Connecte-toi directement.");
+          showSuccess(t("Un compte existe déjà avec cet e-mail. Connecte-toi directement."));
           setIsLogin(true);
         } else {
           setIsEmailSent(true);
         }
       }
       else {
-        showSuccess("Compte créé !");
-        navigate("/choisir-profil");
+        showSuccess(t("Compte créé !"));
+        navigate(lp("/choisir-profil"));
       }
     }
     setLoading(false);
@@ -114,7 +118,7 @@ const Auth = () => {
           <div className="w-20 h-20 bg-[#8A2BE2]/20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#8A2BE2]">
             <Mail size={40} />
           </div>
-          <h1 className="text-2xl font-gaming font-black">Vérifiez vos mails</h1>
+          <h1 className="text-2xl font-gaming font-black">{t("Vérifiez vos mails")}</h1>
           <p className="text-[#8888AA] text-sm leading-relaxed">Un lien de confirmation a été envoyé à <span className="text-white font-bold">{email}</span>.</p>
           <p className="text-[10px] text-[#8888AA]/70 leading-relaxed">
             Pense à vérifier aussi les dossiers spam et promotions.
@@ -135,7 +139,7 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-[#07070C] text-white flex flex-col items-center justify-center p-6 relative">
       <Link 
-        to="/" 
+        to={lp("/")} 
         className="fixed top-6 left-6 z-[1000] flex items-center gap-2 text-[#8888AA] hover:text-white transition-all bg-[#0F0F1E]/80 px-4 py-2 rounded-full border border-[#8A2BE2]/30 text-xs font-gaming font-bold uppercase tracking-wider"
       >
         <ArrowLeft size={16} /> Accueil
@@ -143,7 +147,7 @@ const Auth = () => {
 
       <div className="w-full max-w-md space-y-8 glass-panel p-8">
         <div className="text-center space-y-2">
-          <Link to="/" className="inline-block mb-2"><Logo size="lg" showText={false} /></Link>
+          <Link to={lp("/")} className="inline-block mb-2"><Logo size="lg" showText={false} /></Link>
           <h1 className="text-3xl font-gaming font-black uppercase">
             eGame <span className="text-[#8A2BE2]">Bénin</span>
           </h1>
@@ -181,13 +185,13 @@ const Auth = () => {
 
           <div className="relative py-2">
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-[#8A2BE2]/20"></span></div>
-            <div className="relative flex justify-center text-[10px] uppercase font-gaming"><span className="bg-[#0F0F1E] px-3 text-[#8888AA]">Ou par e-mail</span></div>
+            <div className="relative flex justify-center text-[10px] uppercase font-gaming"><span className="bg-[#0F0F1E] px-3 text-[#8888AA]">{t("Ou par e-mail")}</span></div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div className="space-y-1.5">
-                <Label htmlFor="username" className="text-xs font-gaming uppercase text-[#8888AA]">Pseudo de Joueur</Label>
+                <Label htmlFor="username" className="text-xs font-gaming uppercase text-[#8888AA]">{t("Pseudo de Joueur")}</Label>
                 <div className="relative">
                   <AtSign className="absolute left-3 top-3 text-[#8888AA]" size={18} />
                   <Input id="username" placeholder="Ex: ProGamer229" className="pl-10 bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={username} onChange={(e) => setUsername(e.target.value)} required />
@@ -197,7 +201,7 @@ const Auth = () => {
 
             {!isLogin && (
               <div className="space-y-1.5">
-                <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">Pays</Label>
+                <Label htmlFor="country" className="text-xs font-gaming uppercase text-[#8888AA]">{t("Pays")}</Label>
                 <div className="relative">
                   <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A2BE2] pointer-events-none" />
                   <select
@@ -222,7 +226,7 @@ const Auth = () => {
 
             {!isLogin && (
               <div className="space-y-1.5">
-                <Label htmlFor="phone" className="text-xs font-gaming uppercase text-[#8888AA]">Numéro Mobile Money</Label>
+                <Label htmlFor="phone" className="text-xs font-gaming uppercase text-[#8888AA]">{t("Numéro Mobile Money")}</Label>
                 <PhoneCountryInput
                   id="phone"
                   value={phone}
@@ -233,7 +237,7 @@ const Auth = () => {
             )}
             
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-gaming uppercase text-[#8888AA]">Adresse E-mail</Label>
+              <Label htmlFor="email" className="text-xs font-gaming uppercase text-[#8888AA]">{t("Adresse E-mail")}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 text-[#8888AA]" size={18} />
                 <Input id="email" type="email" placeholder="votre@email.com" className="pl-10 bg-[#07070C] border-[#8A2BE2]/30 rounded-xl text-white font-medium" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -242,8 +246,8 @@ const Auth = () => {
 
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <Label htmlFor="password" className="text-xs font-gaming uppercase text-[#8888AA]">Mot de passe</Label>
-                {isLogin && <Link to="/forgot-password" className="text-[10px] text-[#A855F7] hover:underline font-gaming">Oublié ?</Link>}
+                <Label htmlFor="password" className="text-xs font-gaming uppercase text-[#8888AA]">{t("Mot de passe")}</Label>
+                {isLogin && <Link to="/forgot-password" className="text-[10px] text-[#A855F7] hover:underline font-gaming">{t("Oublié ?")}</Link>}
               </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 text-[#8888AA]" size={18} />
