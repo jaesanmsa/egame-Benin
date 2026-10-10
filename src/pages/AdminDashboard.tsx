@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -24,6 +25,9 @@ import PartnersAdminTab from '@/components/admin/PartnersAdminTab';
 import CheckInsAdminTab from '@/components/admin/CheckInsAdminTab';
 
 const AdminDashboard = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -357,7 +361,7 @@ const AdminDashboard = () => {
             </div>
             <div>
               <h1 className="text-3xl font-black tracking-tight">Administration</h1>
-              <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Gestion de l'arène eGame Bénin</p>
+              <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">{t("Gestion de l'arène eGame Bénin")}</p>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -369,12 +373,12 @@ const AdminDashboard = () => {
               <MessageSquareText size={18} /> Tickets & validation
             </button>
             <Link
-            to="/admin/organizers"
+            to={localizedLinkPath("/admin/organizers")}
             className="w-full sm:w-auto rounded-2xl border border-[#8A2BE2]/40 bg-[#0F0F1E] px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white transition-colors hover:border-[#A855F7] hover:bg-[#8A2BE2]/10 flex items-center justify-center gap-2"
           >
             Organisateurs V2
           </Link>
-          <Link to="/admin/team-tournaments" className="w-full sm:w-auto rounded-2xl border border-[#8A2BE2]/40 bg-[#0F0F1E] px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white transition-colors hover:border-[#A855F7] hover:bg-[#8A2BE2]/10 flex items-center justify-center gap-2">
+          <Link to={localizedLinkPath("/admin/team-tournaments")} className="w-full sm:w-auto rounded-2xl border border-[#8A2BE2]/40 bg-[#0F0F1E] px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white transition-colors hover:border-[#A855F7] hover:bg-[#8A2BE2]/10 flex items-center justify-center gap-2">
             Équipes & inscriptions
           </Link>
           <button
@@ -410,7 +414,7 @@ const AdminDashboard = () => {
                 <p className="text-sm font-black break-words">
                   Espace Discord — {discordStatus.title || discordStatus.tournamentId}
                 </p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">Automatisation des tournois</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">{t("Automatisation des tournois")}</p>
               </div>
             </div>
 
@@ -466,15 +470,15 @@ const AdminDashboard = () => {
           <div className="bg-muted/50 p-1.5 rounded-[25px] border border-border overflow-x-auto no-scrollbar">
             <TabsList className="flex w-full bg-transparent h-auto gap-1 min-w-max px-4">
               <TabsTrigger value="payments" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Transactions</TabsTrigger>
-              <TabsTrigger value="participants" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Joueurs</TabsTrigger>
-              <TabsTrigger value="tournaments" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Nouveau</TabsTrigger>
-              <TabsTrigger value="edit" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Modifier</TabsTrigger>
-              <TabsTrigger value="news" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Actualités</TabsTrigger>
-              <TabsTrigger value="finish" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Clôturer</TabsTrigger>
+              <TabsTrigger value="participants" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">{t("Joueurs")}</TabsTrigger>
+              <TabsTrigger value="tournaments" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">{t("Nouveau")}</TabsTrigger>
+              <TabsTrigger value="edit" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">{t("Modifier")}</TabsTrigger>
+              <TabsTrigger value="news" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">{t("Actualités")}</TabsTrigger>
+              <TabsTrigger value="finish" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">{t("Clôturer")}</TabsTrigger>
               <TabsTrigger value="leaderboard" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Top 5</TabsTrigger>
-              <TabsTrigger value="partnerships" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Partenariats</TabsTrigger>
+              <TabsTrigger value="partnerships" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">{t("Partenariats")}</TabsTrigger>
               <TabsTrigger value="tickets" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Tickets</TabsTrigger>
-              <TabsTrigger value="partners-admin" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Partenaires</TabsTrigger>
+              <TabsTrigger value="partners-admin" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">{t("Partenaires")}</TabsTrigger>
               <TabsTrigger value="checkins" className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-[20px] data-[state=active]:bg-violet-600 data-[state=active]:text-white transition-all">Check-ins</TabsTrigger>
             </TabsList>
           </div>
