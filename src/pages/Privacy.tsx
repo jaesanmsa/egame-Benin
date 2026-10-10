@@ -1,4 +1,4 @@
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React from 'react';
@@ -9,6 +9,7 @@ import { ArrowLeft, Shield, Scale, Lock, FileText, AlertCircle } from 'lucide-re
 import { useNavigate } from 'react-router-dom';
 
 const Privacy = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const navigate = useNavigate();
