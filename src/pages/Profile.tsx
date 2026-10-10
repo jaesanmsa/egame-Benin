@@ -14,6 +14,7 @@ import CheckInCard from '@/components/checkin/CheckInCard';
 import RewardsHistory from '@/components/checkin/RewardsHistory';
 import DiscordConnectionCard from '@/components/DiscordConnectionCard';
 import OrganizerProfileCard from '@/components/OrganizerProfileCard';
+import { Users } from 'lucide-react';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
@@ -166,6 +167,7 @@ const Profile = () => {
         
                 <DiscordConnectionCard />
                 <OrganizerProfileCard />
+                <Link to="/mes-equipes" className="flex items-center justify-between rounded-2xl border border-[#8A2BE2]/30 bg-[#0F0F1E] p-4 text-sm font-bold text-white hover:border-[#A855F7]"><span className="flex items-center gap-3"><Users size={20} className="text-[#A855F7]" /> Mes équipes et inscriptions collectives</span><span className="text-[#A855F7]">→</span></Link>
 
         <div className="space-y-3">
           {isAdmin && (
