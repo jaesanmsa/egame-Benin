@@ -10,9 +10,10 @@ import { AFRICAN_COUNTRIES } from '@/lib/countries';
 import { Mail, Lock, UserPlus, LogIn, AtSign, ArrowLeft, Globe, Zap, ChevronDown } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Logo from '@/components/Logo';
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 
 const Auth = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const lp = (path: string) => language === "en" ? "/en" + (path === "/" ? "" : path) : path;
@@ -247,7 +248,7 @@ const Auth = () => {
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <Label htmlFor="password" className="text-xs font-gaming uppercase text-[#8888AA]">{t("Mot de passe")}</Label>
-                {isLogin && <Link to="/forgot-password" className="text-[10px] text-[#A855F7] hover:underline font-gaming">{t("Oublié ?")}</Link>}
+                {isLogin && <Link to={localizedLinkPath("/forgot-password")} className="text-[10px] text-[#A855F7] hover:underline font-gaming">{t("Oublié ?")}</Link>}
               </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 text-[#8888AA]" size={18} />
