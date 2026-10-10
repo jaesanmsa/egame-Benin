@@ -18,12 +18,11 @@ const AccountChoice = () => {
       try {
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (authError || !user) { navigate("/auth", { replace: true }); return; }
-        // No onboarding dialog for people who already registered before this update.
-        const createdRecently = Date.now() - new Date(user.created_at).getTime() < 30 * 60 * 1000;
+        // All existing profiles were marked player during migration; only new, unclassified profiles see this choice.
         const { data: profile, error: profileError } = await supabase.from("profiles")
           .select("account_kind").eq("id", user.id).maybeSingle();
         if (profileError) throw profileError;
-        if (!createdRecently || profile?.account_kind) {
+        if (profile?.account_kind) {
           navigate("/", { replace: true }); return;
         }
         if (active) setUserId(user.id);
