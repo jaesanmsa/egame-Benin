@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
 import FloatingSupport from "@/components/FloatingSupport";
 import DailyCheckInModal from "@/components/checkin/DailyCheckInModal";
@@ -34,7 +34,7 @@ const NewsDetail = React.lazy(() => import("./pages/NewsDetail"));
 const About = React.lazy(() => import("./pages/About"));
 const BecomePartner = React.lazy(() => import("./pages/BecomePartner"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
-const EnglishSite = React.lazy(() => import("./pages/EnglishSite"));
+// EN is intentionally disabled until full FR/EN feature parity is implemented.
 const OrganizerApplicationPage = React.lazy(() => import("./pages/OrganizerApplication"));
 const OrganizerDashboard = React.lazy(() => import("./pages/OrganizerDashboard"));
 const OrganizerAdmin = React.lazy(() => import("./pages/OrganizerAdmin"));
@@ -71,7 +71,7 @@ const App = () => (
       <BrowserRouter>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-              <Route path="/en/*" element={<EnglishSite />} />
+              <Route path="/en/*" element={<Navigate to="/" replace />} />
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/choisir-profil" element={<AccountChoice />} />
