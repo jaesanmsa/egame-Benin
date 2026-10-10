@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import PlayerBadge from '@/components/PlayerBadge';
 import SEO from '@/components/SEO';
 import { Settings, LogOut, Star, Palette, Activity, Zap, Award, Bell, BellOff, History, LayoutDashboard, Phone, MapPin } from 'lucide-react';
@@ -18,6 +18,7 @@ import OrganizerProfileCard from '@/components/OrganizerProfileCard';
 import { Users } from 'lucide-react';
 
 const Profile = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const lp = (path: string) => language === "en" ? "/en" + (path === "/" ? "" : path) : path;
