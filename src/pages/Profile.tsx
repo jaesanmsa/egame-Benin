@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import PlayerBadge from '@/components/PlayerBadge';
 import SEO from '@/components/SEO';
 import { Settings, LogOut, Star, Palette, Activity, Zap, Award, Bell, BellOff, History, LayoutDashboard, Phone, MapPin } from 'lucide-react';
@@ -17,6 +18,9 @@ import OrganizerProfileCard from '@/components/OrganizerProfileCard';
 import { Users } from 'lucide-react';
 
 const Profile = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const lp = (path: string) => language === "en" ? "/en" + (path === "/" ? "" : path) : path;
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -28,7 +32,7 @@ const Profile = () => {
     const getUserData = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) { navigate('/auth'); return; }
+        if (!user) { navigate(lp('/auth')); return; }
         setUser(user);
         
         const { data: profileData } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
@@ -42,7 +46,7 @@ const Profile = () => {
         
         setTournamentCount(count || 0);
       } catch (err) {
-        navigate('/auth');
+        navigate(lp('/auth'));
       } finally {
         setLoading(false);
       }
@@ -52,8 +56,8 @@ const Profile = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    showSuccess("Déconnexion réussie !");
-    navigate('/');
+    showSuccess(t("Déconnexion réussie !"));
+    navigate(lp('/'));
   };
 
   const handleToggleNotifications = async () => {
@@ -64,10 +68,10 @@ const Profile = () => {
           .from('profiles')
           .update({ notifications_enabled: false })
           .eq('id', user.id);
-        showSuccess("Notifications désactivées.");
+        showSuccess(t("Notifications désactivées."));
       } else {
         await requestNotificationPermission(user.id);
-        showSuccess("Notifications activées !");
+        showSuccess(t("Notifications activées !"));
       }
       
       const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
@@ -101,7 +105,7 @@ const Profile = () => {
             <div className="w-28 h-28 rounded-full border-4 border-[#8A2BE2] overflow-hidden bg-[#07070C] shadow-2xl mx-auto">
               <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
             </div>
-            <Link to="/avatar-maker" className="absolute bottom-0 right-0 bg-[#8A2BE2] p-2.5 rounded-full border-2 border-[#07070C] hover:scale-110 transition-transform text-white shadow-lg">
+            <Link to={lp("/avatar-maker")} className="absolute bottom-0 right-0 bg-[#8A2BE2] p-2.5 rounded-full border-2 border-[#07070C] hover:scale-110 transition-transform text-white shadow-lg">
               <Palette size={16} />
             </Link>
           </div>
@@ -126,19 +130,19 @@ const Profile = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
           <div className="glass-panel min-w-0 p-3 sm:p-5 text-center space-y-1">
             <Activity className="mx-auto text-[#8A2BE2]" size={22} />
-            <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase">Tournois</p>
+            <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase">{t("Tournois")}</p>
             <p className="text-xl font-gaming font-black text-white">{tournamentCount}</p>
           </div>
 
           <div className="glass-panel p-5 text-center space-y-1 border-[#FFD700]/30">
             <Zap className="mx-auto text-[#FFD700]" size={22} />
-            <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase">Points</p>
+            <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase">{t("Points")}</p>
             <p className="text-xl font-gaming font-black text-[#FFD700]">{displayPoints}</p>
           </div>
 
           <div className="glass-panel p-5 text-center space-y-1 border-emerald-500/30">
             <Award className="mx-auto text-emerald-400" size={22} />
-            <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase">Victoires</p>
+            <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase">{t("Victoires")}</p>
             <p className="text-xl font-gaming font-black text-emerald-400">{profile?.champion_count || 0}</p>
           </div>
 
@@ -156,22 +160,22 @@ const Profile = () => {
                           <div className="flex items-center gap-3 min-w-0">
                             <Phone size={20} className="text-[#8A2BE2] shrink-0" />
                     <div>
-                      <p className="text-xs font-gaming font-bold text-white">Numéro Mobile Money</p>
+                      <p className="text-xs font-gaming font-bold text-white">{t("Numéro Mobile Money")}</p>
                       <p className="text-xs text-[#8888AA] font-mono">{phone}</p>
                     </div>
                   </div>
-                  <Link to="/edit-profile" className="text-xs font-gaming font-bold text-[#A855F7] hover:underline">
+                  <Link to={lp("/edit-profile")} className="text-xs font-gaming font-bold text-[#A855F7] hover:underline">
                     Modifier
                   </Link>
                 </div>
         
                 <DiscordConnectionCard />
                 <OrganizerProfileCard />
-                <Link to="/mes-equipes" className="flex items-center justify-between rounded-2xl border border-[#8A2BE2]/30 bg-[#0F0F1E] p-4 text-sm font-bold text-white hover:border-[#A855F7]"><span className="flex items-center gap-3"><Users size={20} className="text-[#A855F7]" /> Mes équipes et inscriptions collectives</span><span className="text-[#A855F7]">→</span></Link>
+                <Link to={lp("/mes-equipes")} className="flex items-center justify-between rounded-2xl border border-[#8A2BE2]/30 bg-[#0F0F1E] p-4 text-sm font-bold text-white hover:border-[#A855F7]"><span className="flex items-center gap-3"><Users size={20} className="text-[#A855F7]" /> Mes équipes et inscriptions collectives</span><span className="text-[#A855F7]">→</span></Link>
 
         <div className="space-y-3">
           {isAdmin && (
-            <Link to="/admin" className="block">
+            <Link to={lp("/admin")} className="block">
               <button className="w-full btn-neon p-4 rounded-2xl font-gaming font-black text-xs uppercase tracking-wider flex items-center justify-between shadow-lg shadow-[#8A2BE2]/30 transition-all">
                 <span className="flex items-center gap-3"><LayoutDashboard size={18} /> Dashboard Administration</span>
                 <span>→</span>
@@ -179,7 +183,7 @@ const Profile = () => {
             </Link>
           )}
 
-          <Link to="/payments" className="block">
+          <Link to={lp("/payments")} className="block">
             <button className="w-full glass-panel hover:border-[#8A2BE2] p-4 rounded-2xl font-gaming font-bold text-xs uppercase text-white flex items-center justify-between transition-all">
               <span className="flex items-center gap-3"><History size={18} className="text-[#8A2BE2]" /> Historique des Inscriptions</span>
               <span>→</span>
@@ -197,7 +201,7 @@ const Profile = () => {
             </span>
           </button>
 
-          <Link to="/edit-profile" className="block">
+          <Link to={lp("/edit-profile")} className="block">
             <button className="w-full glass-panel hover:border-[#8A2BE2] p-4 rounded-2xl font-gaming font-bold text-xs uppercase text-white flex items-center justify-between transition-all">
               <span className="flex items-center gap-3"><Settings size={18} className="text-[#8888AA]" /> Modifier mon profil</span>
               <span>→</span>
