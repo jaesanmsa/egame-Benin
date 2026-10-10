@@ -1,9 +1,22 @@
 import { useLocation } from "react-router-dom";
+import { useCallback } from "react";
+import { toEnglishPath } from "@/lib/languageRouting";
 
 // Both locales render the same React pages; only text is translated.
 export function useSiteLanguage(): "fr" | "en" {
   const { pathname } = useLocation();
   return pathname === "/en" || pathname.startsWith("/en/") ? "en" : "fr";
+}
+
+// Keeps internal links on the same localized route without altering their handlers.
+export function useLocalePath(): (destination: string) => string {
+  const language = useSiteLanguage();
+  return useCallback((destination: string) => {
+    if (language !== "en" || !destination.startsWith("/") || destination.startsWith("/en") || destination.startsWith("//")) return destination;
+    const match = destination.match(/^([^?#]*)(.*)$/);
+    if (!match) return destination;
+    return toEnglishPath(match[1]) + match[2];
+  }, [language]);
 }
 
 const EN: Record<string, string> = {
