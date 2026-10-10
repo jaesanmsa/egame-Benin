@@ -86,7 +86,7 @@ export async function getCommunityInvitations(): Promise<CommunityInvitation[]> 
 }
 
 export async function getCommunityMemberships() {
-  const { data, error } = await supabase.from("community_memberships").select("id,community_id,user_id,status,joined_at,ended_at,ended_by,profiles!community_memberships_user_id_fkey(username,full_name)").order("joined_at", { ascending: false });
+  const { data, error } = await supabase.from("community_memberships").select("id,community_id,user_id,status,joined_at,ended_at,ended_by,profiles!community_memberships_profile_id_fkey(username,full_name)").order("joined_at", { ascending: false });
   if (error) fail(error);
   return data || [];
 }
