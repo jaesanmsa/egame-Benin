@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Navbar from '@/components/Navbar';
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import { Target, Users, Shield, ArrowLeft, Trophy, UserPlus, Gamepad2, CreditCard, Hash, MessageSquare, Zap } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -51,6 +51,7 @@ const STEPS: Step[] = [
 ];
 
 const About = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const navigate = useNavigate();
@@ -167,7 +168,7 @@ const About = () => {
               </div>
             </div>
             <button
-              onClick={() => navigate('/contact')}
+              onClick={() => navigate(localizedLinkPath("/contact"))}
               className="shrink-0 bg-[#5865F2] hover:bg-[#4752C4] text-white font-gaming font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-2xl shadow-lg shadow-[#5865F2]/20 transition-all flex items-center gap-2"
             >
               <MessageSquare size={16} />
