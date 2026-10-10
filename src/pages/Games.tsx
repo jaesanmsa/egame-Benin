@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { Gamepad2, Filter, SearchX, ArrowRight } from 'lucide-react';
@@ -23,6 +24,8 @@ const ALL_GAMES = [
 ];
 
 const Games = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const [activeGames, setActiveGames] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [selectedGame, setSelectedGame] = useState<string>("all");
@@ -63,8 +66,8 @@ const Games = () => {
               <Gamepad2 size={26} />
             </div>
             <div>
-              <h1 className="text-3xl font-gaming font-black uppercase text-white">Jeux pris en charge</h1>
-              <p className="text-xs text-[#8888AA] font-esport tracking-wider mt-1">Les tournois sont annoncés séparément selon leur disponibilité.</p>
+              <h1 className="text-3xl font-gaming font-black uppercase text-white">{t("Jeux pris en charge")}</h1>
+              <p className="text-xs text-[#8888AA] font-esport tracking-wider mt-1">{t("Les tournois sont annoncés séparément selon leur disponibilité.")}</p>
             </div>
           </div>
 
@@ -73,11 +76,11 @@ const Games = () => {
               <SelectTrigger className="bg-[#0F0F1E] border border-[#8A2BE2]/30 rounded-2xl h-14 text-xs font-gaming font-bold">
                 <div className="flex items-center gap-2">
                   <Filter size={16} className="text-[#8A2BE2]" />
-                  <SelectValue placeholder="Filtrer par jeu" />
+                  <SelectValue placeholder={t("Filtrer par jeu")} />
                 </div>
               </SelectTrigger>
               <SelectContent className="bg-[#0F0F1E] border border-[#8A2BE2]/40 text-white">
-                <SelectItem value="all">Tous les jeux</SelectItem>
+                <SelectItem value="all">{t("Tous les jeux")}</SelectItem>
                 {ALL_GAMES.map(game => (
                   <SelectItem key={game.id} value={game.id}>
                     {game.name}
@@ -94,11 +97,11 @@ const Games = () => {
           ) : filteredGames.length === 0 ? (
             <div className="col-span-full py-20 text-center glass-panel">
               <SearchX size={48} className="mx-auto text-[#8888AA] mb-3 opacity-40" />
-              <p className="text-sm font-gaming text-[#8888AA]">Aucun jeu correspondant.</p>
+              <p className="text-sm font-gaming text-[#8888AA]">{t("Aucun jeu correspondant.")}</p>
             </div>
           ) : (
             filteredGames.map((game) => (
-              <Link key={game.id} to={`/game/${game.id}`}>
+              <Link key={game.id} to={language === "en" ? `/en/game/${game.id}` : `/game/${game.id}`}>
                 <motion.div 
                   whileHover={{ y: -8, scale: 1.02 }}
                   className="group relative aspect-[3/4] rounded-3xl overflow-hidden border border-[#8A2BE2]/20 hover:border-[#8A2BE2] bg-[#0F0F1E] shadow-2xl cursor-pointer"
@@ -110,7 +113,7 @@ const Games = () => {
                     {activeGames.has(game.id) && (
                       <div className="flex items-center gap-1.5 bg-emerald-950/80 backdrop-blur-md border border-emerald-500/50 px-2.5 py-1 rounded-full">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                        <span className="text-[9px] font-gaming font-extrabold text-emerald-400 uppercase">Actif</span>
+                        <span className="text-[9px] font-gaming font-extrabold text-emerald-400 uppercase">{t("Actif")}</span>
                       </div>
                     )}
                   </div>
