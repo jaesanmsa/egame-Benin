@@ -1,4 +1,4 @@
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -70,6 +70,7 @@ const emptyForm = {
 };
 
 const BecomePartner = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const [form, setForm] = useState(emptyForm);
@@ -219,7 +220,7 @@ const BecomePartner = () => {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-              <Link to="/">
+              <Link to={localizedLinkPath("/")}>
                 <Button variant="outline" className="bg-[#0F0F1E] border-[#8A2BE2]/50 hover:bg-[#8A2BE2]/10 rounded-2xl font-gaming font-bold text-xs uppercase tracking-wider px-6">
                   Retour à l'accueil
                 </Button>
