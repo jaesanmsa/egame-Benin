@@ -33,7 +33,7 @@ const Auth = () => {
     const { error: resendError } = await supabase.auth.resend({
       type: 'signup',
       email: email.trim().toLowerCase(),
-      options: { emailRedirectTo: getRedirectUrl() }
+      options: { emailRedirectTo: `${getRedirectUrl()}/choisir-profil` }
     });
     if (resendError) showError(resendError.message);
     else showSuccess("Nouveau lien de confirmation envoyé !");
@@ -117,7 +117,7 @@ const Auth = () => {
           <h1 className="text-2xl font-gaming font-black">Vérifiez vos mails</h1>
           <p className="text-[#8888AA] text-sm leading-relaxed">Un lien de confirmation a été envoyé à <span className="text-white font-bold">{email}</span>.</p>
           <p className="text-[10px] text-[#8888AA]/70 leading-relaxed">
-            Pense à vérifier ton dossier spam ou promotions (expéditeur : noreply@mail.app.supabase.io).
+            Pense à vérifier aussi les dossiers spam et promotions.
           </p>
           <div className="space-y-3 pt-2">
             <button onClick={handleResendEmail} disabled={resending} className="w-full btn-neon py-4 text-xs tracking-widest uppercase">
