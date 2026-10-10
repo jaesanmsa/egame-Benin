@@ -1,4 +1,4 @@
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React from 'react';
@@ -19,6 +19,7 @@ const LEGAL_INFO = [
 ];
 
 const LegalNotice = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const navigate = useNavigate();
