@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
 import FloatingSupport from "@/components/FloatingSupport";
 import DailyCheckInModal from "@/components/checkin/DailyCheckInModal";
@@ -54,6 +54,15 @@ const queryClient = new QueryClient({
   },
 });
 
+// Le check-in quotidien appartient exclusivement à l'espace personnel.
+ // Ne jamais le monter sur les pages de connexion, récupération ou confirmation :
+ // un lien de récupération Supabase peut ouvrir une session temporaire.
+const AccountCheckInReminder = () => {
+  const { pathname } = useLocation();
+  if (pathname !== "/profil") return null;
+  return <DailyCheckInModal />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -99,7 +108,7 @@ const App = () => (
           </Routes>
         </Suspense>
         <FloatingSupport />
-        <DailyCheckInModal />
+        <AccountCheckInReminder />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
