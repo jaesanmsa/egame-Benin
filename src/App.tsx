@@ -85,7 +85,8 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/devenir-partenaire" element={<BecomePartner />} />
               <Route path="/news" element={<News />} />
-              <Route path="/news/:id" element={<NewsDetail />} />
+                            <Route path="/news/coc-rules" element={<News />} />
+                            <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/jeux" element={<Games />} />
               <Route path="/game/:id" element={<GameDetails />} />
             <Route path="*" element={<NotFound />} />

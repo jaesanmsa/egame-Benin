@@ -317,7 +317,7 @@ const AdminDashboard = () => {
       if (pushError) showError("Notification non envoyée : " + pushError.message);
     });
 
-    let summary = `Tournoi clôturé ! ${rewarded.length} joueur(s) récompensé(s) — Gagnant : +${PODIUM_REWARDS.first} pts + 1 Victoire`;
+    let summary = `Tournoi clôturé ! ${rewarded.length} joueur(s) récompensé(s) — Gagnant : +${PODIUM_REWARDS.first} pts + 1 Victoire (tous les podiums reçoivent +1 Victoire)`;
     if (secondPlace) summary += `, 2e : +${PODIUM_REWARDS.second} pts`;
     if (thirdPlace) summary += `, 3e : +${PODIUM_REWARDS.third} pts`;
     if (mvpName) summary += `, MVP : +1 MVP`;

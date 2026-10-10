@@ -36,6 +36,14 @@ interface NewTournamentTabProps {
 }
 
 const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit, createDiscordSpace, setCreateDiscordSpace }: NewTournamentTabProps) => {
+  // Synchronise l'image avec le jeu sélectionné au montage et lors des changements.
+  React.useEffect(() => {
+    const defaultImage = GAMES_CONFIG[newTournament.game] || "";
+    if (newTournament.image_url !== defaultImage) {
+      setNewTournament({ ...newTournament, image_url: defaultImage });
+    }
+  }, [newTournament.game]);
+
   const handleGameChange = (game: string) => {
     const defaultImage = GAMES_CONFIG[game] || "";
     setNewTournament({
@@ -71,7 +79,7 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit, createDis
         
         <div className="space-y-2">
           <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Jeu</Label>
-          <Select onValueChange={handleGameChange} defaultValue={newTournament.game || "Free Fire"}>
+          <Select onValueChange={handleGameChange} value={newTournament.game || "Free Fire"}>
             <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
               <SelectValue placeholder="Jeu" />
             </SelectTrigger>
@@ -79,7 +87,8 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit, createDis
               {GAMES.map(game => (
                 <SelectItem key={game} value={game} className="font-bold">{game}</SelectItem>
               ))}
-            </SelectContent></Select>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">

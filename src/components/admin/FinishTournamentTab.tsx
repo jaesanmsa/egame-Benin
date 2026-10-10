@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const PODIUM_REWARDS = { first: 50, second: 20, third: 10 };
+export const PODIUM_VICTORY = true; // All 3 podium places get +1 Victory
 
 interface FinishTournamentTabProps {
   activeTournaments: any[];
@@ -77,7 +78,7 @@ const FinishTournamentTab = ({ activeTournaments, finishData, setFinishData, onS
                 className="py-6 bg-muted/50 border-[#FFD700]/30 rounded-xl"
                 required
               />
-              <p className="text-[10px] font-bold text-muted-foreground">+1 Victoire sur son profil et +{PODIUM_REWARDS.first} points eGame</p>
+              <p className="text-[10px] font-bold text-orange-500">+1 Victoire sur son profil et +{PODIUM_REWARDS.first} points eGame — tous les podiums reçoivent +1 Victoire</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
