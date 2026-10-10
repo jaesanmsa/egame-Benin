@@ -2,10 +2,10 @@ import { Link, useLocation } from "react-router-dom";
 import { toEnglishPath, toFrenchPath } from "@/lib/languageRouting";
 
 const LanguageSwitcher = () => {
-  const { pathname } = useLocation();
+  const { pathname, search, hash } = useLocation();
   const english = pathname === "/en" || pathname.startsWith("/en/");
-  const targetEnglish = english ? pathname : toEnglishPath(pathname);
-  const targetFrench = english ? toFrenchPath(pathname) : pathname;
+  const targetEnglish = (english ? pathname : toEnglishPath(pathname)) + search + hash;
+  const targetFrench = (english ? toFrenchPath(pathname) : pathname) + search + hash;
 
   return (
     <div role="group" aria-label="Select language" className="inline-flex shrink-0 items-center gap-1 rounded-full border border-white/10 bg-[#07070C]/70 p-1">

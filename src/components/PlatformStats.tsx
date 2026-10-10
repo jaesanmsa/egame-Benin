@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -11,9 +12,12 @@ interface PlatformStatsRow {
   competition_players: number | null;
 }
 
-const formatNumber = (n: number) => n.toLocaleString("fr-FR");
+const formatNumber = (n: number, language: "fr" | "en") => n.toLocaleString(language === "en" ? "en-US" : "fr-FR");
 
 const PlatformStats = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const [row, setRow] = useState<PlatformStatsRow | null>(null);
   const [partnerCount, setPartnerCount] = useState(0);
   const [loaded, setLoaded] = useState(false);
@@ -34,10 +38,10 @@ const PlatformStats = () => {
   if (!loaded || !row) return null;
 
   const stats = [
-    { icon: Users, value: row.total_players, label: "Joueurs inscrits", color: "text-[#A855F7]" },
-    { icon: Trophy, value: row.tournaments_organized, label: "Compétitions organisées", color: "text-[#FFD700]" },
-    { icon: UsersRound, value: partnerCount, label: "Partenaires", color: "text-emerald-400", alwaysShow: true },
-    { icon: Swords, value: row.competition_players, label: "Participants aux compétitions", color: "text-cyan-400" },
+    { icon: Users, value: row.total_players, label: t("Joueurs inscrits"), color: "text-[#A855F7]" },
+    { icon: Trophy, value: row.tournaments_organized, label: t("Compétitions organisées"), color: "text-[#FFD700]" },
+    { icon: UsersRound, value: partnerCount, label: t("Partenaires"), color: "text-emerald-400", alwaysShow: true },
+    { icon: Swords, value: row.competition_players, label: t("Participants aux compétitions"), color: "text-cyan-400" },
   ].filter((s) => typeof s.value === "number" && ((s.value as number) > 0 || s.alwaysShow));
 
   if (stats.length < 2) return null;
@@ -46,9 +50,9 @@ const PlatformStats = () => {
     <section className="max-w-7xl mx-auto px-6 py-16 space-y-8">
       <div className="text-center space-y-2">
         <h2 className="text-2xl md:text-3xl font-gaming font-black uppercase text-white">
-          Nos <span className="text-[#FFD700]">résultats</span> en chiffres
+          Nos <span className="text-[#FFD700]">{t("résultats")}</span> en chiffres
         </h2>
-        <p className="text-sm text-[#8888AA] font-esport">Des indicateurs issus directement des données réelles de la plateforme.</p>
+        <p className="text-sm text-[#8888AA] font-esport">{t("Des indicateurs issus directement des données réelles de la plateforme.")}</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
@@ -63,7 +67,7 @@ const PlatformStats = () => {
           >
             <s.icon size={24} className={`mx-auto ${s.color}`} />
             <p className="text-3xl md:text-4xl font-gaming font-black tracking-tight text-white leading-none">
-              {formatNumber(s.value as number)}
+              {formatNumber(s.value as number, language)}
             </p>
             <p className="text-[10px] font-gaming font-bold uppercase tracking-widest text-[#8888AA] leading-snug">
               {s.label}

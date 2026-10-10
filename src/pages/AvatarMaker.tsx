@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React, { useState } from 'react';
@@ -22,6 +23,9 @@ const COLOR_OPTIONS = [
 ];
 
 const AvatarMaker = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const navigate = useNavigate();
   const [selectedEmoji, setSelectedEmoji] = useState(EMOJIS[0]);
   const [selectedColor, setSelectedColor] = useState(COLOR_OPTIONS[0]);
@@ -72,7 +76,7 @@ const AvatarMaker = () => {
           <ArrowLeft size={16} /> Retour
         </button>
 
-        <h1 className="text-3xl font-gaming font-black uppercase text-white">Studio d'Avatar</h1>
+        <h1 className="text-3xl font-gaming font-black uppercase text-white">{t("Studio d'Avatar")}</h1>
 
         <div className="flex flex-col items-center gap-8">
           <div className={`w-40 h-40 rounded-full ${selectedColor.class} flex items-center justify-center text-7xl shadow-2xl border-4 border-white/20 transition-all duration-300`}>
@@ -81,7 +85,7 @@ const AvatarMaker = () => {
 
           <div className="w-full space-y-6 bg-[#0F0F1E] p-8 rounded-3xl border border-[#8A2BE2]/30 text-left">
             <div className="space-y-3">
-              <p className="text-xs font-gaming font-bold text-[#8888AA] uppercase">Sélectionner un Emoji</p>
+              <p className="text-xs font-gaming font-bold text-[#8888AA] uppercase">{t("Sélectionner un Emoji")}</p>
               <div className="grid grid-cols-5 gap-3">
                 {EMOJIS.map((emoji) => (
                   <button
@@ -96,7 +100,7 @@ const AvatarMaker = () => {
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs font-gaming font-bold text-[#8888AA] uppercase">Couleur du fond</p>
+              <p className="text-xs font-gaming font-bold text-[#8888AA] uppercase">{t("Couleur du fond")}</p>
               <div className="flex flex-wrap gap-3">
                 {COLOR_OPTIONS.map((color) => (
                   <button

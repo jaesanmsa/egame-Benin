@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React, { useEffect, useState, useRef } from 'react';
@@ -9,6 +10,9 @@ import { showSuccess, showError } from '@/utils/toast';
 import { supabase } from '@/lib/supabase';
 
 const PaymentSuccess = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const [searchParams] = useSearchParams();
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -112,15 +116,15 @@ const PaymentSuccess = () => {
           {isProcessing ? (
             <div className="py-12 space-y-4">
               <Loader2 className="w-12 h-12 text-[#8A2BE2] animate-spin mx-auto" />
-              <h1 className="text-xl font-gaming font-bold">Vérification de la transaction...</h1>
+              <h1 className="text-xl font-gaming font-bold">{t("Vérification de la transaction...")}</h1>
             </div>
           ) : error ? (
             <div className="py-8 space-y-4">
               <AlertCircle size={48} className="text-red-400 mx-auto" />
-              <h1 className="text-xl font-gaming font-bold text-red-400">Échec de validation</h1>
+              <h1 className="text-xl font-gaming font-bold text-red-400">{t("Échec de validation")}</h1>
               <p className="text-xs text-[#8888AA]">{error}</p>
-              <Link to="/contact" className="block">
-                <button className="w-full btn-glow-border py-3.5 text-xs uppercase">Contacter le support</button>
+              <Link to={localizedLinkPath("/contact")} className="block">
+                <button className="w-full btn-glow-border py-3.5 text-xs uppercase">{t("Contacter le support")}</button>
               </Link>
             </div>
           ) : (
@@ -130,13 +134,13 @@ const PaymentSuccess = () => {
               </div>
 
               <div className="space-y-2">
-                <h1 className="text-2xl font-gaming font-black uppercase text-white">Paiement validé !</h1>
-                <p className="text-sm font-bold text-white">Ton ticket est prêt.</p>
-                <p className="text-xs text-[#8888AA]">Ta place sera confirmée après vérification de ce code par les arbitres eGame.</p>
+                <h1 className="text-2xl font-gaming font-black uppercase text-white">{t("Paiement validé !")}</h1>
+                <p className="text-sm font-bold text-white">{t("Ton ticket est prêt.")}</p>
+                <p className="text-xs text-[#8888AA]">{t("Ta place sera confirmée après vérification de ce code par les arbitres eGame.")}</p>
               </div>
 
               <div className="p-6 bg-[#0A0A0F] rounded-2xl border-2 border-dashed border-[#FFD700]/50 space-y-2">
-                <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase tracking-widest">Ton ticket eGame Bénin</p>
+                <p className="text-[10px] font-gaming font-bold text-[#8888AA] uppercase tracking-widest">{t("Ton ticket eGame Bénin")}</p>
                 <div className="flex items-center justify-center gap-3">
                   <span className="text-[#FFD700] font-gaming font-black text-2xl tracking-widest">{validationCode}</span>
                   <button onClick={() => { navigator.clipboard.writeText(validationCode!); showSuccess("Code copié !"); }} className="text-[#8888AA] hover:text-white">
@@ -146,14 +150,14 @@ const PaymentSuccess = () => {
               </div>
 
               <div className="space-y-3">
-                <Link to="/contact" className="block">
+                <Link to={localizedLinkPath("/contact")} className="block">
                   <button className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-gaming font-bold text-xs uppercase tracking-wider py-4 rounded-xl flex items-center justify-center gap-2">
                     <MessageSquare size={18} />
                     Suivre sur Discord
                   </button>
                 </Link>
 
-                <Link to="/payments" className="block">
+                <Link to={localizedLinkPath("/payments")} className="block">
                   <button className="w-full bg-[#0A0A0F] border border-[#8A2BE2]/30 hover:border-[#8A2BE2] text-white font-gaming font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl flex items-center justify-center gap-2">
                     <History size={16} /> Voir mon historique
                   </button>

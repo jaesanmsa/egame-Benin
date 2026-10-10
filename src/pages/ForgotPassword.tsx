@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React, { useState } from 'react';
@@ -10,6 +11,9 @@ import { Link } from 'react-router-dom';
 import { showError, showSuccess } from '@/utils/toast';
 
 const ForgotPassword = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -48,21 +52,21 @@ const ForgotPassword = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
       <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-[2.5rem] border border-border shadow-2xl">
-        <Link to="/auth" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+        <Link to={localizedLinkPath("/auth")} className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft size={18} />
           Retour
         </Link>
 
         <div className="text-center">
-          <h1 className="text-3xl font-black">Mot de passe oublié</h1>
-          <p className="text-muted-foreground mt-2">Entrez votre email pour recevoir un lien de réinitialisation</p>
+          <h1 className="text-3xl font-black">{t("Mot de passe oublié")}</h1>
+          <p className="text-muted-foreground mt-2">{t("Entrez votre email pour recevoir un lien de réinitialisation")}</p>
         </div>
 
         {sent && <p role="status" className="rounded-xl border border-green-500/30 bg-green-500/10 p-4 text-sm">Si cette adresse correspond à un compte, tu recevras un lien. Vérifie aussi les spams. Le lien peut prendre quelques minutes.</p>}
         {failure && <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">{failure} <a href="mailto:contact@egamebenin.com" className="underline">Contacter le support</a></p>}
         <form onSubmit={handleReset} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("Email")}</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-3 text-muted-foreground" size={18} />
               <Input

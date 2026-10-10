@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -15,6 +16,9 @@ const input = "w-full rounded-xl border border-[#8A2BE2]/30 bg-[#080810] px-4 py
 const action = "rounded-xl bg-[#8A2BE2] px-4 py-2.5 text-xs font-bold text-white disabled:opacity-40";
 
 const Teams = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const [me, setMe] = useState<string | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
@@ -79,29 +83,29 @@ const Teams = () => {
   const myTeams = useMemo(() => teams.filter(t => t.captain_id === me || members.some(m => m.team_id === t.id && m.user_id === me && m.status === "active")), [teams,members,me]);
   const pendingTeams = useMemo(() => teams.filter(t => members.some(m => m.team_id === t.id && m.user_id === me && m.status === "pending")), [teams,members,me]);
 
-  if (loading) return <div className="min-h-screen bg-[#07070C] text-center pt-32 text-white">Chargement des équipes…</div>;
+  if (loading) return <div className="min-h-screen bg-[#07070C] text-center pt-32 text-white">{t("Chargement des équipes…")}</div>;
   return <div className="min-h-screen bg-[#07070C] pb-28 pt-24 text-white">
     <SEO title="Mes équipes — eGame Bénin" noindex />
     <Navbar />
     <main className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6">
       <header><p className="text-xs font-bold text-[#A855F7]">eGAME BÉNIN · ÉQUIPES</p>
-        <h1 className="mt-2 font-gaming text-3xl font-black">Mes équipes</h1>
+        <h1 className="mt-2 font-gaming text-3xl font-black">{t("Mes équipes")}</h1>
         <p className="mt-2 text-sm text-[#AAAACC]">Crée ton équipe, invite tes coéquipiers et demande son inscription aux compétitions par équipes.</p>
-        <Link to="/profil" className="mt-3 inline-block text-xs text-[#C5A2FF] underline">← Retour à mon profil</Link>
+        <Link to={localizedLinkPath("/profil")} className="mt-3 inline-block text-xs text-[#C5A2FF] underline">{t("← Retour à mon profil")}</Link>
       </header>
-      {!me && <section className="rounded-2xl border border-white/10 p-6">Connecte-toi pour gérer tes équipes. <Link to="/auth" className="text-[#C5A2FF] underline">Se connecter</Link></section>}
+      {!me && <section className="rounded-2xl border border-white/10 p-6">Connecte-toi pour gérer tes équipes. <Link to={localizedLinkPath("/auth")} className="text-[#C5A2FF] underline">Se connecter</Link></section>}
       {error && <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">{error}</p>}
       {message && <p role="status" className="rounded-xl border border-green-500/30 bg-green-500/10 p-4 text-sm text-green-200">{message}</p>}
       {me && <>
         <section className="rounded-2xl border border-[#8A2BE2]/30 bg-[#0F0F1E] p-5">
-          <h2 className="font-gaming text-lg font-black">Créer une équipe</h2>
+          <h2 className="font-gaming text-lg font-black">{t("Créer une équipe")}</h2>
           <form onSubmit={create} className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
             <input aria-label="Nom de l'équipe" required minLength={3} maxLength={60} placeholder="Nom de l'équipe" className={input} value={teamName} onChange={e=>setTeamName(e.target.value)} />
             <select aria-label="Jeu" value={game} onChange={e=>setGame(e.target.value)} className={input}>{ORGANIZER_GAMES.map(g=><option key={g}>{g}</option>)}</select>
-            <button disabled={busy} type="submit" className={action}>Créer</button>
+            <button disabled={busy} type="submit" className={action}>{t("Créer")}</button>
           </form>
         </section>
-        {pendingTeams.length>0 && <section className="space-y-3"><h2 className="font-gaming text-xl font-black">Invitations reçues</h2>
+        {pendingTeams.length>0 && <section className="space-y-3"><h2 className="font-gaming text-xl font-black">{t("Invitations reçues")}</h2>
           {pendingTeams.map(t=><article key={t.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#8A2BE2]/30 bg-[#0F0F1E] p-4">
             <span className="text-sm font-bold">{t.name} · {t.game_key}</span>
             <div className="flex gap-2"><button disabled={busy} className={action} onClick={()=>void run(()=>supabase.rpc("egame_respond_team_invite",{p_team_id:t.id,p_accept:true}),"Invitation acceptée.")}>Accepter</button>
@@ -109,7 +113,7 @@ const Teams = () => {
           </article>)}
         </section>}
         <section className="space-y-4"><h2 className="font-gaming text-xl font-black">Équipes ({myTeams.length})</h2>
-          {!myTeams.length && <p className="text-sm text-[#AAAACC]">Tu n'as pas encore d'équipe.</p>}
+          {!myTeams.length && <p className="text-sm text-[#AAAACC]">{t("Tu n'as pas encore d'équipe.")}</p>}
           {myTeams.map(t=>{
             const roster = members.filter(m=>m.team_id===t.id && m.status!=="removed" && m.status!=="declined");
             const captain = t.captain_id===me;
@@ -118,18 +122,18 @@ const Teams = () => {
             const teamRegistrations = registrations.filter(r=>r.team_id===t.id);
             return <article key={t.id} className="space-y-4 rounded-2xl border border-[#8A2BE2]/30 bg-[#0F0F1E] p-5">
               <header><h3 className="font-gaming text-lg font-black">{t.name}</h3><p className="text-xs text-[#AAAACC]">{t.game_key} · {captain?"Tu es capitaine":"Membre"}</p></header>
-              <div className="space-y-2"><h4 className="text-xs font-bold uppercase text-[#C5A2FF]">Membres</h4>
+              <div className="space-y-2"><h4 className="text-xs font-bold uppercase text-[#C5A2FF]">{t("Membres")}</h4>
                 {roster.map(m=><div key={m.user_id} className="flex items-center justify-between gap-2 rounded-lg bg-[#080810] px-3 py-2 text-xs">
                   <span>@{players[m.user_id] || "Joueur"} {m.user_id===t.captain_id?"· capitaine":""} · {m.status==="pending"?"invité":"actif"}</span>
                   {(captain && m.user_id!==t.captain_id || m.user_id===me && !captain) &&
                     <button disabled={busy} className="text-red-300 underline" onClick={()=>void run(()=>supabase.rpc("egame_remove_team_member",{p_team_id:t.id,p_user_id:m.user_id}),"Membre retiré.")}>Retirer</button>}
                 </div>)}
               </div>
-              {captain && <div className="space-y-2"><h4 className="text-xs font-bold uppercase text-[#C5A2FF]">Inviter un joueur par pseudo</h4>
+              {captain && <div className="space-y-2"><h4 className="text-xs font-bold uppercase text-[#C5A2FF]">{t("Inviter un joueur par pseudo")}</h4>
                 <div className="flex gap-2"><input value={invites[t.id]||""} onChange={e=>setInvites(old=>({...old,[t.id]:e.target.value}))} placeholder="Pseudo eGame" className={input} />
                   <button disabled={busy||!invites[t.id]?.trim()} className={action} onClick={()=>void run(()=>supabase.rpc("egame_invite_team_member",{p_team_id:t.id,p_username:invites[t.id].trim()}),"Invitation envoyée.")}>Inviter</button></div>
               </div>}
-              {captain && <div className="space-y-3 border-t border-white/10 pt-4"><h4 className="text-sm font-bold">Tournois disponibles pour cette équipe</h4>
+              {captain && <div className="space-y-3 border-t border-white/10 pt-4"><h4 className="text-sm font-bold">{t("Tournois disponibles pour cette équipe")}</h4>
                 {!available.length && <p className="text-xs text-[#AAAACC]">Aucun tournoi par équipes gratuit n'est ouvert pour ce jeu actuellement. Les tournois payants nécessitent un paiement collectif sécurisé et ne sont pas encore accessibles ici.</p>}
                 {available.map(({setting,tournament})=>{
                   const registered=teamRegistrations.find(r=>r.tournament_id===tournament.id);

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { Newspaper, ArrowRight, Clock, SearchX } from 'lucide-react';
@@ -10,6 +11,9 @@ import { supabase } from '@/lib/supabase';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const News = () => {
+  const localizedLinkPath = useLocalePath();
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,8 +46,8 @@ const News = () => {
             <Newspaper size={24} />
           </div>
           <div>
-            <h1 className="text-3xl font-gaming font-black uppercase text-white">Le Mag eSport</h1>
-            <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider mt-1">Actualités, tournois et conseils eGame Bénin</p>
+            <h1 className="text-3xl font-gaming font-black uppercase text-white">{t("Le Mag eSport")}</h1>
+            <p className="text-xs text-[#8888AA] font-esport uppercase tracking-wider mt-1">{t("Actualités, tournois et conseils eGame Bénin")}</p>
           </div>
         </div>
 
@@ -59,7 +63,7 @@ const News = () => {
         ) : news.length === 0 ? (
           <div className="py-20 text-center glass-panel">
             <SearchX size={48} className="mx-auto text-[#8888AA] mb-3 opacity-40" />
-            <p className="text-sm font-gaming text-[#8888AA]">Aucun article pour le moment.</p>
+            <p className="text-sm font-gaming text-[#8888AA]">{t("Aucun article pour le moment.")}</p>
           </div>
         ) : (
           <>

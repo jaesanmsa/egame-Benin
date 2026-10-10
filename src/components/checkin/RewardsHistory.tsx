@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -29,6 +30,8 @@ const formatDate = (iso: string) => {
 };
 
 const RewardsHistory = ({ userId }: { userId: string }) => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const [events, setEvents] = useState<RewardEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -138,7 +141,7 @@ const RewardsHistory = ({ userId }: { userId: string }) => {
         <h3 className="text-sm font-gaming font-black uppercase tracking-widest text-[#8888AA] flex items-center gap-2">
           <History size={14} className="text-[#8A2BE2]" /> Historique des récompenses
         </h3>
-        <p className="text-xs text-[#8888AA]/70 mt-3">Aucune récompense pour le moment. Termine ton premier tournoi ou complète ta série de 7 jours !</p>
+        <p className="text-xs text-[#8888AA]/70 mt-3">{t("Aucune récompense pour le moment. Termine ton premier tournoi ou complète ta série de 7 jours !")}</p>
       </div>
     );
   }

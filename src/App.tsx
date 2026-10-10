@@ -34,7 +34,7 @@ const NewsDetail = React.lazy(() => import("./pages/NewsDetail"));
 const About = React.lazy(() => import("./pages/About"));
 const BecomePartner = React.lazy(() => import("./pages/BecomePartner"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
-const EnglishSite = React.lazy(() => import("./pages/EnglishSite"));
+// FR and EN now use the same page components, not a separate EnglishSite.
 const OrganizerApplicationPage = React.lazy(() => import("./pages/OrganizerApplication"));
 const OrganizerDashboard = React.lazy(() => import("./pages/OrganizerDashboard"));
 const OrganizerAdmin = React.lazy(() => import("./pages/OrganizerAdmin"));
@@ -59,7 +59,7 @@ const queryClient = new QueryClient({
  // un lien de récupération Supabase peut ouvrir une session temporaire.
 const AccountCheckInReminder = () => {
   const { pathname } = useLocation();
-  if (pathname !== "/profil") return null;
+  if (pathname !== "/profil" && pathname !== "/en/profil") return null;
   return <DailyCheckInModal />;
 };
 
@@ -71,7 +71,35 @@ const App = () => (
       <BrowserRouter>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-              <Route path="/en/*" element={<EnglishSite />} />
+              <Route path="/en" element={<Index />} />
+              <Route path="/en/auth" element={<Auth />} />
+              <Route path="/en/choisir-profil" element={<AccountChoice />} />
+              <Route path="/en/mes-equipes" element={<Teams />} />
+              <Route path="/en/admin/team-tournaments" element={<TeamTournamentAdmin />} />
+              <Route path="/en/forgot-password" element={<ForgotPassword />} />
+              <Route path="/en/reset-password" element={<ResetPassword />} />
+              <Route path="/en/admin" element={<AdminDashboard />} />
+              <Route path="/en/profil" element={<Profile />} />
+              <Route path="/en/edit-profile" element={<EditProfile />} />
+              <Route path="/en/avatar-maker" element={<AvatarMaker />} />
+              <Route path="/en/payments" element={<PaymentHistory />} />
+              <Route path="/en/payment-success" element={<PaymentSuccess />} />
+              <Route path="/en/payment/moneroo/callback" element={<MonerooCallback />} />
+              <Route path="/en/privacy" element={<Privacy />} />
+              <Route path="/en/mentions-legales" element={<LegalNotice />} />
+
+              <Route path="/en/games" element={<Games />} />
+              <Route path="/en/leaderboard" element={<Leaderboard />} />
+              <Route path="/en/game/:id" element={<GameDetails />} />
+              <Route path="/en/tournament/:id" element={<TournamentDetails />} />
+              <Route path="/en/news" element={<News />} />
+              <Route path="/en/news/:id" element={<NewsDetail />} />
+              <Route path="/en/about" element={<About />} />
+              <Route path="/en/contact" element={<Contact />} />
+              <Route path="/en/partners" element={<BecomePartner />} />
+              <Route path="/en/organizer-application" element={<OrganizerApplicationPage />} />
+              <Route path="/en/organizer" element={<OrganizerDashboard />} />
+              <Route path="/en/admin/organizers" element={<OrganizerAdmin />} />
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/choisir-profil" element={<AccountChoice />} />

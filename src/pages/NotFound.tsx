@@ -1,8 +1,12 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import SEO from "@/components/SEO";
 
 const NotFound = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
+  const localizedLinkPath = useLocalePath();
   const location = useLocation();
 
   useEffect(() => {
@@ -17,8 +21,8 @@ const NotFound = () => {
       <SEO title="Page introuvable" noindex />
       <div className="text-center p-8 bg-card rounded-[2.5rem] border border-border shadow-2xl">
         <h1 className="text-6xl font-black mb-4 text-violet-500">404</h1>
-        <p className="text-xl text-muted-foreground mb-8">Oups ! Cette page n'existe pas.</p>
-        <Link to="/" className="inline-block bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-2xl font-bold transition-all">
+        <p className="text-xl text-muted-foreground mb-8">{t("Oups ! Cette page n'existe pas.")}</p>
+        <Link to={localizedLinkPath("/")} className="inline-block bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-2xl font-bold transition-all">
           Retour à l'accueil
         </Link>
       </div>

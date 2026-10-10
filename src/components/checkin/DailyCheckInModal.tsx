@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, X, CheckCircle2, PartyPopper } from "lucide-react";
@@ -14,6 +15,8 @@ const MODAL_STORAGE_PREFIX = "egame_checkin_modal_";
  * la carte « Ma série eGame » du profil.
  */
 const DailyCheckInModal = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const [userId, setUserId] = useState<string | null>(null);
   const { state, loading, claiming, claim, canClaim } = useCheckIn(userId);
   const [open, setOpen] = useState(false);
@@ -98,7 +101,7 @@ const DailyCheckInModal = () => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-gaming font-black text-white leading-snug">
-                    {justClaimed.completed ? "🎉 Série terminée !" : "✅ Présence validée !"}
+                    {justClaimed.completed ? t("🎉 Série terminée !") : t("✅ Présence validée !")}
                   </p>
                   <p className="text-[10px] text-[#8888AA]">
                     +{justClaimed.completed ? CYCLE_TOTAL_POINTS : justClaimed.points} pt{justClaimed.points > 1 ? "s" : ""}
@@ -122,7 +125,7 @@ const DailyCheckInModal = () => {
                   disabled={claiming || !canClaim}
                   className="shrink-0 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#8A2BE2] to-[#A855F7] hover:brightness-110 disabled:opacity-60 text-white font-gaming font-black text-[10px] uppercase tracking-widest shadow-lg shadow-[#8A2BE2]/30 transition-all"
                 >
-                  {claiming ? "…" : "Réclamer"}
+                  {claiming ? "…" : t("Réclamer")}
                 </button>
               </>
             )}

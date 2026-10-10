@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -69,6 +70,9 @@ const emptyForm = {
 };
 
 const BecomePartner = () => {
+  const localizedLinkPath = useLocalePath();
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
@@ -209,14 +213,14 @@ const BecomePartner = () => {
               <CheckCircle2 size={40} className="text-emerald-400" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-gaming font-black uppercase text-white">Proposition bien envoyée !</h3>
+              <h3 className="text-xl font-gaming font-black uppercase text-white">{t("Proposition bien envoyée !")}</h3>
               <p className="text-sm text-[#8888AA] leading-relaxed max-w-md mx-auto">
                 Merci pour ton intérêt. L'équipe eGame Bénin étudie chaque proposition et te répond
                 depuis <span className="text-white font-bold">{CONTACT_EMAIL}</span> dans un délai de 72 heures.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-              <Link to="/">
+              <Link to={localizedLinkPath("/")}>
                 <Button variant="outline" className="bg-[#0F0F1E] border-[#8A2BE2]/50 hover:bg-[#8A2BE2]/10 rounded-2xl font-gaming font-bold text-xs uppercase tracking-wider px-6">
                   Retour à l'accueil
                 </Button>
@@ -244,19 +248,19 @@ const BecomePartner = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
-                <Label htmlFor="full_name" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Nom / prénom *</Label>
+                <Label htmlFor="full_name" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">{t("Nom / prénom *")}</Label>
                 <Input
                   id="full_name"
                   value={form.full_name}
                   onChange={(e) => set("full_name", e.target.value)}
-                  placeholder="Ton nom complet"
+                  placeholder={t("Ton nom complet")}
                   className={`bg-[#0A0A0F] border-[#8A2BE2]/30 focus-visible:border-[#8A2BE2] rounded-2xl h-12 text-white placeholder:text-[#8888AA]/60 ${errors.full_name ? "border-red-500/70" : ""}`}
                 />
                 {errors.full_name && <p className="text-[10px] text-red-400 font-bold">{errors.full_name}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="organization" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Entreprise, organisation, clan ou communauté *</Label>
+                <Label htmlFor="organization" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">{t("Entreprise, organisation, clan ou communauté *")}</Label>
                 <Input
                   id="organization"
                   value={form.organization}
@@ -268,7 +272,7 @@ const BecomePartner = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">E-mail *</Label>
+                <Label htmlFor="email" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">{t("E-mail *")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -281,7 +285,7 @@ const BecomePartner = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="whatsapp" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Numéro de téléphone *</Label>
+                <Label htmlFor="whatsapp" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">{t("Numéro de téléphone *")}</Label>
                 <Input
                   id="whatsapp"
                   type="tel"
@@ -294,10 +298,10 @@ const BecomePartner = () => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Type de partenariat *</Label>
+                <Label className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">{t("Type de partenariat *")}</Label>
                 <Select value={form.partnership_type} onValueChange={(v) => set("partnership_type", v)}>
                   <SelectTrigger className={`bg-[#0A0A0F] border-[#8A2BE2]/30 focus:ring-[#8A2BE2] rounded-2xl h-12 text-white ${errors.partnership_type ? "border-red-500/70" : ""}`}>
-                    <SelectValue placeholder="Choisis un type" />
+                    <SelectValue placeholder={t("Choisis un type")} />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white">
                     {PARTNERSHIP_TYPES.map((t) => (
@@ -309,10 +313,10 @@ const BecomePartner = () => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Jeu concerné <span className="text-[#8888AA] normal-case">(si applicable)</span></Label>
+                <Label className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Jeu concerné <span className="text-[#8888AA] normal-case">{t("(si applicable)")}</span></Label>
                 <Select value={form.game} onValueChange={(v) => set("game", v)}>
                   <SelectTrigger className="bg-[#0A0A0F] border-[#8A2BE2]/30 focus:ring-[#8A2BE2] rounded-2xl h-12 text-white">
-                    <SelectValue placeholder="Non applicable" />
+                    <SelectValue placeholder={t("Non applicable")} />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white">
                     {GAMES.map((g) => (
@@ -323,7 +327,7 @@ const BecomePartner = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="link" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Lien site / réseau / groupe <span className="text-[#8888AA] normal-case">(si applicable)</span></Label>
+                <Label htmlFor="link" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Lien site / réseau / groupe <span className="text-[#8888AA] normal-case">{t("(si applicable)")}</span></Label>
                 <Input
                   id="link"
                   value={form.link}
@@ -335,46 +339,46 @@ const BecomePartner = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="community_size" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Taille de la communauté <span className="text-[#8888AA] normal-case">(si applicable)</span></Label>
+                <Label htmlFor="community_size" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Taille de la communauté <span className="text-[#8888AA] normal-case">{t("(si applicable)")}</span></Label>
                 <Input
                   id="community_size"
                   value={form.community_size}
                   onChange={(e) => set("community_size", e.target.value)}
-                  placeholder="Ex: 350 membres"
+                  placeholder={t("Ex: 350 membres")}
                   className="bg-[#0A0A0F] border-[#8A2BE2]/30 focus-visible:border-[#8A2BE2] rounded-2xl h-12 text-white placeholder:text-[#8888AA]/60"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="contribution" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Ce que tu souhaites apporter *</Label>
+              <Label htmlFor="contribution" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">{t("Ce que tu souhaites apporter *")}</Label>
               <Textarea
                 id="contribution"
                 value={form.contribution}
                 onChange={(e) => set("contribution", e.target.value)}
-                placeholder="Financement, matériel, connexion, couverture média, mobilisation de joueurs, expertise…"
+                placeholder={t("Financement, matériel, connexion, couverture média, mobilisation de joueurs, expertise…")}
                 className={`bg-[#0A0A0F] border-[#8A2BE2]/30 focus-visible:border-[#8A2BE2] rounded-2xl text-white placeholder:text-[#8888AA]/60 min-h-[90px] ${errors.contribution ? "border-red-500/70" : ""}`}
               />
               {errors.contribution && <p className="text-[10px] text-red-400 font-bold">{errors.contribution}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="expectations" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Ce que tu recherches dans la collaboration *</Label>
+              <Label htmlFor="expectations" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">{t("Ce que tu recherches dans la collaboration *")}</Label>
               <Textarea
                 id="expectations"
                 value={form.expectations}
                 onChange={(e) => set("expectations", e.target.value)}
-                placeholder="Visibilité, statut officiel, contenus, présence événementielle…"
+                placeholder={t("Visibilité, statut officiel, contenus, présence événementielle…")}
                 className={`bg-[#0A0A0F] border-[#8A2BE2]/30 focus-visible:border-[#8A2BE2] rounded-2xl text-white placeholder:text-[#8888AA]/60 min-h-[90px] ${errors.expectations ? "border-red-500/70" : ""}`}
               />
               {errors.expectations && <p className="text-[10px] text-red-400 font-bold">{errors.expectations}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Budget envisagé <span className="text-[#8888AA] normal-case">(si sponsor financier, facultatif)</span></Label>
+              <Label className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Budget envisagé <span className="text-[#8888AA] normal-case">{t("(si sponsor financier, facultatif)")}</span></Label>
               <Select value={form.budget} onValueChange={(v) => set("budget", v)}>
                 <SelectTrigger className="bg-[#0A0A0F] border-[#8A2BE2]/30 focus:ring-[#8A2BE2] rounded-2xl h-12 text-white">
-                  <SelectValue placeholder="Non applicable" />
+                  <SelectValue placeholder={t("Non applicable")} />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0F0F1E] border-[#8A2BE2]/40 text-white">
                   {BUDGETS.map((b) => (
@@ -385,12 +389,12 @@ const BecomePartner = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="message" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">Message / proposition détaillée *</Label>
+              <Label htmlFor="message" className="text-[10px] font-gaming font-black uppercase tracking-widest text-[#A855F7]">{t("Message / proposition détaillée *")}</Label>
               <Textarea
                 id="message"
                 value={form.message}
                 onChange={(e) => set("message", e.target.value)}
-                placeholder="Présente ton idée de collaboration : format, objectifs, calendrier…"
+                placeholder={t("Présente ton idée de collaboration : format, objectifs, calendrier…")}
                 className={`bg-[#0A0A0F] border-[#8A2BE2]/30 focus-visible:border-[#8A2BE2] rounded-2xl text-white placeholder:text-[#8888AA]/60 min-h-[130px] ${errors.message ? "border-red-500/70" : ""}`}
               />
               {errors.message && <p className="text-[10px] text-red-400 font-bold">{errors.message}</p>}
@@ -441,7 +445,7 @@ const BecomePartner = () => {
           <h2 className="text-xl md:text-2xl font-gaming font-black uppercase text-white">
             Vous avez une proposition différente ?
           </h2>
-          <p className="text-sm text-[#8888AA] font-esport">Nous étudions également les collaborations sur mesure.</p>
+          <p className="text-sm text-[#8888AA] font-esport">{t("Nous étudions également les collaborations sur mesure.")}</p>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
             className="inline-flex items-center gap-2 text-[#FFD700] font-gaming font-black text-sm hover:underline break-all"

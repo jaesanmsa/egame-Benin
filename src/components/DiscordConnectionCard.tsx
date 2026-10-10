@@ -1,3 +1,4 @@
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Loader2, Unlink } from "lucide-react";
@@ -18,6 +19,8 @@ import DiscordLogo from "./DiscordLogo";
  * reste persistante dans discord_connections d'une session à l'autre.
  */
 const DiscordConnectionCard = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const [connection, setConnection] = useState<DiscordConnection | null>(null);
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
@@ -77,7 +80,7 @@ const DiscordConnectionCard = () => {
           </div>
           <div className="min-w-0">
             <p className="text-xs font-gaming font-black uppercase tracking-widest text-white">Discord</p>
-            <p className="text-[10px] text-[#8888AA]">Liaison facultative pour les espaces privés des tournois</p>
+            <p className="text-[10px] text-[#8888AA]">{t("Liaison facultative pour les espaces privés des tournois")}</p>
           </div>
         </div>
         {connection && !loading && (
@@ -126,7 +129,7 @@ const DiscordConnectionCard = () => {
         </motion.div>
       ) : (
         <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <p className="text-xs text-[#8888AA] leading-relaxed">Discord non connecté.</p>
+          <p className="text-xs text-[#8888AA] leading-relaxed">{t("Discord non connecté.")}</p>
           <p className="text-[10px] text-[#8888AA]/70 leading-relaxed">
             Connecte ton Discord pour accéder aux espaces privés des tournois et suivre la communauté.
             Ta connexion eGame (Google ou e-mail) reste inchangée.
