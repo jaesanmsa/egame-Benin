@@ -59,7 +59,6 @@ const OrganizerApplicationPage = () => {
   }, []);
 
   const updateCommunity = (id: string, key: keyof RequestedCommunity, value: string) => setCommunities((items) => items.map((item) => item.id === id ? { ...item, [key]: value } : item));
-  const addCommunity = () => { if (communities.length < 2) setCommunities((items) => [...items, blankCommunity()]); };
   const removeCommunity = (id: string) => setCommunities((items) => items.length > 1 ? items.filter((item) => item.id !== id) : items);
 
   const saveApplication = async (event: FormEvent, submit: boolean) => {
@@ -76,8 +75,8 @@ const OrganizerApplicationPage = () => {
       setError("Pour chaque communauté, renseigne le nom, le jeu, le lien public et le justificatif de responsabilité."); return;
     }
     if (new Set(communities.map((item) => item.game)).size !== communities.length) { setError("Choisis deux jeux différents pour tes communautés."); return; }
-    if (!applicantName.trim() || !country.trim() || !professionalContact.trim() || (submit && !termsAccepted)) {
-      setError("Complète ton identité, ton pays et ton contact professionnel. Accepte les conditions pour soumettre la candidature."); return;
+    if (!applicantName.trim() || !country.trim() || !professionalContact.trim() || !termsAccepted) {
+      setError("Complète ton identité, ton pays et ton contact professionnel. Accepte les conditions pour poursuivre."); return;
     }
 
     setSubmitting(true);
