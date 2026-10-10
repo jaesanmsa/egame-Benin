@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { useSiteLanguage, translate, useLocalePath } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { Gamepad2, Filter, SearchX, ArrowRight } from 'lucide-react';
@@ -24,6 +24,7 @@ const ALL_GAMES = [
 ];
 
 const Games = () => {
+  const localizedLinkPath = useLocalePath();
   const language = useSiteLanguage();
   const t = (value: string) => translate(value, language);
   const [activeGames, setActiveGames] = useState<Set<string>>(new Set());
