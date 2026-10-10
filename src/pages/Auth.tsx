@@ -43,7 +43,7 @@ const Auth = () => {
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: getRedirectUrl() }
+      options: { redirectTo: `${getRedirectUrl()}/choisir-profil` }
     });
     if (error) showError(error.message);
   };
@@ -84,7 +84,7 @@ const Auth = () => {
         email: cleanEmail, 
         password,
         options: {
-          emailRedirectTo: getRedirectUrl(),
+          emailRedirectTo: `${getRedirectUrl()}/choisir-profil`,
           data: { username: cleanUsername, full_name: cleanUsername, country, phone }
         }
       });
@@ -101,7 +101,7 @@ const Auth = () => {
       }
       else {
         showSuccess("Compte créé !");
-        setIsLogin(true);
+        navigate("/choisir-profil");
       }
     }
     setLoading(false);
