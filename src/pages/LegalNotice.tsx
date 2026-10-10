@@ -48,7 +48,7 @@ const LegalNotice = () => {
           </div>
           <h1 className="text-3xl font-black mb-2">{t("Mentions légales")}</h1>
           <p className="text-muted-foreground">{t("Informations légales • eGame Bénin")}</p>
-          <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">Dernière mise à jour : 15 Septembre 2026</p>
+          <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">{t("Dernière mise à jour : 15 Septembre 2026")}</p>
         </motion.div>
 
         <motion.section
@@ -63,7 +63,7 @@ const LegalNotice = () => {
           <div className="bg-card border border-border rounded-[2rem] shadow-sm overflow-hidden">
             {LEGAL_INFO.map((row, index) => (
               <div
-                key={row.label}
+                key={t(row.label)}
                 className={`flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 px-8 py-4 ${index !== LEGAL_INFO.length - 1 ? 'border-b border-border/60' : ''}`}
               >
                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground sm:w-36 shrink-0">
@@ -103,15 +103,15 @@ const LegalNotice = () => {
           </div>
           <div className="bg-card border border-border p-8 rounded-[2rem] space-y-4 text-sm text-muted-foreground leading-relaxed shadow-sm">
             <p>
-              Le site egamebenin.com est hébergé par <strong className="text-foreground">Vercel</strong> — vercel.com.
+              {t("Le site egamebenin.com est hébergé par")} <strong className="text-foreground">Vercel</strong> — vercel.com.
             </p>
             <p>
-              Les services backend (authentification, base de données et fonctions serveur) sont fournis par{' '}
+              {t("Les services backend (authentification, base de données et fonctions serveur) sont fournis par")}{' '}
               <strong className="text-foreground">Supabase</strong> — supabase.com.
             </p>
             <div className="flex items-start gap-3">
               <Globe className="text-violet-500 shrink-0 mt-0.5" size={16} />
-              <p className="min-w-0">Les paiements sont traités par des prestataires de paiement sécurisés.</p>
+              <p className="min-w-0">{t("Les paiements sont traités par des prestataires de paiement sécurisés.")}</p>
             </div>
             <div className="flex items-start gap-3">
               <Mail className="text-violet-500 shrink-0 mt-0.5" size={16} />
@@ -130,7 +130,7 @@ const LegalNotice = () => {
             <span>© 2026 eGame Bénin</span>
             <span>— RCCM : <span className="font-mono">RB/ABC/26 A 138238</span></span>
             <span>| IFU : <span className="font-mono">0202398541260</span></span>
-            <span>| <Link to="/privacy" className="hover:text-violet-500 underline underline-offset-2">{t("Politique de confidentialité")}</Link></span>
+            <span>| <Link to={language === "en" ? "/en/privacy" : "/privacy"} className="hover:text-violet-500 underline underline-offset-2">{t("Politique de confidentialité")}</Link></span>
           </p>
         </footer>
       </main>
