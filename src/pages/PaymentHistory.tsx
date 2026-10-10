@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
 import SEO from '@/components/SEO';
 import { ArrowLeft, Clock, CheckCircle2, CreditCard, Copy, MessageSquare, XCircle, RefreshCw } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -20,6 +21,8 @@ interface Payment {
 }
 
 const PaymentHistory = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value, language);
   const navigate = useNavigate();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [ticketCodes, setTicketCodes] = useState<Record<string, string>>({});
@@ -105,7 +108,7 @@ const PaymentHistory = () => {
           </button>
         </div>
 
-        <h1 className="text-3xl font-gaming font-black uppercase text-white">Mes Inscriptions</h1>
+        <h1 className="text-3xl font-gaming font-black uppercase text-white">{t("Mes Inscriptions")}</h1>
 
         {loading ? (
           <div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>
@@ -114,7 +117,7 @@ const PaymentHistory = () => {
             {payments.length === 0 ? (
               <div className="text-center py-20 bg-[#0F0F1E] rounded-3xl border border-[#8A2BE2]/20">
                 <CreditCard size={48} className="mx-auto text-[#8888AA] mb-4 opacity-40" />
-                <p className="text-sm font-gaming text-[#8888AA]">Aucune inscription enregistrée.</p>
+                <p className="text-sm font-gaming text-[#8888AA]">{t("Aucune inscription enregistrée.")}</p>
               </div>
             ) : (
               payments.map((payment) => (
@@ -143,7 +146,7 @@ const PaymentHistory = () => {
                       </div>
                       <div className="p-4 bg-[#0A0A0F] rounded-2xl border border-[#FFD700]/30 flex items-center justify-between">
                         <div>
-                          <p className="text-[#8888AA] text-[9px] font-gaming font-bold uppercase tracking-widest">Ticket eGame Bénin</p>
+                          <p className="text-[#8888AA] text-[9px] font-gaming font-bold uppercase tracking-widest">{t("Ticket eGame Bénin")}</p>
                           <p className="text-[#FFD700] font-gaming font-black text-xl tracking-widest">{ticketCodeFor(payment)}</p>
                         </div>
                         <button onClick={() => copyToClipboard(ticketCodeFor(payment))} className="p-2 text-[#8888AA] hover:text-white">
