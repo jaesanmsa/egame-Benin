@@ -192,7 +192,7 @@ const Index = () => {
               </div>
               <div className="min-w-0">
                 <p className="text-[8px] sm:text-[9px] font-gaming font-black uppercase tracking-wider text-[#A855F7]">{t("Étape")} {index + 1}</p>
-                <h3 className="text-[10px] sm:text-xs font-gaming font-bold uppercase leading-tight text-white break-words">{step.title}</h3>
+                <h3 className="text-[10px] sm:text-xs font-gaming font-bold uppercase leading-tight text-white break-words">{t(step.title)}</h3>
                 <p className="hidden sm:block text-[10px] text-[#8888AA] leading-snug mt-1">{t(step.text)}</p>
               </div>
             </div>
@@ -238,7 +238,7 @@ const Index = () => {
       </section>
 
       {/* Partenaires publics et officiellement confirmés uniquement. */}
-      {hasPartners && <PartnersSection />}
+      {hasPartners && <PartnersSection language={language} />}
       <div className="flex justify-center px-5 pb-10">
         <Link
           to={localPath("/devenir-partenaire", "/en/partners")}
