@@ -15,6 +15,7 @@ const EditProfile = React.lazy(() => import("./pages/EditProfile"));
 const AvatarMaker = React.lazy(() => import("./pages/AvatarMaker"));
 const Auth = React.lazy(() => import("./pages/Auth"));
 const AccountChoice = React.lazy(() => import("./pages/AccountChoice"));
+const Teams = React.lazy(() => import("./pages/Teams"));
 const ForgotPassword = React.lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = React.lazy(() => import("./pages/ResetPassword"));
 const AdminDashboard = React.lazy(() => import("./pages/AdminDashboard"));
@@ -64,6 +65,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/choisir-profil" element={<AccountChoice />} />
+              <Route path="/mes-equipes" element={<Teams />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/admin" element={<AdminDashboard />} />
