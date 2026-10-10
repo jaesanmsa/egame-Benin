@@ -138,7 +138,7 @@ const Index = () => {
               onClick={() => navigate(localizedLinkPath("/auth?mode=signup"))}
               className="mx-auto inline-flex min-h-11 items-center justify-center rounded-xl border border-[#A855F7]/60 bg-[#8A2BE2]/15 px-6 py-3 text-[11px] font-gaming font-black uppercase tracking-widest text-white shadow-lg shadow-[#8A2BE2]/15 transition-all hover:border-[#A855F7] hover:bg-[#8A2BE2]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A855F7]"
             >
-              Créer un compte eGame
+              {t("Créer un compte eGame")}
             </button>
           )}
         </div>
