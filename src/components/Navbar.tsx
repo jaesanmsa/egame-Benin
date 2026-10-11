@@ -53,9 +53,9 @@ const Navbar = () => {
       </button>
       {menuOpen && (
         <div role="menu" className="absolute right-0 top-full z-[70] mt-3 w-56 rounded-2xl border border-[#8A2BE2]/40 bg-[#0F0F1E] p-2 shadow-2xl">
-          <Link role="menuitem" to={localPath("/profil", "/en/profil")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><User size={15} className="text-[#A855F7]" /> Mon profil</Link>
-          <Link role="menuitem" to={localPath("/payments", "/en/payments")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><CreditCard size={15} className="text-[#A855F7]" /> Mes inscriptions</Link>
-          <Link role="menuitem" to={localizedLinkPath("/profil#recompenses")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><Trophy size={15} className="text-[#A855F7]" /> Mes points</Link>
+          <Link role="menuitem" to={localPath("/profil", "/en/profil")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><User size={15} className="text-[#A855F7]" /> {t("Mon profil")}</Link>
+          <Link role="menuitem" to={localPath("/payments", "/en/payments")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><CreditCard size={15} className="text-[#A855F7]" /> {t("Mes inscriptions")}</Link>
+          <Link role="menuitem" to={localizedLinkPath("/profil#recompenses")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><Trophy size={15} className="text-[#A855F7]" /> {t("Mes points")}</Link>
           <Link role="menuitem" to={localPath("/edit-profile", "/en/edit-profile")} className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-white hover:bg-[#8A2BE2]/15"><Settings size={15} className="text-[#A855F7]" /> {t("Paramètres")}</Link>
           <button role="menuitem" onClick={handleLogout} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-xs font-bold text-red-400 hover:bg-red-500/10"><LogOut size={15} /> {t("Déconnexion")}</button>
         </div>
