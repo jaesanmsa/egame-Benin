@@ -127,7 +127,7 @@ const Index = () => {
             className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 pt-2"
           >
             <button onClick={() => navigate(localPath('/jeux', '/en/games'))} className="w-full sm:w-auto min-h-12 btn-glow-border px-7 py-3.5 text-xs tracking-widest uppercase flex items-center justify-center gap-3">
-              Voir les tournois <ArrowRight size={16} />
+              {t("Voir les tournois")} <ArrowRight size={16} />
             </button>
             <a href={MAIN_DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto min-h-12 px-7 py-3.5 border border-[#5865F2]/60 hover:border-[#5865F2] bg-[#0F0F1E]/80 hover:bg-[#5865F2]/15 rounded-2xl text-xs font-gaming font-bold uppercase tracking-widest text-white transition-all flex items-center justify-center gap-3">
               <DiscordLogo size={16} /> {t("Rejoindre Discord")}
@@ -244,7 +244,7 @@ const Index = () => {
           to={localPath("/devenir-partenaire", "/en/partners")}
           className="inline-flex min-h-10 items-center justify-center rounded-xl border border-[#FFD700]/70 bg-[#FFD700]/10 px-5 py-2.5 text-[10px] font-gaming font-black uppercase tracking-widest text-[#FFD700] transition-colors hover:bg-[#FFD700]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#FFD700]"
         >
-          Devenir partenaire
+          {t("Devenir partenaire")}
         </Link>
       </div>
 
