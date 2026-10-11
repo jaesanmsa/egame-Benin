@@ -76,7 +76,7 @@ const Leaderboard = () => {
 
         <div className="text-center z-10 space-y-1">
           <p className="font-gaming font-extrabold text-xs text-white truncate max-w-[90px]">{player?.username || "---"}</p>
-          <p className={`text-[10px] font-bold ${config.color} uppercase tracking-wider`}>{player?.wins || 0} Victoires</p>
+          <p className={`text-[10px] font-bold ${config.color} uppercase tracking-wider`}>{player?.wins || 0} {t("Victoires")}</p>
           {player?.wins > 0 && (
             <div className="flex justify-center">
               <PlayerBadge tournamentCount={player.wins} size="sm" />
@@ -100,7 +100,7 @@ const Leaderboard = () => {
           onClick={() => selectedGame ? setSelectedGame(null) : navigate(-1)} 
           className="flex items-center gap-2 text-[#8888AA] hover:text-white transition-colors text-xs font-gaming font-bold uppercase tracking-widest"
         >
-          <ArrowLeft size={16} /> {selectedGame ? "Retour au choix du jeu" : "Retour"}
+          <ArrowLeft size={16} /> {selectedGame ? t("Retour au choix du jeu") : t("Retour")}
         </button>
 
         <div className="text-center space-y-3">
@@ -108,10 +108,10 @@ const Leaderboard = () => {
             <Trophy size={32} />
           </div>
           <h1 className="text-3xl md:text-4xl font-gaming font-black uppercase tracking-tight">
-            {selectedGame ? DEFAULT_GAMES.find(g => g.id === selectedGame)?.name : "Classement Continental"}
+            {selectedGame ? DEFAULT_GAMES.find(g => g.id === selectedGame)?.name : t("Classement Continental")}
           </h1>
           <p className="text-xs text-[#8888AA] font-esport uppercase tracking-widest">
-            Classement des joueurs eGame Bénin
+            {t("Classement des joueurs eGame Bénin")}
           </p>
         </div>
 
