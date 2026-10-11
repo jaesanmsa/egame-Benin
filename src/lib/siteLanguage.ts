@@ -20,6 +20,14 @@ export function useLocalePath(): (destination: string) => string {
 }
 
 const EN: Record<string, string> = {
+"Classement des joueurs eGame Bénin": "eGame Bénin player rankings",
+"Retour au choix du jeu": "Back to game selection",
+"Classement Continental": "Continental rankings",
+"Victoires": "Wins",
+"Lire l'article complet": "Read full article",
+"de lecture": "read",
+"Lien de l'article copié !": "Article link copied!",
+
   "Accueil": "Home", "Tournois": "Tournaments", "Classement": "Rankings", "Actualités": "News",
   "Connexion": "Sign in", "Créer un compte": "Create account", "Mon compte": "My account",
   "Mon profil": "My profile", "Mes inscriptions": "My registrations", "Mes points": "My points",
