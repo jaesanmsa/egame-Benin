@@ -1,3 +1,5 @@
+import { useSiteLanguage, translate } from '@/lib/siteLanguage';
+import { localizeNews } from '@/lib/newsLocalization';
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -10,6 +12,8 @@ import { supabase } from '@/lib/supabase';
 import { showSuccess } from '@/utils/toast';
 
 const NewsDetail = () => {
+  const language = useSiteLanguage();
+  const t = (value: string) => translate(value,language);
   const { id } = useParams();
   const navigate = useNavigate();
   const [article, setArticle] = useState<any>(null);
@@ -23,18 +27,18 @@ const NewsDetail = () => {
         .eq('id', id)
         .single();
       
-      if (data) setArticle(data);
+      if (data) setArticle(localizeNews(data, language));
       setLoading(false);
     };
     fetchArticle();
-  }, [id]);
+  }, [id, language]);
 
   if (loading) return <div className="min-h-screen bg-[#07070C] flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" /></div>;
   if (!article) return <NotFound />;
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
-    showSuccess("Lien de l'article copié !");
+    showSuccess(t("Lien de l'article copié !"));
   };
 
   return (
@@ -64,7 +68,7 @@ const NewsDetail = () => {
           <header className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-gaming font-bold text-[#A855F7] uppercase flex items-center gap-2">
-                <Clock size={14} /> {article.read_time} de lecture
+                <Clock size={14} /> {article.read_time} {t("de lecture")}
               </span>
               <button onClick={handleShare} className="p-2 text-[#8888AA] hover:text-white transition-colors">
                 <Share2 size={20} />
