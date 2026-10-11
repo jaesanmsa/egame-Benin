@@ -59,7 +59,7 @@ const queryClient = new QueryClient({
  // un lien de récupération Supabase peut ouvrir une session temporaire.
 const AccountCheckInReminder = () => {
   const { pathname } = useLocation();
-  if (pathname !== "/profil" && pathname !== "/en/profil") return null;
+  if (!["/", "/en", "/profil", "/en/profil"].includes(pathname)) return null;
   return <DailyCheckInModal />;
 };
 
