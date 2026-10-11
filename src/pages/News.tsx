@@ -1,3 +1,4 @@
+import { localizeNews } from '@/lib/newsLocalization';
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -24,11 +25,11 @@ const News = () => {
         .select('*')
         .order('created_at', { ascending: false });
       
-      if (data) setNews(data);
+      if (data) setNews(data.map(article => localizeNews(article, language)));
       setLoading(false);
     };
     fetchNews();
-  }, []);
+  }, [language]);
 
   const featuredArticle = news.find(a => a.is_featured) || news[0];
   const otherArticles = news.filter(a => a.id !== featuredArticle?.id);
@@ -68,7 +69,7 @@ const News = () => {
         ) : (
           <>
             {featuredArticle && (
-              <Link to={`/news/${featuredArticle.id}`} className="block">
+              <Link to={localizedLinkPath(`/news/${featuredArticle.id}`)} className="block">
                 <motion.div 
                   whileHover={{ y: -6 }}
                   className="glass-panel overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2 group"
@@ -79,7 +80,7 @@ const News = () => {
                   <div className="p-8 flex flex-col justify-between space-y-4">
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 text-xs font-gaming font-bold text-[#A855F7] uppercase tracking-wider">
-                        <Clock size={12} /> {featuredArticle.read_time} de lecture
+                        <Clock size={12} /> {featuredArticle.read_time} {t("de lecture")}
                       </div>
                       <h2 className="text-2xl font-gaming font-black text-white group-hover:text-[#A855F7] transition-colors leading-tight">
                         {featuredArticle.title}
@@ -89,7 +90,7 @@ const News = () => {
                       </p>
                     </div>
                     <div className="text-xs font-gaming font-bold text-[#FFD700] uppercase flex items-center gap-2">
-                      Lire l'article complet <ArrowRight size={14} />
+                      {t("Lire l'article complet")} <ArrowRight size={14} />
                     </div>
                   </div>
                 </motion.div>
@@ -98,7 +99,7 @@ const News = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {otherArticles.map((article) => (
-                <Link key={article.id} to={`/news/${article.id}`}>
+                <Link key={article.id} to={localizedLinkPath(`/news/${article.id}`)}>
                   <motion.article 
                     whileHover={{ y: -6 }}
                     className="glass-panel overflow-hidden shadow-xl flex flex-col h-full group"
