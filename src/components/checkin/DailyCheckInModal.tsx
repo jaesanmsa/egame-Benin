@@ -105,7 +105,7 @@ const DailyCheckInModal = () => {
                   </p>
                   <p className="text-[10px] text-[#8888AA]">
                     +{justClaimed.completed ? CYCLE_TOTAL_POINTS : justClaimed.points} pt{justClaimed.points > 1 ? "s" : ""}
-                    {justClaimed.completed ? " crédités" : " en attente"} • Reviens demain !
+                    {justClaimed.completed ? t(" crédités") : t(" en attente")} {language === "en" ? " • Come back tomorrow!" : " • Reviens demain !"}
                   </p>
                 </div>
               </>
@@ -116,9 +116,9 @@ const DailyCheckInModal = () => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-gaming font-black text-white leading-snug">
-                    {gapDetected ? "Série reprise · Jour 1/7" : `Récompense quotidienne · Jour ${nextDay}/7`}
+                    {gapDetected ? t("Série reprise · Jour 1/7") : `${language === "en" ? "Daily reward · Day" : "Récompense quotidienne · Jour"} ${nextDay}/7`}
                   </p>
-                  <p className="text-[10px] text-[#8888AA]">+{nextPoints} point{nextPoints > 1 ? "s" : ""} à réclamer maintenant</p>
+                  <p className="text-[10px] text-[#8888AA]">+{nextPoints} {language === "en" ? `point${nextPoints > 1 ? "s" : ""} available to claim now` : `point${nextPoints > 1 ? "s" : ""} à réclamer maintenant`}</p>
                 </div>
                 <button
                   onClick={handleClaim}
@@ -131,7 +131,7 @@ const DailyCheckInModal = () => {
             )}
             <button
               onClick={() => { setOpen(false); setDismissed(true); }}
-              aria-label="Fermer le rappel"
+              aria-label={language === "en" ? "Close reminder" : "Fermer le rappel"}
               className="shrink-0 p-1.5 rounded-lg text-[#8888AA] hover:text-white hover:bg-white/5 transition-colors"
             >
               <X size={14} />
