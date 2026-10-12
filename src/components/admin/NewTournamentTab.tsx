@@ -53,15 +53,7 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit, createDis
     });
   };
 
-  const [isFree, setIsFree] = React.useState(false);
-
-  const handleFreeToggle = (free: boolean) => {
-    setIsFree(free);
-    setNewTournament({
-      ...newTournament,
-      entry_fee: free ? 0 : (newTournament.entry_fee || 1000)
-    });
-  };
+  const isFree = true;
 
   return (
     <motion.form initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} onSubmit={onSubmit} className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm space-y-8">
@@ -91,25 +83,7 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit, createDis
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Passerelle de Paiement</Label>
-          <Select onValueChange={(v) => setNewTournament({...newTournament, payment_gateway: v})} defaultValue={newTournament.payment_gateway || "kkiapay"}>
-            <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
-              <div className="flex items-center gap-2">
-                <CreditCard size={16} className="text-violet-500" />
-                <SelectValue placeholder="Choisir la passerelle" />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="bg-card border-border">
-              <SelectItem value="kkiapay" className="font-bold">KKiaPay</SelectItem>
-              <SelectItem value="fedapay" className="font-bold">FedaPay</SelectItem>
-              <SelectItem value="moneroo" className="font-bold">Moneroo</SelectItem>
-              <SelectItem value="both" className="font-bold">KKiaPay + FedaPay</SelectItem>
-              <SelectItem value="all" className="font-bold">Toutes les solutions (KKiaPay + FedaPay + Moneroo)</SelectItem>
-              <SelectItem value="maketou" className="font-bold">Maketou</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+
 
         <div className="space-y-2">
           <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-emerald-600">Début des inscriptions</Label>
@@ -190,18 +164,7 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit, createDis
           )}
         </div>
 
-        <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Frais d'entrée (FCFA)</Label>
-          <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/50 px-4 py-4">
-            <Switch id="free-tournament" checked={isFree} onCheckedChange={handleFreeToggle} />
-            <Label htmlFor="free-tournament" className="text-xs font-bold cursor-pointer select-none">
-              {isFree ? "Gratuit — inscription sans paiement, avec ticket" : "Payant — définir les frais ci-dessous"}
-            </Label>
-          </div>
-          {!isFree && (
-            <Input type="number" value={newTournament.entry_fee || ''} onChange={e => setNewTournament({...newTournament, entry_fee: parseInt(e.target.value) || 0})} className="py-6 bg-muted/50 border-border rounded-xl" placeholder="ex: 1000" />
-          )}
-        </div>
+        <div className="space-y-2"><Label>Inscriptions gratuites</Label><p className="text-xs text-muted-foreground">Les joueurs participent sans paiement. Une autorisation de l’éditeur peut rester nécessaire.</p></div>
 
         <div className="md:col-span-2 space-y-2">
           <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Cash Prize</Label>
@@ -248,7 +211,7 @@ const NewTournamentTab = ({ newTournament, setNewTournament, onSubmit, createDis
             <Switch id="test-tournament" checked={!!newTournament.is_test} onCheckedChange={(v) => setNewTournament({ ...newTournament, is_test: v })} />
             <Label htmlFor="test-tournament" className="text-sm font-black cursor-pointer select-none flex items-center gap-2">
               <FlaskConical size={16} className="text-amber-500" />
-              Tournoi d'essai (test des paiements)
+              Tournoi d'essai (inscriptions gratuites)
             </Label>
           </div>
           {newTournament.is_test && (
