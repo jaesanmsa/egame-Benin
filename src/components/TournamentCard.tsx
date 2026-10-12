@@ -70,7 +70,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
             {type === 'Online' ? <Globe size={12} className="text-cyan-400" /> : <MapPin size={12} className="text-orange-400" />}
             {type === 'Online' ? t('En ligne') : t('Présentiel')}
           </Badge>
-          {entryFee === "0" && (
+          {status !== "finished" && (
             <Badge className="bg-emerald-950/80 backdrop-blur-md text-emerald-300 border border-emerald-500/50 text-[10px] font-bold uppercase tracking-wider py-1 px-3 rounded-full">
               {t("Gratuit")}
             </Badge>
@@ -139,7 +139,7 @@ const TournamentCard = ({ id, title, game, image, date, participants, entryFee, 
         <button
           className="w-full btn-neon py-3 rounded-xl text-xs uppercase tracking-widest flex items-center justify-center gap-2"
         >
-          {entryFee === "0" ? "S'inscrire • Gratuit" : `S'inscrire • ${entryFee} FCFA`}
+          {t("S'inscrire • Gratuit")}
           <ArrowRight size={14} />
         </button>
       </div>
