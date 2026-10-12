@@ -121,6 +121,9 @@ const Index = () => {
           >
             {t("Participe à des tournois gaming, affronte d’autres joueurs et construis ton parcours sur eGame Bénin.")}
           </motion.p>
+          <p className="text-xs sm:text-sm font-bold text-emerald-400">
+            {language === "en" ? "Free entry to all tournaments — no payments or check-in points required." : "Participation gratuite à tous les tournois — aucun paiement ni point de check-in requis."}
+          </p>
           <motion.div
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
