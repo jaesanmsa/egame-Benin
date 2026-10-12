@@ -211,7 +211,7 @@ const AdminDashboard = () => {
             type: 'NEW_TOURNAMENT',
             game: newTournament.game,
             slots: newTournament.max_participants,
-            fee: newTournament.entry_fee,
+            fee: 0,
             prize: newTournament.prize_pool,
             tournament_id: newTournament.id
           }
@@ -237,7 +237,7 @@ const AdminDashboard = () => {
         title: editingTournament.title,
         game: editingTournament.game,
         image_url: editingTournament.image_url,
-        entry_fee: editingTournament.entry_fee,
+        entry_fee: 0,
         max_participants: editingTournament.max_participants,
         type: editingTournament.type,
         prize_pool: editingTournament.prize_pool,
