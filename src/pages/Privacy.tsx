@@ -31,7 +31,7 @@ const Privacy = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-24 pt-12 md:pt-24">
-      <SEO title="Confidentialité & Conditions d'utilisation" description="Conditions d'utilisation, règles de l'arène, protection des données, paiements et remboursements sur eGame Bénin." />
+      <SEO title="Confidentialité & Conditions d'utilisation" description="Conditions d'utilisation, règles des tournois gratuits et protection des données sur eGame Bénin." />
       <Navbar />
       <main className="max-w-3xl mx-auto px-6 py-8">
         <motion.button 
@@ -77,7 +77,7 @@ const Privacy = () => {
               
               <div>
                 <h3 className="font-bold text-foreground mb-2">{t("Description du service")}</h3>
-                <p>{t("eGame Bénin est une plateforme d'organisation de tournois de jeux vidéo. Nous fournissons l'infrastructure pour l'inscription, le paiement des frais de participation et la gestion des classements.")}</p>
+                <p>{t("eGame Bénin est une plateforme d'organisation de tournois de jeux vidéo. Les inscriptions aux nouveaux tournois sont gratuites. Nous fournissons l'infrastructure pour les inscriptions et la gestion des classements.")}</p>
               </div>
 
               <div>
@@ -129,8 +129,8 @@ const Privacy = () => {
               </div>
 
               <div>
-                <h3 className="font-bold text-foreground mb-2">{t("Sécurité des paiements")}</h3>
-                <p>{t("Les paiements sont traités par des prestataires de paiement sécurisés. Les moyens disponibles peuvent varier selon le tournoi. eGame Bénin n'a jamais accès à vos codes PIN ou informations de carte bancaire.")}</p>
+                <h3 className="font-bold text-foreground mb-2">{t("Protection des données financières")}</h3>
+                <p>{t("Les nouvelles inscriptions aux tournois ne nécessitent aucun paiement. Les éventuelles opérations historiques sont conservées à des fins de suivi et de transparence. eGame Bénin n'a jamais accès à vos codes PIN ou informations de carte bancaire.")}</p>
               </div>
 
               <div>
@@ -144,11 +144,11 @@ const Privacy = () => {
           <motion.section variants={itemVariants}>
             <div className="flex items-center gap-3 mb-6">
               <AlertCircle className="text-violet-500" size={24} />
-              <h2 className="text-xl font-bold">{t("4. Inscriptions & Remboursements")}</h2>
+              <h2 className="text-xl font-bold">{t("4. Inscriptions gratuites et événements")}</h2>
             </div>
             <div className="bg-card border border-border p-8 rounded-[2rem] space-y-4 text-sm text-muted-foreground leading-relaxed shadow-sm">
-              <p>{t("• Les frais d'inscription sont définitifs et non remboursables une fois le tournoi commencé.")}</p>
-              <p>{t("• En cas d'annulation d'un tournoi par l'administration, les participants seront intégralement remboursés ou crédités pour un futur événement.")}</p>
+              <p>{t("• L'inscription aux nouveaux tournois est gratuite ; aucun frais ni point de fidélité n'est nécessaire pour participer.")}</p>
+              <p>{t("• En cas d'annulation d'un tournoi, les joueurs sont informés. Toute obligation relative à un paiement historique reste applicable.")}</p>
               <p>{t("• Les récompenses sont versées après validation définitive des résultats, selon les conditions du tournoi.")}</p>
             </div>
           </motion.section>
