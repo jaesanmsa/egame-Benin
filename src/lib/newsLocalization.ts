@@ -9,7 +9,7 @@ const englishArticles: Record<string, {title:string;excerpt:string;content:strin
   "f1c0c179-2155-480a-96ab-a7e4d793e5b8": {
     title: "Guide: How to Join a Tournament",
     excerpt: "The steps to register for a tournament and confirm your participation.",
-    content: "How to join a tournament on eGame Bénin:\n\n1. Browse the open tournaments.\n2. Complete your profile and connect your Discord account.\n3. Follow the registration steps and choose a payment method available for that tournament.\n4. Check your registrations and the information shared on the relevant Discord server.\n\nPrizes are awarded after the final results are verified, according to the tournament rules."
+    content: "How to join a tournament on eGame Bénin:\n\n1. Browse the open tournaments.\n2. Complete your profile and connect your Discord account.\n3. Follow the free registration steps and confirm your participation according to the tournament instructions.\n4. Check your registrations and the information shared on the relevant Discord server.\n\nPrizes are awarded after the final results are verified, according to the tournament rules."
   }
 };
 export function localizeNews<T extends NewsArticle>(article: T, language: "fr" | "en"): T {
