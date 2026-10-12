@@ -20,6 +20,22 @@ export function useLocalePath(): (destination: string) => string {
 }
 
 const EN: Record<string, string> = {
+  "Crée ton compte": "Create your account",
+  "Choisis ton tournoi": "Choose your tournament",
+  "Inscris-toi gratuitement": "Register for free",
+  "Suis ton inscription": "Track your registration",
+  "Rejoins le Discord de ton jeu": "Join your game's Discord",
+  "Joue et reçois tes récompenses": "Play and earn prizes",
+  "Explore les tournois ouverts, choisis ton jeu et consulte les dates, les règles et les récompenses annoncées.": "Explore open tournaments, choose your game and review the dates, rules and announced prizes.",
+  "Accepte le règlement du tournoi et inscris-toi sans paiement. Aucun point de check-in n’est nécessaire.": "Accept the tournament rules and register without paying. No check-in points are required.",
+  "eGame Bénin est une plateforme d'organisation de tournois de jeux vidéo. Les inscriptions aux nouveaux tournois sont gratuites. Nous fournissons l'infrastructure pour les inscriptions et la gestion des classements.": "eGame Bénin is a video-game tournament platform. Registration for new tournaments is free. We provide infrastructure for registration and rankings.",
+  "Protection des données financières": "Financial data protection",
+  "Les nouvelles inscriptions aux tournois ne nécessitent aucun paiement. Les éventuelles opérations historiques sont conservées à des fins de suivi et de transparence. eGame Bénin n'a jamais accès à vos codes PIN ou informations de carte bancaire.": "New tournament registrations do not require payment. Any historical transactions are retained for recordkeeping and transparency. eGame Bénin never has access to your PINs or payment card credentials.",
+  "4. Inscriptions gratuites et événements": "4. Free registrations and events",
+  "• L'inscription aux nouveaux tournois est gratuite ; aucun frais ni point de fidélité n'est nécessaire pour participer.": "• Registration for new tournaments is free; no fee or loyalty points are required to participate.",
+  "• En cas d'annulation d'un tournoi, les joueurs sont informés. Toute obligation relative à un paiement historique reste applicable.": "• If a tournament is canceled, players will be notified. Any obligations relating to historical payments remain applicable.",
+  "Les inscriptions aux nouveaux tournois sont gratuites ; les anciennes opérations financières restent consultables dans l'historique des participants concernés.": "Registration for new tournaments is free; previous financial transactions remain visible in the respective participants' histories.",
+
 "Classement des joueurs eGame Bénin": "eGame Bénin player rankings",
 "Retour au choix du jeu": "Back to game selection",
 "Classement Continental": "Continental rankings",
