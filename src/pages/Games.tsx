@@ -69,7 +69,6 @@ const Games = () => {
             <div>
               <h1 className="text-3xl font-gaming font-black uppercase text-white">{t("Jeux pris en charge")}</h1>
               <p className="text-xs text-[#8888AA] font-esport tracking-wider mt-1">{t("Les tournois sont annoncés séparément selon leur disponibilité.")}</p>
-              <p className="text-xs font-bold text-emerald-400 mt-2">{language === "en" ? "Tournament entry is free. No payment or check-in points are required." : "L'inscription aux tournois est gratuite, sans paiement ni points de check-in."}</p>
             </div>
           </div>
 
