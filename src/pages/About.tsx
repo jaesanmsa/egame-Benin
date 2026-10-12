@@ -128,7 +128,7 @@ const About = () => {
           <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {STEPS.map((step, i) => (
               <li
-                key={step.title}
+                key={t(step.title)}
                 className={`relative bg-[#0F0F1E] border p-8 rounded-3xl space-y-4 ${
                   step.highlight
                     ? 'border-emerald-500/50 shadow-xl shadow-emerald-500/10'
@@ -147,7 +147,7 @@ const About = () => {
                     <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/40 font-extrabold">Étape clé</span>
                   )}
                 </h3>
-                <p className="text-xs text-[#8888AA] leading-relaxed">{step.desc}</p>
+                <p className="text-xs text-[#8888AA] leading-relaxed">{t(step.desc)}</p>
               </li>
             ))}
           </ol>
