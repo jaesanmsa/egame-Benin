@@ -25,12 +25,12 @@ const STEPS: Step[] = [
   {
     icon: Gamepad2,
     title: "Choisis ton tournoi",
-    desc: "Explore les tournois ouverts, sélectionne ton jeu préféré et vérifie la date, les frais et le Cash Prize."
+    desc: "Explore les tournois ouverts, choisis ton jeu et consulte les dates, les règles et les récompenses annoncées."
   },
   {
-    icon: CreditCard,
-    title: "Paie tes frais d'inscription",
-    desc: "Accepte le règlement du tournoi puis paie avec les moyens disponibles pour cette compétition : Mobile Money et carte bancaire selon disponibilité."
+    icon: Shield,
+    title: "Inscris-toi gratuitement",
+    desc: "Accepte le règlement du tournoi et inscris-toi sans paiement. Aucun point de check-in n’est nécessaire."
   },
   {
     icon: Hash,
@@ -161,7 +161,7 @@ const About = () => {
               <div className="space-y-2">
                 <h3 className="font-gaming font-black text-lg text-white uppercase">Le réflexe à ne pas oublier</h3>
                 <p className="text-xs text-[#8888AA] leading-relaxed max-w-xl">
-                  Après chaque paiement, ton <span className="text-white font-bold">code de validation</span> (ex : EGB-A1B2C)
+                  Après ton inscription gratuite, ton <span className="text-white font-bold">code de validation</span> (ex : EGB-A1B2C)
                   apparaît dans « Mes Inscriptions ». Les arbitres le vérifient pour confirmer officiellement
                   ta place — suis la validation sur le <span className="text-[#8B9AFF] font-bold">serveur Discord de ton jeu</span>.
                 </p>
