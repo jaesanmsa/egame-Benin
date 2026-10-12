@@ -103,6 +103,13 @@ const CheckInCard = ({ userId }: { userId: string }) => {
 
   return (
     <div className="glass-panel p-4 space-y-3">
+      <p className="text-[11px] text-[#FFD700] font-bold">
+        {language === "en" ? "Community loyalty level" : "Niveau de fidélité communautaire"} : {
+          state.balance >= 100 ? (language === "en" ? "Pillar" : "Pilier")
+          : state.balance >= 30 ? (language === "en" ? "Regular" : "Habitué")
+          : (language === "en" ? "Explorer" : "Explorateur")
+        }
+      </p>
       {/* ===== Ligne principale compacte ===== */}
       <div className="flex items-center gap-2.5 flex-wrap">
         <button
