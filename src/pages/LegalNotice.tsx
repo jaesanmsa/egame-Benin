@@ -112,7 +112,7 @@ const LegalNotice = () => {
             </p>
             <div className="flex items-start gap-3">
               <Globe className="text-violet-500 shrink-0 mt-0.5" size={16} />
-              <p className="min-w-0">{t("Les paiements sont traités par des prestataires de paiement sécurisés.")}</p>
+              <p className="min-w-0">{t("Les inscriptions aux nouveaux tournois sont gratuites ; les anciennes opérations financières restent consultables dans l'historique des participants concernés.")}</p>
             </div>
             <div className="flex items-start gap-3">
               <Mail className="text-violet-500 shrink-0 mt-0.5" size={16} />
