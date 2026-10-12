@@ -401,7 +401,7 @@ const TournamentDetails = () => {
   if (!tournament) return null;
 
   const isFinished = tournament.status === 'finished';
-  const isFree = Number(tournament.entry_fee) === 0;
+  const isFree = !isFinished; // All future registrations are free; historical tournament payments remain archived.
   // Passerelle imposée à la création du tournoi : seul ce moyen de paiement est proposé.
   const paymentGateway = (tournament.payment_gateway || '').toLowerCase();
   const maxSlots = tournament.max_participants || 40;
@@ -667,10 +667,8 @@ const TournamentDetails = () => {
                   >
                     {isPaying || (isLoggedIn && discordReady === null && !waiveGates) ? (
                       <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Préparation...</>
-                    ) : isFree ? (
-                      "S'inscrire Gratuitement • Ticket"
-                    ) : (
-                      `S'inscrire et Payer • ${tournament.entry_fee} FCFA`
+                     ) : (
+                      t("S'inscrire Gratuitement • Ticket")
                     )}
                   </button>
                   {formattedEndRegistration && (
@@ -829,11 +827,12 @@ const TournamentDetails = () => {
                 <button
                   onClick={() => {
                     setShowConfirmation(false);
-                    if (isFree) handleFreeRegistration();
-                    else if (paymentGateway === 'kkiapay') handleKKiaPay();
+                    handleFreeRegistration();
+                    /* Paid registrations are disabled. Historical payment components are retained for records only. */
+                    /* else if (paymentGateway === 'kkiapay') handleKKiaPay();
                     else if (paymentGateway === 'fedapay') handleFedaPay();
                     else if (paymentGateway === 'moneroo') handleMoneroo();
-                    else setShowPaymentMethods(true);
+                    else setShowPaymentMethods(true); */
                   }}
                   className="w-full btn-glow-border py-4 text-xs tracking-widest uppercase"
                 >
