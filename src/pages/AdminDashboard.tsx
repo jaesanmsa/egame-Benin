@@ -182,6 +182,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     const { data: createdTournament, error } = await supabase.from('tournaments').insert([{
       ...newTournament,
+      entry_fee: 0, // Politique eGame Bénin : inscriptions gratuites.
       // Les heures saisies (GMT+1) sont converties en instants exacts.
       registration_start_date: beninInputToIso(newTournament.registration_start_date),
       start_date: beninInputToIso(newTournament.start_date),
