@@ -95,25 +95,7 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Passerelle de Paiement</Label>
-              <Select onValueChange={(v) => setEditingTournament({...editingTournament, payment_gateway: v})} value={editingTournament.payment_gateway || "kkiapay"}>
-                <SelectTrigger className="py-6 bg-muted/50 border-border rounded-xl">
-                  <div className="flex items-center gap-2">
-                    <CreditCard size={16} className="text-violet-500" />
-                    <SelectValue placeholder="Choisir la passerelle" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent className="bg-card border-border">
-                  <SelectItem value="kkiapay" className="font-bold">KKiaPay</SelectItem>
-                  <SelectItem value="fedapay" className="font-bold">FedaPay</SelectItem>
-                  <SelectItem value="moneroo" className="font-bold">Moneroo</SelectItem>
-                  <SelectItem value="both" className="font-bold">KKiaPay + FedaPay</SelectItem>
-                  <SelectItem value="all" className="font-bold">Toutes les solutions (KKiaPay + FedaPay + Moneroo)</SelectItem>
-                  <SelectItem value="maketou" className="font-bold">Maketou</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+
 
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-emerald-600">Début des inscriptions</Label>
@@ -180,15 +162,7 @@ const EditTournamentTab = ({ activeTournaments, editingTournament, setEditingTou
               />
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Frais d'entrée (FCFA)</Label>
-              <Input 
-                type="number"
-                value={editingTournament.entry_fee || 0} 
-                onChange={e => setEditingTournament({...editingTournament, entry_fee: parseInt(e.target.value)})}
-                className="py-6 bg-muted/50 border-border rounded-xl"
-              />
-            </div>
+            <div className="space-y-2"><Label>Inscription gratuite</Label><p className="text-xs text-muted-foreground">Aucun frais d’inscription pour les nouveaux tournois.</p></div>
 
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest ml-1">Cash Prize</Label>
