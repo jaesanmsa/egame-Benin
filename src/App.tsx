@@ -33,6 +33,7 @@ const News = React.lazy(() => import("./pages/News"));
 const NewsDetail = React.lazy(() => import("./pages/NewsDetail"));
 const About = React.lazy(() => import("./pages/About"));
 const BecomePartner = React.lazy(() => import("./pages/BecomePartner"));
+const CommunityPartners = React.lazy(() => import("./pages/CommunityPartners"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 // FR and EN now use the same page components, not a separate EnglishSite.
 const OrganizerApplicationPage = React.lazy(() => import("./pages/OrganizerApplication"));
@@ -97,6 +98,7 @@ const App = () => (
               <Route path="/en/about" element={<About />} />
               <Route path="/en/contact" element={<Contact />} />
               <Route path="/en/partners" element={<BecomePartner />} />
+              <Route path="/en/community-partners" element={<CommunityPartners />} />
               <Route path="/en/organizer-application" element={<OrganizerApplicationPage />} />
               <Route path="/en/organizer" element={<OrganizerDashboard />} />
               <Route path="/en/admin/organizers" element={<OrganizerAdmin />} />
@@ -127,6 +129,7 @@ const App = () => (
               <Route path="/mentions-legales" element={<LegalNotice />} />
               <Route path="/about" element={<About />} />
               <Route path="/devenir-partenaire" element={<BecomePartner />} />
+              <Route path="/partenaires" element={<CommunityPartners />} />
               <Route path="/news" element={<News />} />
                             <Route path="/news/coc-rules" element={<News />} />
                             <Route path="/news/:id" element={<NewsDetail />} />
