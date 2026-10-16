@@ -252,6 +252,7 @@ const Index = () => {
         <Logo size="md" className="justify-center" />
         <div className="flex flex-wrap justify-center gap-x-5 gap-y-3 px-4 text-[10px] sm:text-xs text-[#8888AA] font-bold uppercase tracking-wider">
           <Link to={localizedLinkPath("/about")} className="hover:text-white">{t("À propos")}</Link>
+          <Link to={localPath("/partenaires", "/en/community-partners")} className="hover:text-white">{language === "en" ? "Our partners" : "Nos partenaires"}</Link>
           <Link to={localizedLinkPath("/devenir-partenaire")} className="hover:text-white">{t("Devenir partenaire")}</Link>
           <Link to={localPath("/contact", "/en/contact")} className="hover:text-white">Contact</Link>
           <Link to={localizedLinkPath("/mentions-legales")} className="hover:text-white">{t("Mentions légales")}</Link>
